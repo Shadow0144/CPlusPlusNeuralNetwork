@@ -16,6 +16,9 @@
     <Filter Include="Header Files\Function">
       <UniqueIdentifier>{00e166c2-0aed-4317-916e-b1d7322592fd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Function">
+      <UniqueIdentifier>{292a4076-72cb-4655-98ac-45c13577f502}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="NeuralNetwork.cpp">
@@ -28,7 +31,7 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DotProductFunction.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Function</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -49,6 +52,9 @@
     </ClInclude>
     <ClInclude Include="DotProductFunction.h">
       <Filter>Header Files\Function</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawingCanvas.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

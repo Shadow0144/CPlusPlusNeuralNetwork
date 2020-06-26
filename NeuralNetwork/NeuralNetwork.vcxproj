@@ -151,6 +151,7 @@
   <ItemGroup>
     <ClInclude Include="Differentiable.h" />
     <ClInclude Include="DotProductFunction.h" />
+    <ClInclude Include="DrawingCanvas.h" />
     <ClInclude Include="Function.h" />
     <ClInclude Include="NeuralNetwork.h" />
     <ClInclude Include="Neuron.h" />
