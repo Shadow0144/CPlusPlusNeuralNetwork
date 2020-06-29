@@ -63,19 +63,14 @@ void draw_network()
     char window_name[] = "Neural Network";
     Mat img = Mat::Mat(size, size, CV_8UC3, Scalar(225, 225, 225));
 
-    int layers = 4;
-    int layerShapes[] = { 5, 3, 3, 1 };
+    int layers = 5;
+    int layerShapes[] = { 5, 3, 3, 3, 1 };
     ActivationFunction functions[] = 
         { ActivationFunction::Identity,
           ActivationFunction::ReLU,
           ActivationFunction::Sigmoid, 
+          ActivationFunction::Tanh,
           ActivationFunction::WeightedDotProduct };
-
-    /*int layers = 2;
-    int layerShapes[] = { 1, 1 };
-    ActivationFunction functions[] = 
-        { ActivationFunction::WeightedDotProduct, 
-          ActivationFunction::WeightedDotProduct };*/
 
     NeuralNetwork network = NeuralNetwork(layers, layerShapes, functions);
 
@@ -84,6 +79,13 @@ void draw_network()
     canvas.offset = Point(0, 0);
     canvas.scale = 1.0f;
     network.draw(canvas);
+
+    float x[10] = { 1, 2, 3, 4, 5, 6, 7, 8, 10 };
+    float y[10] = { 1, 2, 3, 4, 5, 6, 7, 8, 10 };
+    Mat training_x = cv::Mat(1, 10, CV_32F, x);
+    Mat training_y = cv::Mat(1, 10, CV_32F, y);
+
+    Mat result_y = network.feedForward(training_x);
 
     imshow(window_name, img);
     waitKey(0); // Wait for a keystroke in the window

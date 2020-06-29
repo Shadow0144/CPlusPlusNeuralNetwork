@@ -2,6 +2,7 @@
 
 #include <opencv2/core.hpp>
 #include <opencv2/imgproc.hpp>
+#include <iostream>
 
 ReLUFunction::ReLUFunction(int numInputs)
 {
