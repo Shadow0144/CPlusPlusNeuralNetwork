@@ -4,10 +4,10 @@
 
 using namespace cv;
 
-class DotProductFunction : public Function
+class TanhFunction : public Function
 {
 public:
-	DotProductFunction(int numInputs);
+	TanhFunction(int numInputs);
 
 	Mat feedForward(Mat input);
 	Mat backPropagate(Mat error);

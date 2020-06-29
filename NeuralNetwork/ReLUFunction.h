@@ -4,10 +4,10 @@
 
 using namespace cv;
 
-class DotProductFunction : public Function
+class ReLUFunction : public Function
 {
 public:
-	DotProductFunction(int numInputs);
+	ReLUFunction(int numInputs);
 
 	Mat feedForward(Mat input);
 	Mat backPropagate(Mat error);

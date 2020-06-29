@@ -27,7 +27,7 @@ int test()
 
 void draw()
 {
-    int w = 400;
+    int w = 800;
 
     char window_name[] = "Neural Network";
     Mat img = Mat::Mat(w, w, CV_8UC3, Scalar(225, 225, 225));
@@ -59,16 +59,16 @@ void draw()
 
 void draw_network()
 {
-    int w = 400;
-
+    const int size = 800;
     char window_name[] = "Neural Network";
-    Mat img = Mat::Mat(w, w, CV_8UC3, Scalar(225, 225, 225));
+    Mat img = Mat::Mat(size, size, CV_8UC3, Scalar(225, 225, 225));
 
-    int layers = 3;
-    int layerShapes[] = { 2, 3, 1 };
+    int layers = 4;
+    int layerShapes[] = { 5, 3, 3, 1 };
     ActivationFunction functions[] = 
-        { ActivationFunction::WeightedDotProduct, 
-          ActivationFunction::WeightedDotProduct, 
+        { ActivationFunction::Identity,
+          ActivationFunction::ReLU,
+          ActivationFunction::Sigmoid, 
           ActivationFunction::WeightedDotProduct };
 
     /*int layers = 2;

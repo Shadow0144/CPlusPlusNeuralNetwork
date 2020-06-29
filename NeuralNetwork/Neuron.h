@@ -9,6 +9,7 @@ using namespace std;
 
 enum class ActivationFunction
 {
+	Identity,
 	WeightedDotProduct,
 	ReLU,
 	Sigmoid,
@@ -18,15 +19,24 @@ enum class ActivationFunction
 class Neuron
 {
 public:
-	Neuron(ActivationFunction function);
+	Neuron(ActivationFunction function, vector<Neuron*>* parents);
 	~Neuron();
 
-	float feedForward(Mat input);
-	float backPropagate(float error);
+	Mat feedForward(Mat input);
+	Mat backPropagate(Mat errors);
 
-	void draw(DrawingCanvas canvas, int* previous_xs, int previous_count, int previous_y, bool output);
+	void draw(DrawingCanvas canvas, bool output);
 
 private:
 	ActivationFunction functionType;
 	Function* activationFunction;
+	vector<Neuron*>* parents;
+	int parentCount;
+	int inputCount;
+
+	struct DrawingParameters
+	{
+		Point center;
+	};
+	DrawingParameters drawingParameters;
 };

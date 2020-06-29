@@ -1,29 +1,30 @@
-#include "DotProductFunction.h"
+#include "TanhFunction.h"
 
 #include <opencv2/core.hpp>
 #include <opencv2/imgproc.hpp>
 
-DotProductFunction::DotProductFunction(int numInputs)
+TanhFunction::TanhFunction(int numInputs)
 {
 	this->numInputs = numInputs;
 	this->weights.setParameters(numInputs);
 }
 
-Mat DotProductFunction::feedForward(Mat inputs)
+Mat TanhFunction::feedForward(Mat inputs)
 {
 	Mat result(1, 1, CV_32FC1);
 	float dot = ((float)(inputs.dot(weights.getParameters())));
-	result.at<float>(0, 0) = dot;
+	float tanhDot = tanh(dot);
+	result.at<float>(0, 0) = tanhDot;
 	return result;
 }
 
-Mat DotProductFunction::backPropagate(Mat error)
+Mat TanhFunction::backPropagate(Mat error)
 {
 	Mat mat;
 	return mat;
 }
 
-void DotProductFunction::draw(DrawingCanvas canvas)
+void TanhFunction::draw(DrawingCanvas canvas)
 {
 	const Scalar black(0, 0, 0);
 

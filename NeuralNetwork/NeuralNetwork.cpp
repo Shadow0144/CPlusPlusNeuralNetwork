@@ -5,13 +5,15 @@ NeuralNetwork::NeuralNetwork(int layerCount, int* layerShapes, ActivationFunctio
 	this->layerCount = layerCount;
 	this->layerShapes = layerShapes;
 	layers = new vector<Neuron*>[layerCount];
+	vector<Neuron*>* parents = NULL;
 	for (int i = 0; i < layerCount; i++)
 	{
 		layers[i] = vector<Neuron*>();
 		for (int j = 0; j < layerShapes[i]; j++)
 		{
-			layers[i].push_back(new Neuron(layerFunctions[i]));
+			layers[i].push_back(new Neuron(layerFunctions[i], parents));
 		}
+		parents = &layers[i];
 	}
 }
 
@@ -35,8 +37,8 @@ void NeuralNetwork::draw(DrawingCanvas canvas)
 	// Calculate the drawing space parameters
 	const int half_width = canvas.canvas.cols / 2;
 	const int half_height = canvas.canvas.rows / 2;
-	const int y_shift = 50;
-	const int x_shift = 50;
+	const int y_shift = 120;
+	const int x_shift = 120;
 	int y = 0;
 	int x = 0;
 
@@ -56,7 +58,7 @@ void NeuralNetwork::draw(DrawingCanvas canvas)
 		{
 			// Set the offset and draw the neuron
 			canvas.offset = Point(x, y);
-			layers[i][j]->draw(canvas, previous_xs, previous_count, previous_y, (i == (layerCount-1)));
+			layers[i][j]->draw(canvas, (i == (layerCount-1)));
 			next_xs[j] = x;
 			x += x_shift;
 		}

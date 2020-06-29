@@ -33,6 +33,24 @@
     <ClCompile Include="DotProductFunction.cpp">
       <Filter>Source Files\Function</Filter>
     </ClCompile>
+    <ClCompile Include="ReLUFunction.cpp">
+      <Filter>Source Files\Function</Filter>
+    </ClCompile>
+    <ClCompile Include="IdentityFunction.cpp">
+      <Filter>Source Files\Function</Filter>
+    </ClCompile>
+    <ClCompile Include="ParameterSet.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SigmoidFunction.cpp">
+      <Filter>Source Files\Function</Filter>
+    </ClCompile>
+    <ClCompile Include="TanhFunction.cpp">
+      <Filter>Source Files\Function</Filter>
+    </ClCompile>
+    <ClCompile Include="Function.cpp">
+      <Filter>Source Files\Function</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NeuralNetwork.h">
@@ -44,17 +62,26 @@
     <ClInclude Include="Function.h">
       <Filter>Header Files\Function</Filter>
     </ClInclude>
-    <ClInclude Include="Differentiable.h">
-      <Filter>Header Files\Function</Filter>
-    </ClInclude>
-    <ClInclude Include="Variable.h">
-      <Filter>Header Files\Function</Filter>
-    </ClInclude>
     <ClInclude Include="DotProductFunction.h">
       <Filter>Header Files\Function</Filter>
     </ClInclude>
     <ClInclude Include="DrawingCanvas.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ReLUFunction.h">
+      <Filter>Header Files\Function</Filter>
+    </ClInclude>
+    <ClInclude Include="IdentityFunction.h">
+      <Filter>Header Files\Function</Filter>
+    </ClInclude>
+    <ClInclude Include="ParameterSet.h">
+      <Filter>Header Files\Function</Filter>
+    </ClInclude>
+    <ClInclude Include="SigmoidFunction.h">
+      <Filter>Header Files\Function</Filter>
+    </ClInclude>
+    <ClInclude Include="TanhFunction.h">
+      <Filter>Header Files\Function</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

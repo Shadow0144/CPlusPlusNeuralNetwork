@@ -1,29 +1,30 @@
-#include "DotProductFunction.h"
+#include "SigmoidFunction.h"
 
 #include <opencv2/core.hpp>
 #include <opencv2/imgproc.hpp>
 
-DotProductFunction::DotProductFunction(int numInputs)
+SigmoidFunction::SigmoidFunction(int numInputs)
 {
 	this->numInputs = numInputs;
 	this->weights.setParameters(numInputs);
 }
 
-Mat DotProductFunction::feedForward(Mat inputs)
+Mat SigmoidFunction::feedForward(Mat inputs)
 {
 	Mat result(1, 1, CV_32FC1);
 	float dot = ((float)(inputs.dot(weights.getParameters())));
-	result.at<float>(0, 0) = dot;
+	float sigmoidDot = 1.0f / (1.0f + exp(-dot));
+	result.at<float>(0, 0) = sigmoidDot;
 	return result;
 }
 
-Mat DotProductFunction::backPropagate(Mat error)
+Mat SigmoidFunction::backPropagate(Mat error)
 {
 	Mat mat;
 	return mat;
 }
 
-void DotProductFunction::draw(DrawingCanvas canvas)
+void SigmoidFunction::draw(DrawingCanvas canvas)
 {
 	const Scalar black(0, 0, 0);
 
