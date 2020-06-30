@@ -24,7 +24,28 @@ NeuralNetwork::~NeuralNetwork()
 
 Mat NeuralNetwork::feedForward(Mat input)
 {
-	return Mat::zeros(Size(), 0);
+	// Fix: Assumes a non-zero network
+	Mat result = Mat(0, layerShapes[layerCount-1], CV_32F); // The final result encapsulating all examples
+	if (layerCount > 0 && input.cols == 1 /*input.cols == layerShapes[0]*/)
+	{
+		for (int i = 0; i < input.rows; i++) // Loop through the examples
+		{
+			Mat example = input.row(i); // A single example
+			for (int j = 0; j < layerCount; j++) // Loop through the layers
+			{
+				Mat row_result = Mat(1, 0, CV_32F); // The result of a single layer of calculation
+				for (int k = 0; k < layerShapes[j]; k++) // Loop through the neurons
+				{
+					hconcat(row_result, layers[j].at(k)->feedForward(example), row_result);
+				}
+				example = row_result; // Feed the row_result into the next row
+			}
+			vconcat(result, example, result);
+		}
+	}
+	else { }
+
+	return result;
 }
 
 bool NeuralNetwork::backPropagate(Mat y, Mat yHat)

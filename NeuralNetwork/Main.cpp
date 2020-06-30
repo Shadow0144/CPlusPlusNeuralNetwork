@@ -80,12 +80,17 @@ void draw_network()
     canvas.scale = 1.0f;
     network.draw(canvas);
 
-    float x[10] = { 1, 2, 3, 4, 5, 6, 7, 8, 10 };
-    float y[10] = { 1, 2, 3, 4, 5, 6, 7, 8, 10 };
-    Mat training_x = cv::Mat(1, 10, CV_32F, x);
-    Mat training_y = cv::Mat(1, 10, CV_32F, y);
+    float x[10] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+    float y[10] = { 2, 4, 6, 8, 10, 12, 14, 16, 18, 20 };
+    Mat training_x = cv::Mat(10, 1, CV_32F, x);
+    Mat training_y = cv::Mat(10, 1, CV_32F, y);
 
     Mat result_y = network.feedForward(training_x);
+
+    for (int i = 0; i < training_x.rows; i++)
+    {
+        cout << "X: " << training_x.at<float>(i) << " Y': " << training_y.at<float>(i) << " Y: " << result_y.at<float>(i) << endl;
+    }
 
     imshow(window_name, img);
     waitKey(0); // Wait for a keystroke in the window

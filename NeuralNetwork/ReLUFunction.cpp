@@ -7,18 +7,19 @@
 ReLUFunction::ReLUFunction(int numInputs)
 {
 	this->numInputs = numInputs;
-	this->weights.setParameters(numInputs);
+	this->weights.setParametersRandom(numInputs);
 }
 
 Mat ReLUFunction::feedForward(Mat inputs)
 {
 	Mat result(1, 1, CV_32FC1);
 	float dot = ((float)(inputs.dot(weights.getParameters())));
-	result.at<float>(0, 0) = dot;
+	float reLUDot = (dot >= 0.0f) ? dot : 0.0f;
+	result.at<float>(0, 0) = reLUDot;
 	return result;
 }
 
-Mat ReLUFunction::backPropagate(Mat error)
+Mat ReLUFunction::backPropagate(Mat lastInput, Mat error)
 {
 	Mat mat;
 	return mat;

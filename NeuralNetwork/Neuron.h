@@ -33,10 +33,17 @@ private:
 	vector<Neuron*>* parents;
 	int parentCount;
 	int inputCount;
+	vector<Neuron*>* children;
+	int childCount;
 
 	struct DrawingParameters
 	{
 		Point center;
 	};
 	DrawingParameters drawingParameters;
+
+	Mat lastInput;
+	Mat result; // Results of feedforward
+
+	void addChild(Neuron* child);
 };

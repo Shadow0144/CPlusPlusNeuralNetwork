@@ -3,6 +3,11 @@
 #include <opencv2/core.hpp>
 #include <opencv2/imgproc.hpp>
 
+void Function::applyBackProgate()
+{
+	weights.applyDeltaParameters();
+}
+
 void Function::draw(DrawingCanvas canvas)
 {
 	const Scalar black(0, 0, 0);

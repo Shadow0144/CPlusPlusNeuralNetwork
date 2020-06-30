@@ -6,7 +6,7 @@
 SigmoidFunction::SigmoidFunction(int numInputs)
 {
 	this->numInputs = numInputs;
-	this->weights.setParameters(numInputs);
+	this->weights.setParametersRandom(numInputs);
 }
 
 Mat SigmoidFunction::feedForward(Mat inputs)
@@ -18,7 +18,7 @@ Mat SigmoidFunction::feedForward(Mat inputs)
 	return result;
 }
 
-Mat SigmoidFunction::backPropagate(Mat error)
+Mat SigmoidFunction::backPropagate(Mat lastInput, Mat error)
 {
 	Mat mat;
 	return mat;

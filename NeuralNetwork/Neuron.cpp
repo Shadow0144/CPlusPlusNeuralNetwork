@@ -22,6 +22,12 @@ Neuron::Neuron(ActivationFunction function, vector<Neuron*>* parents)
 	{
 		this->parentCount = 0;
 	}
+	this->children = new vector<Neuron*>();
+	childCount = 0;
+	for (int i = 0; i < parentCount; i++)
+	{
+		this->parents->at(i)->addChild(this);
+	}
 	functionType = function;
 	inputCount = (parentCount == 0) ? 1 : parentCount;
 	switch (functionType)
@@ -50,16 +56,25 @@ Neuron::Neuron(ActivationFunction function, vector<Neuron*>* parents)
 Neuron::~Neuron()
 {
 	delete activationFunction;
+	delete children;
+}
+
+void Neuron::addChild(Neuron* child)
+{
+	children->push_back(child);
+	childCount++;
 }
 
 Mat Neuron::feedForward(Mat input)
 {
-	return Mat();
+	lastInput = Mat(input);
+	result = activationFunction->feedForward(input);
+	return result;
 }
 
 Mat Neuron::backPropagate(Mat errors)
 {
-	return Mat();
+	return activationFunction->backPropagate(lastInput, errors);
 }
 
 void Neuron::draw(DrawingCanvas canvas, bool output)
@@ -95,20 +110,20 @@ void Neuron::draw(DrawingCanvas canvas, bool output)
 	else if (parentCount % 2 == 0)
 	{
 		i_angle = (3.0 * M_PI / 4.0);
-		angle = M_PI / parentCount / 2.0;
+		angle = M_PI / ((double)(parentCount)) / 2.0;
 	}
 	else 
 	{
 		i_angle = (3.0 * M_PI / 4.0);
-		angle = M_PI / (parentCount - 1) / 2.0;
+		angle = M_PI / (((double)(parentCount)) - 1.0) / 2.0;
 	}
 	for (int i = 0; i < parentCount; i++)
 	{
 		int w_x = ((int)(cos(i_angle - (angle * i)) * radius + drawingParameters.center.x));
 		int w_y = ((int)(-sin(i_angle - (angle * i)) * radius + drawingParameters.center.y));
 		Point weight_pt(w_x, w_y);
-		circle(canvas.canvas, weight_pt, weight_radius, black, 1, LINE_8);
-		putText(canvas.canvas, to_string(i), weight_pt, FONT_HERSHEY_COMPLEX_SMALL, 1.0, black);
+		//circle(canvas.canvas, weight_pt, weight_radius, black, 1, LINE_8);
+		//putText(canvas.canvas, to_string(i), weight_pt, FONT_HERSHEY_COMPLEX_SMALL, 1.0, black);
 	}
 
 	// Draw the links

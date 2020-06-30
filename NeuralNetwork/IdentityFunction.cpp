@@ -6,6 +6,7 @@
 IdentityFunction::IdentityFunction(int numInputs)
 {
 	this->numInputs = numInputs;
+	this->weights.setParametersOne(numInputs);
 }
 
 Mat IdentityFunction::feedForward(Mat input)
@@ -13,10 +14,13 @@ Mat IdentityFunction::feedForward(Mat input)
 	return input;
 }
 
-Mat IdentityFunction::backPropagate(Mat error)
+Mat IdentityFunction::backPropagate(Mat lastInput, Mat error)
 {
-	Mat result = Mat::eye(numInputs, numInputs, CV_32FC1) * error;
-	return result;
+	Mat sigma = cv::sum(error) * Mat::zeros(1, 1, CV_32FC1);
+
+	weights.setDeltaParameters(-ALPHA * sigma * lastInput);
+
+	return sigma * weights.getParameters();
 }
 
 void IdentityFunction::draw(DrawingCanvas canvas)

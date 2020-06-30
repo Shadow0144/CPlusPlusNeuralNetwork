@@ -6,7 +6,7 @@
 TanhFunction::TanhFunction(int numInputs)
 {
 	this->numInputs = numInputs;
-	this->weights.setParameters(numInputs);
+	this->weights.setParametersRandom(numInputs);
 }
 
 Mat TanhFunction::feedForward(Mat inputs)
@@ -18,7 +18,7 @@ Mat TanhFunction::feedForward(Mat inputs)
 	return result;
 }
 
-Mat TanhFunction::backPropagate(Mat error)
+Mat TanhFunction::backPropagate(Mat lastInput, Mat error)
 {
 	Mat mat;
 	return mat;

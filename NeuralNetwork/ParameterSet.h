@@ -8,8 +8,12 @@ class ParameterSet
 {
 public:
 	ParameterSet();
-	Mat getParameters() { return parameters; }
-	void setParameters(int parameterCount);
+	Mat getParameters();
+	void setParametersRandom(int parameterCount);
+	void setParametersZero(int parameterCount);
+	void setParametersOne(int parameterCount);
+	void setDeltaParameters(Mat deltaParameters);
+	void applyDeltaParameters();
 
 private:
 	Mat parameters;

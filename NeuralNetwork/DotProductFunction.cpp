@@ -6,7 +6,7 @@
 DotProductFunction::DotProductFunction(int numInputs)
 {
 	this->numInputs = numInputs;
-	this->weights.setParameters(numInputs);
+	this->weights.setParametersRandom(numInputs);
 }
 
 Mat DotProductFunction::feedForward(Mat inputs)
@@ -17,10 +17,13 @@ Mat DotProductFunction::feedForward(Mat inputs)
 	return result;
 }
 
-Mat DotProductFunction::backPropagate(Mat error)
+Mat DotProductFunction::backPropagate(Mat lastInput, Mat error)
 {
-	Mat mat;
-	return mat;
+	Mat sigma = cv::sum(error) * Mat::eye(1, 1, CV_32FC1);
+
+	weights.setDeltaParameters(-ALPHA * sigma * lastInput);
+
+	return sigma * weights.getParameters();
 }
 
 void DotProductFunction::draw(DrawingCanvas canvas)
