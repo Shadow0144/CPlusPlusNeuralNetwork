@@ -10,6 +10,6 @@ public:
 	IdentityFunction(int numInputs);
 
 	Mat feedForward(Mat input);
-	Mat backPropagate(Mat lastInput, Mat error);
+	Mat backPropagate(Mat lastInput, Mat errors);
 	void draw(DrawingCanvas canvas);
 };

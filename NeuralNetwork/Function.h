@@ -18,5 +18,5 @@ protected:
 	ParameterSet weights;
 	const int draw_len = 16;
 
-	const float ALPHA = 0.1f; // Learning rate
+	const float ALPHA = 0.001f; // Learning rate
 };

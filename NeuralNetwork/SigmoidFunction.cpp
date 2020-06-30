@@ -15,13 +15,24 @@ Mat SigmoidFunction::feedForward(Mat inputs)
 	float dot = ((float)(inputs.dot(weights.getParameters())));
 	float sigmoidDot = 1.0f / (1.0f + exp(-dot));
 	result.at<float>(0, 0) = sigmoidDot;
+
+	lastOutput = Mat(result);
+
 	return result;
 }
 
-Mat SigmoidFunction::backPropagate(Mat lastInput, Mat error)
+Mat SigmoidFunction::backPropagate(Mat lastInput, Mat errors)
 {
-	Mat mat;
-	return mat;
+	// TODO: Make cleaner
+	Scalar errorSum = cv::sum(errors);
+	float errorSumF = ((float)(errorSum[0]));
+
+	Mat prime = lastOutput * (1 - lastOutput);
+	Mat sigma = errorSumF * prime;
+
+	weights.setDeltaParameters(ALPHA * lastInput.t() * sigma);
+
+	return sigma * weights.getParameters().t();
 }
 
 float sigmoid(float value)

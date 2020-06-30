@@ -59,18 +59,36 @@ void draw()
 
 void draw_network()
 {
-    const int size = 800;
+    const int size = 600;
     char window_name[] = "Neural Network";
     Mat img = Mat::Mat(size, size, CV_8UC3, Scalar(225, 225, 225));
 
-    int layers = 5;
+    /*int layers = 5;
     int layerShapes[] = { 5, 3, 3, 3, 1 };
     ActivationFunction functions[] = 
         { ActivationFunction::Identity,
           ActivationFunction::ReLU,
           ActivationFunction::Sigmoid, 
           ActivationFunction::Tanh,
-          ActivationFunction::WeightedDotProduct };
+          ActivationFunction::WeightedDotProduct };*/
+
+    int layers = 3;
+    int layerShapes[] = { 1, 1, 1 };
+    ActivationFunction functions[] =
+        { ActivationFunction::WeightedDotProduct,
+        ActivationFunction::Sigmoid,
+        ActivationFunction::WeightedDotProduct };
+
+    /*int layers = 2;
+    int layerShapes[] = { 1, 1 };
+    ActivationFunction functions[] =
+        { ActivationFunction::WeightedDotProduct,
+          ActivationFunction::WeightedDotProduct };*/
+
+    /*int layers = 1;
+    int layerShapes[] = { 1 };
+    ActivationFunction functions[] =
+        { ActivationFunction::WeightedDotProduct };*/
 
     NeuralNetwork network = NeuralNetwork(layers, layerShapes, functions);
 
@@ -80,16 +98,42 @@ void draw_network()
     canvas.scale = 1.0f;
     network.draw(canvas);
 
+    int samples = 10;
     float x[10] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+    //float x[1] = { 1 };
     float y[10] = { 2, 4, 6, 8, 10, 12, 14, 16, 18, 20 };
-    Mat training_x = cv::Mat(10, 1, CV_32F, x);
-    Mat training_y = cv::Mat(10, 1, CV_32F, y);
+    //float y[1] = { 2 };
+    Mat training_x = cv::Mat(samples, 1, CV_32F, x);
+    Mat training_y = cv::Mat(samples, 1, CV_32F, y);
 
     Mat result_y = network.feedForward(training_x);
 
     for (int i = 0; i < training_x.rows; i++)
     {
-        cout << "X: " << training_x.at<float>(i) << " Y': " << training_y.at<float>(i) << " Y: " << result_y.at<float>(i) << endl;
+        cout << "Feedforward Untrained: X: " << training_x.at<float>(i) << " Y': " << training_y.at<float>(i) << " Y: " << result_y.at<float>(i) << endl;
+    }
+
+    cout << endl;
+
+    network.draw(canvas);
+    imshow(window_name, img);
+    moveWindow(window_name, 0, 0);
+
+    for (int t = 0; t < 100; t++)
+    {
+        network.backPropagate(training_x, training_y);
+        cout << "Epoch: " << t << endl;
+        network.draw(canvas);
+        imshow(window_name, img);
+        waitKey(100); // Wait 100ms
+    }
+    result_y = network.feedForward(training_x);
+
+    cout << endl;
+
+    for (int i = 0; i < training_x.rows; i++)
+    {
+        cout << "Feedforward Trained: X: " << training_x.at<float>(i) << " Y': " << training_y.at<float>(i) << " Y: " << result_y.at<float>(i) << endl;
     }
 
     imshow(window_name, img);

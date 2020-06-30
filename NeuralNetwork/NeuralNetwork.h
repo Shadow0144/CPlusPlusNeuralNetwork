@@ -12,7 +12,7 @@ public:
 	~NeuralNetwork();
 
 	Mat feedForward(Mat input);
-	bool backPropagate(Mat y, Mat yHat);
+	bool backPropagate(Mat xs, Mat yHats);
 
 	void draw(DrawingCanvas canvas);
 

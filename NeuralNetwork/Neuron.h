@@ -24,6 +24,7 @@ public:
 
 	Mat feedForward(Mat input);
 	Mat backPropagate(Mat errors);
+	void applyBackPropagate();
 
 	void draw(DrawingCanvas canvas, bool output);
 

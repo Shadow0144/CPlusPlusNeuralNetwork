@@ -15,13 +15,24 @@ Mat TanhFunction::feedForward(Mat inputs)
 	float dot = ((float)(inputs.dot(weights.getParameters())));
 	float tanhDot = tanh(dot);
 	result.at<float>(0, 0) = tanhDot;
+
+	lastOutput = Mat(result);
+
 	return result;
 }
 
-Mat TanhFunction::backPropagate(Mat lastInput, Mat error)
+Mat TanhFunction::backPropagate(Mat lastInput, Mat errors)
 {
-	Mat mat;
-	return mat;
+	// TODO: Make cleaner
+	Scalar errorSum = cv::sum(errors);
+	float errorSumF = ((float)(errorSum[0]));
+
+	Mat prime = 1 - (lastOutput * lastOutput);
+	Mat sigma = errorSumF * prime;
+
+	weights.setDeltaParameters(ALPHA * lastInput.t() * sigma);
+
+	return sigma * weights.getParameters().t();
 }
 
 void TanhFunction::draw(DrawingCanvas canvas)

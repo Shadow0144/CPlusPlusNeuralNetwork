@@ -77,6 +77,11 @@ Mat Neuron::backPropagate(Mat errors)
 	return activationFunction->backPropagate(lastInput, errors);
 }
 
+void Neuron::applyBackPropagate()
+{
+	activationFunction->applyBackProgate();
+}
+
 void Neuron::draw(DrawingCanvas canvas, bool output)
 {
 	const int p = 10;

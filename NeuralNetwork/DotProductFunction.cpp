@@ -2,6 +2,9 @@
 
 #include <opencv2/core.hpp>
 #include <opencv2/imgproc.hpp>
+#include <iostream>
+
+using namespace std;
 
 DotProductFunction::DotProductFunction(int numInputs)
 {
@@ -11,19 +14,21 @@ DotProductFunction::DotProductFunction(int numInputs)
 
 Mat DotProductFunction::feedForward(Mat inputs)
 {
-	Mat result(1, 1, CV_32FC1);
-	float dot = ((float)(inputs.dot(weights.getParameters())));
-	result.at<float>(0, 0) = dot;
+	Mat result = inputs * weights.getParameters();
 	return result;
 }
 
-Mat DotProductFunction::backPropagate(Mat lastInput, Mat error)
+Mat DotProductFunction::backPropagate(Mat lastInput, Mat errors)
 {
-	Mat sigma = cv::sum(error) * Mat::eye(1, 1, CV_32FC1);
+	// TODO: Make cleaner
+	Scalar errorSum = cv::sum(errors);
+	float errorSumF = ((float)(errorSum[0]));
+	Mat prime = Mat::ones(1, 1, CV_32FC1);
+	Mat sigma = errorSumF * prime;
+	
+	weights.setDeltaParameters(ALPHA * lastInput.t() * sigma);
 
-	weights.setDeltaParameters(-ALPHA * sigma * lastInput);
-
-	return sigma * weights.getParameters();
+	return sigma * weights.getParameters().t();
 }
 
 void DotProductFunction::draw(DrawingCanvas canvas)

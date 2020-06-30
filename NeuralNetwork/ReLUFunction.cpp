@@ -19,10 +19,20 @@ Mat ReLUFunction::feedForward(Mat inputs)
 	return result;
 }
 
-Mat ReLUFunction::backPropagate(Mat lastInput, Mat error)
+Mat ReLUFunction::backPropagate(Mat lastInput, Mat errors)
 {
-	Mat mat;
-	return mat;
+	// TODO: Make cleaner
+	Scalar errorSum = cv::sum(errors);
+	float errorSumF = ((float)(errorSum[0]));
+
+	float dot = ((float)(lastInput.dot(weights.getParameters())));
+	float reLUPrime = (dot >= 0.0f) ? 1.0f : 0.0f;
+	Mat prime = Mat::ones(1, 1, CV_32FC1) * reLUPrime;
+	Mat sigma = errorSumF * prime;
+
+	weights.setDeltaParameters(ALPHA * lastInput.t() * sigma);
+
+	return sigma * weights.getParameters().t();
 }
 
 void ReLUFunction::draw(DrawingCanvas canvas)

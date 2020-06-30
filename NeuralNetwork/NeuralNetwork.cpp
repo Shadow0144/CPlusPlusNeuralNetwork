@@ -1,5 +1,9 @@
 #include "NeuralNetwork.h"
 
+#include <iostream>
+
+#define DRAW 1
+
 NeuralNetwork::NeuralNetwork(int layerCount, int* layerShapes, ActivationFunction* layerFunctions)
 {
 	this->layerCount = layerCount;
@@ -48,13 +52,50 @@ Mat NeuralNetwork::feedForward(Mat input)
 	return result;
 }
 
-bool NeuralNetwork::backPropagate(Mat y, Mat yHat)
+bool NeuralNetwork::backPropagate(Mat xs, Mat yHats)
 {
+	if (xs.rows = yHats.rows)
+	{
+		for (int i = 0; i < yHats.rows; i++)
+		{
+			Mat y = feedForward(xs.row(i));
+			Mat pow;
+			cv::pow(y - yHats.row(i), 2, pow);
+			Mat errors = Mat(1, layerShapes[layerCount - 1], CV_32FC1, cv::sum(pow));
+			for (int j = (layerCount - 1); j > 0; j--) // Skip the top row
+			{
+				Mat newErrors = Mat(0, layerShapes[j - 1], CV_32FC1);
+				for (int k = 0; k < layerShapes[j]; k++)
+				{
+					Mat newError = layers[j].at(k)->backPropagate(errors.col(k));
+					vconcat(newErrors, newError, newErrors);
+				}
+				errors = newErrors;
+			}
+			for (int k = 0; k < layerShapes[0]; k++) // Top row
+			{
+				layers[0].at(k)->backPropagate(errors.col(k));
+			}
+			
+			for (int j = 0; j < layerCount; j++)
+			{
+				for (int k = 0; k < layerShapes[j]; k++)
+				{
+					layers[j].at(k)->applyBackPropagate();
+				}
+			}
+		}
+	}
+	else { }
+
 	return false;
 }
 
 void NeuralNetwork::draw(DrawingCanvas canvas)
 {
+	// Clear the canvas
+	canvas.canvas.setTo(Scalar(225, 225, 225));
+
 	// Calculate the drawing space parameters
 	const int half_width = canvas.canvas.cols / 2;
 	const int half_height = canvas.canvas.rows / 2;

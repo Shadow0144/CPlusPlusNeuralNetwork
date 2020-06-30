@@ -17,12 +17,12 @@ Mat ParameterSet::getParameters()
 
 void ParameterSet::setParametersRandom(int parameterCount)
 {
-	parameters = Mat(Size(parameterCount, 1), CV_32FC1);
+	parameters = Mat(parameterCount, 1, CV_32FC1);
 
-	RNG rng = RNG();
-	cv::Mat mean = cv::Mat::zeros(1, 1, CV_64FC1);
-	cv::Mat sigma = cv::Mat::ones(1, 1, CV_64FC1);
-	rng.fill(parameters, cv::RNG::NORMAL, mean, sigma);
+	RNG rng = RNG(cv::getCPUTickCount());
+	Scalar mean = 0.0f;
+	Scalar sigma = 1.0f;
+	rng.fill(parameters, RNG::NORMAL, mean, sigma);
 }
 
 void ParameterSet::setParametersZero(int parameterCount)

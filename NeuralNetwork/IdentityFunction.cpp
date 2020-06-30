@@ -14,9 +14,9 @@ Mat IdentityFunction::feedForward(Mat input)
 	return input;
 }
 
-Mat IdentityFunction::backPropagate(Mat lastInput, Mat error)
+Mat IdentityFunction::backPropagate(Mat lastInput, Mat errors)
 {
-	Mat sigma = cv::sum(error) * Mat::zeros(1, 1, CV_32FC1);
+	Mat sigma = cv::sum(errors) * Mat::zeros(1, 1, CV_32FC1);
 
 	weights.setDeltaParameters(-ALPHA * sigma * lastInput);
 
