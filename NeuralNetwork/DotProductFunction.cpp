@@ -14,8 +14,7 @@ DotProductFunction::DotProductFunction(int numInputs)
 
 Mat DotProductFunction::feedForward(Mat inputs)
 {
-	Mat result = inputs * weights.getParameters();
-	return result;
+	return inputs * weights.getParameters();
 }
 
 Mat DotProductFunction::backPropagate(Mat lastInput, Mat errors)
@@ -26,9 +25,18 @@ Mat DotProductFunction::backPropagate(Mat lastInput, Mat errors)
 	Mat prime = Mat::ones(1, 1, CV_32FC1);
 	Mat sigma = errorSumF * prime;
 	
-	weights.setDeltaParameters(ALPHA * lastInput.t() * sigma);
+	weights.setDeltaParameters(-ALPHA * lastInput.t() * sigma);
 
-	return sigma * weights.getParameters().t();
+	// Strip away the bias parameter and weights the sigma by the incoming weights
+	Mat weightsPrime = weights.getParameters();
+	weightsPrime = weightsPrime(Rect(0, 0, 1, numInputs-1)).t();
+
+	return sigma * weightsPrime;
+}
+
+bool DotProductFunction::hasBias()
+{
+	return true;
 }
 
 void DotProductFunction::draw(DrawingCanvas canvas)

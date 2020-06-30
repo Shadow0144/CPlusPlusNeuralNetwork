@@ -30,9 +30,18 @@ Mat ReLUFunction::backPropagate(Mat lastInput, Mat errors)
 	Mat prime = Mat::ones(1, 1, CV_32FC1) * reLUPrime;
 	Mat sigma = errorSumF * prime;
 
-	weights.setDeltaParameters(ALPHA * lastInput.t() * sigma);
+	weights.setDeltaParameters(-ALPHA * lastInput.t() * sigma);
 
-	return sigma * weights.getParameters().t();
+	// Strip away the bias parameter and weights the sigma by the incoming weights
+	Mat weightsPrime = weights.getParameters();
+	weightsPrime = weightsPrime(Rect(0, 0, 1, numInputs-1)).t();
+
+	return sigma * weightsPrime;
+}
+
+bool ReLUFunction::hasBias()
+{
+	return true;
 }
 
 void ReLUFunction::draw(DrawingCanvas canvas)

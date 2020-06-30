@@ -11,6 +11,7 @@ public:
 
 	Mat feedForward(Mat input);
 	Mat backPropagate(Mat lastInput, Mat errors);
+	bool hasBias();
 	void draw(DrawingCanvas canvas);
 
 private:

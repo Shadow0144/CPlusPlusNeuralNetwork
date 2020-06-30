@@ -2,8 +2,6 @@
 
 #include <iostream>
 
-#define DRAW 1
-
 NeuralNetwork::NeuralNetwork(int layerCount, int* layerShapes, ActivationFunction* layerFunctions)
 {
 	this->layerCount = layerCount;

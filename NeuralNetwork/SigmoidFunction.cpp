@@ -11,14 +11,10 @@ SigmoidFunction::SigmoidFunction(int numInputs)
 
 Mat SigmoidFunction::feedForward(Mat inputs)
 {
-	Mat result(1, 1, CV_32FC1);
-	float dot = ((float)(inputs.dot(weights.getParameters())));
-	float sigmoidDot = 1.0f / (1.0f + exp(-dot));
-	result.at<float>(0, 0) = sigmoidDot;
-
-	lastOutput = Mat(result);
-
-	return result;
+	lastOutput = inputs * weights.getParameters();
+	exp(-lastOutput, lastOutput);
+	lastOutput = 1.0f / (1.0f + lastOutput);
+	return lastOutput;
 }
 
 Mat SigmoidFunction::backPropagate(Mat lastInput, Mat errors)
@@ -30,9 +26,18 @@ Mat SigmoidFunction::backPropagate(Mat lastInput, Mat errors)
 	Mat prime = lastOutput * (1 - lastOutput);
 	Mat sigma = errorSumF * prime;
 
-	weights.setDeltaParameters(ALPHA * lastInput.t() * sigma);
+	weights.setDeltaParameters(-ALPHA * lastInput.t() * sigma);
 
-	return sigma * weights.getParameters().t();
+	// Strip away the bias parameter and weights the sigma by the incoming weights
+	Mat weightsPrime = weights.getParameters();
+	weightsPrime = weightsPrime(Rect(0, 0, 1, numInputs-1)).t();
+
+	return sigma * weightsPrime;
+}
+
+bool SigmoidFunction::hasBias()
+{
+	return true;
 }
 
 float sigmoid(float value)

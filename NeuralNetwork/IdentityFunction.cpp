@@ -18,9 +18,14 @@ Mat IdentityFunction::backPropagate(Mat lastInput, Mat errors)
 {
 	Mat sigma = cv::sum(errors) * Mat::zeros(1, 1, CV_32FC1);
 
-	weights.setDeltaParameters(-ALPHA * sigma * lastInput);
+	weights.setDeltaParameters(-ALPHA * lastInput.t() * sigma); // This will be zero
 
 	return sigma * weights.getParameters();
+}
+
+bool IdentityFunction::hasBias()
+{
+	return false;
 }
 
 void IdentityFunction::draw(DrawingCanvas canvas)

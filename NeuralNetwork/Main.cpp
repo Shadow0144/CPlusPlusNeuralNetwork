@@ -10,6 +10,12 @@
 using namespace cv;
 using namespace std;
 
+//#define FIVE
+//#define FOUR
+#define THREE
+//#define TWO
+//#define ONE
+
 int test()
 {
     Mat image;
@@ -63,32 +69,34 @@ void draw_network()
     char window_name[] = "Neural Network";
     Mat img = Mat::Mat(size, size, CV_8UC3, Scalar(225, 225, 225));
 
-    /*int layers = 5;
+#if defined(FIVE)
+    int layers = 5;
     int layerShapes[] = { 5, 3, 3, 3, 1 };
     ActivationFunction functions[] = 
         { ActivationFunction::Identity,
           ActivationFunction::ReLU,
           ActivationFunction::Sigmoid, 
           ActivationFunction::Tanh,
-          ActivationFunction::WeightedDotProduct };*/
-
+          ActivationFunction::WeightedDotProduct };
+#elif defined(THREE)
     int layers = 3;
-    int layerShapes[] = { 1, 1, 1 };
+    int layerShapes[] = { 1, 3, 1 };
     ActivationFunction functions[] =
         { ActivationFunction::WeightedDotProduct,
         ActivationFunction::Sigmoid,
         ActivationFunction::WeightedDotProduct };
-
-    /*int layers = 2;
+#elif defined(TWO)
+    int layers = 2;
     int layerShapes[] = { 1, 1 };
     ActivationFunction functions[] =
         { ActivationFunction::WeightedDotProduct,
-          ActivationFunction::WeightedDotProduct };*/
-
-    /*int layers = 1;
+          ActivationFunction::WeightedDotProduct };
+#elif defined(ONE)
+    int layers = 1;
     int layerShapes[] = { 1 };
     ActivationFunction functions[] =
-        { ActivationFunction::WeightedDotProduct };*/
+        { ActivationFunction::WeightedDotProduct };
+#endif
 
     NeuralNetwork network = NeuralNetwork(layers, layerShapes, functions);
 
@@ -101,10 +109,10 @@ void draw_network()
     int samples = 10;
     float x[10] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
     //float x[1] = { 1 };
-    float y[10] = { 2, 4, 6, 8, 10, 12, 14, 16, 18, 20 };
+    float y[10] = { 3, 5, 7, 8, 11, 13, 15, 17, 19, 21 };
     //float y[1] = { 2 };
-    Mat training_x = cv::Mat(samples, 1, CV_32F, x);
-    Mat training_y = cv::Mat(samples, 1, CV_32F, y);
+    Mat training_x = cv::Mat(samples, 1, CV_32F, x) / 100.0f;
+    Mat training_y = cv::Mat(samples, 1, CV_32F, y) / 100.0f;
 
     Mat result_y = network.feedForward(training_x);
 
@@ -119,13 +127,26 @@ void draw_network()
     imshow(window_name, img);
     moveWindow(window_name, 0, 0);
 
-    for (int t = 0; t < 100; t++)
+    const int EPOCHS = 1000;
+    const int PRINT = 100;
+    for (int t = 0; t < EPOCHS; t++)
     {
         network.backPropagate(training_x, training_y);
-        cout << "Epoch: " << t << endl;
-        network.draw(canvas);
-        imshow(window_name, img);
-        waitKey(100); // Wait 100ms
+
+        if (t % PRINT == 0)
+        {
+            network.draw(canvas);
+            imshow(window_name, img);
+            waitKey(100); // Wait 100ms
+            result_y = network.feedForward(training_x);
+            cout << endl << "Epoch: " << t << endl;
+            for (int i = 0; i < training_x.rows; i++)
+            {
+                cout << "Feedforward Training: X: " << training_x.at<float>(i) 
+                    << " Y': " << training_y.at<float>(i) 
+                    << " Y: " << result_y.at<float>(i) << endl;
+            }
+        }
     }
     result_y = network.feedForward(training_x);
 

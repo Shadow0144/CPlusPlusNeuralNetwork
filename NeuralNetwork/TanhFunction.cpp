@@ -11,14 +11,9 @@ TanhFunction::TanhFunction(int numInputs)
 
 Mat TanhFunction::feedForward(Mat inputs)
 {
-	Mat result(1, 1, CV_32FC1);
-	float dot = ((float)(inputs.dot(weights.getParameters())));
-	float tanhDot = tanh(dot);
-	result.at<float>(0, 0) = tanhDot;
-
-	lastOutput = Mat(result);
-
-	return result;
+	lastOutput = inputs * weights.getParameters();
+	lastOutput.at<float>(0) = tanh(lastOutput.at<float>(0));
+	return lastOutput;
 }
 
 Mat TanhFunction::backPropagate(Mat lastInput, Mat errors)
@@ -30,9 +25,18 @@ Mat TanhFunction::backPropagate(Mat lastInput, Mat errors)
 	Mat prime = 1 - (lastOutput * lastOutput);
 	Mat sigma = errorSumF * prime;
 
-	weights.setDeltaParameters(ALPHA * lastInput.t() * sigma);
+	weights.setDeltaParameters(-ALPHA * lastInput.t() * sigma);
 
-	return sigma * weights.getParameters().t();
+	// Strip away the bias parameter and weights the sigma by the incoming weights
+	Mat weightsPrime = weights.getParameters();
+	weightsPrime = weightsPrime(Rect(0, 0, 1, numInputs-1)).t();
+
+	return sigma * weightsPrime;
+}
+
+bool TanhFunction::hasBias()
+{
+	return true;
 }
 
 void TanhFunction::draw(DrawingCanvas canvas)

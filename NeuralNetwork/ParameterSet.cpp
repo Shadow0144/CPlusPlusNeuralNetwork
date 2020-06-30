@@ -42,5 +42,5 @@ void ParameterSet::setDeltaParameters(Mat deltaParameters)
 
 void ParameterSet::applyDeltaParameters()
 {
-	parameters += deltaParameters;
+	parameters -= deltaParameters;
 }

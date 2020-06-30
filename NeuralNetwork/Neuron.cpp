@@ -36,15 +36,19 @@ Neuron::Neuron(ActivationFunction function, vector<Neuron*>* parents)
 			activationFunction = new IdentityFunction(inputCount);
 			break;
 		case ActivationFunction::WeightedDotProduct:
+			inputCount++; // Bias
 			activationFunction = new DotProductFunction(inputCount);
 			break;
 		case ActivationFunction::ReLU:
+			inputCount++; // Bias
 			activationFunction = new ReLUFunction(inputCount);
 			break;
 		case ActivationFunction::Sigmoid:
+			inputCount++; // Bias
 			activationFunction = new SigmoidFunction(inputCount);
 			break;
 		case ActivationFunction::Tanh:
+			inputCount++; // Bias
 			activationFunction = new TanhFunction(inputCount);
 			break;
 		default:
@@ -68,7 +72,12 @@ void Neuron::addChild(Neuron* child)
 Mat Neuron::feedForward(Mat input)
 {
 	lastInput = Mat(input);
-	result = activationFunction->feedForward(input);
+	if (activationFunction->hasBias())
+	{
+		hconcat(lastInput, Mat::ones(1, 1, CV_32FC1), lastInput); // Add bias
+	}
+	else { }
+	result = activationFunction->feedForward(lastInput);
 	return result;
 }
 
