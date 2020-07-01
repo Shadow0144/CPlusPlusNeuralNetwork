@@ -57,9 +57,7 @@ bool NeuralNetwork::backPropagate(Mat xs, Mat yHats)
 		for (int i = 0; i < yHats.rows; i++)
 		{
 			Mat y = feedForward(xs.row(i));
-			Mat pow;
-			cv::pow(y - yHats.row(i), 2, pow);
-			Mat errors = Mat(1, layerShapes[layerCount - 1], CV_32FC1, cv::sum(pow));
+			Mat errors = Mat(1, layerShapes[layerCount - 1], CV_32FC1, cv::sum(yHats.row(i) - y));
 			for (int j = (layerCount - 1); j > 0; j--) // Skip the top row
 			{
 				Mat newErrors = Mat(0, layerShapes[j - 1], CV_32FC1);

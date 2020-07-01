@@ -12,9 +12,9 @@ using namespace std;
 
 //#define FIVE
 //#define FOUR
-#define THREE
+//#define THREE
 //#define TWO
-//#define ONE
+#define ONE
 
 int test()
 {
@@ -111,17 +111,16 @@ void draw_network()
     //float x[1] = { 1 };
     float y[10] = { 3, 5, 7, 8, 11, 13, 15, 17, 19, 21 };
     //float y[1] = { 2 };
-    Mat training_x = cv::Mat(samples, 1, CV_32F, x) / 100.0f;
-    Mat training_y = cv::Mat(samples, 1, CV_32F, y) / 100.0f;
+    Mat training_x = cv::Mat(samples, 1, CV_32F, x) / 10.0f;
+    Mat training_y = cv::Mat(samples, 1, CV_32F, y) / 10.0f;
 
     Mat result_y = network.feedForward(training_x);
 
+    cout << "Initial: " << endl;
     for (int i = 0; i < training_x.rows; i++)
     {
         cout << "Feedforward Untrained: X: " << training_x.at<float>(i) << " Y': " << training_y.at<float>(i) << " Y: " << result_y.at<float>(i) << endl;
     }
-
-    cout << endl;
 
     network.draw(canvas);
     imshow(window_name, img);
@@ -139,7 +138,7 @@ void draw_network()
             imshow(window_name, img);
             waitKey(100); // Wait 100ms
             result_y = network.feedForward(training_x);
-            cout << endl << "Epoch: " << t << endl;
+            cout << endl << "Epoch: " << (t+1) << endl;
             for (int i = 0; i < training_x.rows; i++)
             {
                 cout << "Feedforward Training: X: " << training_x.at<float>(i) 
@@ -150,8 +149,7 @@ void draw_network()
     }
     result_y = network.feedForward(training_x);
 
-    cout << endl;
-
+    cout << endl << "Trained: " << endl;
     for (int i = 0; i < training_x.rows; i++)
     {
         cout << "Feedforward Trained: X: " << training_x.at<float>(i) << " Y': " << training_y.at<float>(i) << " Y: " << result_y.at<float>(i) << endl;
