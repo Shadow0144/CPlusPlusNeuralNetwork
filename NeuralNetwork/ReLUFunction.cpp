@@ -12,11 +12,9 @@ ReLUFunction::ReLUFunction(int numInputs)
 
 Mat ReLUFunction::feedForward(Mat inputs)
 {
-	Mat result(1, 1, CV_32FC1);
-	float dot = ((float)(inputs.dot(weights.getParameters())));
-	float reLUDot = (dot >= 0.0f) ? dot : 0.0f;
-	result.at<float>(0, 0) = reLUDot;
-	return result;
+	lastOutput = inputs * weights.getParameters();
+	lastOutput.at<float>(0) = lastOutput.at<float>(0) > 0.0f ? lastOutput.at<float>(0) : 0.0f;
+	return lastOutput;
 }
 
 Mat ReLUFunction::backPropagate(Mat lastInput, Mat errors)
@@ -25,8 +23,7 @@ Mat ReLUFunction::backPropagate(Mat lastInput, Mat errors)
 	Scalar errorSum = cv::sum(errors);
 	float errorSumF = ((float)(errorSum[0]));
 
-	float dot = ((float)(lastInput.dot(weights.getParameters())));
-	float reLUPrime = (dot >= 0.0f) ? 1.0f : 0.0f;
+	float reLUPrime = (lastOutput.at<float>(0) >= 0.0f) ? 1.0f : 0.0f;
 	Mat prime = Mat::ones(1, 1, CV_32FC1) * reLUPrime;
 	Mat sigma = errorSumF * prime;
 

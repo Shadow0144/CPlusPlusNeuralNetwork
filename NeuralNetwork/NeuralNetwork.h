@@ -14,6 +14,8 @@ public:
 	Mat feedForward(Mat input);
 	bool backPropagate(Mat xs, Mat yHats);
 
+	float MSE(Mat ys, Mat yHats);
+
 	void draw(DrawingCanvas canvas);
 
 private:

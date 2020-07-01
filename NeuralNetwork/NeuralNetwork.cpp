@@ -87,6 +87,15 @@ bool NeuralNetwork::backPropagate(Mat xs, Mat yHats)
 	return false;
 }
 
+float NeuralNetwork::MSE(Mat ys, Mat yHats)
+{
+	Mat diff = yHats - ys;
+	Mat pow;
+	cv::pow(diff, 2, pow);
+	float result = 0.5f * ((float)(sum(pow)[0]));
+	return result;
+}
+
 void NeuralNetwork::draw(DrawingCanvas canvas)
 {
 	// Clear the canvas
