@@ -4,6 +4,8 @@
 #include "IdentityFunction.h"
 #include "DotProductFunction.h"
 #include "ReLUFunction.h"
+#include "LeakyReLUFunction.h"
+#include "SoftplusFunction.h"
 #include "SigmoidFunction.h"
 #include "TanhFunction.h"
 
@@ -42,6 +44,14 @@ Neuron::Neuron(ActivationFunction function, vector<Neuron*>* parents)
 		case ActivationFunction::ReLU:
 			inputCount++; // Bias
 			activationFunction = new ReLUFunction(inputCount);
+			break;
+		case ActivationFunction::LeakyReLU:
+			inputCount++; // Bias
+			activationFunction = new LeakyReLUFunction(inputCount);
+			break;
+		case ActivationFunction::Softplus:
+			inputCount++; // Bias
+			activationFunction = new SoftplusFunction(inputCount);
 			break;
 		case ActivationFunction::Sigmoid:
 			inputCount++; // Bias
@@ -93,18 +103,25 @@ void Neuron::applyBackPropagate()
 
 void Neuron::draw(DrawingCanvas canvas, bool output)
 {
-	const int p = 10;
-	const int radius = 40;
-	const Scalar black(0, 0, 0);
-	const Scalar gray(100, 100, 100);
-	const Scalar light_gray(200, 200, 200);
-	const int line_length = 15;
-	const int weight_radius = 10;
+	const int P = 10;
+	const int RADIUS = 40;
+	const Scalar BLACK(0, 0, 0);
+	const Scalar GRAY(100, 100, 100);
+	const Scalar LIGHT_GRAY(200, 200, 200);
+	const Scalar WHITE(255, 255, 255);
+	const int LINE_LENGTH = 15;
+	const int WEIGHT_RADIUS = 10;
+	const int BIAS_OFFSET_X = 40;
+	const int BIAS_OFFSET_Y = -52;
+	const int BIAS_WIDTH = 20;
+	const int BIAS_HEIGHT = 30;
+	const int BIAS_TEXT_X = 4;
+	const int BIAS_TEXT_Y = 20;
 
 	// Draw the neuron
-	drawingParameters.center = Point(p + radius, p + radius) + canvas.offset;
-	circle(canvas.canvas, drawingParameters.center, radius, light_gray, -1, LINE_8);
-	circle(canvas.canvas, drawingParameters.center, radius, black, 1, LINE_8);
+	drawingParameters.center = Point(P + RADIUS, P + RADIUS) + canvas.offset;
+	circle(canvas.canvas, drawingParameters.center, RADIUS, LIGHT_GRAY, -1, LINE_8);
+	circle(canvas.canvas, drawingParameters.center, RADIUS, BLACK, 1, LINE_8);
 
 	// Draw the activation function
 	DrawingCanvas innerCanvas;
@@ -133,39 +150,97 @@ void Neuron::draw(DrawingCanvas canvas, bool output)
 	}
 	for (int i = 0; i < parentCount; i++)
 	{
-		int w_x = ((int)(cos(i_angle - (angle * i)) * radius + drawingParameters.center.x));
-		int w_y = ((int)(-sin(i_angle - (angle * i)) * radius + drawingParameters.center.y));
+		int w_x = ((int)(cos(i_angle - (angle * i)) * RADIUS + drawingParameters.center.x));
+		int w_y = ((int)(-sin(i_angle - (angle * i)) * RADIUS + drawingParameters.center.y));
 		Point weight_pt(w_x, w_y);
 		//circle(canvas.canvas, weight_pt, weight_radius, black, 1, LINE_8);
-		//putText(canvas.canvas, to_string(i), weight_pt, FONT_HERSHEY_COMPLEX_SMALL, 1.0, black);
+		//putText(canvas.canvas, to_string(i), weight_pt, FONT_HERSHEY_COMPLEX_SMALL, 1.0, BLACK);
 	}
+
+	// Draw the bias
+	int bx = 0;
+	int by = 0;
+	if (activationFunction->hasBias())
+	{
+		bx = drawingParameters.center.x + BIAS_OFFSET_X;
+		by = drawingParameters.center.y + BIAS_OFFSET_Y;
+		Point bTL = Point(bx, by);
+		Point bBR = Point(bx + BIAS_WIDTH, by + BIAS_HEIGHT);
+		Point bias_pt = Point(bx + BIAS_TEXT_X, by + BIAS_TEXT_Y);
+		rectangle(canvas.canvas, bTL, bBR, BLACK, 1, LINE_8);
+		putText(canvas.canvas, to_string(1), bias_pt, FONT_HERSHEY_COMPLEX_SMALL, 1.0, BLACK);
+	}
+	else { }
 
 	// Draw the links
 	Point pt = Point(drawingParameters.center);
-	pt.y -= radius;
-	if (parentCount == 0)
+	pt.y -= RADIUS;
+	// Draw the links to the previous neurons
+	int previousX, previousY;
+	for (int i = 0; i < inputCount; i++)
 	{
-		// Draw the input lines
-		Point previous(pt.x, pt.y - line_length);
-		line(canvas.canvas, previous, pt, gray, 1, LINE_8);
-	}
-	else
-	{
-		// Draw the links to the previous neurons
-		for (int i = 0; i < parentCount; i++)
+		if (parentCount == 0 && i == 0)
 		{
-			int previousX = parents->at(i)->drawingParameters.center.x;
-			int previousY = parents->at(i)->drawingParameters.center.y;
-			Point previousNeuron(previousX, previousY + radius);
-			line(canvas.canvas, previousNeuron, pt, black, 1, LINE_8);
+			previousX = pt.x;
+			previousY = pt.y - LINE_LENGTH;
+		}
+		else if (i < (inputCount - 1) || !activationFunction->hasBias())
+		{
+			previousX = parents->at(i)->drawingParameters.center.x;
+			previousY = parents->at(i)->drawingParameters.center.y + RADIUS;
+		}
+		else
+		{
+			previousX = bx;
+			previousY = by + ((int)(BIAS_HEIGHT / 2.0f));
+		}
+
+		Point previousNeuronPt(previousX, previousY);
+		Scalar lineColor = Scalar(255, 255, 255);
+		int lineWidth = 1;
+		float weight = activationFunction->getWeights().getParameters().at<float>(i);
+		if (weight >= 0.0f)
+		{
+			if (weight <= 1.0f)
+			{
+				lineColor = Scalar(1.0 - ((double)(weight)), 1.0 - ((double)(weight)), 1.0 - ((double)(weight))) * 255;
+				lineWidth = ((int)(ceil(weight * lineWidth)));
+			}
+			else 
+			{
+				lineColor = Scalar(0.0f, 0.0f, 0.0f) * 255;
+				lineWidth = ((int)(ceil(1.0f * lineWidth)));
+			}
+		}
+		else
+		{
+			if (weight >= -1.0f)
+			{
+				lineColor = Scalar(0.0f, 0.0f, -weight) * 255;
+				lineWidth = ((int)(ceil(-weight * lineWidth)));
+			}
+			else
+			{
+				lineColor = Scalar(0.0f, 0.0f, 1.0f) * 255;
+				lineWidth = ((int)(ceil(1.0f * lineWidth)));
+			}
+		}
+		if (lineWidth > 0)
+		{
+			line(canvas.canvas, previousNeuronPt, pt, lineColor, lineWidth, LINE_8);
+		}
+		else
+		{
+			line(canvas.canvas, previousNeuronPt, pt, WHITE, 1, LINE_8);
 		}
 	}
+
 	if (output)
 	{
 		// Draw the output lines
-		pt.y += (2 * radius);
-		Point next(pt.x, pt.y + line_length);
-		line(canvas.canvas, next, pt, gray, 1, LINE_8);
+		pt.y += (2 * RADIUS);
+		Point next(pt.x, pt.y + LINE_LENGTH);
+		line(canvas.canvas, next, pt, GRAY, 1, LINE_8);
 	}
 	else { }
 }

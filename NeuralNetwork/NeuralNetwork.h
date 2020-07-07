@@ -16,7 +16,7 @@ public:
 
 	float MSE(Mat ys, Mat yHats);
 
-	void draw(DrawingCanvas canvas);
+	void draw(DrawingCanvas canvas, Mat target_xs, Mat target_ys);
 
 private:
 	int layerCount;

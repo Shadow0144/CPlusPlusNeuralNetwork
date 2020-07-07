@@ -1,23 +1,25 @@
-#include "ReLUFunction.h"
+#include "SoftplusFunction.h"
 
 #include <opencv2/core.hpp>
 #include <opencv2/imgproc.hpp>
 #include <iostream>
 
-ReLUFunction::ReLUFunction(int numInputs)
+SoftplusFunction::SoftplusFunction(int numInputs)
 {
 	this->numInputs = numInputs;
 	this->weights.setParametersRandom(numInputs);
 }
 
-Mat ReLUFunction::feedForward(Mat inputs)
+Mat SoftplusFunction::feedForward(Mat inputs)
 {
 	lastOutput = inputs * weights.getParameters();
-	lastOutput.at<float>(0) = max(0.0f, lastOutput.at<float>(0));
+	float lOut = lastOutput.at<float>(0);
+	float alpha = 0.01f; // TODO
+	lastOutput.at<float>(0) = (alpha * lOut) + ((1.0f - alpha) * log(1 + exp(lOut)));
 	return lastOutput;
 }
 
-Mat ReLUFunction::backPropagate(Mat lastInput, Mat errors)
+Mat SoftplusFunction::backPropagate(Mat lastInput, Mat errors)
 {
 	// TODO: Make cleaner
 	Scalar errorSum = cv::sum(errors);
@@ -31,17 +33,17 @@ Mat ReLUFunction::backPropagate(Mat lastInput, Mat errors)
 
 	// Strip away the bias parameter and weights the sigma by the incoming weights
 	Mat weightsPrime = weights.getParameters();
-	weightsPrime = weightsPrime(Rect(0, 0, 1, numInputs-1)).t();
+	weightsPrime = weightsPrime(Rect(0, 0, 1, numInputs - 1)).t();
 
 	return sigma * weightsPrime;
 }
 
-bool ReLUFunction::hasBias()
+bool SoftplusFunction::hasBias()
 {
 	return true;
 }
 
-void ReLUFunction::draw(DrawingCanvas canvas)
+void SoftplusFunction::draw(DrawingCanvas canvas)
 {
 	const Scalar BLACK(0, 0, 0);
 

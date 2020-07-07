@@ -14,10 +14,12 @@ using namespace cv;
 using namespace std;
 
 //#define FIVE
-#define FOUR
-//#define THREE
+//#define FOUR
+#define THREE
 //#define TWO
 //#define ONE
+
+#define VERBOSITY 0
 
 int test()
 {
@@ -51,10 +53,10 @@ void test_network()
           ActivationFunction::WeightedDotProduct };
 #elif defined(THREE)
     int layers = 3;
-    int layerShapes[] = { 1, 3, 1 };
+    int layerShapes[] = { 1, 6, 1 };
     ActivationFunction functions[] =
         { ActivationFunction::WeightedDotProduct,
-          ActivationFunction::Tanh,
+          ActivationFunction::ReLU,
           ActivationFunction::WeightedDotProduct };
 #elif defined(FOUR)
     int layers = 4;
@@ -83,7 +85,6 @@ void test_network()
     canvas.canvas = img;
     canvas.offset = Point(0, 0);
     canvas.scale = 1.0f;
-    network.draw(canvas);
 
     /*const int SAMPLES = 10;
     float x[SAMPLES] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
@@ -91,17 +92,17 @@ void test_network()
     Mat training_x = cv::Mat(SAMPLES, 1, CV_32F, x) / 10.0f;
     Mat training_y = cv::Mat(SAMPLES, 1, CV_32F, y) / 10.0f;*/
 
-    const int SAMPLES = 10;
+    const int SAMPLES = 100;
     float x[SAMPLES];
     float y[SAMPLES];
 
     float twoPi = ((float)(2.0f * M_PI));
-    float inc = twoPi / SAMPLES;
+    float inc = 2.0f * twoPi / SAMPLES;
     int i = 0;
-    for (float t = 0; t < twoPi; t += inc)
+    for (float t = -twoPi; t < twoPi; t += inc)
     {
         x[i] = t;
-        y[i] = ((float)(sin(t)));
+        y[i] = ((float)(3.0 * sin(0.5 * t + 0.5)));
         i++;
     }
 
@@ -109,21 +110,24 @@ void test_network()
     Mat training_y = cv::Mat(SAMPLES, 1, CV_32F, y) / 10.0f;
 
     Mat result_y = network.feedForward(training_x);
+    network.draw(canvas, training_x, training_y);
 
     cout << "Initial: " << endl;
+#if (VERBOSITY == 1)
     for (int i = 0; i < training_x.rows; i++)
     {
         cout << "Feedforward Untrained: X: " << training_x.at<float>(i) << " Y': " << training_y.at<float>(i) << " Y: " << result_y.at<float>(i) << endl;
     }
+#endif
     float MSE = network.MSE(result_y, training_y);
     cout << "MSE: " << MSE << endl;
 
-    network.draw(canvas);
+    network.draw(canvas, training_x, training_y);
     imshow(window_name, img);
     moveWindow(window_name, 400, 180);
     waitKey(100);
 
-    const float STOP = 0.001f;
+    const float STOP = 0.01f;
     const int EPOCHS = 10000;
     const int PRINT = 100;
     int t = 0;
@@ -133,17 +137,19 @@ void test_network()
 
         if (t % PRINT == 0)
         {
-            network.draw(canvas);
+            network.draw(canvas, training_x, training_y);
             imshow(window_name, img);
             waitKey(1); // Wait enough for the window to draw
             result_y = network.feedForward(training_x);
             cout << endl << "Epoch: " << (t+1) << endl;
+#if (VERBOSITY == 1)
             for (int i = 0; i < training_x.rows; i++)
             {
                 cout << "Feedforward Training: X: " << training_x.at<float>(i) 
                     << " Y': " << training_y.at<float>(i) 
                     << " Y: " << result_y.at<float>(i) << endl;
             }
+#endif
             MSE = network.MSE(result_y, training_y);
             cout << "MSE: " << MSE << endl;
         }
@@ -163,12 +169,15 @@ void test_network()
     else { }
 
     cout << endl << "Trained: " << endl;
+#if (VERBOSITY == 1)
     for (int i = 0; i < training_x.rows; i++)
     {
         cout << "Feedforward Trained: X: " << training_x.at<float>(i) << " Y': " << training_y.at<float>(i) << " Y: " << result_y.at<float>(i) << endl;
     }
+#endif
     cout << "MSE: " << network.MSE(result_y, training_y) << endl;
 
+    network.draw(canvas, training_x, training_y);
     imshow(window_name, img);
     cout << endl << "Press any key to exit" << endl;
     waitKey(0); // Wait for a keystroke in the window

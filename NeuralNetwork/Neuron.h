@@ -12,6 +12,8 @@ enum class ActivationFunction
 	Identity,
 	WeightedDotProduct,
 	ReLU,
+	LeakyReLU,
+	Softplus,
 	Sigmoid,
 	Tanh
 };

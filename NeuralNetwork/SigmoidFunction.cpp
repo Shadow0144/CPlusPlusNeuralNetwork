@@ -47,17 +47,17 @@ float sigmoid(float value)
 
 void SigmoidFunction::draw(DrawingCanvas canvas)
 {
-	const Scalar black(0, 0, 0);
-	const float step_size = 0.1f;
+	const Scalar BLACK(0, 0, 0);
+	const float STEP_SIZE = 0.1f;
 
 	Function::draw(canvas);
 
-	for (float i = -1.0f; i < 1.0f; i += step_size)
+	for (float i = -1.0f; i < 1.0f; i += STEP_SIZE)
 	{
-		int y1 = ((int)(draw_len * sigmoid(i * weights.getParameters().at<float>(0))));
-		int y2 = ((int)(draw_len * sigmoid((i + step_size) * weights.getParameters().at<float>(0))));
-		Point l_start(canvas.offset.x + ((int)(draw_len * i)), canvas.offset.y - y1);
-		Point l_end(canvas.offset.x + ((int)(draw_len * (i + step_size))), canvas.offset.y - y2);
-		line(canvas.canvas, l_start, l_end, black, 1, LINE_8);
+		int y1 = ((int)(DRAW_LEN * sigmoid(i * weights.getParameters().at<float>(0))));
+		int y2 = ((int)(DRAW_LEN * sigmoid((i + STEP_SIZE) * weights.getParameters().at<float>(0))));
+		Point l_start(canvas.offset.x + ((int)(DRAW_LEN * i)), canvas.offset.y - y1);
+		Point l_end(canvas.offset.x + ((int)(DRAW_LEN * (i + STEP_SIZE))), canvas.offset.y - y2);
+		line(canvas.canvas, l_start, l_end, BLACK, 1, LINE_8);
 	}
 }

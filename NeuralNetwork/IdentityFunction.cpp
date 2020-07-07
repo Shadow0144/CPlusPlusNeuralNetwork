@@ -27,12 +27,12 @@ bool IdentityFunction::hasBias()
 
 void IdentityFunction::draw(DrawingCanvas canvas)
 {
-	const Scalar black(0, 0, 0);
+	const Scalar BLACK(0, 0, 0);
 
-	Point l_start(canvas.offset.x - draw_len, canvas.offset.y - ((int)(-draw_len)));
-	Point l_end(canvas.offset.x + draw_len, canvas.offset.y - ((int)(draw_len)));
+	Point l_start(canvas.offset.x - DRAW_LEN, canvas.offset.y - ((int)(-DRAW_LEN)));
+	Point l_end(canvas.offset.x + DRAW_LEN, canvas.offset.y - ((int)(DRAW_LEN)));
 
 	Function::draw(canvas);
 
-	line(canvas.canvas, l_start, l_end, black, 1, LINE_8);
+	line(canvas.canvas, l_start, l_end, BLACK, 1, LINE_8);
 }

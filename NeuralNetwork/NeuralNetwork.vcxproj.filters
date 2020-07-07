@@ -51,6 +51,12 @@
     <ClCompile Include="Function.cpp">
       <Filter>Source Files\Function</Filter>
     </ClCompile>
+    <ClCompile Include="SoftplusFunction.cpp">
+      <Filter>Source Files\Function</Filter>
+    </ClCompile>
+    <ClCompile Include="LeakyReLUFunction.cpp">
+      <Filter>Source Files\Function</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NeuralNetwork.h">
@@ -81,6 +87,12 @@
       <Filter>Header Files\Function</Filter>
     </ClInclude>
     <ClInclude Include="TanhFunction.h">
+      <Filter>Header Files\Function</Filter>
+    </ClInclude>
+    <ClInclude Include="SoftplusFunction.h">
+      <Filter>Header Files\Function</Filter>
+    </ClInclude>
+    <ClInclude Include="LeakyReLUFunction.h">
       <Filter>Header Files\Function</Filter>
     </ClInclude>
   </ItemGroup>

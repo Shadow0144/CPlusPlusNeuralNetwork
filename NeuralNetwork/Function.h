@@ -14,10 +14,11 @@ public:
 	void applyBackProgate();
 	virtual bool hasBias() = 0;
 	virtual void draw(DrawingCanvas canvas);
+	ParameterSet getWeights() { return weights; }
 protected:
 	int numInputs;
 	ParameterSet weights;
-	const int draw_len = 16;
+	const int DRAW_LEN = 16;
 
-	const float ALPHA = 1.0f; // Learning rate
+	const float ALPHA = 0.1f; // Learning rate
 };

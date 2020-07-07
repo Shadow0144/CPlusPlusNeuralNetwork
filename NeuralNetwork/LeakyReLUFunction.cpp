@@ -1,23 +1,25 @@
-#include "ReLUFunction.h"
+#include "LeakyReLUFunction.h"
 
 #include <opencv2/core.hpp>
 #include <opencv2/imgproc.hpp>
 #include <iostream>
 
-ReLUFunction::ReLUFunction(int numInputs)
+LeakyReLUFunction::LeakyReLUFunction(int numInputs)
 {
 	this->numInputs = numInputs;
 	this->weights.setParametersRandom(numInputs);
 }
 
-Mat ReLUFunction::feedForward(Mat inputs)
+Mat LeakyReLUFunction::feedForward(Mat inputs)
 {
 	lastOutput = inputs * weights.getParameters();
-	lastOutput.at<float>(0) = max(0.0f, lastOutput.at<float>(0));
+	float lOut = lastOutput.at<float>(0);
+	float alpha = 0.01f; // TODO
+	lastOutput.at<float>(0) = max(alpha * lOut, lOut);
 	return lastOutput;
 }
 
-Mat ReLUFunction::backPropagate(Mat lastInput, Mat errors)
+Mat LeakyReLUFunction::backPropagate(Mat lastInput, Mat errors)
 {
 	// TODO: Make cleaner
 	Scalar errorSum = cv::sum(errors);
@@ -31,17 +33,17 @@ Mat ReLUFunction::backPropagate(Mat lastInput, Mat errors)
 
 	// Strip away the bias parameter and weights the sigma by the incoming weights
 	Mat weightsPrime = weights.getParameters();
-	weightsPrime = weightsPrime(Rect(0, 0, 1, numInputs-1)).t();
+	weightsPrime = weightsPrime(Rect(0, 0, 1, numInputs - 1)).t();
 
 	return sigma * weightsPrime;
 }
 
-bool ReLUFunction::hasBias()
+bool LeakyReLUFunction::hasBias()
 {
 	return true;
 }
 
-void ReLUFunction::draw(DrawingCanvas canvas)
+void LeakyReLUFunction::draw(DrawingCanvas canvas)
 {
 	const Scalar BLACK(0, 0, 0);
 
