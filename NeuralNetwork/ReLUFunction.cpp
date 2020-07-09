@@ -23,7 +23,7 @@ Mat ReLUFunction::backPropagate(Mat lastInput, Mat errors)
 	Scalar errorSum = cv::sum(errors);
 	float errorSumF = ((float)(errorSum[0]));
 
-	float reLUPrime = (lastOutput.at<float>(0) >= 0.0f) ? 1.0f : 0.0f;
+	float reLUPrime = (lastOutput.at<float>(0) > 0.0f) ? 1.0f : 0.0f;
 	Mat prime = Mat::ones(1, 1, CV_32FC1) * reLUPrime;
 	Mat sigma = errorSumF * prime;
 

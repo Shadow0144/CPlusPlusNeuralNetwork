@@ -10,11 +10,15 @@ SoftplusFunction::SoftplusFunction(int numInputs)
 	this->weights.setParametersRandom(numInputs);
 }
 
+float softplus(float value, float k)
+{
+	return (log(1 + exp(k * value)) / k);
+}
+
 Mat SoftplusFunction::feedForward(Mat inputs)
 {
 	lastOutput = inputs * weights.getParameters();
-	float lOut = lastOutput.at<float>(0);
-	lastOutput.at<float>(0) = (alpha * lOut) + ((1.0f - alpha) * log(1 + exp(lOut)));
+	lastOutput.at<float>(0) = softplus(lastOutput.at<float>(0), k);
 	return lastOutput;
 }
 
@@ -24,8 +28,9 @@ Mat SoftplusFunction::backPropagate(Mat lastInput, Mat errors)
 	Scalar errorSum = cv::sum(errors);
 	float errorSumF = ((float)(errorSum[0]));
 
-	float reLUPrime = (lastOutput.at<float>(0) >= 0.0f) ? 1.0f : 0.0f;
-	Mat prime = Mat::ones(1, 1, CV_32FC1) * reLUPrime;
+	Mat z = lastInput * weights.getParameters();
+	float softPlusPrime = 1.0f / (1.0f + exp(-k * z.at<float>(0)));
+	Mat prime = Mat::ones(1, 1, CV_32FC1) * softPlusPrime;
 	Mat sigma = errorSumF * prime;
 
 	weights.setDeltaParameters(-ALPHA * lastInput.t() * sigma);
@@ -45,31 +50,16 @@ bool SoftplusFunction::hasBias()
 void SoftplusFunction::draw(DrawingCanvas canvas)
 {
 	const Scalar BLACK(0, 0, 0);
-
-	float slope = weights.getParameters().at<float>(0);
-	float inv_slope = 1.0f / abs(slope);
-	float x1, x2, y1, y2;
-	if (slope > 0.0f)
-	{
-		x1 = -1.0f;
-		x2 = +min(1.0f, inv_slope);
-		y1 = 0.0f;
-		y2 = (x2 * slope);
-	}
-	else
-	{
-		x1 = -min(1.0f, inv_slope);
-		x2 = 1.0f;
-		y1 = (x1 * slope);
-		y2 = 0.0f;
-	}
-
-	Point l_start(canvas.offset.x + ((int)(DRAW_LEN * x1)), canvas.offset.y - ((int)(DRAW_LEN * y1)));
-	Point l_mid(canvas.offset.x, canvas.offset.y);
-	Point l_end(canvas.offset.x + ((int)(DRAW_LEN * x2)), canvas.offset.y - ((int)(DRAW_LEN * y2)));
+	const float STEP_SIZE = 0.1f;
 
 	Function::draw(canvas);
 
-	line(canvas.canvas, l_start, l_mid, BLACK, 1, LINE_8);
-	line(canvas.canvas, l_mid, l_end, BLACK, 1, LINE_8);
+	for (float i = -1.0f; i < 1.0f; i += STEP_SIZE)
+	{
+		int y1 = ((int)(DRAW_LEN * softplus(i * weights.getParameters().at<float>(0), k)));
+		int y2 = ((int)(DRAW_LEN * softplus((i + STEP_SIZE) * weights.getParameters().at<float>(0), k)));
+		Point l_start(canvas.offset.x + ((int)(DRAW_LEN * i)), canvas.offset.y - y1);
+		Point l_end(canvas.offset.x + ((int)(DRAW_LEN * (i + STEP_SIZE))), canvas.offset.y - y2);
+		line(canvas.canvas, l_start, l_end, BLACK, 1, LINE_8);
+	}
 }

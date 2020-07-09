@@ -9,11 +9,15 @@ SigmoidFunction::SigmoidFunction(int numInputs)
 	this->weights.setParametersRandom(numInputs);
 }
 
+float sigmoid(float value)
+{
+	return (1.0f / (1.0f + exp(-value)));
+}
+
 Mat SigmoidFunction::feedForward(Mat inputs)
 {
 	lastOutput = inputs * weights.getParameters();
-	exp(-lastOutput, lastOutput);
-	lastOutput = 1.0f / (1.0f + lastOutput);
+	lastOutput.at<float>(0) = sigmoid(lastOutput.at<float>(0));
 	return lastOutput;
 }
 
@@ -38,11 +42,6 @@ Mat SigmoidFunction::backPropagate(Mat lastInput, Mat errors)
 bool SigmoidFunction::hasBias()
 {
 	return true;
-}
-
-float sigmoid(float value)
-{
-	return (1.0f / (1.0f + exp(-value)));
 }
 
 void SigmoidFunction::draw(DrawingCanvas canvas)

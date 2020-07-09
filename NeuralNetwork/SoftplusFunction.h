@@ -4,6 +4,7 @@
 
 using namespace cv;
 
+// Softplus / SmoothReLU
 class SoftplusFunction : public Function
 {
 public:
@@ -14,11 +15,11 @@ public:
 	bool hasBias();
 	void draw(DrawingCanvas canvas);
 
-	float getAlpha() { return alpha; }
-	void setAlpha(float alpha) { this->alpha = alpha; }
+	float getK() { return k; }
+	void setK(float k) { this->k = k; }
 
 private:
 	Mat lastOutput;
 
-	float alpha = 0.01f; // Leak coefficient
+	float k = 1.0f; // Sharpness coefficient
 };

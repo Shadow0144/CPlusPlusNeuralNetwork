@@ -4,6 +4,7 @@
 
 using namespace cv;
 
+// Leaky ReLU / Parametric ReLU
 class LeakyReLUFunction : public Function
 {
 public:
@@ -14,11 +15,11 @@ public:
 	bool hasBias();
 	void draw(DrawingCanvas canvas);
 
-	float getAlpha() { return alpha; }
-	void setAlpha(float alpha) { this->alpha = alpha; }
+	float getA() { return a; }
+	void setA(float a) { this->a = a; }
 
 private:
 	Mat lastOutput;
 
-	float alpha = 0.1f; // Leak coefficient
+	float a = 0.01f; // Leak coefficient
 };

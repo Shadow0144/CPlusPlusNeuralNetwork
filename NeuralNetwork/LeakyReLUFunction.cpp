@@ -14,7 +14,7 @@ Mat LeakyReLUFunction::feedForward(Mat inputs)
 {
 	lastOutput = inputs * weights.getParameters();
 	float lOut = lastOutput.at<float>(0);
-	lastOutput.at<float>(0) = max(alpha * lOut, lOut);
+	lastOutput.at<float>(0) = max(a * lOut, lOut);
 	return lastOutput;
 }
 
@@ -24,7 +24,7 @@ Mat LeakyReLUFunction::backPropagate(Mat lastInput, Mat errors)
 	Scalar errorSum = cv::sum(errors);
 	float errorSumF = ((float)(errorSum[0]));
 
-	float reLUPrime = (lastOutput.at<float>(0) >= 0.0f) ? 1.0f : alpha;
+	float reLUPrime = (lastOutput.at<float>(0) > 0.0f) ? 1.0f : a;
 	Mat prime = Mat::ones(1, 1, CV_32FC1) * reLUPrime;
 	Mat sigma = errorSumF * prime;
 
@@ -53,7 +53,7 @@ void LeakyReLUFunction::draw(DrawingCanvas canvas)
 	{
 		x1 = -1.0f;
 		x2 = +min(1.0f, inv_slope);
-		y1 = -alpha;
+		y1 = -a;
 		y2 = (x2 * slope);
 	}
 	else
@@ -61,7 +61,7 @@ void LeakyReLUFunction::draw(DrawingCanvas canvas)
 		x1 = -min(1.0f, inv_slope);
 		x2 = 1.0f;
 		y1 = (x1 * slope);
-		y2 = alpha;
+		y2 = a;
 	}
 
 	Point l_start(canvas.offset.x + ((int)(DRAW_LEN * x1)), canvas.offset.y - ((int)(DRAW_LEN * y1)));

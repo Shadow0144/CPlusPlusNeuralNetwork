@@ -60,7 +60,7 @@ void test_network()
     int layerShapes[] = { 1, 6, 1 };
     ActivationFunction functions[] =
         { ActivationFunction::WeightedDotProduct,
-          ActivationFunction::LeakyReLU,
+          ActivationFunction::Sigmoid,
           ActivationFunction::WeightedDotProduct };
 #elif defined(FOUR)
     int layers = 4;
@@ -133,13 +133,14 @@ void test_network()
     moveWindow(window_name, 400, 180);
     waitKey(100);
 
-    const float STOP = 0.01f;
-    const int EPOCHS = 10000;
+    const float STOP = 0.001f;
+    const int ITERATIONS = 10000;
     const int PRINT = 100;
     int t = 0;
-    while (error > STOP && t < EPOCHS)
+    while (error > STOP && t < ITERATIONS)
     {
         network.backPropagate(training_x, training_y);
+        error = network.getError(result_y, training_y);
 
         if (t % PRINT == 0)
         {
@@ -147,7 +148,7 @@ void test_network()
             imshow(window_name, img);
             waitKey(1); // Wait enough for the window to draw
             result_y = network.feedForward(training_x);
-            cout << endl << "Epoch: " << (t+1) << endl;
+            cout << endl << "Iterations: " << (t+1) << endl;
 #if (VERBOSITY == 1)
             for (int i = 0; i < training_x.rows; i++)
             {
@@ -156,7 +157,6 @@ void test_network()
                     << " Y: " << result_y.at<float>(i) << endl;
             }
 #endif
-            error = network.getError(result_y, training_y);
             cout << "Error: " << error << endl;
         }
 
@@ -168,7 +168,7 @@ void test_network()
     {
         cout << endl << "Minimum loss condition reached" << endl;
     }
-    else if (t == EPOCHS)
+    else if (t == ITERATIONS)
     {
         cout << endl << "Maximum iterations reached" << endl;
     }
@@ -181,6 +181,7 @@ void test_network()
         cout << "Feedforward Trained: X: " << training_x.at<float>(i) << " Y': " << training_y.at<float>(i) << " Y: " << result_y.at<float>(i) << endl;
     }
 #endif
+    cout << "Iterations: " << t << endl;
     cout << "Error: " << network.getError(result_y, training_y) << endl;
 
     network.draw(canvas, training_x, training_y);
@@ -199,14 +200,14 @@ int main(int argc, char** argv)
 
     QQmlApplicationEngine engine;
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
-    if (engine.rootObjects().isEmpty())
-        return -1;
+    //if (engine.rootObjects().isEmpty())
+    //    return -1;
 
-    int r = app.exec();
+    //int r = app.exec();
 
     test_network();
 
-    return r;
+    //return r;
 
-    //return 0;
+    return 0;
 }
