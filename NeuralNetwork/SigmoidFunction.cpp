@@ -44,6 +44,11 @@ bool SigmoidFunction::hasBias()
 	return true;
 }
 
+int SigmoidFunction::numOutputs()
+{
+	return 1;
+}
+
 void SigmoidFunction::draw(DrawingCanvas canvas)
 {
 	const Scalar BLACK(0, 0, 0);

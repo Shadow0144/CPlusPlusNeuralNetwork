@@ -148,6 +148,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ConvolutionFunction.cpp" />
     <ClCompile Include="DotProductFunction.cpp" />
     <ClCompile Include="Function.cpp" />
     <ClCompile Include="IdentityFunction.cpp" />
@@ -163,6 +164,7 @@
     <ClCompile Include="TanhFunction.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ConvolutionFunction.h" />
     <ClInclude Include="ErrorFunction.h" />
     <ClInclude Include="LeakyReLUFunction.h" />
     <ClInclude Include="MSEFunction.h" />

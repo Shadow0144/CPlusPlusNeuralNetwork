@@ -40,6 +40,11 @@ bool SoftmaxFunction::hasBias()
 	return false;
 }
 
+int SoftmaxFunction::numOutputs()
+{
+	return numInputs;
+}
+
 void SoftmaxFunction::draw(DrawingCanvas canvas)
 {
 	const Scalar BLACK(0, 0, 0);

@@ -47,6 +47,21 @@ bool SoftplusFunction::hasBias()
 	return true;
 }
 
+float SoftplusFunction::getK() 
+{
+	return k;
+}
+
+void SoftplusFunction::setK(float k)
+{
+	this->k = k;
+}
+
+int SoftplusFunction::numOutputs()
+{
+	return 1;
+}
+
 void SoftplusFunction::draw(DrawingCanvas canvas)
 {
 	const Scalar BLACK(0, 0, 0);

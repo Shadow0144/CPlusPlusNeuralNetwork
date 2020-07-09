@@ -1,36 +1,36 @@
-#include "IdentityFunction.h"
+#include "ConvolutionFunction.h"
 
 #include <opencv2/core.hpp>
 #include <opencv2/imgproc.hpp>
 
-IdentityFunction::IdentityFunction(int numInputs)
+ConvolutionFunction::ConvolutionFunction(int numInputs)
 {
 	this->numInputs = numInputs;
 	this->weights.setParametersOne(numInputs);
 }
 
-Mat IdentityFunction::feedForward(Mat input)
+Mat ConvolutionFunction::feedForward(Mat input)
 {
 	return input;
 }
 
-Mat IdentityFunction::backPropagate(Mat lastInput, Mat errors)
+Mat ConvolutionFunction::backPropagate(Mat lastInput, Mat errors)
 {
 	weights.setDeltaParameters(-ALPHA * lastInput.t() * 0.0f);
 	return errors;
 }
 
-bool IdentityFunction::hasBias()
+bool ConvolutionFunction::hasBias()
 {
 	return false;
 }
 
-int IdentityFunction::numOutputs()
+int ConvolutionFunction::numOutputs()
 {
 	return numInputs;
 }
 
-void IdentityFunction::draw(DrawingCanvas canvas)
+void ConvolutionFunction::draw(DrawingCanvas canvas)
 {
 	const Scalar BLACK(0, 0, 0);
 

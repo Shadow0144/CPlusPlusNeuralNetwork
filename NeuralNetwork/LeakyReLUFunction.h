@@ -15,8 +15,10 @@ public:
 	bool hasBias();
 	void draw(DrawingCanvas canvas);
 
-	float getA() { return a; }
-	void setA(float a) { this->a = a; }
+	float getA();
+	void setA(float a);
+
+	int numOutputs();
 
 private:
 	Mat lastOutput;

@@ -42,6 +42,21 @@ bool LeakyReLUFunction::hasBias()
 	return true;
 }
 
+float LeakyReLUFunction::getA() 
+{ 
+	return a;
+}
+
+void LeakyReLUFunction::setA(float a) 
+{
+	this->a = a;
+}
+
+int LeakyReLUFunction::numOutputs()
+{
+	return 1;
+}
+
 void LeakyReLUFunction::draw(DrawingCanvas canvas)
 {
 	const Scalar BLACK(0, 0, 0);

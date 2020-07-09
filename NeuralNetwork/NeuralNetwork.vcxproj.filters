@@ -66,6 +66,9 @@
     <ClCompile Include="MSEFunction.cpp">
       <Filter>Source Files\ErrorFunction</Filter>
     </ClCompile>
+    <ClCompile Include="ConvolutionFunction.cpp">
+      <Filter>Source Files\ActivationFunction</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NeuralNetwork.h">
@@ -89,9 +92,6 @@
     <ClInclude Include="IdentityFunction.h">
       <Filter>Header Files\ActivationFunction</Filter>
     </ClInclude>
-    <ClInclude Include="ParameterSet.h">
-      <Filter>Header Files\ActivationFunction</Filter>
-    </ClInclude>
     <ClInclude Include="SigmoidFunction.h">
       <Filter>Header Files\ActivationFunction</Filter>
     </ClInclude>
@@ -112,6 +112,12 @@
     </ClInclude>
     <ClInclude Include="MSEFunction.h">
       <Filter>Header Files\ErrorFunction</Filter>
+    </ClInclude>
+    <ClInclude Include="ParameterSet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ConvolutionFunction.h">
+      <Filter>Header Files\ActivationFunction</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

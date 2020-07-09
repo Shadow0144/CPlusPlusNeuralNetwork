@@ -15,6 +15,7 @@ public:
 	virtual bool hasBias() = 0;
 	virtual void draw(DrawingCanvas canvas);
 	ParameterSet getWeights() { return weights; }
+	virtual int numOutputs() = 0;
 protected:
 	int numInputs = 0;
 	ParameterSet weights;

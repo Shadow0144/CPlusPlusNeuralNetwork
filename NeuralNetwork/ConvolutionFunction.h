@@ -4,10 +4,10 @@
 
 using namespace cv;
 
-class SigmoidFunction : public Function
+class ConvolutionFunction : public Function
 {
 public:
-	SigmoidFunction(int numInputs);
+	ConvolutionFunction(int numInputs);
 
 	Mat feedForward(Mat input);
 	Mat backPropagate(Mat lastInput, Mat errors);
@@ -15,7 +15,4 @@ public:
 	void draw(DrawingCanvas canvas);
 
 	int numOutputs();
-
-private:
-	Mat lastOutput;
 };

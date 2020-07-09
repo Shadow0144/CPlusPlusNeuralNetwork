@@ -39,6 +39,11 @@ bool TanhFunction::hasBias()
 	return true;
 }
 
+int TanhFunction::numOutputs()
+{
+	return 1;
+}
+
 void TanhFunction::draw(DrawingCanvas canvas)
 {
 	const Scalar BLACK(0, 0, 0);

@@ -41,6 +41,11 @@ bool ReLUFunction::hasBias()
 	return true;
 }
 
+int ReLUFunction::numOutputs()
+{
+	return 1;
+}
+
 void ReLUFunction::draw(DrawingCanvas canvas)
 {
 	const Scalar BLACK(0, 0, 0);

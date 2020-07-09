@@ -14,6 +14,8 @@ public:
 	bool hasBias();
 	void draw(DrawingCanvas canvas);
 
+	int numOutputs();
+
 private:
 	Mat lastOutput;
 };

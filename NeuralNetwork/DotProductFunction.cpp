@@ -39,6 +39,11 @@ bool DotProductFunction::hasBias()
 	return true;
 }
 
+int DotProductFunction::numOutputs()
+{
+	return 1;
+}
+
 void DotProductFunction::draw(DrawingCanvas canvas)
 {
 	const Scalar BLACK(0, 0, 0);
