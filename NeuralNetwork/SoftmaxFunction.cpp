@@ -1,30 +1,28 @@
-#include "LeakyReLUFunction.h"
+#include "SoftmaxFunction.h"
 
 #include <opencv2/core.hpp>
 #include <opencv2/imgproc.hpp>
 #include <iostream>
 
-LeakyReLUFunction::LeakyReLUFunction(int numInputs)
+SoftmaxFunction::SoftmaxFunction(int numInputs)
 {
 	this->numInputs = numInputs;
-	this->weights.setParametersRandom(numInputs);
+	this->weights.setParametersZero(0);
 }
 
-Mat LeakyReLUFunction::feedForward(Mat inputs)
+Mat SoftmaxFunction::feedForward(Mat inputs)
 {
-	lastOutput = inputs * weights.getParameters();
-	float lOut = lastOutput.at<float>(0);
-	lastOutput.at<float>(0) = max(alpha * lOut, lOut);
+	//lastOutput = cv::exp(inputs);
 	return lastOutput;
 }
 
-Mat LeakyReLUFunction::backPropagate(Mat lastInput, Mat errors)
+Mat SoftmaxFunction::backPropagate(Mat lastInput, Mat errors)
 {
 	// TODO: Make cleaner
 	Scalar errorSum = cv::sum(errors);
 	float errorSumF = ((float)(errorSum[0]));
 
-	float reLUPrime = (lastOutput.at<float>(0) >= 0.0f) ? 1.0f : alpha;
+	float reLUPrime = (lastOutput.at<float>(0) >= 0.0f) ? 1.0f : 0.0f;
 	Mat prime = Mat::ones(1, 1, CV_32FC1) * reLUPrime;
 	Mat sigma = errorSumF * prime;
 
@@ -37,12 +35,12 @@ Mat LeakyReLUFunction::backPropagate(Mat lastInput, Mat errors)
 	return sigma * weightsPrime;
 }
 
-bool LeakyReLUFunction::hasBias()
+bool SoftmaxFunction::hasBias()
 {
-	return true;
+	return false;
 }
 
-void LeakyReLUFunction::draw(DrawingCanvas canvas)
+void SoftmaxFunction::draw(DrawingCanvas canvas)
 {
 	const Scalar BLACK(0, 0, 0);
 
@@ -53,7 +51,7 @@ void LeakyReLUFunction::draw(DrawingCanvas canvas)
 	{
 		x1 = -1.0f;
 		x2 = +min(1.0f, inv_slope);
-		y1 = -alpha;
+		y1 = 0.0f;
 		y2 = (x2 * slope);
 	}
 	else
@@ -61,7 +59,7 @@ void LeakyReLUFunction::draw(DrawingCanvas canvas)
 		x1 = -min(1.0f, inv_slope);
 		x2 = 1.0f;
 		y1 = (x1 * slope);
-		y2 = alpha;
+		y2 = 0.0f;
 	}
 
 	Point l_start(canvas.offset.x + ((int)(DRAW_LEN * x1)), canvas.offset.y - ((int)(DRAW_LEN * y1)));

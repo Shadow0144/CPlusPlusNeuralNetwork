@@ -8,6 +8,7 @@
 #include "SoftplusFunction.h"
 #include "SigmoidFunction.h"
 #include "TanhFunction.h"
+#include "SoftmaxFunction.h"
 
 #include <math.h>
 #include <opencv2/core.hpp>
@@ -60,6 +61,9 @@ Neuron::Neuron(ActivationFunction function, vector<Neuron*>* parents)
 		case ActivationFunction::Tanh:
 			inputCount++; // Bias
 			activationFunction = new TanhFunction(inputCount);
+			break; 
+		case ActivationFunction::Softmax:
+			activationFunction = new SoftmaxFunction(inputCount);
 			break;
 		default:
 			activationFunction = new IdentityFunction(inputCount);

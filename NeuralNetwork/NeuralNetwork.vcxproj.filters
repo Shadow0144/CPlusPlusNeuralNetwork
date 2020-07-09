@@ -13,11 +13,17 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\Function">
+    <Filter Include="Source Files\ErrorFunction">
+      <UniqueIdentifier>{9c6fdaa7-b3a3-4286-ac9c-ed40fb5bba8d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ActivationFunction">
+      <UniqueIdentifier>{292a4076-72cb-4655-98ac-45c13577f502}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ActivationFunction">
       <UniqueIdentifier>{00e166c2-0aed-4317-916e-b1d7322592fd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Function">
-      <UniqueIdentifier>{292a4076-72cb-4655-98ac-45c13577f502}</UniqueIdentifier>
+    <Filter Include="Header Files\ErrorFunction">
+      <UniqueIdentifier>{71842a1e-ee76-4533-9dbc-721be86e27fd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -31,31 +37,37 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DotProductFunction.cpp">
-      <Filter>Source Files\Function</Filter>
+      <Filter>Source Files\ActivationFunction</Filter>
     </ClCompile>
     <ClCompile Include="ReLUFunction.cpp">
-      <Filter>Source Files\Function</Filter>
+      <Filter>Source Files\ActivationFunction</Filter>
     </ClCompile>
     <ClCompile Include="IdentityFunction.cpp">
-      <Filter>Source Files\Function</Filter>
+      <Filter>Source Files\ActivationFunction</Filter>
     </ClCompile>
     <ClCompile Include="ParameterSet.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SigmoidFunction.cpp">
-      <Filter>Source Files\Function</Filter>
+      <Filter>Source Files\ActivationFunction</Filter>
     </ClCompile>
     <ClCompile Include="TanhFunction.cpp">
-      <Filter>Source Files\Function</Filter>
+      <Filter>Source Files\ActivationFunction</Filter>
     </ClCompile>
     <ClCompile Include="Function.cpp">
-      <Filter>Source Files\Function</Filter>
+      <Filter>Source Files\ActivationFunction</Filter>
     </ClCompile>
     <ClCompile Include="SoftplusFunction.cpp">
-      <Filter>Source Files\Function</Filter>
+      <Filter>Source Files\ActivationFunction</Filter>
     </ClCompile>
     <ClCompile Include="LeakyReLUFunction.cpp">
-      <Filter>Source Files\Function</Filter>
+      <Filter>Source Files\ActivationFunction</Filter>
+    </ClCompile>
+    <ClCompile Include="SoftmaxFunction.cpp">
+      <Filter>Source Files\ActivationFunction</Filter>
+    </ClCompile>
+    <ClCompile Include="MSEFunction.cpp">
+      <Filter>Source Files\ErrorFunction</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -66,39 +78,56 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Function.h">
-      <Filter>Header Files\Function</Filter>
+      <Filter>Header Files\ActivationFunction</Filter>
     </ClInclude>
     <ClInclude Include="DotProductFunction.h">
-      <Filter>Header Files\Function</Filter>
+      <Filter>Header Files\ActivationFunction</Filter>
     </ClInclude>
     <ClInclude Include="DrawingCanvas.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ReLUFunction.h">
-      <Filter>Header Files\Function</Filter>
+      <Filter>Header Files\ActivationFunction</Filter>
     </ClInclude>
     <ClInclude Include="IdentityFunction.h">
-      <Filter>Header Files\Function</Filter>
+      <Filter>Header Files\ActivationFunction</Filter>
     </ClInclude>
     <ClInclude Include="ParameterSet.h">
-      <Filter>Header Files\Function</Filter>
+      <Filter>Header Files\ActivationFunction</Filter>
     </ClInclude>
     <ClInclude Include="SigmoidFunction.h">
-      <Filter>Header Files\Function</Filter>
+      <Filter>Header Files\ActivationFunction</Filter>
     </ClInclude>
     <ClInclude Include="TanhFunction.h">
-      <Filter>Header Files\Function</Filter>
+      <Filter>Header Files\ActivationFunction</Filter>
     </ClInclude>
     <ClInclude Include="SoftplusFunction.h">
-      <Filter>Header Files\Function</Filter>
+      <Filter>Header Files\ActivationFunction</Filter>
     </ClInclude>
     <ClInclude Include="LeakyReLUFunction.h">
-      <Filter>Header Files\Function</Filter>
+      <Filter>Header Files\ActivationFunction</Filter>
+    </ClInclude>
+    <ClInclude Include="SoftmaxFunction.h">
+      <Filter>Header Files\ActivationFunction</Filter>
+    </ClInclude>
+    <ClInclude Include="ErrorFunction.h">
+      <Filter>Header Files\ErrorFunction</Filter>
+    </ClInclude>
+    <ClInclude Include="MSEFunction.h">
+      <Filter>Header Files\ErrorFunction</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="SuccessVisualStudioWindows.jpg">
       <Filter>Resource Files</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="main.qml">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="qml.qrc">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

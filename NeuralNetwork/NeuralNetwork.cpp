@@ -4,7 +4,7 @@
 #include <opencv2/core.hpp>
 #include <opencv2/imgproc.hpp>
 
-NeuralNetwork::NeuralNetwork(int layerCount, int* layerShapes, ActivationFunction* layerFunctions)
+NeuralNetwork::NeuralNetwork(int layerCount, int* layerShapes, ActivationFunction* layerFunctions, ErrorFunction* errorFunction)
 {
 	this->layerCount = layerCount;
 	this->layerShapes = layerShapes;
@@ -19,6 +19,7 @@ NeuralNetwork::NeuralNetwork(int layerCount, int* layerShapes, ActivationFunctio
 		}
 		parents = &layers[i];
 	}
+	this->errorFunction = errorFunction;
 }
 
 NeuralNetwork::~NeuralNetwork()
@@ -89,13 +90,9 @@ bool NeuralNetwork::backPropagate(Mat xs, Mat yHats)
 	return false;
 }
 
-float NeuralNetwork::MSE(Mat ys, Mat yHats)
+float NeuralNetwork::getError(Mat predicted, Mat actual)
 {
-	Mat diff = yHats - ys;
-	Mat pow;
-	cv::pow(diff, 2, pow);
-	float result = 0.5f * ((float)(sum(pow)[0]));
-	return result;
+	return errorFunction->getError(predicted, actual);
 }
 
 void NeuralNetwork::draw(DrawingCanvas canvas, Mat target_xs, Mat target_ys)

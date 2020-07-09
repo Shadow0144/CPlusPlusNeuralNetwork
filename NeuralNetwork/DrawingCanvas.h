@@ -9,5 +9,5 @@ struct DrawingCanvas
 public:
 	Mat canvas;
 	Point offset;
-	float scale;
+	float scale = 1.0f;
 };

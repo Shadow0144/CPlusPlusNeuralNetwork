@@ -16,7 +16,7 @@ public:
 	virtual void draw(DrawingCanvas canvas);
 	ParameterSet getWeights() { return weights; }
 protected:
-	int numInputs;
+	int numInputs = 0;
 	ParameterSet weights;
 	const int DRAW_LEN = 16;
 

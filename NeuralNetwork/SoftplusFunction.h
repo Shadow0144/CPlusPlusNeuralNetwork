@@ -14,6 +14,11 @@ public:
 	bool hasBias();
 	void draw(DrawingCanvas canvas);
 
+	float getAlpha() { return alpha; }
+	void setAlpha(float alpha) { this->alpha = alpha; }
+
 private:
 	Mat lastOutput;
+
+	float alpha = 0.01f; // Leak coefficient
 };

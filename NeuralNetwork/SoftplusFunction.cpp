@@ -14,7 +14,6 @@ Mat SoftplusFunction::feedForward(Mat inputs)
 {
 	lastOutput = inputs * weights.getParameters();
 	float lOut = lastOutput.at<float>(0);
-	float alpha = 0.01f; // TODO
 	lastOutput.at<float>(0) = (alpha * lOut) + ((1.0f - alpha) * log(1 + exp(lOut)));
 	return lastOutput;
 }

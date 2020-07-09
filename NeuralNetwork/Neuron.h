@@ -15,7 +15,8 @@ enum class ActivationFunction
 	LeakyReLU,
 	Softplus,
 	Sigmoid,
-	Tanh
+	Tanh,
+	Softmax
 };
 
 class Neuron

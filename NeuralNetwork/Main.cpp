@@ -1,5 +1,8 @@
 #define _USE_MATH_DEFINES
 
+#include <QtGui/QGuiApplication>
+#include <QtQml/QQmlApplicationEngine>
+
 #include <iostream>
 #include <opencv2/core.hpp>
 #include <opencv2/imgcodecs.hpp>
@@ -9,6 +12,7 @@
 #include <cmath>
 
 #include "NeuralNetwork.h"
+#include "MSEFunction.h"
 
 using namespace cv;
 using namespace std;
@@ -56,7 +60,7 @@ void test_network()
     int layerShapes[] = { 1, 6, 1 };
     ActivationFunction functions[] =
         { ActivationFunction::WeightedDotProduct,
-          ActivationFunction::ReLU,
+          ActivationFunction::LeakyReLU,
           ActivationFunction::WeightedDotProduct };
 #elif defined(FOUR)
     int layers = 4;
@@ -79,7 +83,9 @@ void test_network()
         { ActivationFunction::WeightedDotProduct };
 #endif
 
-    NeuralNetwork network = NeuralNetwork(layers, layerShapes, functions);
+    ErrorFunction* errorFunction = new MSEFunction();
+
+    NeuralNetwork network = NeuralNetwork(layers, layerShapes, functions, errorFunction);
 
     DrawingCanvas canvas;
     canvas.canvas = img;
@@ -119,8 +125,8 @@ void test_network()
         cout << "Feedforward Untrained: X: " << training_x.at<float>(i) << " Y': " << training_y.at<float>(i) << " Y: " << result_y.at<float>(i) << endl;
     }
 #endif
-    float MSE = network.MSE(result_y, training_y);
-    cout << "MSE: " << MSE << endl;
+    float error = network.getError(result_y, training_y);
+    cout << "Error: " << error << endl;
 
     network.draw(canvas, training_x, training_y);
     imshow(window_name, img);
@@ -131,7 +137,7 @@ void test_network()
     const int EPOCHS = 10000;
     const int PRINT = 100;
     int t = 0;
-    while (MSE > STOP && t < EPOCHS)
+    while (error > STOP && t < EPOCHS)
     {
         network.backPropagate(training_x, training_y);
 
@@ -150,15 +156,15 @@ void test_network()
                     << " Y: " << result_y.at<float>(i) << endl;
             }
 #endif
-            MSE = network.MSE(result_y, training_y);
-            cout << "MSE: " << MSE << endl;
+            error = network.getError(result_y, training_y);
+            cout << "Error: " << error << endl;
         }
 
         t++;
     }
     result_y = network.feedForward(training_x);
 
-    if (MSE <= STOP)
+    if (error <= STOP)
     {
         cout << endl << "Minimum loss condition reached" << endl;
     }
@@ -175,7 +181,7 @@ void test_network()
         cout << "Feedforward Trained: X: " << training_x.at<float>(i) << " Y': " << training_y.at<float>(i) << " Y: " << result_y.at<float>(i) << endl;
     }
 #endif
-    cout << "MSE: " << network.MSE(result_y, training_y) << endl;
+    cout << "Error: " << network.getError(result_y, training_y) << endl;
 
     network.draw(canvas, training_x, training_y);
     imshow(window_name, img);
@@ -183,9 +189,24 @@ void test_network()
     waitKey(0); // Wait for a keystroke in the window
 }
 
-int main()
+int main(int argc, char** argv)
 {
+#if defined(Q_OS_WIN)
+    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+#endif
+
+    QGuiApplication app(argc, argv);
+
+    QQmlApplicationEngine engine;
+    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
+    if (engine.rootObjects().isEmpty())
+        return -1;
+
+    int r = app.exec();
+
     test_network();
 
-    return 0;
+    return r;
+
+    //return 0;
 }
