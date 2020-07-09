@@ -42,6 +42,12 @@ int test()
 
 void test_network()
 {
+    const float STOP = 0.001f;
+    const int ITERATIONS = 10000;
+    const int PRINT = 100;
+    const float CONVERGENCE_W = 0.001f;
+    const float CONVERGENCE_E = 0.00000001f;
+
     const int size = 600;
     char window_name[] = "Neural Network";
     Mat img = Mat::Mat(size, size, CV_8UC3, Scalar(225, 225, 225));
@@ -85,7 +91,7 @@ void test_network()
 
     ErrorFunction* errorFunction = new MSEFunction();
 
-    NeuralNetwork network = NeuralNetwork(layers, layerShapes, functions, errorFunction);
+    NeuralNetwork network = NeuralNetwork(layers, layerShapes, functions, errorFunction, CONVERGENCE_W);
 
     DrawingCanvas canvas;
     canvas.canvas = img;
@@ -133,21 +139,23 @@ void test_network()
     moveWindow(window_name, 400, 180);
     waitKey(100);
 
-    const float STOP = 0.001f;
-    const int ITERATIONS = 10000;
-    const int PRINT = 100;
     int t = 0;
-    while (error > STOP && t < ITERATIONS)
+    bool converged = false;
+    float lastError = error;
+    float deltaError = error;
+    while (error > STOP && t < ITERATIONS && !converged && deltaError > CONVERGENCE_E)
     {
-        network.backPropagate(training_x, training_y);
+        converged = network.backPropagate(training_x, training_y);
+        result_y = network.feedForward(training_x);
         error = network.getError(result_y, training_y);
+        deltaError = abs(lastError - error);
+        lastError = error;
 
         if (t % PRINT == 0)
         {
             network.draw(canvas, training_x, training_y);
             imshow(window_name, img);
             waitKey(1); // Wait enough for the window to draw
-            result_y = network.feedForward(training_x);
             cout << endl << "Iterations: " << (t+1) << endl;
 #if (VERBOSITY == 1)
             for (int i = 0; i < training_x.rows; i++)
@@ -164,7 +172,15 @@ void test_network()
     }
     result_y = network.feedForward(training_x);
 
-    if (error <= STOP)
+    if (deltaError <= CONVERGENCE_E)
+    {
+        cout << endl << "Error has converged" << endl;
+    }
+    else if (converged)
+    {
+        cout << endl << "Weights have converged" << endl;
+    }
+    else if (error <= STOP)
     {
         cout << endl << "Minimum loss condition reached" << endl;
     }

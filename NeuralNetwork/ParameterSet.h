@@ -12,6 +12,7 @@ public:
 	void setParametersRandom(int parameterCount);
 	void setParametersZero(int parameterCount);
 	void setParametersOne(int parameterCount);
+	Mat getDeltaParameters();
 	void setDeltaParameters(Mat deltaParameters);
 	void applyDeltaParameters();
 

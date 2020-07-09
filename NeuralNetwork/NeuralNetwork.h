@@ -9,7 +9,8 @@ using namespace std;
 class NeuralNetwork
 {
 public:
-	NeuralNetwork(int layerCount, int* layerShapes, ActivationFunction* layerFunctions, ErrorFunction* errorFunction);
+	NeuralNetwork(int layerCount, int* layerShapes, ActivationFunction* layerFunctions, 
+		ErrorFunction* errorFunction, float convergenceThreshold);
 	~NeuralNetwork();
 
 	Mat feedForward(Mat input);
@@ -24,4 +25,5 @@ private:
 	int* layerShapes;
 	vector<Neuron*>* layers;
 	ErrorFunction* errorFunction;
+	float convergenceThreshold;
 };

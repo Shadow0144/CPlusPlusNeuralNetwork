@@ -11,7 +11,7 @@ class Function
 public:
 	virtual Mat feedForward(Mat inputs) = 0;
 	virtual Mat backPropagate(Mat lastInput, Mat errors) = 0;
-	void applyBackProgate();
+	float applyBackProgate(); // Returns the sum of the change in the weights
 	virtual bool hasBias() = 0;
 	virtual void draw(DrawingCanvas canvas);
 	ParameterSet getWeights() { return weights; }

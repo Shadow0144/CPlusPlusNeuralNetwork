@@ -35,6 +35,11 @@ void ParameterSet::setParametersOne(int parameterCount)
 	parameters = Mat::ones(Size(parameterCount, 1), CV_32FC1);
 }
 
+Mat ParameterSet::getDeltaParameters()
+{
+	return deltaParameters;
+}
+
 void ParameterSet::setDeltaParameters(Mat deltaParameters)
 {
 	this->deltaParameters = deltaParameters;

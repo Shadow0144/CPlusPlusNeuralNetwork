@@ -100,9 +100,9 @@ Mat Neuron::backPropagate(Mat errors)
 	return activationFunction->backPropagate(lastInput, errors);
 }
 
-void Neuron::applyBackPropagate()
+float Neuron::applyBackPropagate()
 {
-	activationFunction->applyBackProgate();
+	return activationFunction->applyBackProgate();
 }
 
 void Neuron::draw(DrawingCanvas canvas, bool output)

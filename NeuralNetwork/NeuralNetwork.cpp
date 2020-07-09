@@ -4,7 +4,8 @@
 #include <opencv2/core.hpp>
 #include <opencv2/imgproc.hpp>
 
-NeuralNetwork::NeuralNetwork(int layerCount, int* layerShapes, ActivationFunction* layerFunctions, ErrorFunction* errorFunction)
+NeuralNetwork::NeuralNetwork(int layerCount, int* layerShapes, ActivationFunction* layerFunctions, 
+	ErrorFunction* errorFunction, float convergenceThreshold)
 {
 	this->layerCount = layerCount;
 	this->layerShapes = layerShapes;
@@ -20,6 +21,7 @@ NeuralNetwork::NeuralNetwork(int layerCount, int* layerShapes, ActivationFunctio
 		parents = &layers[i];
 	}
 	this->errorFunction = errorFunction;
+	this->convergenceThreshold = convergenceThreshold;
 }
 
 NeuralNetwork::~NeuralNetwork()
@@ -55,6 +57,7 @@ Mat NeuralNetwork::feedForward(Mat input)
 
 bool NeuralNetwork::backPropagate(Mat xs, Mat yHats)
 {
+	bool converged = true;
 	if (xs.rows = yHats.rows)
 	{
 		for (int i = 0; i < yHats.rows; i++)
@@ -80,14 +83,19 @@ bool NeuralNetwork::backPropagate(Mat xs, Mat yHats)
 			{
 				for (int k = 0; k < layerShapes[j]; k++)
 				{
-					layers[j].at(k)->applyBackPropagate();
+					float deltaW = layers[j].at(k)->applyBackPropagate();
+					if (deltaW > convergenceThreshold) // Always positive
+					{
+						converged = false;
+					}
+					else { }
 				}
 			}
 		}
 	}
 	else { }
 
-	return false;
+	return converged;
 }
 
 float NeuralNetwork::getError(Mat predicted, Mat actual)

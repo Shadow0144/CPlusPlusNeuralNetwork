@@ -3,9 +3,10 @@
 #include <opencv2/core.hpp>
 #include <opencv2/imgproc.hpp>
 
-void Function::applyBackProgate()
+float Function::applyBackProgate()
 {
 	weights.applyDeltaParameters();
+	return ((float)(sum(abs(weights.getDeltaParameters()))[0]));
 }
 
 void Function::draw(DrawingCanvas canvas)
