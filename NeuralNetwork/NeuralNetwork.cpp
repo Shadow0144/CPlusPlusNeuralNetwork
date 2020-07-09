@@ -3,10 +3,16 @@
 #include <iostream>
 #include <opencv2/core.hpp>
 #include <opencv2/imgproc.hpp>
+#include <opencv2/imgcodecs.hpp>
+#include <opencv2/highgui.hpp>
+#include <math.h>
+#include <cmath>
 
-NeuralNetwork::NeuralNetwork(int layerCount, int* layerShapes, ActivationFunction* layerFunctions, 
-	ErrorFunction* errorFunction, float convergenceThreshold)
+NeuralNetwork::NeuralNetwork(int layerCount, int* layerShapes, ActivationFunction* layerFunctions)
 {
+	this->verbosity = 1;
+	this->drawRate = 100;
+	this->drawingEnabled = true;
 	this->layerCount = layerCount;
 	this->layerShapes = layerShapes;
 	layers = new vector<Neuron*>[layerCount];
@@ -20,8 +26,6 @@ NeuralNetwork::NeuralNetwork(int layerCount, int* layerShapes, ActivationFunctio
 		}
 		parents = &layers[i];
 	}
-	this->errorFunction = errorFunction;
-	this->convergenceThreshold = convergenceThreshold;
 }
 
 NeuralNetwork::~NeuralNetwork()
@@ -29,15 +33,15 @@ NeuralNetwork::~NeuralNetwork()
 	//delete layers;
 }
 
-Mat NeuralNetwork::feedForward(Mat input)
+Mat NeuralNetwork::feedForward(Mat inputs)
 {
 	// Fix: Assumes a non-zero network
 	Mat result = Mat(0, layerShapes[layerCount-1], CV_32F); // The final result encapsulating all examples
-	if (layerCount > 0 && input.cols == 1 /*input.cols == layerShapes[0]*/)
+	if (layerCount > 0 && inputs.cols == 1 /*input.cols == layerShapes[0]*/)
 	{
-		for (int i = 0; i < input.rows; i++) // Loop through the examples
+		for (int i = 0; i < inputs.rows; i++) // Loop through the examples
 		{
-			Mat example = input.row(i); // A single example
+			Mat example = inputs.row(i); // A single example
 			for (int j = 0; j < layerCount; j++) // Loop through the layers
 			{
 				Mat row_result = Mat(1, 0, CV_32F); // The result of a single layer of calculation
@@ -55,15 +59,15 @@ Mat NeuralNetwork::feedForward(Mat input)
 	return result;
 }
 
-bool NeuralNetwork::backPropagate(Mat xs, Mat yHats)
+bool NeuralNetwork::backPropagate(Mat inputs, Mat targets)
 {
 	bool converged = true;
-	if (xs.rows = yHats.rows)
+	if (inputs.rows == targets.rows)
 	{
-		for (int i = 0; i < yHats.rows; i++)
+		for (int i = 0; i < targets.rows; i++)
 		{
-			Mat y = feedForward(xs.row(i));
-			Mat errors = Mat(1, layerShapes[layerCount - 1], CV_32FC1, cv::sum(yHats.row(i) - y));
+			Mat y = feedForward(inputs.row(i));
+			Mat errors = Mat(1, layerShapes[layerCount - 1], CV_32FC1, cv::sum(targets.row(i) - y));
 			for (int j = (layerCount - 1); j > 0; j--) // Skip the top row
 			{
 				Mat newErrors = Mat(0, layerShapes[j - 1], CV_32FC1);
@@ -84,7 +88,7 @@ bool NeuralNetwork::backPropagate(Mat xs, Mat yHats)
 				for (int k = 0; k < layerShapes[j]; k++)
 				{
 					float deltaW = layers[j].at(k)->applyBackPropagate();
-					if (deltaW > convergenceThreshold) // Always positive
+					if (deltaW > weightConvergenceThreshold) // Always positive
 					{
 						converged = false;
 					}
@@ -98,9 +102,167 @@ bool NeuralNetwork::backPropagate(Mat xs, Mat yHats)
 	return converged;
 }
 
+void NeuralNetwork::train(Mat inputs, Mat targets)
+{
+	const int SIZE = 600;
+	char window_name[] = "Neural Network";
+	Mat img = Mat::Mat(SIZE, SIZE, CV_8UC3, Scalar(225, 225, 225));
+	
+	DrawingCanvas canvas;
+	canvas.canvas = img;
+	canvas.offset = Point(0, 0);
+	canvas.scale = 1.0f;
+
+	Mat predicted = feedForward(inputs);
+	draw(canvas, predicted, targets);
+
+	float error = getError(predicted, targets);
+	if (verbosity >= 1)
+	{
+		cout << "Initial: " << endl;
+		if (verbosity >= 2)
+		{
+			for (int i = 0; i < inputs.rows; i++)
+			{
+				cout << "Feedforward Untrained: X: " << inputs.at<float>(i) << " Y': " << targets.at<float>(i) << " Y: " << predicted.at<float>(i) << endl;
+			}
+		}
+		else {}
+		cout << "Error: " << error << endl;
+	}
+	else {}
+
+	draw(canvas, inputs, targets);
+	imshow(window_name, img);
+	moveWindow(window_name, 400, 180);
+	waitKey(100);
+
+	int t = 0;
+	bool converged = false;
+	float lastError = error;
+	float deltaError = error;
+	while (error > minError && t < maxIterations && !converged && deltaError > errorConvergenceThreshold)
+	{
+		converged = backPropagate(inputs, targets);
+		predicted = feedForward(inputs);
+		error = getError(predicted, targets);
+		deltaError = abs(lastError - error);
+		lastError = error;
+
+		if (t % drawRate == 0)
+		{
+			draw(canvas, inputs, targets);
+			imshow(window_name, img);
+			waitKey(1); // Wait enough for the window to draw
+			if (verbosity >= 1)
+			{
+				cout << endl << "Iterations: " << (t + 1) << endl;
+				if (verbosity >= 2)
+				{
+					for (int i = 0; i < inputs.rows; i++)
+					{
+						cout << "Feedforward Training: X: " << inputs.at<float>(i)
+							<< " Y': " << targets.at<float>(i)
+							<< " Y: " << predicted.at<float>(i) << endl;
+					}
+				}
+				else {}
+				cout << "Error: " << error << endl;
+			}
+			else {}
+		}
+
+		t++;
+	}
+	predicted = feedForward(inputs);
+
+	if (verbosity >= 1)
+	{
+		if (deltaError <= errorConvergenceThreshold)
+		{
+			cout << endl << "Error has converged" << endl;
+		}
+		else if (converged)
+		{
+			cout << endl << "Weights have converged" << endl;
+		}
+		else if (error <= minError)
+		{
+			cout << endl << "Minimum loss condition reached" << endl;
+		}
+		else if (t == maxIterations)
+		{
+			cout << endl << "Maximum iterations reached" << endl;
+		}
+		else {}
+	}
+	else {}
+
+	if (verbosity >= 1)
+	{
+		cout << endl << "Trained: " << endl;
+		if (verbosity >= 2)
+		{
+			for (int i = 0; i < inputs.rows; i++)
+			{
+				cout << "Feedforward Trained: X: " << inputs.at<float>(i) << " Y': " << targets.at<float>(i) << " Y: " << predicted.at<float>(i) << endl;
+			}
+		}
+		else {}
+		cout << "Iterations: " << t << endl;
+		cout << "Error: " << getError(predicted, targets) << endl;
+	}
+	else {}
+
+	draw(canvas, inputs, targets);
+	imshow(window_name, img);
+	cout << endl << "Press any key to exit" << endl;
+	waitKey(0); // Wait for a keystroke in the window
+}
+
+void NeuralNetwork::setTrainingParameters(ErrorFunction* errorFunction, int maxIterations,
+	float minError, float errorConvergenceThreshold, float weightConvergenceThreshold)
+{
+	this->errorFunction = errorFunction;
+	this->maxIterations = maxIterations;
+	this->minError = minError;
+	this->errorConvergenceThreshold = errorConvergenceThreshold;
+	this->weightConvergenceThreshold = weightConvergenceThreshold;
+}
+
 float NeuralNetwork::getError(Mat predicted, Mat actual)
 {
 	return errorFunction->getError(predicted, actual);
+}
+
+int NeuralNetwork::getVerbosity()
+{
+	return verbosity;
+}
+
+void NeuralNetwork::setVerbosity(int verbosity)
+{
+	this->verbosity = verbosity;
+}
+
+int NeuralNetwork::getDrawRate()
+{
+	return drawRate;
+}
+
+void NeuralNetwork::setDrawRate(int drawRate)
+{
+	this->drawRate = drawRate;
+}
+
+bool NeuralNetwork::getDrawingEnabled()
+{
+	return drawingEnabled;
+}
+
+void NeuralNetwork::setDrawingEnabled(bool drawingEnabled)
+{
+	this->drawingEnabled = drawingEnabled;
 }
 
 void NeuralNetwork::draw(DrawingCanvas canvas, Mat target_xs, Mat target_ys)
