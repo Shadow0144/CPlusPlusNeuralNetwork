@@ -1,8 +1,5 @@
 #define _USE_MATH_DEFINES
 
-#include <QtGui/QGuiApplication>
-#include <QtQml/QQmlApplicationEngine>
-
 #include <iostream>
 #include <opencv2/core.hpp>
 #include <opencv2/imgcodecs.hpp>
@@ -118,22 +115,7 @@ void test_network()
 
 int main(int argc, char** argv)
 {
-#if defined(Q_OS_WIN)
-    //QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-#endif
-
-    //QGuiApplication app(argc, argv);
-
-    //QQmlApplicationEngine engine;
-    //engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
-    //if (engine.rootObjects().isEmpty())
-    //    return -1;
-
-    //int r = app.exec();
-
     test_network();
-
-    //return r;
 
     return 0;
 }

@@ -26,6 +26,12 @@ NeuralNetwork::NeuralNetwork(int layerCount, int* layerShapes, ActivationFunctio
 		}
 		parents = &layers[i];
 	}
+
+	this->errorFunction = NULL;
+	this->maxIterations = 10000;
+	this->minError = 0.001f;
+	this->errorConvergenceThreshold = 0.00000001f;
+	this->weightConvergenceThreshold = 0.001f;
 }
 
 NeuralNetwork::~NeuralNetwork()
@@ -265,6 +271,7 @@ void NeuralNetwork::setDrawingEnabled(bool drawingEnabled)
 	this->drawingEnabled = drawingEnabled;
 }
 
+bool windowMade = false;
 void NeuralNetwork::draw(DrawingCanvas canvas, Mat target_xs, Mat target_ys)
 {
 	// Clear the canvas
@@ -341,7 +348,8 @@ void NeuralNetwork::draw(DrawingCanvas canvas, Mat target_xs, Mat target_ys)
 		else { }
 	}
 
-	int resizeX = GRID_SIZE / ((int)((target_xs.at<float>(target_xs.rows - 1) - target_xs.at<float>(0)))) / 2;
+	float w = ((int)((target_xs.at<float>(target_xs.rows - 1) - target_xs.at<float>(0)))) / 2.0f;
+	int resizeX = ((int)(GRID_SIZE / w));
 	// Fix: Clipping y
 	const Scalar BLUE(255, 0, 0);
 	const float STEP_SIZE = 0.1f;
