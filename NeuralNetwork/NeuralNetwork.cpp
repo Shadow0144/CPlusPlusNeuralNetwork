@@ -1,5 +1,8 @@
 #include "NeuralNetwork.h"
 
+#include <Eigen/Core>
+#include <nanogui/window.h>
+
 #include <iostream>
 #include <opencv2/core.hpp>
 #include <opencv2/imgproc.hpp>
