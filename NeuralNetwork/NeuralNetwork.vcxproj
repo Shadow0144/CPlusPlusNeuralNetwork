@@ -159,6 +159,7 @@
     <ClCompile Include="IdentityFunction.cpp" />
     <ClCompile Include="LeakyReLUFunction.cpp" />
     <ClCompile Include="MSEFunction.cpp" />
+    <ClCompile Include="NetworkVisualizer.cpp" />
     <ClCompile Include="NeuralNetwork.cpp" />
     <ClCompile Include="Neuron.cpp" />
     <ClCompile Include="ParameterSet.cpp" />
@@ -173,6 +174,7 @@
     <ClInclude Include="ErrorFunction.h" />
     <ClInclude Include="LeakyReLUFunction.h" />
     <ClInclude Include="MSEFunction.h" />
+    <ClInclude Include="NetworkVisualizer.h" />
     <ClInclude Include="ParameterSet.h" />
     <ClInclude Include="DotProductFunction.h" />
     <ClInclude Include="DrawingCanvas.h" />

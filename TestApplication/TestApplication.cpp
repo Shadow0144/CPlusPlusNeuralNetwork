@@ -10,6 +10,7 @@
 
 #include "NeuralNetwork.h"
 #include "MSEFunction.h"
+#include "NetworkVisualizer.h"
 
 using namespace cv;
 using namespace std;
@@ -115,7 +116,9 @@ void test_network()
 
 int main(int argc, char** argv)
 {
-    test_network();
+    //test_network();
+
+    NetworkVisualizer nv = NetworkVisualizer();
 
     return 0;
 }
