@@ -90,6 +90,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <TargetName>$(ProjectName)d</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -177,7 +178,6 @@
     <ClInclude Include="NetworkVisualizer.h" />
     <ClInclude Include="ParameterSet.h" />
     <ClInclude Include="DotProductFunction.h" />
-    <ClInclude Include="DrawingCanvas.h" />
     <ClInclude Include="Function.h" />
     <ClInclude Include="IdentityFunction.h" />
     <ClInclude Include="NeuralNetwork.h" />

@@ -1,7 +1,5 @@
 #include "SoftmaxFunction.h"
 
-#include <opencv2/core.hpp>
-#include <opencv2/imgproc.hpp>
 #include <iostream>
 
 SoftmaxFunction::SoftmaxFunction(int numInputs)
@@ -10,29 +8,24 @@ SoftmaxFunction::SoftmaxFunction(int numInputs)
 	this->weights.setParametersZero(0);
 }
 
-Mat SoftmaxFunction::feedForward(Mat inputs)
+MatrixXd SoftmaxFunction::feedForward(MatrixXd inputs)
 {
-	//lastOutput = cv::exp(inputs);
 	return lastOutput;
 }
 
-Mat SoftmaxFunction::backPropagate(Mat lastInput, Mat errors)
+MatrixXd SoftmaxFunction::backPropagate(MatrixXd lastInput, MatrixXd errors)
 {
-	// TODO: Make cleaner
-	Scalar errorSum = cv::sum(errors);
-	float errorSumF = ((float)(errorSum[0]));
+	double errorSum = errors.sum();
+	double reLUPrime = (lastOutput(0) >= 0.0) ? 1.0 : 0.0;
+	MatrixXd prime = MatrixXd::Ones(1, 1) * reLUPrime;
+	MatrixXd sigma = errorSum * prime;
 
-	float reLUPrime = (lastOutput.at<float>(0) >= 0.0f) ? 1.0f : 0.0f;
-	Mat prime = Mat::ones(1, 1, CV_32FC1) * reLUPrime;
-	Mat sigma = errorSumF * prime;
+	weights.setDeltaParameters(-ALPHA * lastInput.transpose() * sigma);
 
-	weights.setDeltaParameters(-ALPHA * lastInput.t() * sigma);
+	// Strip away the bias parameter and weight the sigma by the incoming weights
+	MatrixXd weightsPrime = weights.getParameters().block(0, 0, (numInputs - 1), 1);
 
-	// Strip away the bias parameter and weights the sigma by the incoming weights
-	Mat weightsPrime = weights.getParameters();
-	weightsPrime = weightsPrime(Rect(0, 0, 1, numInputs - 1)).t();
-
-	return sigma * weightsPrime;
+	return sigma * weightsPrime.transpose();
 }
 
 bool SoftmaxFunction::hasBias()
@@ -45,9 +38,9 @@ int SoftmaxFunction::numOutputs()
 	return numInputs;
 }
 
-void SoftmaxFunction::draw(DrawingCanvas canvas)
+void SoftmaxFunction::draw(NetworkVisualizer canvas)
 {
-	const Scalar BLACK(0, 0, 0);
+	/*const Scalar BLACK(0, 0, 0);
 
 	float slope = weights.getParameters().at<float>(0);
 	float inv_slope = 1.0f / abs(slope);
@@ -74,5 +67,5 @@ void SoftmaxFunction::draw(DrawingCanvas canvas)
 	Function::draw(canvas);
 
 	line(canvas.canvas, l_start, l_mid, BLACK, 1, LINE_8);
-	line(canvas.canvas, l_mid, l_end, BLACK, 1, LINE_8);
+	line(canvas.canvas, l_mid, l_end, BLACK, 1, LINE_8);*/
 }

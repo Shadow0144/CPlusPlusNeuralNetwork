@@ -1,22 +1,24 @@
 #pragma once
 
-#include <opencv2/core.hpp>
+#pragma warning(push, 0)
+#include <Eigen/Core>
+#pragma warning(pop)
 
-using namespace cv;
+using namespace Eigen;
 
 class ParameterSet
 {
 public:
 	ParameterSet();
-	Mat getParameters();
+	MatrixXd getParameters();
 	void setParametersRandom(int parameterCount);
 	void setParametersZero(int parameterCount);
 	void setParametersOne(int parameterCount);
-	Mat getDeltaParameters();
-	void setDeltaParameters(Mat deltaParameters);
+	MatrixXd getDeltaParameters();
+	void setDeltaParameters(MatrixXd deltaParameters);
 	void applyDeltaParameters();
 
 private:
-	Mat parameters;
-	Mat deltaParameters;
+	MatrixXd parameters;
+	MatrixXd deltaParameters;
 };

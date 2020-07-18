@@ -1,7 +1,5 @@
 #include "SoftplusFunction.h"
 
-#include <opencv2/core.hpp>
-#include <opencv2/imgproc.hpp>
 #include <iostream>
 
 SoftplusFunction::SoftplusFunction(int numInputs)
@@ -10,36 +8,32 @@ SoftplusFunction::SoftplusFunction(int numInputs)
 	this->weights.setParametersRandom(numInputs);
 }
 
-float softplus(float value, float k)
+double softplus(double value, double k)
 {
 	return (log(1 + exp(k * value)) / k);
 }
 
-Mat SoftplusFunction::feedForward(Mat inputs)
+MatrixXd SoftplusFunction::feedForward(MatrixXd inputs)
 {
 	lastOutput = inputs * weights.getParameters();
-	lastOutput.at<float>(0) = softplus(lastOutput.at<float>(0), k);
+	lastOutput(0) = softplus(lastOutput(0), k);
 	return lastOutput;
 }
 
-Mat SoftplusFunction::backPropagate(Mat lastInput, Mat errors)
+MatrixXd SoftplusFunction::backPropagate(MatrixXd lastInput, MatrixXd errors)
 {
-	// TODO: Make cleaner
-	Scalar errorSum = cv::sum(errors);
-	float errorSumF = ((float)(errorSum[0]));
+	double errorSum = errors.sum();
+	MatrixXd z = lastInput * weights.getParameters();
+	double softPlusPrime = 1.0 / (1.0 + exp(-k * z(0)));
+	MatrixXd prime = MatrixXd::Ones(1, 1) * softPlusPrime;
+	MatrixXd sigma = errorSum * prime;
 
-	Mat z = lastInput * weights.getParameters();
-	float softPlusPrime = 1.0f / (1.0f + exp(-k * z.at<float>(0)));
-	Mat prime = Mat::ones(1, 1, CV_32FC1) * softPlusPrime;
-	Mat sigma = errorSumF * prime;
+	weights.setDeltaParameters(-ALPHA * lastInput.transpose() * sigma);
 
-	weights.setDeltaParameters(-ALPHA * lastInput.t() * sigma);
+	// Strip away the bias parameter and weight the sigma by the incoming weights
+	MatrixXd weightsPrime = weights.getParameters().block(0, 0, (numInputs - 1), 1);
 
-	// Strip away the bias parameter and weights the sigma by the incoming weights
-	Mat weightsPrime = weights.getParameters();
-	weightsPrime = weightsPrime(Rect(0, 0, 1, numInputs - 1)).t();
-
-	return sigma * weightsPrime;
+	return sigma * weightsPrime.transpose();
 }
 
 bool SoftplusFunction::hasBias()
@@ -47,12 +41,12 @@ bool SoftplusFunction::hasBias()
 	return true;
 }
 
-float SoftplusFunction::getK() 
+double SoftplusFunction::getK() 
 {
 	return k;
 }
 
-void SoftplusFunction::setK(float k)
+void SoftplusFunction::setK(double k)
 {
 	this->k = k;
 }
@@ -62,9 +56,9 @@ int SoftplusFunction::numOutputs()
 	return 1;
 }
 
-void SoftplusFunction::draw(DrawingCanvas canvas)
+void SoftplusFunction::draw(NetworkVisualizer canvas)
 {
-	const Scalar BLACK(0, 0, 0);
+	/*const Scalar BLACK(0, 0, 0);
 	const float STEP_SIZE = 0.1f;
 
 	Function::draw(canvas);
@@ -76,5 +70,5 @@ void SoftplusFunction::draw(DrawingCanvas canvas)
 		Point l_start(canvas.offset.x + ((int)(DRAW_LEN * i)), canvas.offset.y - y1);
 		Point l_end(canvas.offset.x + ((int)(DRAW_LEN * (i + STEP_SIZE))), canvas.offset.y - y2);
 		line(canvas.canvas, l_start, l_end, BLACK, 1, LINE_8);
-	}
+	}*/
 }

@@ -1,8 +1,8 @@
 #include "ReLUFunction.h"
 
-#include <opencv2/core.hpp>
-#include <opencv2/imgproc.hpp>
 #include <iostream>
+
+using namespace std;
 
 ReLUFunction::ReLUFunction(int numInputs)
 {
@@ -10,30 +10,26 @@ ReLUFunction::ReLUFunction(int numInputs)
 	this->weights.setParametersRandom(numInputs);
 }
 
-Mat ReLUFunction::feedForward(Mat inputs)
+MatrixXd ReLUFunction::feedForward(MatrixXd inputs)
 {
 	lastOutput = inputs * weights.getParameters();
-	lastOutput.at<float>(0) = max(0.0f, lastOutput.at<float>(0));
+	lastOutput(0) = max(0.0, lastOutput(0));
 	return lastOutput;
 }
 
-Mat ReLUFunction::backPropagate(Mat lastInput, Mat errors)
+MatrixXd ReLUFunction::backPropagate(MatrixXd lastInput, MatrixXd errors)
 {
-	// TODO: Make cleaner
-	Scalar errorSum = cv::sum(errors);
-	float errorSumF = ((float)(errorSum[0]));
+	double errorSum = errors.sum();
+	double reLUPrime = (lastOutput(0) > 0.0) ? 1.0 : 0.0;
+	MatrixXd prime = MatrixXd::Ones(1, 1) * reLUPrime;
+	MatrixXd sigma = errorSum * prime;
 
-	float reLUPrime = (lastOutput.at<float>(0) > 0.0f) ? 1.0f : 0.0f;
-	Mat prime = Mat::ones(1, 1, CV_32FC1) * reLUPrime;
-	Mat sigma = errorSumF * prime;
+	weights.setDeltaParameters(-ALPHA * lastInput.transpose() * sigma);
 
-	weights.setDeltaParameters(-ALPHA * lastInput.t() * sigma);
+	// Strip away the bias parameter and weight the sigma by the incoming weights
+	MatrixXd weightsPrime = weights.getParameters().block(0, 0, (numInputs - 1), 1);
 
-	// Strip away the bias parameter and weights the sigma by the incoming weights
-	Mat weightsPrime = weights.getParameters();
-	weightsPrime = weightsPrime(Rect(0, 0, 1, numInputs-1)).t();
-
-	return sigma * weightsPrime;
+	return sigma * weightsPrime.transpose();
 }
 
 bool ReLUFunction::hasBias()
@@ -46,9 +42,9 @@ int ReLUFunction::numOutputs()
 	return 1;
 }
 
-void ReLUFunction::draw(DrawingCanvas canvas)
+void ReLUFunction::draw(NetworkVisualizer canvas)
 {
-	const Scalar BLACK(0, 0, 0);
+	/*const Scalar BLACK(0, 0, 0);
 
 	float slope = weights.getParameters().at<float>(0);
 	float inv_slope = 1.0f / abs(slope);
@@ -75,5 +71,5 @@ void ReLUFunction::draw(DrawingCanvas canvas)
 	Function::draw(canvas);
 
 	line(canvas.canvas, l_start, l_mid, BLACK, 1, LINE_8);
-	line(canvas.canvas, l_mid, l_end, BLACK, 1, LINE_8);
+	line(canvas.canvas, l_mid, l_end, BLACK, 1, LINE_8);*/
 }

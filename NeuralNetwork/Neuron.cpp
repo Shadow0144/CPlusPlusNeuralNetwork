@@ -11,8 +11,6 @@
 #include "SoftmaxFunction.h"
 
 #include <math.h>
-#include <opencv2/core.hpp>
-#include <opencv2/imgproc.hpp>
 
 Neuron::Neuron(ActivationFunction function, vector<Neuron*>* parents)
 {
@@ -83,31 +81,33 @@ void Neuron::addChild(Neuron* child)
 	childCount++;
 }
 
-Mat Neuron::feedForward(Mat input)
+MatrixXd Neuron::feedForward(MatrixXd input)
 {
-	lastInput = Mat(input);
+	lastInput = MatrixXd(input);
 	if (activationFunction->hasBias())
 	{
-		hconcat(lastInput, Mat::ones(1, 1, CV_32FC1), lastInput); // Add bias
+		MatrixXd concat(lastInput.rows(), lastInput.cols() + 1);
+		concat << lastInput, MatrixXd::Ones(1, 1); // Add bias
+		lastInput = concat;
 	}
 	else { }
 	result = activationFunction->feedForward(lastInput);
 	return result;
 }
 
-Mat Neuron::backPropagate(Mat errors)
+MatrixXd Neuron::backPropagate(MatrixXd errors)
 {
 	return activationFunction->backPropagate(lastInput, errors);
 }
 
-float Neuron::applyBackPropagate()
+double Neuron::applyBackPropagate()
 {
 	return activationFunction->applyBackProgate();
 }
 
-void Neuron::draw(DrawingCanvas canvas, bool output)
+void Neuron::draw(NetworkVisualizer canvas, bool output)
 {
-	const int P = 10;
+	/*const int P = 10;
 	const int RADIUS = 40;
 	const Scalar BLACK(0, 0, 0);
 	const Scalar GRAY(100, 100, 100);
@@ -246,5 +246,5 @@ void Neuron::draw(DrawingCanvas canvas, bool output)
 		Point next(pt.x, pt.y + LINE_LENGTH);
 		line(canvas.canvas, next, pt, GRAY, 1, LINE_8);
 	}
-	else { }
+	else { }*/
 }

@@ -12,14 +12,14 @@ public:
 	NeuralNetwork(int layerCount, int* layerShapes, ActivationFunction* layerFunctions);
 	~NeuralNetwork();
 
-	Mat feedForward(Mat inputs);
-	bool backPropagate(Mat inputs, Mat targets); // Single step
-	void train(Mat inputs, Mat targets); // Train until a condition is met
+	MatrixXd feedForward(MatrixXd inputs);
+	bool backPropagate(MatrixXd inputs, MatrixXd targets); // Single step
+	void train(MatrixXd inputs, MatrixXd targets); // Train until a condition is met
 
 	void setTrainingParameters(ErrorFunction* errorFunction, int maxIterations,
-		float minError, float errorConvergenceThreshold, float weightConvergenceThreshold);
+		double minError, double errorConvergenceThreshold, double weightConvergenceThreshold);
 
-	float getError(Mat predicted, Mat actual);
+	double getError(MatrixXd predicted, MatrixXd actual);
 
 	int getVerbosity();
 	void setVerbosity(int verbosity);
@@ -28,7 +28,7 @@ public:
 	void setDrawRate(int drawRate);
 	bool getDrawingEnabled();
 	void setDrawingEnabled(bool drawingEnabled);
-	void draw(DrawingCanvas canvas, Mat target_xs, Mat target_ys);
+	void draw(NetworkVisualizer canvas, MatrixXd target_xs, MatrixXd target_ys);
 
 private:
 	int verbosity;
@@ -38,8 +38,10 @@ private:
 	vector<Neuron*>* layers;
 	ErrorFunction* errorFunction;
 	int maxIterations;
-	float minError;
-	float errorConvergenceThreshold;
-	float weightConvergenceThreshold;
+	double minError;
+	double errorConvergenceThreshold;
+	double weightConvergenceThreshold;
 	int drawRate;
+
+	friend class NetworkVisualizer;
 };

@@ -86,9 +86,6 @@
     <ClInclude Include="DotProductFunction.h">
       <Filter>Header Files\ActivationFunction</Filter>
     </ClInclude>
-    <ClInclude Include="DrawingCanvas.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ReLUFunction.h">
       <Filter>Header Files\ActivationFunction</Filter>
     </ClInclude>

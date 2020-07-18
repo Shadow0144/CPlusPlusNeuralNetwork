@@ -10,37 +10,32 @@ ParameterSet::ParameterSet()
 
 }
 
-Mat ParameterSet::getParameters() 
+MatrixXd ParameterSet::getParameters()
 { 
 	return parameters;
 }
 
 void ParameterSet::setParametersRandom(int parameterCount)
 {
-	parameters = Mat(parameterCount, 1, CV_32FC1);
-
-	RNG rng = RNG(cv::getCPUTickCount());
-	Scalar mean = 0.0f;
-	Scalar sigma = 1.0f;
-	rng.fill(parameters, RNG::NORMAL, mean, sigma);
+	parameters = MatrixXd::Random(parameterCount, 1);
 }
 
 void ParameterSet::setParametersZero(int parameterCount)
 {
-	parameters = Mat::zeros(Size(parameterCount, 1), CV_32FC1);
+	parameters = MatrixXd::Zero(parameterCount, 1);
 }
 
 void ParameterSet::setParametersOne(int parameterCount)
 {
-	parameters = Mat::ones(Size(parameterCount, 1), CV_32FC1);
+	parameters = MatrixXd::Ones(parameterCount, 1);
 }
 
-Mat ParameterSet::getDeltaParameters()
+MatrixXd ParameterSet::getDeltaParameters()
 {
 	return deltaParameters;
 }
 
-void ParameterSet::setDeltaParameters(Mat deltaParameters)
+void ParameterSet::setDeltaParameters(MatrixXd deltaParameters)
 {
 	this->deltaParameters = deltaParameters;
 }

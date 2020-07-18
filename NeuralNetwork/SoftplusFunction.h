@@ -2,26 +2,24 @@
 
 #include "Function.h"
 
-using namespace cv;
-
 // Softplus / SmoothReLU
 class SoftplusFunction : public Function
 {
 public:
 	SoftplusFunction(int numInputs);
 
-	Mat feedForward(Mat input);
-	Mat backPropagate(Mat lastInput, Mat errors);
+	MatrixXd feedForward(MatrixXd input);
+	MatrixXd backPropagate(MatrixXd lastInput, MatrixXd errors);
 	bool hasBias();
-	void draw(DrawingCanvas canvas);
+	void draw(NetworkVisualizer canvas);
 
-	float getK();
-	void setK(float k);
+	double getK();
+	void setK(double k);
 
 	int numOutputs();
 
 private:
-	Mat lastOutput;
+	MatrixXd lastOutput;
 
-	float k = 1.0f; // Sharpness coefficient
+	double k = 1.0; // Sharpness coefficient
 };

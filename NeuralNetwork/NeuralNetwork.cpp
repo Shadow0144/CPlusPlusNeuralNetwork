@@ -1,13 +1,6 @@
 #include "NeuralNetwork.h"
 
-#include <Eigen/Core>
-#include <nanogui/window.h>
-
 #include <iostream>
-#include <opencv2/core.hpp>
-#include <opencv2/imgproc.hpp>
-#include <opencv2/imgcodecs.hpp>
-#include <opencv2/highgui.hpp>
 #include <math.h>
 #include <cmath>
 
@@ -32,9 +25,9 @@ NeuralNetwork::NeuralNetwork(int layerCount, int* layerShapes, ActivationFunctio
 
 	this->errorFunction = NULL;
 	this->maxIterations = 10000;
-	this->minError = 0.001f;
-	this->errorConvergenceThreshold = 0.00000001f;
-	this->weightConvergenceThreshold = 0.001f;
+	this->minError = 0.001;
+	this->errorConvergenceThreshold = 0.00000001;
+	this->weightConvergenceThreshold = 0.001;
 }
 
 NeuralNetwork::~NeuralNetwork()
@@ -42,25 +35,25 @@ NeuralNetwork::~NeuralNetwork()
 	//delete layers;
 }
 
-Mat NeuralNetwork::feedForward(Mat inputs)
+MatrixXd NeuralNetwork::feedForward(MatrixXd inputs)
 {
 	// Fix: Assumes a non-zero network
-	Mat result = Mat(0, layerShapes[layerCount-1], CV_32F); // The final result encapsulating all examples
-	if (layerCount > 0 && inputs.cols == 1 /*input.cols == layerShapes[0]*/)
+	MatrixXd result = MatrixXd(inputs.rows(), layerShapes[layerCount-1]); // The final result encapsulating all examples
+	if (layerCount > 0 && inputs.cols() == 1 /*input.cols == layerShapes[0]*/)
 	{
-		for (int i = 0; i < inputs.rows; i++) // Loop through the examples
+		for (int i = 0; i < inputs.rows(); i++) // Loop through the examples
 		{
-			Mat example = inputs.row(i); // A single example
+			MatrixXd example = inputs.row(i); // A single example
 			for (int j = 0; j < layerCount; j++) // Loop through the layers
 			{
-				Mat row_result = Mat(1, 0, CV_32F); // The result of a single layer of calculation
+				MatrixXd row_result = MatrixXd(1, layerShapes[j]); // The result of a single layer of calculation
 				for (int k = 0; k < layerShapes[j]; k++) // Loop through the neurons
 				{
-					hconcat(row_result, layers[j].at(k)->feedForward(example), row_result);
+					row_result(k) = layers[j].at(k)->feedForward(example)(0);
 				}
 				example = row_result; // Feed the row_result into the next row
 			}
-			vconcat(result, example, result);
+			result.row(i) = example;
 		}
 	}
 	else { }
@@ -68,22 +61,22 @@ Mat NeuralNetwork::feedForward(Mat inputs)
 	return result;
 }
 
-bool NeuralNetwork::backPropagate(Mat inputs, Mat targets)
+bool NeuralNetwork::backPropagate(MatrixXd inputs, MatrixXd targets)
 {
 	bool converged = true;
-	if (inputs.rows == targets.rows)
+	if (inputs.rows() == targets.rows())
 	{
-		for (int i = 0; i < targets.rows; i++)
+		for (int i = 0; i < targets.rows(); i++)
 		{
-			Mat y = feedForward(inputs.row(i));
-			Mat errors = Mat(1, layerShapes[layerCount - 1], CV_32FC1, cv::sum(targets.row(i) - y));
+			MatrixXd y = feedForward(inputs.row(i));
+			MatrixXd errors = (targets.row(i) - y).colwise().sum();
 			for (int j = (layerCount - 1); j > 0; j--) // Skip the top row
 			{
-				Mat newErrors = Mat(0, layerShapes[j - 1], CV_32FC1);
+				MatrixXd newErrors = MatrixXd(layerShapes[j], layerShapes[j - 1]); // One row per neuron above
 				for (int k = 0; k < layerShapes[j]; k++)
 				{
-					Mat newError = layers[j].at(k)->backPropagate(errors.col(k));
-					vconcat(newErrors, newError, newErrors);
+					MatrixXd newError = layers[j].at(k)->backPropagate(errors.col(k));
+					newErrors.row(k) = newError.row(0);
 				}
 				errors = newErrors;
 			}
@@ -96,7 +89,7 @@ bool NeuralNetwork::backPropagate(Mat inputs, Mat targets)
 			{
 				for (int k = 0; k < layerShapes[j]; k++)
 				{
-					float deltaW = layers[j].at(k)->applyBackPropagate();
+					double deltaW = layers[j].at(k)->applyBackPropagate();
 					if (deltaW > weightConvergenceThreshold) // Always positive
 					{
 						converged = false;
@@ -111,29 +104,29 @@ bool NeuralNetwork::backPropagate(Mat inputs, Mat targets)
 	return converged;
 }
 
-void NeuralNetwork::train(Mat inputs, Mat targets)
+void NeuralNetwork::train(MatrixXd inputs, MatrixXd targets)
 {
 	const int SIZE = 600;
 	char window_name[] = "Neural Network";
-	Mat img = Mat::Mat(SIZE, SIZE, CV_8UC3, Scalar(225, 225, 225));
+	//MatrixXd img = Mat::Mat(SIZE, SIZE, CV_8UC3, Scalar(225, 225, 225));
 	
-	DrawingCanvas canvas;
+	/*DrawingCanvas canvas;
 	canvas.canvas = img;
 	canvas.offset = Point(0, 0);
-	canvas.scale = 1.0f;
+	canvas.scale = 1.0f;*/
 
-	Mat predicted = feedForward(inputs);
-	draw(canvas, predicted, targets);
+	MatrixXd predicted = feedForward(inputs);
+	//draw(canvas, predicted, targets);
 
-	float error = getError(predicted, targets);
+	double error = getError(predicted, targets);
 	if (verbosity >= 1)
 	{
 		cout << "Initial: " << endl;
 		if (verbosity >= 2)
 		{
-			for (int i = 0; i < inputs.rows; i++)
+			for (int i = 0; i < inputs.rows(); i++)
 			{
-				cout << "Feedforward Untrained: X: " << inputs.at<float>(i) << " Y': " << targets.at<float>(i) << " Y: " << predicted.at<float>(i) << endl;
+				cout << "Feedforward Untrained: X: " << inputs(i) << " Y': " << targets(i) << " Y: " << predicted(i) << endl;
 			}
 		}
 		else {}
@@ -141,15 +134,15 @@ void NeuralNetwork::train(Mat inputs, Mat targets)
 	}
 	else {}
 
-	draw(canvas, inputs, targets);
+	/*draw(canvas, inputs, targets);
 	imshow(window_name, img);
 	moveWindow(window_name, 400, 180);
-	waitKey(100);
+	waitKey(100);*/
 
 	int t = 0;
 	bool converged = false;
-	float lastError = error;
-	float deltaError = error;
+	double lastError = error;
+	double deltaError = error;
 	while (error > minError && t < maxIterations && !converged && deltaError > errorConvergenceThreshold)
 	{
 		converged = backPropagate(inputs, targets);
@@ -160,19 +153,19 @@ void NeuralNetwork::train(Mat inputs, Mat targets)
 
 		if (t % drawRate == 0)
 		{
-			draw(canvas, inputs, targets);
+			/*draw(canvas, inputs, targets);
 			imshow(window_name, img);
-			waitKey(1); // Wait enough for the window to draw
+			waitKey(1); // Wait enough for the window to draw*/
 			if (verbosity >= 1)
 			{
 				cout << endl << "Iterations: " << (t + 1) << endl;
 				if (verbosity >= 2)
 				{
-					for (int i = 0; i < inputs.rows; i++)
+					for (int i = 0; i < inputs.rows(); i++)
 					{
-						cout << "Feedforward Training: X: " << inputs.at<float>(i)
-							<< " Y': " << targets.at<float>(i)
-							<< " Y: " << predicted.at<float>(i) << endl;
+						cout << "Feedforward Training: X: " << inputs(i)
+							<< " Y': " << targets(i)
+							<< " Y: " << predicted(i) << endl;
 					}
 				}
 				else {}
@@ -212,9 +205,9 @@ void NeuralNetwork::train(Mat inputs, Mat targets)
 		cout << endl << "Trained: " << endl;
 		if (verbosity >= 2)
 		{
-			for (int i = 0; i < inputs.rows; i++)
+			for (int i = 0; i < inputs.rows(); i++)
 			{
-				cout << "Feedforward Trained: X: " << inputs.at<float>(i) << " Y': " << targets.at<float>(i) << " Y: " << predicted.at<float>(i) << endl;
+				cout << "Feedforward Trained: X: " << inputs(i) << " Y': " << targets(i) << " Y: " << predicted(i) << endl;
 			}
 		}
 		else {}
@@ -223,14 +216,14 @@ void NeuralNetwork::train(Mat inputs, Mat targets)
 	}
 	else {}
 
-	draw(canvas, inputs, targets);
+	/*draw(canvas, inputs, targets);
 	imshow(window_name, img);
 	cout << endl << "Press any key to exit" << endl;
-	waitKey(0); // Wait for a keystroke in the window
+	waitKey(0); // Wait for a keystroke in the window*/
 }
 
 void NeuralNetwork::setTrainingParameters(ErrorFunction* errorFunction, int maxIterations,
-	float minError, float errorConvergenceThreshold, float weightConvergenceThreshold)
+	double minError, double errorConvergenceThreshold, double weightConvergenceThreshold)
 {
 	this->errorFunction = errorFunction;
 	this->maxIterations = maxIterations;
@@ -239,7 +232,7 @@ void NeuralNetwork::setTrainingParameters(ErrorFunction* errorFunction, int maxI
 	this->weightConvergenceThreshold = weightConvergenceThreshold;
 }
 
-float NeuralNetwork::getError(Mat predicted, Mat actual)
+double NeuralNetwork::getError(MatrixXd predicted, MatrixXd actual)
 {
 	return errorFunction->getError(predicted, actual);
 }
@@ -275,9 +268,9 @@ void NeuralNetwork::setDrawingEnabled(bool drawingEnabled)
 }
 
 bool windowMade = false;
-void NeuralNetwork::draw(DrawingCanvas canvas, Mat target_xs, Mat target_ys)
+void NeuralNetwork::draw(NetworkVisualizer canvas, MatrixXd target_xs, MatrixXd target_ys)
 {
-	// Clear the canvas
+	/*// Clear the canvas
 	canvas.canvas.setTo(Scalar(225, 225, 225));
 
 	// Calculate the drawing space parameters
@@ -356,8 +349,8 @@ void NeuralNetwork::draw(DrawingCanvas canvas, Mat target_xs, Mat target_ys)
 	// Fix: Clipping y
 	const Scalar BLUE(255, 0, 0);
 	const float STEP_SIZE = 0.1f;
-	Mat input1 = Mat(1, layerShapes[0], CV_32FC1);
-	Mat input2 = Mat(1, layerShapes[0], CV_32FC1);
+	MatrixXd input1 = MatrixXd(1, layerShapes[0], CV_32FC1);
+	MatrixXd input2 = MatrixXd(1, layerShapes[0], CV_32FC1);
 	for (float i = -1.0f; i < 1.0f; i += STEP_SIZE)
 	{
 		input1.at<float>(0) = i;
@@ -377,5 +370,5 @@ void NeuralNetwork::draw(DrawingCanvas canvas, Mat target_xs, Mat target_ys)
 		circle(canvas.canvas,
 			Point(CENTER_X + ((int)(resizeX * target_xs.at<float>(i))), CENTER_X - ((int)(resizeX * target_ys.at<float>(i)))),
 			TARGET_RADIUS, TARGET_COLOR, 1, LINE_8);
-	}
+	}*/
 }

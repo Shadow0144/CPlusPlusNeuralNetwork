@@ -1,22 +1,19 @@
 #include "IdentityFunction.h"
 
-#include <opencv2/core.hpp>
-#include <opencv2/imgproc.hpp>
-
 IdentityFunction::IdentityFunction(int numInputs)
 {
 	this->numInputs = numInputs;
 	this->weights.setParametersOne(numInputs);
 }
 
-Mat IdentityFunction::feedForward(Mat input)
+MatrixXd IdentityFunction::feedForward(MatrixXd input)
 {
 	return input;
 }
 
-Mat IdentityFunction::backPropagate(Mat lastInput, Mat errors)
+MatrixXd IdentityFunction::backPropagate(MatrixXd lastInput, MatrixXd errors)
 {
-	weights.setDeltaParameters(-ALPHA * lastInput.t() * 0.0f);
+	weights.setDeltaParameters(-ALPHA * lastInput.transpose() * 0.0);
 	return errors;
 }
 
@@ -30,14 +27,14 @@ int IdentityFunction::numOutputs()
 	return numInputs;
 }
 
-void IdentityFunction::draw(DrawingCanvas canvas)
+void IdentityFunction::draw(NetworkVisualizer canvas)
 {
-	const Scalar BLACK(0, 0, 0);
+	/*const Scalar BLACK(0, 0, 0);
 
 	Point l_start(canvas.offset.x - DRAW_LEN, canvas.offset.y - ((int)(-DRAW_LEN)));
 	Point l_end(canvas.offset.x + DRAW_LEN, canvas.offset.y - ((int)(DRAW_LEN)));
 
 	Function::draw(canvas);
 
-	line(canvas.canvas, l_start, l_end, BLACK, 1, LINE_8);
+	line(canvas.canvas, l_start, l_end, BLACK, 1, LINE_8);*/
 }

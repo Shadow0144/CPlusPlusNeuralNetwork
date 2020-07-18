@@ -2,18 +2,16 @@
 
 #include "Function.h"
 
-using namespace cv;
-
 // Leaky ReLU / Parametric ReLU
 class LeakyReLUFunction : public Function
 {
 public:
 	LeakyReLUFunction(int numInputs);
 
-	Mat feedForward(Mat input);
-	Mat backPropagate(Mat lastInput, Mat errors);
+	MatrixXd feedForward(MatrixXd input);
+	MatrixXd backPropagate(MatrixXd lastInput, MatrixXd errors);
 	bool hasBias();
-	void draw(DrawingCanvas canvas);
+	void draw(NetworkVisualizer canvas);
 
 	float getA();
 	void setA(float a);
@@ -21,7 +19,7 @@ public:
 	int numOutputs();
 
 private:
-	Mat lastOutput;
+	MatrixXd lastOutput;
 
 	float a = 0.01f; // Leak coefficient
 };

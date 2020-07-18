@@ -1,37 +1,30 @@
 #include "TanhFunction.h"
 
-#include <opencv2/core.hpp>
-#include <opencv2/imgproc.hpp>
-
 TanhFunction::TanhFunction(int numInputs)
 {
 	this->numInputs = numInputs;
 	this->weights.setParametersRandom(numInputs);
 }
 
-Mat TanhFunction::feedForward(Mat inputs)
+MatrixXd TanhFunction::feedForward(MatrixXd inputs)
 {
 	lastOutput = inputs * weights.getParameters();
-	lastOutput.at<float>(0) = tanh(lastOutput.at<float>(0));
+	lastOutput(0) = tanh(lastOutput(0));
 	return lastOutput;
 }
 
-Mat TanhFunction::backPropagate(Mat lastInput, Mat errors)
+MatrixXd TanhFunction::backPropagate(MatrixXd lastInput, MatrixXd errors)
 {
-	// TODO: Make cleaner
-	Scalar errorSum = cv::sum(errors);
-	float errorSumF = ((float)(errorSum[0]));
+	double errorSum = errors.sum();
+	MatrixXd prime = MatrixXd::Ones(lastOutput.rows(), lastOutput.cols()) -(lastOutput * lastOutput);
+	MatrixXd sigma = errorSum * prime;
 
-	Mat prime = 1 - (lastOutput * lastOutput);
-	Mat sigma = errorSumF * prime;
+	weights.setDeltaParameters(-ALPHA * lastInput.transpose() * sigma);
 
-	weights.setDeltaParameters(-ALPHA * lastInput.t() * sigma);
+	// Strip away the bias parameter and weight the sigma by the incoming weights
+	MatrixXd weightsPrime = weights.getParameters().block(0, 0, (numInputs - 1), 1);
 
-	// Strip away the bias parameter and weights the sigma by the incoming weights
-	Mat weightsPrime = weights.getParameters();
-	weightsPrime = weightsPrime(Rect(0, 0, 1, numInputs-1)).t();
-
-	return sigma * weightsPrime;
+	return sigma * weightsPrime.transpose();
 }
 
 bool TanhFunction::hasBias()
@@ -44,9 +37,9 @@ int TanhFunction::numOutputs()
 	return 1;
 }
 
-void TanhFunction::draw(DrawingCanvas canvas)
+void TanhFunction::draw(NetworkVisualizer canvas)
 {
-	const Scalar BLACK(0, 0, 0);
+	/*const Scalar BLACK(0, 0, 0);
 	const float STEP_SIZE = 0.1f;
 
 	Function::draw(canvas);
@@ -58,5 +51,5 @@ void TanhFunction::draw(DrawingCanvas canvas)
 		Point l_start(canvas.offset.x + ((int)(DRAW_LEN * i)), canvas.offset.y - y1);
 		Point l_end(canvas.offset.x + ((int)(DRAW_LEN * (i + STEP_SIZE))), canvas.offset.y - y2);
 		line(canvas.canvas, l_start, l_end, BLACK, 1, LINE_8);
-	}
+	}*/
 }

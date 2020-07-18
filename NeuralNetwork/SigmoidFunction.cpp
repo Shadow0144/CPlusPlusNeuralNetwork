@@ -1,42 +1,35 @@
 #include "SigmoidFunction.h"
 
-#include <opencv2/core.hpp>
-#include <opencv2/imgproc.hpp>
-
 SigmoidFunction::SigmoidFunction(int numInputs)
 {
 	this->numInputs = numInputs;
 	this->weights.setParametersRandom(numInputs);
 }
 
-float sigmoid(float value)
+double sigmoid(double value)
 {
 	return (1.0f / (1.0f + exp(-value)));
 }
 
-Mat SigmoidFunction::feedForward(Mat inputs)
+MatrixXd SigmoidFunction::feedForward(MatrixXd inputs)
 {
 	lastOutput = inputs * weights.getParameters();
-	lastOutput.at<float>(0) = sigmoid(lastOutput.at<float>(0));
+	lastOutput(0) = sigmoid(lastOutput(0));
 	return lastOutput;
 }
 
-Mat SigmoidFunction::backPropagate(Mat lastInput, Mat errors)
+MatrixXd SigmoidFunction::backPropagate(MatrixXd lastInput, MatrixXd errors)
 {
-	// TODO: Make cleaner
-	Scalar errorSum = cv::sum(errors);
-	float errorSumF = ((float)(errorSum[0]));
+	double errorSum = errors.sum();
+	MatrixXd prime = lastOutput * (MatrixXd::Ones(lastOutput.rows(), lastOutput.cols()) - lastOutput);
+	MatrixXd sigma = errorSum * prime;
 
-	Mat prime = lastOutput * (1 - lastOutput);
-	Mat sigma = errorSumF * prime;
+	weights.setDeltaParameters(-ALPHA * lastInput.transpose() * sigma);
 
-	weights.setDeltaParameters(-ALPHA * lastInput.t() * sigma);
+	// Strip away the bias parameter and weight the sigma by the incoming weights
+	MatrixXd weightsPrime = weights.getParameters().block(0, 0, (numInputs - 1), 1);
 
-	// Strip away the bias parameter and weights the sigma by the incoming weights
-	Mat weightsPrime = weights.getParameters();
-	weightsPrime = weightsPrime(Rect(0, 0, 1, numInputs-1)).t();
-
-	return sigma * weightsPrime;
+	return sigma * weightsPrime.transpose();
 }
 
 bool SigmoidFunction::hasBias()
@@ -49,9 +42,9 @@ int SigmoidFunction::numOutputs()
 	return 1;
 }
 
-void SigmoidFunction::draw(DrawingCanvas canvas)
+void SigmoidFunction::draw(NetworkVisualizer canvas)
 {
-	const Scalar BLACK(0, 0, 0);
+	/*const Scalar BLACK(0, 0, 0);
 	const float STEP_SIZE = 0.1f;
 
 	Function::draw(canvas);
@@ -63,5 +56,5 @@ void SigmoidFunction::draw(DrawingCanvas canvas)
 		Point l_start(canvas.offset.x + ((int)(DRAW_LEN * i)), canvas.offset.y - y1);
 		Point l_end(canvas.offset.x + ((int)(DRAW_LEN * (i + STEP_SIZE))), canvas.offset.y - y2);
 		line(canvas.canvas, l_start, l_end, BLACK, 1, LINE_8);
-	}
+	}*/
 }

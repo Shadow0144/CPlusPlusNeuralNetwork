@@ -1,10 +1,9 @@
 #pragma once
 
 #include "Function.h"
-#include "DrawingCanvas.h"
-#include <opencv2/core.hpp>
+#include "NetworkVisualizer.h"
+#include <vector>
 
-using namespace cv;
 using namespace std;
 
 enum class ActivationFunction
@@ -25,11 +24,11 @@ public:
 	Neuron(ActivationFunction function, vector<Neuron*>* parents);
 	~Neuron();
 
-	Mat feedForward(Mat input);
-	Mat backPropagate(Mat errors);
-	float applyBackPropagate();
+	MatrixXd feedForward(MatrixXd input);
+	MatrixXd backPropagate(MatrixXd errors);
+	double applyBackPropagate();
 
-	void draw(DrawingCanvas canvas, bool output);
+	void draw(NetworkVisualizer canvas, bool output);
 
 private:
 	ActivationFunction functionType;
@@ -40,14 +39,10 @@ private:
 	vector<Neuron*>* children;
 	int childCount;
 
-	struct DrawingParameters
-	{
-		Point center;
-	};
-	DrawingParameters drawingParameters;
-
-	Mat lastInput;
-	Mat result; // Results of feedforward
+	MatrixXd lastInput;
+	MatrixXd result; // Results of feedforward
 
 	void addChild(Neuron* child);
+
+	friend class NetworkVisualizer;
 };

@@ -1,10 +1,6 @@
 #define _USE_MATH_DEFINES
 
 #include <iostream>
-#include <opencv2/core.hpp>
-#include <opencv2/imgcodecs.hpp>
-#include <opencv2/highgui.hpp>
-#include <opencv2/imgproc.hpp>
 #include <math.h>
 #include <cmath>
 
@@ -12,20 +8,21 @@
 #include "MSEFunction.h"
 #include "NetworkVisualizer.h"
 
-using namespace cv;
+using namespace Eigen;
 using namespace std;
 
+#define ALL
 //#define FIVE
 //#define FOUR
-#define THREE
+//#define THREE
 //#define TWO
 //#define ONE
 
 #define VERBOSITY 0
 
-int test()
+int cv_test()
 {
-    Mat image;
+    /*Mat image;
     image = imread("SuccessVisualStudioWindows.jpg", IMREAD_COLOR); // Read the file
     if (image.empty()) // Check for invalid input
     {
@@ -34,19 +31,30 @@ int test()
     }
     namedWindow("Display window", WINDOW_AUTOSIZE); // Create a window for display.
     imshow("Display window", image); // Show our image inside it.
-    waitKey(0); // Wait for a keystroke in the window
+    waitKey(0); // Wait for a keystroke in the window*/
     return 0;
 }
 
 void test_network()
 {
     const int PRINT = 100;
-    const float MIN_ERROR = 0.001f;
+    const double MIN_ERROR = 0.001f;
     const int MAX_ITERATIONS = 10000;
-    const float CONVERGENCE_W = 0.001f;
-    const float CONVERGENCE_E = 0.00000001f;
+    const double CONVERGENCE_W = 0.001;
+    const double CONVERGENCE_E = 0.00000001;
 
-#if defined(FIVE)
+#if defined(ALL)
+    int layers = 7;
+    int layerShapes[] = { 1, 3, 3, 3, 3, 3, 1 };
+    ActivationFunction functions[] =
+    { ActivationFunction::Identity,
+      ActivationFunction::LeakyReLU,
+      ActivationFunction::Softplus,
+      ActivationFunction::ReLU,
+      ActivationFunction::Sigmoid,
+      ActivationFunction::Tanh,
+      ActivationFunction::WeightedDotProduct };
+#elif defined(FIVE)
     int layers = 5;
     int layerShapes[] = { 5, 3, 3, 3, 1 };
     ActivationFunction functions[] =
@@ -95,28 +103,26 @@ void test_network()
     Mat training_y = cv::Mat(SAMPLES, 1, CV_32F, y) / 10.0f;*/
 
     const int SAMPLES = 100;
-    float x[SAMPLES];
-    float y[SAMPLES];
+    const double rescale = 1.0 / 10.0;
 
-    float twoPi = ((float)(2.0f * M_PI));
-    float inc = 2.0f * twoPi / SAMPLES;
-    int i = 0;
-    for (float t = -twoPi; t < twoPi; t += inc)
+    double twoPi = (2.0 * M_PI);
+    double inc = 2.0 * twoPi / SAMPLES;
+    int i = 0; 
+    MatrixXd training_x = MatrixXd(SAMPLES, 1);
+    MatrixXd training_y = MatrixXd(SAMPLES, 1);
+    for (double t = -twoPi; t < twoPi; t += inc)
     {
-        x[i] = t;
-        y[i] = ((float)(3.0 * sin(0.5 * t + 0.5)));
+        training_x(i) = t * rescale;
+        training_y(i) = (3.0 * sin(0.5 * t + 0.5)) * rescale;
         i++;
     }
-
-    Mat training_x = cv::Mat(SAMPLES, 1, CV_32F, x) / 10.0f;
-    Mat training_y = cv::Mat(SAMPLES, 1, CV_32F, y) / 10.0f;
 
     network.train(training_x, training_y);
 }
 
 int main(int argc, char** argv)
 {
-    //test_network();
+    test_network();
 
     NetworkVisualizer nv = NetworkVisualizer();
 

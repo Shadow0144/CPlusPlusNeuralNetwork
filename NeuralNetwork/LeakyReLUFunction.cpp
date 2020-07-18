@@ -1,8 +1,8 @@
 #include "LeakyReLUFunction.h"
 
-#include <opencv2/core.hpp>
-#include <opencv2/imgproc.hpp>
 #include <iostream>
+
+using namespace std;
 
 LeakyReLUFunction::LeakyReLUFunction(int numInputs)
 {
@@ -10,31 +10,27 @@ LeakyReLUFunction::LeakyReLUFunction(int numInputs)
 	this->weights.setParametersRandom(numInputs);
 }
 
-Mat LeakyReLUFunction::feedForward(Mat inputs)
+MatrixXd LeakyReLUFunction::feedForward(MatrixXd inputs)
 {
 	lastOutput = inputs * weights.getParameters();
-	float lOut = lastOutput.at<float>(0);
-	lastOutput.at<float>(0) = max(a * lOut, lOut);
+	double lOut = lastOutput(0);
+	lastOutput(0) = max(a * lOut, lOut);
 	return lastOutput;
 }
 
-Mat LeakyReLUFunction::backPropagate(Mat lastInput, Mat errors)
+MatrixXd LeakyReLUFunction::backPropagate(MatrixXd lastInput, MatrixXd errors)
 {
-	// TODO: Make cleaner
-	Scalar errorSum = cv::sum(errors);
-	float errorSumF = ((float)(errorSum[0]));
+	double errorSum = errors.sum();
+	double reLUPrime = (lastOutput(0) > 0.0) ? 1.0 : a;
+	MatrixXd prime = MatrixXd::Ones(1, 1) * reLUPrime;
+	MatrixXd sigma = errorSum * prime;
 
-	float reLUPrime = (lastOutput.at<float>(0) > 0.0f) ? 1.0f : a;
-	Mat prime = Mat::ones(1, 1, CV_32FC1) * reLUPrime;
-	Mat sigma = errorSumF * prime;
+	weights.setDeltaParameters(-ALPHA * lastInput.transpose() * sigma);
 
-	weights.setDeltaParameters(-ALPHA * lastInput.t() * sigma);
+	// Strip away the bias parameter and weight the sigma by the incoming weights
+	MatrixXd weightsPrime = weights.getParameters().block(0, 0, (numInputs - 1), 1);
 
-	// Strip away the bias parameter and weights the sigma by the incoming weights
-	Mat weightsPrime = weights.getParameters();
-	weightsPrime = weightsPrime(Rect(0, 0, 1, numInputs - 1)).t();
-
-	return sigma * weightsPrime;
+	return sigma * weightsPrime.transpose();
 }
 
 bool LeakyReLUFunction::hasBias()
@@ -57,9 +53,9 @@ int LeakyReLUFunction::numOutputs()
 	return 1;
 }
 
-void LeakyReLUFunction::draw(DrawingCanvas canvas)
+void LeakyReLUFunction::draw(NetworkVisualizer canvas)
 {
-	const Scalar BLACK(0, 0, 0);
+	/*const Scalar BLACK(0, 0, 0);
 
 	float slope = weights.getParameters().at<float>(0);
 	float inv_slope = 1.0f / abs(slope);
@@ -86,5 +82,5 @@ void LeakyReLUFunction::draw(DrawingCanvas canvas)
 	Function::draw(canvas);
 
 	line(canvas.canvas, l_start, l_mid, BLACK, 1, LINE_8);
-	line(canvas.canvas, l_mid, l_end, BLACK, 1, LINE_8);
+	line(canvas.canvas, l_mid, l_end, BLACK, 1, LINE_8);*/
 }

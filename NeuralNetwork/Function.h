@@ -1,19 +1,22 @@
 #pragma once
 
-#include "DrawingCanvas.h"
-#include "ParameterSet.h"
-#include <opencv2/core.hpp>
+#pragma warning(push, 0)
+#include <Eigen/Core>
+#pragma warning(pop)
 
-using namespace cv;
+#include "NetworkVisualizer.h"
+#include "ParameterSet.h"
+
+using namespace Eigen;
 
 class Function
 {
 public:
-	virtual Mat feedForward(Mat inputs) = 0;
-	virtual Mat backPropagate(Mat lastInput, Mat errors) = 0;
-	float applyBackProgate(); // Returns the sum of the change in the weights
+	virtual MatrixXd feedForward(MatrixXd inputs) = 0;
+	virtual MatrixXd backPropagate(MatrixXd lastInput, MatrixXd errors) = 0;
+	double applyBackProgate(); // Returns the sum of the change in the weights
 	virtual bool hasBias() = 0;
-	virtual void draw(DrawingCanvas canvas);
+	virtual void draw(NetworkVisualizer canvas);
 	ParameterSet getWeights() { return weights; }
 	virtual int numOutputs() = 0;
 protected:
@@ -21,5 +24,7 @@ protected:
 	ParameterSet weights;
 	const int DRAW_LEN = 16;
 
-	const float ALPHA = 0.1f; // Learning rate
+	const double ALPHA = 0.1; // Learning rate
+
+	friend class NetworkVisualizer;
 };

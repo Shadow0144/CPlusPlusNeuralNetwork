@@ -2,17 +2,15 @@
 
 #include "Function.h"
 
-using namespace cv;
-
 class DotProductFunction : public Function
 {
 public:
 	DotProductFunction(int numInputs);
 
-	Mat feedForward(Mat input);
-	Mat backPropagate(Mat lastInput, Mat errors);
+	MatrixXd feedForward(MatrixXd input);
+	MatrixXd backPropagate(MatrixXd lastInput, MatrixXd errors);
 	bool hasBias();
-	void draw(DrawingCanvas canvas);
+	void draw(NetworkVisualizer canvas);
 
 	int numOutputs();
 };

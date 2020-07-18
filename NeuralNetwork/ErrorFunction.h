@@ -1,12 +1,16 @@
 #pragma once
 
-#include <opencv2/core.hpp>
+#pragma warning(push, 0)
+#include <Eigen/Core>
+#pragma warning(pop)
 
-using namespace cv;
+using namespace Eigen;
 
 class ErrorFunction
 {
 public:
-	virtual float getError(Mat predicted, Mat actual) = 0;
-	virtual Mat getDerivativeOfError(Mat predicted, Mat actual) = 0;
+	virtual double getError(MatrixXd predicted, MatrixXd actual) = 0;
+	virtual MatrixXd getDerivativeOfError(MatrixXd predicted, MatrixXd actual) = 0;
+
+	friend class NetworkVisualizer;
 };

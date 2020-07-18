@@ -1,17 +1,14 @@
 #include "Function.h"
 
-#include <opencv2/core.hpp>
-#include <opencv2/imgproc.hpp>
-
-float Function::applyBackProgate()
+double Function::applyBackProgate()
 {
 	weights.applyDeltaParameters();
-	return ((float)(sum(abs(weights.getDeltaParameters()))[0]));
+	return weights.getDeltaParameters().cwiseAbs().sum(); // Return the sum of how much the parameters have changed
 }
 
-void Function::draw(DrawingCanvas canvas)
+void Function::draw(NetworkVisualizer canvas)
 {
-	const Scalar BLACK(0, 0, 0);
+	/*const Scalar BLACK(0, 0, 0);
 	const int DARK_GRAY = 50;
 	const Scalar WHITE(255, 255, 255);
 	const int DOT_LENGTH = 4;
@@ -39,5 +36,5 @@ void Function::draw(DrawingCanvas canvas)
 			(*itY)[2] = DARK_GRAY;
 		}
 		else { }
-	}
+	}*/
 }
