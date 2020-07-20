@@ -28,7 +28,7 @@ public:
 	void setDrawRate(int drawRate);
 	bool getDrawingEnabled();
 	void setDrawingEnabled(bool drawingEnabled);
-	void draw(NetworkVisualizer canvas, MatrixXd target_xs, MatrixXd target_ys);
+	void draw(MatrixXd target_xs, MatrixXd target_ys);
 
 private:
 	int verbosity;

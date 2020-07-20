@@ -268,7 +268,7 @@ void NeuralNetwork::setDrawingEnabled(bool drawingEnabled)
 }
 
 bool windowMade = false;
-void NeuralNetwork::draw(NetworkVisualizer canvas, MatrixXd target_xs, MatrixXd target_ys)
+void NeuralNetwork::draw(MatrixXd target_xs, MatrixXd target_ys)
 {
 	/*// Clear the canvas
 	canvas.canvas.setTo(Scalar(225, 225, 225));
