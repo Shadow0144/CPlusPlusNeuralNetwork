@@ -2,9 +2,10 @@
 
 #pragma warning(push, 0)
 #include <Eigen/Core>
+#include <Eigen/Dense>
 #pragma warning(pop)
 
-#include "NetworkVisualizer.h"
+#include "imgui.h"
 #include "ParameterSet.h"
 
 using namespace Eigen;
@@ -16,7 +17,7 @@ public:
 	virtual MatrixXd backPropagate(MatrixXd lastInput, MatrixXd errors) = 0;
 	double applyBackProgate(); // Returns the sum of the change in the weights
 	virtual bool hasBias() = 0;
-	virtual void draw(NetworkVisualizer canvas);
+	virtual void draw(ImDrawList* canvas, ImVec2 origin, float scale);
 	ParameterSet getWeights() { return weights; }
 	virtual int numOutputs() = 0;
 protected:
@@ -24,7 +25,7 @@ protected:
 	ParameterSet weights;
 	const int DRAW_LEN = 16;
 
-	const double ALPHA = 0.1; // Learning rate
+	MatrixXd approximateBezier(MatrixXd points);
 
-	friend class NetworkVisualizer;
+	const double ALPHA = 0.1; // Learning rate
 };

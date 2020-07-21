@@ -39,7 +39,7 @@ int DotProductFunction::numOutputs()
 	return 1;
 }
 
-void DotProductFunction::draw(NetworkVisualizer canvas)
+void DotProductFunction::draw(ImDrawList* canvas, ImVec2 origin, float scale)
 {
 	/*const Scalar BLACK(0, 0, 0);
 	float slope = weights.getParameters().at<float>(0);

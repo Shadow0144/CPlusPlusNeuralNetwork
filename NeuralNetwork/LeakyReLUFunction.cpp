@@ -53,7 +53,7 @@ int LeakyReLUFunction::numOutputs()
 	return 1;
 }
 
-void LeakyReLUFunction::draw(NetworkVisualizer canvas)
+void LeakyReLUFunction::draw(ImDrawList* canvas, ImVec2 origin, float scale)
 {
 	/*const Scalar BLACK(0, 0, 0);
 

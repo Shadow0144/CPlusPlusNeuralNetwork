@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Function.h"
-#include "NetworkVisualizer.h"
+#include "imgui.h"
 #include <vector>
 
 using namespace std;
@@ -28,7 +28,7 @@ public:
 	MatrixXd backPropagate(MatrixXd errors);
 	double applyBackPropagate();
 
-	void draw(NetworkVisualizer canvas, bool output);
+	void draw(ImDrawList* canvas, bool output);
 
 private:
 	ActivationFunction functionType;

@@ -11,6 +11,4 @@ class ErrorFunction
 public:
 	virtual double getError(MatrixXd predicted, MatrixXd actual) = 0;
 	virtual MatrixXd getDerivativeOfError(MatrixXd predicted, MatrixXd actual) = 0;
-
-	friend class NetworkVisualizer;
 };

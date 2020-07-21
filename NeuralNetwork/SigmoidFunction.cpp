@@ -42,19 +42,31 @@ int SigmoidFunction::numOutputs()
 	return 1;
 }
 
-void SigmoidFunction::draw(NetworkVisualizer canvas)
+void SigmoidFunction::draw(ImDrawList* canvas, ImVec2 origin, float scale)
 {
-	/*const Scalar BLACK(0, 0, 0);
-	const float STEP_SIZE = 0.1f;
+	static ImVec4 col = ImVec4(1.0f, 1.0f, 0.4f, 1.0f);
+	const ImU32 col32 = ImColor(col);
 
-	Function::draw(canvas);
+	int r = 3;
+	double range = 3.0;
 
-	for (float i = -1.0f; i < 1.0f; i += STEP_SIZE)
+	int resolution = (r * 4) + 1;
+	MatrixXd sP(resolution, 2);
+	for (int r = 0; r < resolution; r++)
 	{
-		int y1 = ((int)(DRAW_LEN * sigmoid(i * weights.getParameters().at<float>(0))));
-		int y2 = ((int)(DRAW_LEN * sigmoid((i + STEP_SIZE) * weights.getParameters().at<float>(0))));
-		Point l_start(canvas.offset.x + ((int)(DRAW_LEN * i)), canvas.offset.y - y1);
-		Point l_end(canvas.offset.x + ((int)(DRAW_LEN * (i + STEP_SIZE))), canvas.offset.y - y2);
-		line(canvas.canvas, l_start, l_end, BLACK, 1, LINE_8);
-	}*/
+		sP(r, 0) = range * (2.0 * r) / (resolution - 1.0) - range;
+		sP(r, 1) = sigmoid(sP(r, 0));
+	}
+
+	double offset = -sP(0, 0);
+	for (int d = 0; d < (resolution - 3); d += 3)
+	{
+		MatrixXd points = approximateBezier(sP.block(d, 0, 4, 2));
+		canvas->AddBezierCurve(
+			ImVec2(origin.x + ((points(0, 0) + offset) * scale), origin.y - (points(0, 1) * scale)),
+			ImVec2(origin.x + ((points(1, 0) + offset) * scale), origin.y - (points(1, 1) * scale)),
+			ImVec2(origin.x + ((points(2, 0) + offset) * scale), origin.y - (points(2, 1) * scale)),
+			ImVec2(origin.x + ((points(3, 0) + offset) * scale), origin.y - (points(3, 1) * scale)),
+			col32, 1);
+	}
 }

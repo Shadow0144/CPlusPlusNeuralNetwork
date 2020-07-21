@@ -1,4 +1,5 @@
 #include "NeuralNetwork.h"
+#include "NetworkVisualizer.h"
 
 #include <iostream>
 #include <math.h>
@@ -28,11 +29,14 @@ NeuralNetwork::NeuralNetwork(int layerCount, int* layerShapes, ActivationFunctio
 	this->minError = 0.001;
 	this->errorConvergenceThreshold = 0.00000001;
 	this->weightConvergenceThreshold = 0.001;
+
+	visualizer = new NetworkVisualizer(this);
 }
 
 NeuralNetwork::~NeuralNetwork()
 {
 	//delete layers;
+	delete visualizer;
 }
 
 MatrixXd NeuralNetwork::feedForward(MatrixXd inputs)
@@ -106,41 +110,14 @@ bool NeuralNetwork::backPropagate(MatrixXd inputs, MatrixXd targets)
 
 void NeuralNetwork::train(MatrixXd inputs, MatrixXd targets)
 {
-	const int SIZE = 600;
-	char window_name[] = "Neural Network";
-	//MatrixXd img = Mat::Mat(SIZE, SIZE, CV_8UC3, Scalar(225, 225, 225));
-	
-	/*DrawingCanvas canvas;
-	canvas.canvas = img;
-	canvas.offset = Point(0, 0);
-	canvas.scale = 1.0f;*/
+	cout << "Beginning training" << endl;
 
 	MatrixXd predicted = feedForward(inputs);
-	//draw(canvas, predicted, targets);
-
 	double error = getError(predicted, targets);
-	if (verbosity >= 1)
-	{
-		cout << "Initial: " << endl;
-		if (verbosity >= 2)
-		{
-			for (int i = 0; i < inputs.rows(); i++)
-			{
-				cout << "Feedforward Untrained: X: " << inputs(i) << " Y': " << targets(i) << " Y: " << predicted(i) << endl;
-			}
-		}
-		else {}
-		cout << "Error: " << error << endl;
-	}
-	else {}
-
-	/*draw(canvas, inputs, targets);
-	imshow(window_name, img);
-	moveWindow(window_name, 400, 180);
-	waitKey(100);*/
+	Output(LearningState::untrained, 0, inputs, targets, predicted);
 
 	int t = 0;
-	bool converged = false;
+	bool converged = true; // TODO: Revert
 	double lastError = error;
 	double deltaError = error;
 	while (error > minError && t < maxIterations && !converged && deltaError > errorConvergenceThreshold)
@@ -153,25 +130,7 @@ void NeuralNetwork::train(MatrixXd inputs, MatrixXd targets)
 
 		if (t % drawRate == 0)
 		{
-			/*draw(canvas, inputs, targets);
-			imshow(window_name, img);
-			waitKey(1); // Wait enough for the window to draw*/
-			if (verbosity >= 1)
-			{
-				cout << endl << "Iterations: " << (t + 1) << endl;
-				if (verbosity >= 2)
-				{
-					for (int i = 0; i < inputs.rows(); i++)
-					{
-						cout << "Feedforward Training: X: " << inputs(i)
-							<< " Y': " << targets(i)
-							<< " Y: " << predicted(i) << endl;
-					}
-				}
-				else {}
-				cout << "Error: " << error << endl;
-			}
-			else {}
+			Output(LearningState::training, t, inputs, targets, predicted);
 		}
 
 		t++;
@@ -196,30 +155,65 @@ void NeuralNetwork::train(MatrixXd inputs, MatrixXd targets)
 		{
 			cout << endl << "Maximum iterations reached" << endl;
 		}
-		else {}
+		else { }
 	}
-	else {}
+	else { }
 
+	Output(LearningState::trained, t, inputs, targets, predicted);
+
+	cout << "Training complete" << endl;
+
+	// Infinite loop
+	if (drawingEnabled)
+	{
+		while (!visualizer->getWindowClosed())
+		{
+			visualizer->draw();
+		}
+	}
+	else 
+	{ 
+		cout << "Press any key to close" << endl;
+		cin;
+	}
+}
+
+void NeuralNetwork::Output(LearningState state, int iteration, MatrixXd inputs, MatrixXd targets, MatrixXd predicted)
+{
 	if (verbosity >= 1)
 	{
-		cout << endl << "Trained: " << endl;
+		string stateString = "";
+		switch (state)
+		{
+			case LearningState::untrained:
+				stateString = "Initial";
+				break;
+			case LearningState::training:
+				stateString = "Training";
+				break;
+			case LearningState::trained:
+				stateString = "Trained";
+				break;
+		}
+		cout << endl << stateString << ": " << endl;
 		if (verbosity >= 2)
 		{
 			for (int i = 0; i < inputs.rows(); i++)
 			{
-				cout << "Feedforward Trained: X: " << inputs(i) << " Y': " << targets(i) << " Y: " << predicted(i) << endl;
+				cout << "Feedforward " << stateString << ": X: " << inputs(i) << " Y': " << targets(i) << " Y: " << predicted(i) << endl;
 			}
 		}
-		else {}
-		cout << "Iterations: " << t << endl;
+		else { }
+		cout << "Iterations: " << iteration << endl;
 		cout << "Error: " << getError(predicted, targets) << endl;
 	}
-	else {}
+	else { }
 
-	/*draw(canvas, inputs, targets);
-	imshow(window_name, img);
-	cout << endl << "Press any key to exit" << endl;
-	waitKey(0); // Wait for a keystroke in the window*/
+	if (drawingEnabled)
+	{
+		visualizer->draw();
+	}
+	else { }
 }
 
 void NeuralNetwork::setTrainingParameters(ErrorFunction* errorFunction, int maxIterations,

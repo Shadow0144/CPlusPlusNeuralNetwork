@@ -27,7 +27,7 @@ int ConvolutionFunction::numOutputs()
 	return numInputs;
 }
 
-void ConvolutionFunction::draw(NetworkVisualizer canvas)
+void ConvolutionFunction::draw(ImDrawList* canvas, ImVec2 origin, float scale)
 {
 	/*const Scalar BLACK(0, 0, 0);
 

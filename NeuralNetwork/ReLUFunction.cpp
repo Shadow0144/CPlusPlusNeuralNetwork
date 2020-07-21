@@ -42,7 +42,7 @@ int ReLUFunction::numOutputs()
 	return 1;
 }
 
-void ReLUFunction::draw(NetworkVisualizer canvas)
+void ReLUFunction::draw(ImDrawList* canvas, ImVec2 origin, float scale)
 {
 	/*const Scalar BLACK(0, 0, 0);
 

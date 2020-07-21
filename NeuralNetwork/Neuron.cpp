@@ -105,7 +105,7 @@ double Neuron::applyBackPropagate()
 	return activationFunction->applyBackProgate();
 }
 
-void Neuron::draw(NetworkVisualizer canvas, bool output)
+void Neuron::draw(ImDrawList* canvas, bool output)
 {
 	/*const int P = 10;
 	const int RADIUS = 40;

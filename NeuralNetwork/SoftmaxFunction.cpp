@@ -38,7 +38,7 @@ int SoftmaxFunction::numOutputs()
 	return numInputs;
 }
 
-void SoftmaxFunction::draw(NetworkVisualizer canvas)
+void SoftmaxFunction::draw(ImDrawList* canvas, ImVec2 origin, float scale)
 {
 	/*const Scalar BLACK(0, 0, 0);
 

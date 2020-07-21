@@ -56,7 +56,7 @@ int SoftplusFunction::numOutputs()
 	return 1;
 }
 
-void SoftplusFunction::draw(NetworkVisualizer canvas)
+void SoftplusFunction::draw(ImDrawList* canvas, ImVec2 origin, float scale)
 {
 	/*const Scalar BLACK(0, 0, 0);
 	const float STEP_SIZE = 0.1f;

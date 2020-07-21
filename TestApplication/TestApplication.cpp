@@ -124,7 +124,5 @@ int main(int argc, char** argv)
 {
     test_network();
 
-    NetworkVisualizer nv = NetworkVisualizer();
-
     return 0;
 }

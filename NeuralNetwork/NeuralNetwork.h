@@ -4,6 +4,8 @@
 #include "Neuron.h"
 #include "ErrorFunction.h"
 
+class NetworkVisualizer;
+
 using namespace std;
 
 class NeuralNetwork
@@ -42,6 +44,16 @@ private:
 	double errorConvergenceThreshold;
 	double weightConvergenceThreshold;
 	int drawRate;
+	NetworkVisualizer* visualizer;
+
+	enum class LearningState // For printing output
+	{
+		untrained,
+		training,
+		trained
+	};
+
+	void Output(LearningState state, int iteration, MatrixXd inputs, MatrixXd targets, MatrixXd predicted);
 
 	friend class NetworkVisualizer;
 };

@@ -27,7 +27,7 @@ int IdentityFunction::numOutputs()
 	return numInputs;
 }
 
-void IdentityFunction::draw(NetworkVisualizer canvas)
+void IdentityFunction::draw(ImDrawList* canvas, ImVec2 origin, float scale)
 {
 	/*const Scalar BLACK(0, 0, 0);
 
