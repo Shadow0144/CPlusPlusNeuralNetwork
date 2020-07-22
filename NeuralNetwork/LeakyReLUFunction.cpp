@@ -38,12 +38,12 @@ bool LeakyReLUFunction::hasBias()
 	return true;
 }
 
-float LeakyReLUFunction::getA() 
+double LeakyReLUFunction::getA() 
 { 
 	return a;
 }
 
-void LeakyReLUFunction::setA(float a) 
+void LeakyReLUFunction::setA(double a) 
 {
 	this->a = a;
 }
@@ -53,34 +53,34 @@ int LeakyReLUFunction::numOutputs()
 	return 1;
 }
 
-void LeakyReLUFunction::draw(ImDrawList* canvas, ImVec2 origin, float scale)
+void LeakyReLUFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
 {
-	/*const Scalar BLACK(0, 0, 0);
+	Function::draw(canvas, origin, scale);
 
-	float slope = weights.getParameters().at<float>(0);
-	float inv_slope = 1.0f / abs(slope);
-	float x1, x2, y1, y2;
+	const ImColor BLACK(0.0f, 0.0f, 0.0f, 1.0f);
+
+	double slope = weights.getParameters()(0);
+	double inv_slope = 1.0 / abs(slope);
+	double x1, x2, y1, y2;
 	if (slope > 0.0f)
 	{
-		x1 = -1.0f;
-		x2 = +min(1.0f, inv_slope);
+		x1 = -1.0;
+		x2 = +min(1.0, inv_slope);
 		y1 = -a;
 		y2 = (x2 * slope);
 	}
 	else
 	{
-		x1 = -min(1.0f, inv_slope);
-		x2 = 1.0f;
+		x1 = -min(1.0, inv_slope);
+		x2 = 1.0;
 		y1 = (x1 * slope);
 		y2 = a;
 	}
 
-	Point l_start(canvas.offset.x + ((int)(DRAW_LEN * x1)), canvas.offset.y - ((int)(DRAW_LEN * y1)));
-	Point l_mid(canvas.offset.x, canvas.offset.y);
-	Point l_end(canvas.offset.x + ((int)(DRAW_LEN * x2)), canvas.offset.y - ((int)(DRAW_LEN * y2)));
+	ImVec2 l_start(origin.x + (DRAW_LEN * x1 * scale), origin.y - (DRAW_LEN * y1 * scale));
+	ImVec2 l_mid(origin.x, origin.y);
+	ImVec2 l_end(origin.x + (DRAW_LEN * x2 * scale), origin.y - (DRAW_LEN * y2 * scale));
 
-	Function::draw(canvas);
-
-	line(canvas.canvas, l_start, l_mid, BLACK, 1, LINE_8);
-	line(canvas.canvas, l_mid, l_end, BLACK, 1, LINE_8);*/
+	canvas->AddLine(l_start, l_mid, BLACK);
+	canvas->AddLine(l_mid, l_end, BLACK);
 }

@@ -11,15 +11,15 @@ public:
 	MatrixXd feedForward(MatrixXd input);
 	MatrixXd backPropagate(MatrixXd lastInput, MatrixXd errors);
 	bool hasBias();
-	virtual void draw(ImDrawList* canvas, ImVec2 origin, float scale);
+	virtual void draw(ImDrawList* canvas, ImVec2 origin, double scale);
 
-	float getA();
-	void setA(float a);
+	double getA();
+	void setA(double a);
 
 	int numOutputs();
 
 private:
 	MatrixXd lastOutput;
 
-	float a = 0.01f; // Leak coefficient
+	double a = 0.01; // Leak coefficient
 };

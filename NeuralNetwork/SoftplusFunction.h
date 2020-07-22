@@ -11,7 +11,7 @@ public:
 	MatrixXd feedForward(MatrixXd input);
 	MatrixXd backPropagate(MatrixXd lastInput, MatrixXd errors);
 	bool hasBias();
-	virtual void draw(ImDrawList* canvas, ImVec2 origin, float scale);
+	virtual void draw(ImDrawList* canvas, ImVec2 origin, double scale);
 
 	double getK();
 	void setK(double k);

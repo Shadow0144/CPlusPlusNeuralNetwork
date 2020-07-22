@@ -49,25 +49,31 @@ MatrixXd Function::approximateBezier(MatrixXd points)
 	return A * points;
 }
 
-void Function::draw(ImDrawList* canvas, ImVec2 origin, float scale)
+void Function::draw(ImDrawList* canvas, ImVec2 origin, double scale)
 {
-	/*const Scalar BLACK(0, 0, 0);
-	const int DARK_GRAY = 50;
-	const Scalar WHITE(255, 255, 255);
-	const int DOT_LENGTH = 4;
+	const ImColor BLACK(0.0f, 0.0f, 0.0f, 1.0f);
+	const ImColor GRAY(0.3f, 0.3f, 0.3f, 1.0f);
+	const ImColor LIGHT_GRAY(0.6f, 0.6f, 0.6f, 1.0f);
+	const ImColor WHITE(1.0f, 1.0f, 1.0f, 1.0f);
+	const double DOT_LENGTH = 4;
 
-	Point start(canvas.offset.x - DRAW_LEN, canvas.offset.y + DRAW_LEN);
-	Point end(canvas.offset.x + DRAW_LEN, canvas.offset.y - DRAW_LEN);
+	double rescale = DRAW_LEN * scale;
 
-	rectangle(canvas.canvas, start, end, WHITE, -1, LINE_8);
+	ImVec2 start(origin.x - rescale, origin.y + rescale);
+	ImVec2 end(origin.x + rescale, origin.y - rescale);
 
-	Point zero_x_left(canvas.offset.x - DRAW_LEN, canvas.offset.y);
-	Point zero_x_right(canvas.offset.x + DRAW_LEN, canvas.offset.y);
-	LineIterator itX(canvas.canvas, zero_x_left, zero_x_right, LINE_8);
-	Point zero_y_base(canvas.offset.x, canvas.offset.y + DRAW_LEN);
-	Point zero_y_top(canvas.offset.x, canvas.offset.y - DRAW_LEN);
-	LineIterator itY(canvas.canvas, zero_y_base, zero_y_top, LINE_8);
-	for (int i = 0; i < itX.count; i++, itX++, itY++)
+	canvas->AddRectFilled(start, end, WHITE);
+	canvas->AddRect(start, end, BLACK);
+
+	ImVec2 zero_x_left(origin.x - rescale, origin.y);
+	ImVec2 zero_x_right(origin.x + rescale, origin.y);
+	canvas->AddLine(zero_x_left, zero_x_right, LIGHT_GRAY);
+	//LineIterator itX(canvas.canvas, zero_x_left, zero_x_right, LINE_8);
+	ImVec2 zero_y_base(origin.x, origin.y + rescale);
+	ImVec2 zero_y_top(origin.x, origin.y - rescale);
+	canvas->AddLine(zero_y_base, zero_y_top, LIGHT_GRAY);
+	//LineIterator itY(canvas.canvas, zero_y_base, zero_y_top, LINE_8);
+	/*for (int i = 0; i < itX.count; i++, itX++, itY++)
 	{
 		if (i % DOT_LENGTH != 0)
 		{

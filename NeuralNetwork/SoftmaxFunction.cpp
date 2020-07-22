@@ -38,8 +38,10 @@ int SoftmaxFunction::numOutputs()
 	return numInputs;
 }
 
-void SoftmaxFunction::draw(ImDrawList* canvas, ImVec2 origin, float scale)
+void SoftmaxFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
 {
+	Function::draw(canvas, origin, scale);
+
 	/*const Scalar BLACK(0, 0, 0);
 
 	float slope = weights.getParameters().at<float>(0);

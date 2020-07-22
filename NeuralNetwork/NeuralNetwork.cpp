@@ -261,20 +261,20 @@ void NeuralNetwork::setDrawingEnabled(bool drawingEnabled)
 	this->drawingEnabled = drawingEnabled;
 }
 
-void NeuralNetwork::draw(ImDrawList* canvas, ImVec2 origin, float scale, MatrixXd target_xs, MatrixXd target_ys)
+void NeuralNetwork::draw(ImDrawList* canvas, ImVec2 origin, double scale, MatrixXd target_xs, MatrixXd target_ys)
 {
 	// Calculate the drawing space parameters
-	const int HALF_WIDTH = scale * 1280 / 2;
-	const int HALF_HEIGHT = scale * 720 / 2;
-	const int Y_SHIFT = scale * 120;
-	const int X_SHIFT = scale * 120;
-	int y = 0;
-	int x = 0;
+	const double HALF_WIDTH = scale * 1280 / 2;
+	const double HALF_HEIGHT = scale * 720 / 2;
+	const double Y_SHIFT = scale * 120;
+	const double X_SHIFT = scale * 120;
+	double y = 0;
+	double x = 0;
 
-	int previous_y = 0;
-	int* previous_xs = new int[0];
-	int* next_xs;
-	int previous_count = 0;
+	double previous_y = 0;
+	double* previous_xs = new double[0];
+	double* next_xs;
+	double previous_count = 0;
 	
 	// Find the vertical start point
 	y = origin.y + HALF_HEIGHT - (layerCount * Y_SHIFT / 2) - (Y_SHIFT / 2);
@@ -282,7 +282,7 @@ void NeuralNetwork::draw(ImDrawList* canvas, ImVec2 origin, float scale, MatrixX
 	{
 		// Find the horizontal start point for this layer
 		x = origin.x + HALF_WIDTH - (layerShapes[i] * X_SHIFT / 2) - (X_SHIFT / 2);
-		next_xs = new int[layerShapes[i]];
+		next_xs = new double[layerShapes[i]];
 		for (int j = 0; j < layerShapes[i]; j++)
 		{
 			// Set the offset and draw the neuron

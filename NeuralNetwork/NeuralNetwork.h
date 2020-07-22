@@ -30,7 +30,7 @@ public:
 	void setDrawRate(int drawRate);
 	bool getDrawingEnabled();
 	void setDrawingEnabled(bool drawingEnabled);
-	void draw(ImDrawList* canvas, ImVec2 origin, float scale, MatrixXd target_xs, MatrixXd target_ys);
+	void draw(ImDrawList* canvas, ImVec2 origin, double scale, MatrixXd target_xs, MatrixXd target_ys);
 
 private:
 	int verbosity;

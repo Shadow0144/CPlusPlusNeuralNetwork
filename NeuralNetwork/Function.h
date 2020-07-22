@@ -17,13 +17,13 @@ public:
 	virtual MatrixXd backPropagate(MatrixXd lastInput, MatrixXd errors) = 0;
 	double applyBackProgate(); // Returns the sum of the change in the weights
 	virtual bool hasBias() = 0;
-	virtual void draw(ImDrawList* canvas, ImVec2 origin, float scale);
+	virtual void draw(ImDrawList* canvas, ImVec2 origin, double scale);
 	ParameterSet getWeights() { return weights; }
 	virtual int numOutputs() = 0;
 protected:
 	int numInputs = 0;
 	ParameterSet weights;
-	const int DRAW_LEN = 16;
+	const double DRAW_LEN = 16;
 
 	MatrixXd approximateBezier(MatrixXd points);
 

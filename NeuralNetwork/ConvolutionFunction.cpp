@@ -27,8 +27,10 @@ int ConvolutionFunction::numOutputs()
 	return numInputs;
 }
 
-void ConvolutionFunction::draw(ImDrawList* canvas, ImVec2 origin, float scale)
+void ConvolutionFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
 {
+	Function::draw(canvas, origin, scale);
+
 	/*const Scalar BLACK(0, 0, 0);
 
 	Point l_start(canvas.offset.x - DRAW_LEN, canvas.offset.y - ((int)(-DRAW_LEN)));

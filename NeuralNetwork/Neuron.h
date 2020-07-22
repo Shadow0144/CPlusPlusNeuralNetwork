@@ -28,7 +28,7 @@ public:
 	MatrixXd backPropagate(MatrixXd errors);
 	double applyBackPropagate();
 
-	void draw(ImDrawList* canvas, ImVec2 origin, float scale, bool output);
+	void draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output);
 
 private:
 	ActivationFunction functionType;
@@ -41,6 +41,8 @@ private:
 
 	MatrixXd lastInput;
 	MatrixXd result; // Results of feedforward
+
+	ImVec2 position;
 
 	void addChild(Neuron* child);
 

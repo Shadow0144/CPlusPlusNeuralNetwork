@@ -39,20 +39,21 @@ int DotProductFunction::numOutputs()
 	return 1;
 }
 
-void DotProductFunction::draw(ImDrawList* canvas, ImVec2 origin, float scale)
+void DotProductFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
 {
-	/*const Scalar BLACK(0, 0, 0);
-	float slope = weights.getParameters().at<float>(0);
-	float inv_slope = 1.0f / abs(slope);
-	float x1 = -min(1.0f, inv_slope);
-	float x2 = +min(1.0f, inv_slope);
-	float y1 = x1 * slope;
-	float y2 = x2 * slope;
+	Function::draw(canvas, origin, scale);
 
-	Point l_start(canvas.offset.x + ((int)(x1 * DRAW_LEN)), canvas.offset.y - ((int)(y1 * DRAW_LEN)));
-	Point l_end(canvas.offset.x + ((int)(x2 * DRAW_LEN)), canvas.offset.y - ((int)(y2 * DRAW_LEN)));
+	const ImColor BLACK(0.0f, 0.0f, 0.0f, 1.0f);
 
-	Function::draw(canvas);
+	double slope = weights.getParameters()(0);
+	double inv_slope = 1.0 / abs(slope);
+	double x1 = -min(1.0, inv_slope);
+	double x2 = +min(1.0, inv_slope);
+	double y1 = x1 * slope;
+	double y2 = x2 * slope;
 
-	line(canvas.canvas, l_start, l_end, BLACK, 1, LINE_8);*/
+	ImVec2 l_start(origin.x + (x1 * DRAW_LEN * scale), origin.y - (y1 * DRAW_LEN * scale));
+	ImVec2 l_end(origin.x + (x2 * DRAW_LEN * scale), origin.y - (y2 * DRAW_LEN * scale));
+
+	canvas->AddLine(l_start, l_end, BLACK);
 }

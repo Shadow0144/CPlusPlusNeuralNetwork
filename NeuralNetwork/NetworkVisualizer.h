@@ -29,6 +29,8 @@ private:
 	ImVec2 origin;
 	ImVec2 drag;
 	bool startDrag;
-	float scale;
-	const float SCALE_FACTOR = 0.1f;
+	double scale;
+	const double SCALE_FACTOR = 0.1;
+	const double MIN_SCALE_FACTOR = 0.1;
+	const double MAX_SCALE_FACTOR = 10.0;
 };

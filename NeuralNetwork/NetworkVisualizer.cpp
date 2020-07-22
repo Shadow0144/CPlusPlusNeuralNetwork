@@ -18,10 +18,10 @@ NetworkVisualizer::NetworkVisualizer(NeuralNetwork* network)
 {
     this->network = network;
 
-    drag = ImVec2(0.0f, 0.0f);
+    drag = ImVec2(0.0, 0.0);
     startDrag = false;
-    origin = ImVec2(0.0f, 0.0f);
-    scale = 1.0f;
+    origin = ImVec2(0.0, 0.0);
+    scale = 1.0;
 
     setup();
     windowClosed = false;
@@ -141,7 +141,8 @@ void test_draw(ImDrawList* draw_list)
 
 void NetworkVisualizer::draw()
 {
-    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+    const ImVec4 CLEAR_COLOR(0.45, 0.55, 0.60, 1.0);
+    const ImVec4 VERY_LIGHT_GRAY(0.8, 0.8, 0.8, 1.0);
 
     // Poll and handle events (inputs, window resize, etc.)
     // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
@@ -182,13 +183,18 @@ void NetworkVisualizer::draw()
     { 
         startDrag = false;
     }
-    float deltaScale = (ImGui::GetIO().MouseWheel * SCALE_FACTOR);
+    double deltaScale = (ImGui::GetIO().MouseWheel * SCALE_FACTOR);
     if (deltaScale != 0) // TODO: Improve
     {
-        scale += deltaScale;
-        ImVec2 mp = ImGui::GetIO().MousePos;
-        origin.x -= mp.x * deltaScale;
-        origin.y -= mp.y * deltaScale;
+        double previousScale = scale;
+        scale = max(MIN_SCALE_FACTOR, min(MAX_SCALE_FACTOR, scale + deltaScale));
+        if (scale != previousScale)
+        {
+            ImVec2 mp = ImGui::GetIO().MousePos;
+            origin.x -= mp.x * deltaScale;
+            origin.y -= mp.y * deltaScale;
+        }
+        else { }
     }
     else { }
 
@@ -196,6 +202,7 @@ void NetworkVisualizer::draw()
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL2_NewFrame(window);
     ImGui::NewFrame();
+    ImGui::PushStyleColor(ImGuiCol_WindowBg, VERY_LIGHT_GRAY);
     ImGui::Begin("Network", 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
 
     ImDrawList* draw_list = ImGui::GetWindowDrawList();
@@ -203,11 +210,12 @@ void NetworkVisualizer::draw()
     network->draw(draw_list, origin, scale, MatrixXd(), MatrixXd());
 
     ImGui::End();
+    ImGui::PopStyleColor();
 
     // Rendering
     ImGui::Render();
     glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
-    glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
+    glClearColor(CLEAR_COLOR.x, CLEAR_COLOR.y, CLEAR_COLOR.z, CLEAR_COLOR.w);
     glClear(GL_COLOR_BUFFER_BIT);
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     SDL_GL_SwapWindow(window);

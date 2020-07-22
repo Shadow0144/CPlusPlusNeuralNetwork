@@ -27,14 +27,14 @@ int IdentityFunction::numOutputs()
 	return numInputs;
 }
 
-void IdentityFunction::draw(ImDrawList* canvas, ImVec2 origin, float scale)
+void IdentityFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
 {
-	/*const Scalar BLACK(0, 0, 0);
+	Function::draw(canvas, origin, scale);
 
-	Point l_start(canvas.offset.x - DRAW_LEN, canvas.offset.y - ((int)(-DRAW_LEN)));
-	Point l_end(canvas.offset.x + DRAW_LEN, canvas.offset.y - ((int)(DRAW_LEN)));
+	const ImColor BLACK(0.0f, 0.0f, 0.0f, 1.0f);
 
-	Function::draw(canvas);
+	ImVec2 l_start(origin.x - (DRAW_LEN * scale), origin.y + (DRAW_LEN * scale));
+	ImVec2 l_end(origin.x + (DRAW_LEN * scale), origin.y - (DRAW_LEN * scale));
 
-	line(canvas.canvas, l_start, l_end, BLACK, 1, LINE_8);*/
+	canvas->AddLine(l_start, l_end, BLACK);
 }
