@@ -28,7 +28,7 @@ public:
 	MatrixXd backPropagate(MatrixXd errors);
 	double applyBackPropagate();
 
-	void draw(ImDrawList* canvas, bool output);
+	void draw(ImDrawList* canvas, ImVec2 origin, float scale, bool output);
 
 private:
 	ActivationFunction functionType;

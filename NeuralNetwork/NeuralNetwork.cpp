@@ -261,17 +261,13 @@ void NeuralNetwork::setDrawingEnabled(bool drawingEnabled)
 	this->drawingEnabled = drawingEnabled;
 }
 
-bool windowMade = false;
-void NeuralNetwork::draw(MatrixXd target_xs, MatrixXd target_ys)
+void NeuralNetwork::draw(ImDrawList* canvas, ImVec2 origin, float scale, MatrixXd target_xs, MatrixXd target_ys)
 {
-	/*// Clear the canvas
-	canvas.canvas.setTo(Scalar(225, 225, 225));
-
 	// Calculate the drawing space parameters
-	const int HALF_WIDTH = canvas.canvas.cols / 2;
-	const int HALF_HEIGHT = canvas.canvas.rows / 2;
-	const int Y_SHIFT = 120;
-	const int X_SHIFT = 120;
+	const int HALF_WIDTH = scale * 1280 / 2;
+	const int HALF_HEIGHT = scale * 720 / 2;
+	const int Y_SHIFT = scale * 120;
+	const int X_SHIFT = scale * 120;
 	int y = 0;
 	int x = 0;
 
@@ -281,17 +277,17 @@ void NeuralNetwork::draw(MatrixXd target_xs, MatrixXd target_ys)
 	int previous_count = 0;
 	
 	// Find the vertical start point
-	y = HALF_HEIGHT - (layerCount * Y_SHIFT / 2) - (Y_SHIFT / 2);
+	y = origin.y + HALF_HEIGHT - (layerCount * Y_SHIFT / 2) - (Y_SHIFT / 2);
 	for (int i = 0; i < layerCount; i++)
 	{
 		// Find the horizontal start point for this layer
-		x = HALF_WIDTH - (layerShapes[i] * X_SHIFT / 2) - (X_SHIFT / 2);
+		x = origin.x + HALF_WIDTH - (layerShapes[i] * X_SHIFT / 2) - (X_SHIFT / 2);
 		next_xs = new int[layerShapes[i]];
 		for (int j = 0; j < layerShapes[i]; j++)
 		{
 			// Set the offset and draw the neuron
-			canvas.offset = Point(x, y);
-			layers[i][j]->draw(canvas, (i == (layerCount-1)));
+			ImVec2 offset = ImVec2(x, y);
+			layers[i][j]->draw(canvas, offset, scale, (i == (layerCount-1)));
 			next_xs[j] = x;
 			x += X_SHIFT;
 		}
@@ -305,7 +301,7 @@ void NeuralNetwork::draw(MatrixXd target_xs, MatrixXd target_ys)
 		y += Y_SHIFT;
 	}
 
-	// Draw the function approximated by the network
+	/*// Draw the function approximated by the network
 	const int BUFFER = 5;
 	const int GRID_SIZE = 150;
 	const int LEFT = canvas.canvas.cols - BUFFER - GRID_SIZE;

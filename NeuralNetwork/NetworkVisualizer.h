@@ -25,4 +25,10 @@ private:
 	SDL_Window* window;
 	SDL_GLContext gl_context;
 	ImGuiIO io;
+
+	ImVec2 origin;
+	ImVec2 drag;
+	bool startDrag;
+	float scale;
+	const float SCALE_FACTOR = 0.1f;
 };

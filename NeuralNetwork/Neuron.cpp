@@ -105,14 +105,14 @@ double Neuron::applyBackPropagate()
 	return activationFunction->applyBackProgate();
 }
 
-void Neuron::draw(ImDrawList* canvas, bool output)
+void Neuron::draw(ImDrawList* canvas, ImVec2 origin, float scale, bool output)
 {
-	/*const int P = 10;
+	const int P = 10;
 	const int RADIUS = 40;
-	const Scalar BLACK(0, 0, 0);
-	const Scalar GRAY(100, 100, 100);
-	const Scalar LIGHT_GRAY(200, 200, 200);
-	const Scalar WHITE(255, 255, 255);
+	const ImColor BLACK(0.0f, 0.0f, 0.0f, 1.0f);
+	const ImColor GRAY(0.3f, 0.3f, 0.3f, 1.0f);
+	const ImColor LIGHT_GRAY(0.6f, 0.6f, 0.6f, 1.0f);
+	const ImColor WHITE(1.0f, 1.0f, 1.0f, 1.0f);
 	const int LINE_LENGTH = 15;
 	const int WEIGHT_RADIUS = 10;
 	const int BIAS_OFFSET_X = 40;
@@ -123,7 +123,9 @@ void Neuron::draw(ImDrawList* canvas, bool output)
 	const int BIAS_TEXT_Y = 20;
 
 	// Draw the neuron
-	drawingParameters.center = Point(P + RADIUS, P + RADIUS) + canvas.offset;
+	canvas->AddCircleFilled(ImVec2(origin.x, origin.y), RADIUS * scale, LIGHT_GRAY, 32);
+																													
+	/*drawingParameters.center = Point(P + RADIUS, P + RADIUS) + canvas.offset;
 	circle(canvas.canvas, drawingParameters.center, RADIUS, LIGHT_GRAY, -1, LINE_8);
 	circle(canvas.canvas, drawingParameters.center, RADIUS, BLACK, 1, LINE_8);
 

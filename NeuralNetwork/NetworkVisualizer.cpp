@@ -17,6 +17,12 @@
 NetworkVisualizer::NetworkVisualizer(NeuralNetwork* network)
 {
     this->network = network;
+
+    drag = ImVec2(0.0f, 0.0f);
+    startDrag = false;
+    origin = ImVec2(0.0f, 0.0f);
+    scale = 1.0f;
+
     setup();
     windowClosed = false;
 }
@@ -90,43 +96,8 @@ void NetworkVisualizer::setup()
     ImGui_ImplOpenGL3_Init(glsl_version);
 }
 
-// Temp
-double sigmoided(double value)
+void test_draw(ImDrawList* draw_list)
 {
-    return (1.0f / (1.0f + exp(-value)));
-}
-
-void NetworkVisualizer::draw()
-{
-    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-
-    // Poll and handle events (inputs, window resize, etc.)
-    // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
-    // - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application.
-    // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application.
-    // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
-    SDL_Event event;
-    while (SDL_PollEvent(&event))
-    {
-        ImGui_ImplSDL2_ProcessEvent(&event);
-        if ((event.type == SDL_QUIT) ||
-            (event.type == SDL_WINDOWEVENT 
-                && event.window.event == SDL_WINDOWEVENT_CLOSE
-                && event.window.windowID == SDL_GetWindowID(window)))
-        {
-            windowClosed = true;
-        }
-        else { }
-    }
-
-    // Start the Dear ImGui frame
-    ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplSDL2_NewFrame(window);
-    ImGui::NewFrame();
-    ImGui::Begin("Network");
-
-    ImDrawList* draw_list = ImGui::GetWindowDrawList();
-
     // Primitives 
     ImGui::Text("Primitives");
     static float sz = 36.0f;
@@ -166,6 +137,71 @@ void NetworkVisualizer::draw()
         SigmoidFunction sgf(1);
         sgf.draw(draw_list, ImVec2(x, y), sz);
     }
+}
+
+void NetworkVisualizer::draw()
+{
+    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
+    // Poll and handle events (inputs, window resize, etc.)
+    // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
+    // - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application.
+    // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application.
+    // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
+    SDL_Event event;
+    while (SDL_PollEvent(&event))
+    {
+        ImGui_ImplSDL2_ProcessEvent(&event);
+        if ((event.type == SDL_QUIT) ||
+            (event.type == SDL_WINDOWEVENT 
+                && event.window.event == SDL_WINDOWEVENT_CLOSE
+                && event.window.windowID == SDL_GetWindowID(window)))
+        {
+            windowClosed = true;
+        }
+        else { }
+    }
+
+    if (ImGui::GetIO().MouseDown[0])
+    {
+        ImVec2 newDrag = ImGui::GetMouseDragDelta(0);
+        ImVec2 deltaDrag;
+        if (!startDrag)
+        {
+            deltaDrag = newDrag;
+            startDrag = true;
+        }
+        else
+        {
+            deltaDrag = ImVec2(newDrag.x - drag.x, newDrag.y - drag.y);
+        }
+        drag = newDrag;
+        origin = ImVec2(origin.x + deltaDrag.x, origin.y + deltaDrag.y);
+    }
+    else 
+    { 
+        startDrag = false;
+    }
+    float deltaScale = (ImGui::GetIO().MouseWheel * SCALE_FACTOR);
+    if (deltaScale != 0) // TODO: Improve
+    {
+        scale += deltaScale;
+        ImVec2 mp = ImGui::GetIO().MousePos;
+        origin.x -= mp.x * deltaScale;
+        origin.y -= mp.y * deltaScale;
+    }
+    else { }
+
+    // Start the Dear ImGui frame
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplSDL2_NewFrame(window);
+    ImGui::NewFrame();
+    ImGui::Begin("Network", 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
+
+    ImDrawList* draw_list = ImGui::GetWindowDrawList();
+
+    network->draw(draw_list, origin, scale, MatrixXd(), MatrixXd());
+
     ImGui::End();
 
     // Rendering
