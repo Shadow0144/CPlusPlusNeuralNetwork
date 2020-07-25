@@ -36,7 +36,7 @@ bool TanhFunction::hasBias()
 	return true;
 }
 
-int TanhFunction::numOutputs()
+int TanhFunction::getNumOutputs()
 {
 	return 1;
 }

@@ -5,11 +5,11 @@
 #include <math.h>
 #include <cmath>
 
-NeuralNetwork::NeuralNetwork(int layerCount, int* layerShapes, ActivationFunction* layerFunctions)
+NeuralNetwork::NeuralNetwork(int layerCount, int* layerShapes, ActivationFunction* layerFunctions, int inputCount, int outputCount, bool drawingEnabled)
 {
 	this->verbosity = 1;
-	this->drawRate = 100;
-	this->drawingEnabled = true;
+	this->outputRate = 100;
+	this->drawingEnabled = drawingEnabled;
 	this->layerCount = layerCount;
 	this->layerShapes = layerShapes;
 	layers = new vector<Neuron*>[layerCount];
@@ -19,7 +19,10 @@ NeuralNetwork::NeuralNetwork(int layerCount, int* layerShapes, ActivationFunctio
 		layers[i] = vector<Neuron*>();
 		for (int j = 0; j < layerShapes[i]; j++)
 		{
-			layers[i].push_back(new Neuron(layerFunctions[i], parents));
+			// TODO: Temp
+			int input = (i == 0) ? inputCount : parents->size();
+			int output = (i == (layerCount - 1)) ? outputCount : -1;
+			layers[i].push_back(new Neuron(layerFunctions[i], parents, input, output));
 		}
 		parents = &layers[i];
 	}
@@ -30,7 +33,14 @@ NeuralNetwork::NeuralNetwork(int layerCount, int* layerShapes, ActivationFunctio
 	this->errorConvergenceThreshold = 0.00000001;
 	this->weightConvergenceThreshold = 0.001;
 
-	visualizer = new NetworkVisualizer(this);
+	if (drawingEnabled)
+	{
+		visualizer = new NetworkVisualizer(this);
+	}
+	else 
+	{
+		visualizer = NULL;
+	}
 }
 
 NeuralNetwork::~NeuralNetwork()
@@ -42,18 +52,18 @@ NeuralNetwork::~NeuralNetwork()
 MatrixXd NeuralNetwork::feedForward(MatrixXd inputs)
 {
 	// Fix: Assumes a non-zero network
-	MatrixXd result = MatrixXd(inputs.rows(), layerShapes[layerCount-1]); // The final result encapsulating all examples
-	if (layerCount > 0 && inputs.cols() == 1 /*input.cols == layerShapes[0]*/)
+	MatrixXd result = MatrixXd(inputs.rows(), layerShapes[layerCount-1] * (layers[layerCount-1][0])->getNumOutputs()); // The final result encapsulating all examples
+	if (layerCount > 0)
 	{
 		for (int i = 0; i < inputs.rows(); i++) // Loop through the examples
 		{
 			MatrixXd example = inputs.row(i); // A single example
 			for (int j = 0; j < layerCount; j++) // Loop through the layers
 			{
-				MatrixXd row_result = MatrixXd(1, layerShapes[j]); // The result of a single layer of calculation
+				MatrixXd row_result = MatrixXd(1, layerShapes[j] * (layers[layerCount - 1][0])->getNumOutputs()); // The result of a single layer of calculation
 				for (int k = 0; k < layerShapes[j]; k++) // Loop through the neurons
 				{
-					row_result(k) = layers[j].at(k)->feedForward(example)(0);
+					row_result = layers[j].at(k)->feedForward(example); // TODO FIX!
 				}
 				example = row_result; // Feed the row_result into the next row
 			}
@@ -73,20 +83,20 @@ bool NeuralNetwork::backPropagate(MatrixXd inputs, MatrixXd targets)
 		for (int i = 0; i < targets.rows(); i++)
 		{
 			MatrixXd y = feedForward(inputs.row(i));
-			MatrixXd errors = (targets.row(i) - y).colwise().sum();
+			MatrixXd errors = errorFunction->getDerivativeOfError(y, targets.row(i));
 			for (int j = (layerCount - 1); j > 0; j--) // Skip the top row
 			{
 				MatrixXd newErrors = MatrixXd(layerShapes[j], layerShapes[j - 1]); // One row per neuron above
 				for (int k = 0; k < layerShapes[j]; k++)
 				{
-					MatrixXd newError = layers[j].at(k)->backPropagate(errors.col(k));
+					MatrixXd newError = layers[j].at(k)->backPropagate(errors.row(k));
 					newErrors.row(k) = newError.row(0);
 				}
 				errors = newErrors;
 			}
 			for (int k = 0; k < layerShapes[0]; k++) // Top row
 			{
-				layers[0].at(k)->backPropagate(errors.col(k));
+				layers[0].at(k)->backPropagate(errors.row(k));
 			}
 			
 			for (int j = 0; j < layerCount; j++)
@@ -110,14 +120,14 @@ bool NeuralNetwork::backPropagate(MatrixXd inputs, MatrixXd targets)
 
 void NeuralNetwork::train(MatrixXd inputs, MatrixXd targets)
 {
-	cout << "Beginning training" << endl;
-
 	MatrixXd predicted = feedForward(inputs);
-	double error = getError(predicted, targets);
+	double error = abs(getError(predicted, targets));
 	Output(LearningState::untrained, 0, inputs, targets, predicted);
 
+	cout << "Beginning training" << endl;
+
 	int t = 0;
-	bool converged = true; // TODO: Revert
+	bool converged = false;
 	double lastError = error;
 	double deltaError = error;
 	while (error > minError && t < maxIterations && !converged && deltaError > errorConvergenceThreshold)
@@ -128,10 +138,17 @@ void NeuralNetwork::train(MatrixXd inputs, MatrixXd targets)
 		deltaError = abs(lastError - error);
 		lastError = error;
 
-		if (t % drawRate == 0)
+		if (t % outputRate == 0 && t != 0)
 		{
 			Output(LearningState::training, t, inputs, targets, predicted);
 		}
+		else { }
+
+		if (drawingEnabled)
+		{
+			visualizer->draw();
+		}
+		else { }
 
 		t++;
 	}
@@ -173,8 +190,8 @@ void NeuralNetwork::train(MatrixXd inputs, MatrixXd targets)
 	}
 	else 
 	{ 
-		cout << "Press any key to close" << endl;
-		cin;
+		cout << endl;
+		system("pause");
 	}
 }
 
@@ -208,12 +225,6 @@ void NeuralNetwork::Output(LearningState state, int iteration, MatrixXd inputs, 
 		cout << "Error: " << getError(predicted, targets) << endl;
 	}
 	else { }
-
-	if (drawingEnabled)
-	{
-		visualizer->draw();
-	}
-	else { }
 }
 
 void NeuralNetwork::setTrainingParameters(ErrorFunction* errorFunction, int maxIterations,
@@ -241,14 +252,14 @@ void NeuralNetwork::setVerbosity(int verbosity)
 	this->verbosity = verbosity;
 }
 
-int NeuralNetwork::getDrawRate()
+int NeuralNetwork::getOutputRate()
 {
-	return drawRate;
+	return outputRate;
 }
 
-void NeuralNetwork::setDrawRate(int drawRate)
+void NeuralNetwork::setOutputRate(int outputRate)
 {
-	this->drawRate = drawRate;
+	this->outputRate = outputRate;
 }
 
 bool NeuralNetwork::getDrawingEnabled()
@@ -259,6 +270,16 @@ bool NeuralNetwork::getDrawingEnabled()
 void NeuralNetwork::setDrawingEnabled(bool drawingEnabled)
 {
 	this->drawingEnabled = drawingEnabled;
+	if (drawingEnabled && visualizer == NULL)
+	{
+		visualizer = new NetworkVisualizer(this);
+	}
+	else if (!drawingEnabled && visualizer != NULL)
+	{ 
+		delete visualizer;
+		visualizer = NULL;
+	}
+	else { }
 }
 
 void NeuralNetwork::draw(ImDrawList* canvas, ImVec2 origin, double scale, MatrixXd target_xs, MatrixXd target_ys)

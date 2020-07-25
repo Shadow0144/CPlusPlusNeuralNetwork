@@ -12,5 +12,5 @@ public:
 	bool hasBias();
 	virtual void draw(ImDrawList* canvas, ImVec2 origin, double scale);
 
-	int numOutputs();
+	int getNumOutputs();
 };

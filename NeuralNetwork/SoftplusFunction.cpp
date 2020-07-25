@@ -51,7 +51,7 @@ void SoftplusFunction::setK(double k)
 	this->k = k;
 }
 
-int SoftplusFunction::numOutputs()
+int SoftplusFunction::getNumOutputs()
 {
 	return 1;
 }

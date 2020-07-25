@@ -37,7 +37,7 @@ bool SigmoidFunction::hasBias()
 	return true;
 }
 
-int SigmoidFunction::numOutputs()
+int SigmoidFunction::getNumOutputs()
 {
 	return 1;
 }

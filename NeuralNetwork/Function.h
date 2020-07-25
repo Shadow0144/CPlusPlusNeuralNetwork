@@ -19,7 +19,7 @@ public:
 	virtual bool hasBias() = 0;
 	virtual void draw(ImDrawList* canvas, ImVec2 origin, double scale);
 	ParameterSet getWeights() { return weights; }
-	virtual int numOutputs() = 0;
+	virtual int getNumOutputs() = 0;
 protected:
 	int numInputs = 0;
 	ParameterSet weights;

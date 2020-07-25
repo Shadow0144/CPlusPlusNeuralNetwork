@@ -22,7 +22,7 @@ bool ConvolutionFunction::hasBias()
 	return false;
 }
 
-int ConvolutionFunction::numOutputs()
+int ConvolutionFunction::getNumOutputs()
 {
 	return numInputs;
 }

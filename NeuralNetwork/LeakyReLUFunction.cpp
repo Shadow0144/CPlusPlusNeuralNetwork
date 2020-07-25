@@ -48,7 +48,7 @@ void LeakyReLUFunction::setA(double a)
 	this->a = a;
 }
 
-int LeakyReLUFunction::numOutputs()
+int LeakyReLUFunction::getNumOutputs()
 {
 	return 1;
 }

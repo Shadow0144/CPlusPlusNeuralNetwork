@@ -2,40 +2,55 @@
 
 #include <iostream>
 
-SoftmaxFunction::SoftmaxFunction(int numInputs)
+using namespace std;
+
+SoftmaxFunction::SoftmaxFunction(int numInputs, int numOutputs)
 {
 	this->numInputs = numInputs;
-	this->weights.setParametersZero(0);
+	this->numOutputs = numOutputs;
+	this->weights.setParametersRandom(numInputs, numOutputs);
 }
 
 MatrixXd SoftmaxFunction::feedForward(MatrixXd inputs)
 {
+	double total = 0.0;
+
+	lastOutput = MatrixXd(1, numOutputs);
+	double c = -inputs.maxCoeff();
+	for (int i = 0; i < numOutputs; i++)
+	{
+		MatrixXd z = inputs * weights.getParameters().col(i);
+		lastOutput(i) = exp(z(0) + c);
+		total += lastOutput(i);
+	}
+	lastOutput /= total;
+
 	return lastOutput;
 }
 
 MatrixXd SoftmaxFunction::backPropagate(MatrixXd lastInput, MatrixXd errors)
 {
-	double errorSum = errors.sum();
-	double reLUPrime = (lastOutput(0) >= 0.0) ? 1.0 : 0.0;
-	MatrixXd prime = MatrixXd::Ones(1, 1) * reLUPrime;
-	MatrixXd sigma = errorSum * prime;
+	MatrixXd outputDiagonal = lastOutput.row(0).asDiagonal();
+	MatrixXd lastOutputRep = lastOutput.replicate(numOutputs, 1);
+	MatrixXd prime = lastOutputRep.cwiseProduct(MatrixXd::Identity(numOutputs, numOutputs) - lastOutputRep.transpose());
+	MatrixXd sigma = errors * prime;
 
 	weights.setDeltaParameters(-ALPHA * lastInput.transpose() * sigma);
 
 	// Strip away the bias parameter and weight the sigma by the incoming weights
 	MatrixXd weightsPrime = weights.getParameters().block(0, 0, (numInputs - 1), 1);
 
-	return sigma * weightsPrime.transpose();
+	return sigma.sum() * weightsPrime.transpose();
 }
 
 bool SoftmaxFunction::hasBias()
 {
-	return false;
+	return true;
 }
 
-int SoftmaxFunction::numOutputs()
+int SoftmaxFunction::getNumOutputs()
 {
-	return numInputs;
+	return numOutputs;
 }
 
 void SoftmaxFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)

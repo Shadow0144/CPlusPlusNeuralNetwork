@@ -12,7 +12,7 @@
 
 #include <math.h>
 
-Neuron::Neuron(ActivationFunction function, vector<Neuron*>* parents)
+Neuron::Neuron(ActivationFunction function, vector<Neuron*>* parents, int inputCount, int outputCount)
 {
 	this->parents = parents;
 	if (parents != NULL)
@@ -30,7 +30,7 @@ Neuron::Neuron(ActivationFunction function, vector<Neuron*>* parents)
 		this->parents->at(i)->addChild(this);
 	}
 	functionType = function;
-	inputCount = (parentCount == 0) ? 1 : parentCount;
+	this->inputCount = inputCount;
 	switch (functionType)
 	{
 		case ActivationFunction::Identity:
@@ -61,7 +61,8 @@ Neuron::Neuron(ActivationFunction function, vector<Neuron*>* parents)
 			activationFunction = new TanhFunction(inputCount);
 			break; 
 		case ActivationFunction::Softmax:
-			activationFunction = new SoftmaxFunction(inputCount);
+			inputCount++; // Bias
+			activationFunction = new SoftmaxFunction(inputCount, outputCount);
 			break;
 		default:
 			activationFunction = new IdentityFunction(inputCount);
@@ -105,6 +106,11 @@ double Neuron::applyBackPropagate()
 	return activationFunction->applyBackProgate();
 }
 
+int Neuron::getNumOutputs()
+{
+	return activationFunction->getNumOutputs();
+}
+
 void Neuron::draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output)
 {
 	const double P = 10;
@@ -112,6 +118,7 @@ void Neuron::draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output)
 	const ImColor BLACK(0.0f, 0.0f, 0.0f, 1.0f);
 	const ImColor GRAY(0.3f, 0.3f, 0.3f, 1.0f);
 	const ImColor LIGHT_GRAY(0.6f, 0.6f, 0.6f, 1.0f);
+	const ImColor VERY_LIGHT_GRAY(0.8f, 0.8f, 0.8f, 1.0f);
 	const ImColor WHITE(1.0f, 1.0f, 1.0f, 1.0f);
 	const double LINE_LENGTH = 15;
 	const double WEIGHT_RADIUS = 10;
@@ -127,7 +134,6 @@ void Neuron::draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output)
 
 	// Draw the neuron
 	canvas->AddCircleFilled(ImVec2(origin.x, origin.y), RADIUS * scale, LIGHT_GRAY, 32);
-	canvas->AddCircle(ImVec2(origin.x, origin.y), RADIUS * scale, BLACK, 32);
 
 	// Draw the activation function
 	activationFunction->draw(canvas, origin, scale);
@@ -159,59 +165,43 @@ void Neuron::draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output)
 		//putText(canvas.canvas, to_string(i), weight_pt, FONT_HERSHEY_COMPLEX_SMALL, 1.0, BLACK);
 	}*/
 
-	// Draw the bias
-	double bx = 0;
-	double by = 0;
-	if (activationFunction->hasBias())
-	{
-		bx = origin.x + (BIAS_OFFSET_X * scale);
-		by = origin.y + (BIAS_OFFSET_Y * scale);
-		ImVec2 bTL = ImVec2(bx, by);
-		ImVec2 bBR = ImVec2(bx + (BIAS_WIDTH * scale), by + (BIAS_HEIGHT * scale));
-		ImVec2 biasPt = ImVec2(bx + (BIAS_TEXT_X * scale), by);
-		canvas->AddRect(bTL, bBR, BLACK);
-		canvas->AddText(ImGui::GetFont(), (BIAS_FONT_SIZE * scale), biasPt, BLACK, to_string(1).c_str());
-	}
-	else { }
+	// Setup the bias location
+	double bx = origin.x + (BIAS_OFFSET_X * scale);
+	double by = origin.y + (BIAS_OFFSET_Y * scale);
 
 	// Draw the links
 	ImVec2 pt = ImVec2(origin);
 	pt.y -= RADIUS * scale;
 	// Draw the links to the previous neurons
 	double previousX, previousY;
-	for (int i = 0; i < inputCount; i++)
+	for (int i = 0; i < parentCount || i < 1; i++)
 	{
-		if (parentCount == 0 && i == 0)
+		if (parentCount == 0)
 		{
 			previousX = pt.x;
-			previousY = pt.y - LINE_LENGTH;
+			previousY = pt.y - (LINE_LENGTH * scale);
 		}
-		else if (i < (inputCount - 1) || !activationFunction->hasBias())
+		else
 		{
 			previousX = parents->at(i)->position.x;
 			previousY = parents->at(i)->position.y + (RADIUS * scale);
 		}
-		else
-		{
-			previousX = bx;
-			previousY = by + (BIAS_HEIGHT / 2.0);
-		}
 
 		ImVec2 previousNeuronPt(previousX, previousY);
 		ImColor lineColor = ImColor(1.0f, 1.0f, 1.0f, 1.0f);
-		int lineWidth = 1;
+		float lineWidth = (1.0f / 36.0f) * scale;
 		float weight = activationFunction->getWeights().getParameters()(i);
 		if (weight >= 0.0f)
 		{
 			if (weight <= 1.0f)
 			{
 				lineColor = ImColor(1.0f - weight, 1.0f - weight, 1.0f - weight, 1.0f);
-				lineWidth = ((int)(ceil(weight * lineWidth)));
+				lineWidth = weight * lineWidth;
 			}
 			else 
 			{
 				lineColor = ImColor(0.0f, 0.0f, 0.0f, 1.0f);
-				lineWidth = ((int)(ceil(1.0f * lineWidth)));
+				lineWidth = 1.0f * lineWidth;
 			}
 		}
 		else
@@ -219,12 +209,12 @@ void Neuron::draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output)
 			if (weight >= -1.0f)
 			{
 				lineColor = ImColor(-weight, 0.0f, 0.0f, 1.0f);
-				lineWidth = ((int)(ceil(-weight * lineWidth)));
+				lineWidth = -weight * lineWidth;
 			}
 			else
 			{
 				lineColor = ImColor(1.0f, 0.0f, 0.0f, 1.0f);
-				lineWidth = ((int)(ceil(1.0f * lineWidth)));
+				lineWidth = 1.0f * lineWidth;
 			}
 		}
 		if (lineWidth > 0)
@@ -233,16 +223,73 @@ void Neuron::draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output)
 		}
 		else
 		{
-			canvas->AddLine(previousNeuronPt, pt, WHITE, 1);
+			canvas->AddLine(previousNeuronPt, pt, WHITE, 1.0f);
 		}
 	}
+
+	// Consider moving to another function for second pass
+	if (activationFunction->hasBias())
+	{
+		// Draw the bias line
+		previousX = bx;
+		previousY = by + ((BIAS_HEIGHT / 2.0) * scale);
+		ImVec2 previousNeuronPt(previousX, previousY);
+		ImColor lineColor = ImColor(1.0f, 1.0f, 1.0f, 1.0f);
+		float lineWidth = (1.0f / 36.0f) * scale;
+		float weight = activationFunction->getWeights().getParameters()(inputCount-1);
+		if (weight >= 0.0f)
+		{
+			if (weight <= 1.0f)
+			{
+				lineColor = ImColor(1.0f - weight, 1.0f - weight, 1.0f - weight, 1.0f);
+				lineWidth = weight * lineWidth;
+			}
+			else
+			{
+				lineColor = ImColor(0.0f, 0.0f, 0.0f, 1.0f);
+				lineWidth = 1.0f * lineWidth;
+			}
+		}
+		else
+		{
+			if (weight >= -1.0f)
+			{
+				lineColor = ImColor(-weight, 0.0f, 0.0f, 1.0f);
+				lineWidth = -weight * lineWidth;
+			}
+			else
+			{
+				lineColor = ImColor(1.0f, 0.0f, 0.0f, 1.0f);
+				lineWidth = 1.0f * lineWidth;
+			}
+		}
+		if (lineWidth > 0)
+		{
+			canvas->AddLine(previousNeuronPt, pt, lineColor, lineWidth);
+		}
+		else
+		{
+			canvas->AddLine(previousNeuronPt, pt, WHITE, 1.0f);
+		}
+
+		// Draw the bias box
+		ImVec2 bTL = ImVec2(bx, by);
+		ImVec2 bBR = ImVec2(bx + (BIAS_WIDTH * scale), by + (BIAS_HEIGHT * scale));
+		ImVec2 biasPt = ImVec2(bx + (BIAS_TEXT_X * scale), by);
+		canvas->AddRectFilled(bTL, bBR, VERY_LIGHT_GRAY);
+		canvas->AddRect(bTL, bBR, BLACK);
+		canvas->AddText(ImGui::GetFont(), (BIAS_FONT_SIZE * scale), biasPt, BLACK, to_string(1).c_str());
+	}
+	else { }
 
 	if (output)
 	{
 		// Draw the output lines
 		pt.y += (2 * RADIUS * scale);
 		ImVec2 next(pt.x, pt.y + (LINE_LENGTH * scale));
-		canvas->AddLine(next, pt, GRAY, 1);
+		canvas->AddLine(next, pt, GRAY, 1.0f);
 	}
 	else { }
+
+	canvas->AddCircle(ImVec2(origin.x, origin.y), RADIUS * scale, BLACK, 32);
 }

@@ -102,6 +102,9 @@
     <ClCompile Include="imgui_widgets.cpp">
       <Filter>Source Files\imgui</Filter>
     </ClCompile>
+    <ClCompile Include="CrossEntropyFunction.cpp">
+      <Filter>Source Files\ErrorFunction</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NeuralNetwork.h">
@@ -181,6 +184,9 @@
     </ClInclude>
     <ClInclude Include="imstb_truetype.h">
       <Filter>Header Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="CrossEntropyFunction.h">
+      <Filter>Header Files\ErrorFunction</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -34,7 +34,7 @@ bool DotProductFunction::hasBias()
 	return true;
 }
 
-int DotProductFunction::numOutputs()
+int DotProductFunction::getNumOutputs()
 {
 	return 1;
 }

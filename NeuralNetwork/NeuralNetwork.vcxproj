@@ -153,6 +153,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ConvolutionFunction.cpp" />
+    <ClCompile Include="CrossEntropyFunction.cpp" />
     <ClCompile Include="DotProductFunction.cpp" />
     <ClCompile Include="Function.cpp" />
     <ClCompile Include="gl3w\GL\gl3w.c" />
@@ -177,6 +178,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ConvolutionFunction.h" />
+    <ClInclude Include="CrossEntropyFunction.h" />
     <ClInclude Include="ErrorFunction.h" />
     <ClInclude Include="gl3w\GL\gl3w.h" />
     <ClInclude Include="gl3w\GL\glcorearb.h" />

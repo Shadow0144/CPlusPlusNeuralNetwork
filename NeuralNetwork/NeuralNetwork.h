@@ -11,7 +11,7 @@ using namespace std;
 class NeuralNetwork
 {
 public:
-	NeuralNetwork(int layerCount, int* layerShapes, ActivationFunction* layerFunctions);
+	NeuralNetwork(int layerCount, int* layerShapes, ActivationFunction* layerFunctions, int inputCount, int outputCount, bool drawingEnabled = true);
 	~NeuralNetwork();
 
 	MatrixXd feedForward(MatrixXd inputs);
@@ -26,8 +26,8 @@ public:
 	int getVerbosity();
 	void setVerbosity(int verbosity);
 
-	int getDrawRate();
-	void setDrawRate(int drawRate);
+	int getOutputRate();
+	void setOutputRate(int outputRate);
 	bool getDrawingEnabled();
 	void setDrawingEnabled(bool drawingEnabled);
 	void draw(ImDrawList* canvas, ImVec2 origin, double scale, MatrixXd target_xs, MatrixXd target_ys);
@@ -43,7 +43,7 @@ private:
 	double minError;
 	double errorConvergenceThreshold;
 	double weightConvergenceThreshold;
-	int drawRate;
+	int outputRate;
 	NetworkVisualizer* visualizer;
 
 	enum class LearningState // For printing output

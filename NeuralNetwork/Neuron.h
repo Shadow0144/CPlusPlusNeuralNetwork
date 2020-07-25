@@ -21,12 +21,14 @@ enum class ActivationFunction
 class Neuron
 {
 public:
-	Neuron(ActivationFunction function, vector<Neuron*>* parents);
+	Neuron(ActivationFunction function, vector<Neuron*>* parents, int inputCount, int outputCount = -1);
 	~Neuron();
 
 	MatrixXd feedForward(MatrixXd input);
 	MatrixXd backPropagate(MatrixXd errors);
 	double applyBackPropagate();
+
+	int getNumOutputs();
 
 	void draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output);
 

@@ -22,7 +22,7 @@ bool IdentityFunction::hasBias()
 	return false;
 }
 
-int IdentityFunction::numOutputs()
+int IdentityFunction::getNumOutputs()
 {
 	return numInputs;
 }

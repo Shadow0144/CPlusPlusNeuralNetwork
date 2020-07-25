@@ -37,7 +37,7 @@ bool ReLUFunction::hasBias()
 	return true;
 }
 
-int ReLUFunction::numOutputs()
+int ReLUFunction::getNumOutputs()
 {
 	return 1;
 }

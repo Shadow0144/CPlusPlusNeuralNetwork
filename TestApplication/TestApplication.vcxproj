@@ -153,6 +153,14 @@
   <ItemGroup>
     <ClCompile Include="TestApplication.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="iris.dat">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="IrisDataset.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
