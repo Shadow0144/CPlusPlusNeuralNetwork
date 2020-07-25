@@ -34,6 +34,12 @@
     <Filter Include="Header Files\imgui\gl3w">
       <UniqueIdentifier>{c69af12a-00d9-475d-8f09-e2abf24182a4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Visualizer">
+      <UniqueIdentifier>{b285ce44-4aa4-4d01-9bd2-e8c526b8b4e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Visualizer">
+      <UniqueIdentifier>{4a59ead0-00f7-4043-aed8-15dbabf9d437}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="NeuralNetwork.cpp">
@@ -78,9 +84,6 @@
     <ClCompile Include="ConvolutionFunction.cpp">
       <Filter>Source Files\ActivationFunction</Filter>
     </ClCompile>
-    <ClCompile Include="NetworkVisualizer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="imgui_impl_opengl3.cpp">
       <Filter>Source Files\imgui</Filter>
     </ClCompile>
@@ -104,6 +107,12 @@
     </ClCompile>
     <ClCompile Include="CrossEntropyFunction.cpp">
       <Filter>Source Files\ErrorFunction</Filter>
+    </ClCompile>
+    <ClCompile Include="NetworkVisualizer.cpp">
+      <Filter>Source Files\Visualizer</Filter>
+    </ClCompile>
+    <ClCompile Include="ClassifierVisualizer.cpp">
+      <Filter>Source Files\Visualizer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -152,9 +161,6 @@
     <ClInclude Include="ConvolutionFunction.h">
       <Filter>Header Files\ActivationFunction</Filter>
     </ClInclude>
-    <ClInclude Include="NetworkVisualizer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="imgui_impl_opengl3.h">
       <Filter>Header Files\imgui</Filter>
     </ClInclude>
@@ -187,6 +193,12 @@
     </ClInclude>
     <ClInclude Include="CrossEntropyFunction.h">
       <Filter>Header Files\ErrorFunction</Filter>
+    </ClInclude>
+    <ClInclude Include="NetworkVisualizer.h">
+      <Filter>Header Files\Visualizer</Filter>
+    </ClInclude>
+    <ClInclude Include="ClassifierVisualizer.h">
+      <Filter>Header Files\Visualizer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

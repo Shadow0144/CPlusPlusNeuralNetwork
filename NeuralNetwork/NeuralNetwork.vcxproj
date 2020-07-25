@@ -152,6 +152,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ClassifierVisualizer.cpp" />
     <ClCompile Include="ConvolutionFunction.cpp" />
     <ClCompile Include="CrossEntropyFunction.cpp" />
     <ClCompile Include="DotProductFunction.cpp" />
@@ -177,6 +178,7 @@
     <ClCompile Include="TanhFunction.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ClassifierVisualizer.h" />
     <ClInclude Include="ConvolutionFunction.h" />
     <ClInclude Include="CrossEntropyFunction.h" />
     <ClInclude Include="ErrorFunction.h" />

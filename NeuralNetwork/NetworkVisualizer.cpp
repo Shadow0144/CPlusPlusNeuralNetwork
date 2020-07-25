@@ -23,12 +23,21 @@ NetworkVisualizer::NetworkVisualizer(NeuralNetwork* network)
     origin = ImVec2(0.0, 0.0);
     scale = 1.0;
 
+    classifier = NULL;
+    displayClasses = false;
+
     setup();
     windowClosed = false;
 }
 
 NetworkVisualizer::~NetworkVisualizer()
 {
+    if (classifier != NULL)
+    {
+        delete classifier;
+    }
+    else { }
+
     // Cleanup
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplSDL2_Shutdown();
@@ -139,7 +148,19 @@ void test_draw(ImDrawList* draw_list)
     }
 }
 
-void NetworkVisualizer::draw()
+void NetworkVisualizer::addClassificationVisualization(int rows, int cols, ImColor* classColors)
+{
+    if (displayClasses)
+    {
+        delete classifier;
+    }
+    else { }
+
+    classifier = new ClassifierVisualizer(rows, cols, classColors);
+    displayClasses = true;
+}
+
+void NetworkVisualizer::draw(MatrixXd* predicted, MatrixXd* actual)
 {
     const ImVec4 CLEAR_COLOR(0.45, 0.55, 0.60, 1.0);
     const ImVec4 VERY_LIGHT_GRAY(0.8, 0.8, 0.8, 1.0);
@@ -208,6 +229,12 @@ void NetworkVisualizer::draw()
     ImDrawList* draw_list = ImGui::GetWindowDrawList();
 
     network->draw(draw_list, origin, scale, MatrixXd(), MatrixXd());
+
+    if (displayClasses && predicted != NULL && actual != NULL)
+    {
+        classifier->draw(draw_list, *predicted, *actual);
+    }
+    else { }
 
     ImGui::End();
     ImGui::PopStyleColor();

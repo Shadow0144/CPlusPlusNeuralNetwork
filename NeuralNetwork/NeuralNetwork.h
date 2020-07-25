@@ -21,6 +21,8 @@ public:
 	void setTrainingParameters(ErrorFunction* errorFunction, int maxIterations,
 		double minError, double errorConvergenceThreshold, double weightConvergenceThreshold);
 
+	void setClassificationVisualizationParameters(int rows, int cols, ImColor* classColors);
+
 	double getError(MatrixXd predicted, MatrixXd actual);
 
 	int getVerbosity();

@@ -5,6 +5,8 @@
 #include "imgui.h"
 #pragma warning(pop)
 
+#include "ClassifierVisualizer.h"
+
 class NeuralNetwork;
 
 class NetworkVisualizer
@@ -15,7 +17,10 @@ public:
 
 	bool getWindowClosed();
 
-	void draw();
+	void addClassificationVisualization(int rows, int cols, ImColor* classColors);
+
+	void draw(MatrixXd* predicted = NULL, MatrixXd* actual = NULL);
+
 private:
 	void setup();
 
@@ -25,6 +30,9 @@ private:
 	SDL_Window* window;
 	SDL_GLContext gl_context;
 	ImGuiIO io;
+
+	ClassifierVisualizer* classifier;
+	bool displayClasses;
 
 	ImVec2 origin;
 	ImVec2 drag;

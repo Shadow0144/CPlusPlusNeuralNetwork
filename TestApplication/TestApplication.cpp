@@ -220,17 +220,23 @@ ActivationFunction functions[] =
     ErrorFunction* errorFunction = new CrossEntropyFunction();
     NeuralNetwork network = NeuralNetwork(layers, layerShapes, functions, 4, 3);
     network.setTrainingParameters(errorFunction, 1000, MIN_ERROR, CONVERGENCE_E, CONVERGENCE_W);
+    ImColor* classColors = new ImColor[3]
+        {   ImColor(1.0f, 0.0f, 0.0f, 1.0f), 
+            ImColor(0.0f, 1.0f, 0.0f, 1.0f), 
+            ImColor(0.0f, 0.0f, 1.0f, 1.0f) };
+    network.setClassificationVisualizationParameters(30, 5, classColors);
 
     IrisDataset iris;
-
+    MatrixXd irisFeatures = iris.getFeatures();
     MatrixXd irisLabels = iris.getLabelsOneHot();
-    MatrixXd irisPredictions = network.feedForward(iris.getFeatures());
+
+    MatrixXd irisPredictions = network.feedForward(irisFeatures);
 
     print_iris_results(irisPredictions, irisLabels);
 
-    network.train(iris.getFeatures(), irisLabels);    
+    network.train(irisFeatures, irisLabels);
 
-    irisPredictions = network.feedForward(iris.getFeatures());
+    irisPredictions = network.feedForward(irisFeatures);
     print_iris_results(irisPredictions, irisLabels);
 
     system("pause");

@@ -146,7 +146,7 @@ void NeuralNetwork::train(MatrixXd inputs, MatrixXd targets)
 
 		if (drawingEnabled)
 		{
-			visualizer->draw();
+			visualizer->draw(&predicted, &targets);
 		}
 		else { }
 
@@ -185,7 +185,7 @@ void NeuralNetwork::train(MatrixXd inputs, MatrixXd targets)
 	{
 		while (!visualizer->getWindowClosed())
 		{
-			visualizer->draw();
+			visualizer->draw(&predicted, &targets);
 		}
 	}
 	else 
@@ -280,6 +280,11 @@ void NeuralNetwork::setDrawingEnabled(bool drawingEnabled)
 		visualizer = NULL;
 	}
 	else { }
+}
+
+void NeuralNetwork::setClassificationVisualizationParameters(int rows, int cols, ImColor* classColors)
+{
+	visualizer->addClassificationVisualization(rows, cols, classColors);
 }
 
 void NeuralNetwork::draw(ImDrawList* canvas, ImVec2 origin, double scale, MatrixXd target_xs, MatrixXd target_ys)
