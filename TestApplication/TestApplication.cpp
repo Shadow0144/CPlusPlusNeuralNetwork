@@ -19,8 +19,8 @@ using namespace std;
 //#define FIVE
 //#define FOUR
 //#define THREE
-//#define TWO
-#define ONE
+#define TWO
+//#define ONE
 #define IRIS
 
 #define VERBOSITY 0

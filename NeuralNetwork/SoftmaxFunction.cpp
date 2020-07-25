@@ -32,7 +32,7 @@ MatrixXd SoftmaxFunction::backPropagate(MatrixXd lastInput, MatrixXd errors)
 {
 	MatrixXd outputDiagonal = lastOutput.row(0).asDiagonal();
 	MatrixXd lastOutputRep = lastOutput.replicate(numOutputs, 1);
-	MatrixXd prime = lastOutputRep.cwiseProduct(MatrixXd::Identity(numOutputs, numOutputs) - lastOutputRep.transpose());
+	MatrixXd prime = -lastOutputRep.cwiseProduct(MatrixXd::Identity(numOutputs, numOutputs) - lastOutputRep.transpose());
 	MatrixXd sigma = errors * prime;
 
 	weights.setDeltaParameters(-ALPHA * lastInput.transpose() * sigma);
