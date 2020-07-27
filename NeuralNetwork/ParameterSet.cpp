@@ -9,6 +9,9 @@ using namespace std;
 ParameterSet::ParameterSet()
 {
 	srand((unsigned int)time(0));
+	parameters = MatrixXd::Zero(0, 0);
+	deltaParameters = MatrixXd::Zero(0, 0);
+	batchSize = 0;
 }
 
 MatrixXd ParameterSet::getParameters()
@@ -16,34 +19,25 @@ MatrixXd ParameterSet::getParameters()
 	return parameters;
 }
 
-void ParameterSet::setParametersRandom(int inputCount)
-{
-	parameters = MatrixXd::Random(inputCount, 1);
-}
-
 void ParameterSet::setParametersRandom(int inputCount, int outputCount)
 {
 	parameters = MatrixXd::Random(inputCount, outputCount);
-}
-
-void ParameterSet::setParametersZero(int inputCount)
-{
-	parameters = MatrixXd::Zero(inputCount, 1);
+	deltaParameters = MatrixXd::Zero(inputCount, outputCount);
+	batchSize = 0;
 }
 
 void ParameterSet::setParametersZero(int inputCount, int outputCount)
 {
 	parameters = MatrixXd::Zero(inputCount, outputCount);
-}
-
-void ParameterSet::setParametersOne(int inputCount)
-{
-	parameters = MatrixXd::Ones(inputCount, 1);
+	deltaParameters = MatrixXd::Zero(inputCount, outputCount);
+	batchSize = 0;
 }
 
 void ParameterSet::setParametersOne(int inputCount, int outputCount)
 {
 	parameters = MatrixXd::Ones(inputCount, outputCount);
+	deltaParameters = MatrixXd::Zero(inputCount, outputCount);
+	batchSize = 0;
 }
 
 MatrixXd ParameterSet::getDeltaParameters()
@@ -51,12 +45,15 @@ MatrixXd ParameterSet::getDeltaParameters()
 	return deltaParameters;
 }
 
-void ParameterSet::setDeltaParameters(MatrixXd deltaParameters)
+void ParameterSet::incrementDeltaParameters(MatrixXd deltaParameters)
 {
-	this->deltaParameters = deltaParameters;
+	this->deltaParameters += deltaParameters;
+	batchSize++;
 }
 
 void ParameterSet::applyDeltaParameters()
 {
-	parameters -= deltaParameters;
+	parameters -= (deltaParameters / batchSize);
+	deltaParameters = MatrixXd::Zero(parameters.rows(), parameters.cols());
+	batchSize = 0;
 }

@@ -8,6 +8,7 @@
 NeuralNetwork::NeuralNetwork(int layerCount, int* layerShapes, ActivationFunction* layerFunctions, int inputCount, int outputCount, bool drawingEnabled)
 {
 	this->verbosity = 1;
+	this->batchSize = 1;
 	this->outputRate = 100;
 	this->drawingEnabled = drawingEnabled;
 	this->layerCount = layerCount;
@@ -81,38 +82,46 @@ MatrixXd NeuralNetwork::feedForward(MatrixXd inputs)
 bool NeuralNetwork::backPropagate(MatrixXd inputs, MatrixXd targets)
 {
 	bool converged = true;
-	if (inputs.rows() == targets.rows())
+	const int N = targets.rows();
+	if (inputs.rows() == N)
 	{
-		for (int i = 0; i < targets.rows(); i++)
+		for (int n = 0; n < N; n++)
 		{
-			MatrixXd y = feedForward(inputs.row(i));
-			MatrixXd errors = errorFunction->getDerivativeOfError(y, targets.row(i));
-			for (int j = (layerCount - 1); j > 0; j--) // Skip the top row
+			MatrixXd y = feedForward(inputs.row(n));
+			MatrixXd errors = errorFunction->getDerivativeOfError(y, targets.row(n));
+			for (int i = (layerCount - 1); i > 0; i--) // Skip the top row
 			{
-				MatrixXd newErrors = MatrixXd(layerShapes[j - 1], layerShapes[j]); // One row per previous neuron, one col per current neuron
-				for (int k = 0; k < layerShapes[j]; k++)
+				MatrixXd newErrors = MatrixXd(layerShapes[i - 1], layerShapes[i]); // One row per previous neuron, one col per current neuron
+				for (int j = 0; j < layerShapes[i]; j++)
 				{
-					MatrixXd newError = layers[j].at(k)->backPropagate(errors.row(k)); // One row per previous neuron
-					newErrors.col(k) = newError.col(0); // Each neuron of the current layer returns a col weighted of errors
+					MatrixXd newError = layers[i].at(j)->backPropagate(errors.row(j)); // One row per previous neuron
+					newErrors.col(j) = newError.col(0); // Each neuron of the current layer returns a col weighted of errors
 				}
 				errors = newErrors;
 			}
-			for (int k = 0; k < layerShapes[0]; k++) // Top row (ignore return)
+			for (int j = 0; j < layerShapes[0]; j++) // Top row (ignore return)
 			{
-				layers[0].at(k)->backPropagate(errors.row(k));
+				layers[0].at(j)->backPropagate(errors.row(j));
 			}
 			
-			for (int j = 0; j < layerCount; j++)
+			if ((n % batchSize == 0) || (n == (N - 1)))
 			{
-				for (int k = 0; k < layerShapes[j]; k++)
+				for (int i = 0; i < layerCount; i++)
 				{
-					double deltaW = layers[j].at(k)->applyBackPropagate();
-					if (deltaW > weightConvergenceThreshold) // Always positive
+					for (int j = 0; j < layerShapes[i]; j++)
 					{
-						converged = false;
+						double deltaW = layers[i].at(j)->applyBackPropagate();
+						if (deltaW > weightConvergenceThreshold) // Always positive
+						{
+							converged = false;
+						}
+						else { }
 					}
-					else { }
 				}
+			}
+			else // Cannot converge in between batches
+			{
+				converged = false;
 			}
 		}
 	}
@@ -253,6 +262,16 @@ int NeuralNetwork::getVerbosity()
 void NeuralNetwork::setVerbosity(int verbosity)
 {
 	this->verbosity = verbosity;
+}
+
+int NeuralNetwork::getBatchSize()
+{
+	return batchSize;
+}
+
+void NeuralNetwork::setBatchSize(int batchSize)
+{
+	this->batchSize = batchSize;
 }
 
 int NeuralNetwork::getOutputRate()

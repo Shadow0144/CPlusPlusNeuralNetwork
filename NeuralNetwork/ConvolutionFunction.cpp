@@ -14,7 +14,7 @@ MatrixXd ConvolutionFunction::feedForward(MatrixXd input)
 
 MatrixXd ConvolutionFunction::backPropagate(MatrixXd lastInput, MatrixXd errors)
 {
-	weights.setDeltaParameters(-ALPHA * lastInput.transpose() * 0.0);
+	weights.incrementDeltaParameters(-ALPHA * lastInput.transpose() * 0.0);
 	return errors;
 }
 

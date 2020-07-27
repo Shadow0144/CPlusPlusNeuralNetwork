@@ -11,17 +11,15 @@ class ParameterSet
 public:
 	ParameterSet();
 	MatrixXd getParameters();
-	void setParametersRandom(int inputCount);
-	void setParametersZero(int inputCount);
-	void setParametersOne(int inputCount);
-	void setParametersRandom(int inputCount, int outputCount);
-	void setParametersZero(int inputCount, int outputCount);
-	void setParametersOne(int inputCount, int outputCount);
+	void setParametersRandom(int inputCount, int outputCount = 1);
+	void setParametersZero(int inputCount, int outputCount = 1);
+	void setParametersOne(int inputCount, int outputCount = 1);
 	MatrixXd getDeltaParameters();
-	void setDeltaParameters(MatrixXd deltaParameters);
+	void incrementDeltaParameters(MatrixXd deltaParameters);
 	void applyDeltaParameters();
 
 private:
 	MatrixXd parameters;
 	MatrixXd deltaParameters;
+	int batchSize;
 };

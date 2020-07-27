@@ -14,7 +14,7 @@ MatrixXd IdentityFunction::feedForward(MatrixXd input)
 
 MatrixXd IdentityFunction::backPropagate(MatrixXd lastInput, MatrixXd errors)
 {
-	weights.setDeltaParameters(-ALPHA * lastInput.transpose() * 0.0);
+	weights.incrementDeltaParameters(-ALPHA * lastInput.transpose() * 0.0);
 	return errors;
 }
 

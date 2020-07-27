@@ -28,6 +28,9 @@ public:
 	int getVerbosity();
 	void setVerbosity(int verbosity);
 
+	int getBatchSize();
+	void setBatchSize(int batchSize);
+
 	int getOutputRate();
 	void setOutputRate(int outputRate);
 	bool getDrawingEnabled();
@@ -46,6 +49,7 @@ private:
 	double errorConvergenceThreshold;
 	double weightConvergenceThreshold;
 	int outputRate;
+	int batchSize;
 	NetworkVisualizer* visualizer;
 
 	enum class LearningState // For printing output

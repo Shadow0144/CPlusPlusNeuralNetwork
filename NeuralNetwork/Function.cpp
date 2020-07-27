@@ -2,8 +2,9 @@
 
 double Function::applyBackProgate()
 {
+	double deltaWeight = weights.getDeltaParameters().cwiseAbs().sum();
 	weights.applyDeltaParameters();
-	return weights.getDeltaParameters().cwiseAbs().sum(); // Return the sum of how much the parameters have changed
+	return deltaWeight; // Return the sum of how much the parameters have changed
 }
 
 MatrixXd Function::approximateBezier(MatrixXd points)

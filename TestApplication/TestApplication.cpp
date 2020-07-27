@@ -18,9 +18,9 @@ using namespace std;
 //#define ALL
 //#define FIVE
 //#define FOUR
-#define THREE
+//#define THREE
 //#define TWO
-//#define ONE
+#define ONE
 #define IRIS
 
 #define VERBOSITY 0
@@ -131,24 +131,34 @@ void test_network()
 int layers = 1;
 int layerShapes[] = { 1 };
 ActivationFunction functions[] =
-{ ActivationFunction::Softmax };
+    { ActivationFunction::Softmax };
 #elif defined(TWO)
 int layers = 2;
 int layerShapes[] = { 3, 1 };
 ActivationFunction functions[] =
-{
-   ActivationFunction::Sigmoid,
-   ActivationFunction::Softmax
-}; 
+    {
+       ActivationFunction::Sigmoid,
+       ActivationFunction::Softmax
+    }; 
 #elif defined(THREE)
 int layers = 3;
 int layerShapes[] = { 6, 3, 1 };
 ActivationFunction functions[] =
-{
-   ActivationFunction::WeightedDotProduct,
-   ActivationFunction::Sigmoid,
-   ActivationFunction::Softmax
-};
+    {
+       ActivationFunction::WeightedDotProduct,
+       ActivationFunction::Sigmoid,
+       ActivationFunction::Softmax
+    }; 
+#elif defined(FOUR)
+int layers = 4;
+int layerShapes[] = { 6, 6, 6, 1 };
+ActivationFunction functions[] =
+    {
+       ActivationFunction::WeightedDotProduct,
+       ActivationFunction::LeakyReLU,
+       ActivationFunction::Sigmoid,
+       ActivationFunction::Softmax
+    };
 #endif
 #elif defined(ALL)
     int layers = 7;
@@ -242,6 +252,8 @@ ActivationFunction functions[] =
     MatrixXd irisPredictions = network.feedForward(irisFeatures);
 
     cout << "Training on Iris Dataset" << endl << endl;
+
+    network.setBatchSize(30);
 
     print_iris_results(irisPredictions, irisLabels);
 

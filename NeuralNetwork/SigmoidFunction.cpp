@@ -25,7 +25,7 @@ MatrixXd SigmoidFunction::backPropagate(MatrixXd lastInput, MatrixXd errors)
 	MatrixXd prime = lastOutput * (MatrixXd::Ones(lastOutput.rows(), lastOutput.cols()) - lastOutput);
 	MatrixXd sigma = errorSum * prime;
 
-	weights.setDeltaParameters(-ALPHA * lastInput.transpose() * sigma);
+	weights.incrementDeltaParameters(-ALPHA * lastInput.transpose() * sigma);
 
 	// Strip away the bias parameter and weight the sigma by the incoming weights
 	MatrixXd weightsPrime = weights.getParameters().block(0, 0, (numInputs - 1), numOutputs);
