@@ -85,10 +85,10 @@ void Neuron::addChild(Neuron* child)
 MatrixXd Neuron::feedForward(MatrixXd input)
 {
 	lastInput = MatrixXd(input);
-	if (activationFunction->hasBias())
+	if (activationFunction->hasBias()) // Add 1 to the end of the inputs
 	{
 		MatrixXd concat(lastInput.rows(), lastInput.cols() + 1);
-		concat << lastInput, MatrixXd::Ones(1, 1); // Add bias
+		concat << lastInput, MatrixXd::Ones(lastInput.rows(), 1); // Add bias
 		lastInput = concat;
 	}
 	else { }

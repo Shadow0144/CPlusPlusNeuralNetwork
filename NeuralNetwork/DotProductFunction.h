@@ -11,6 +11,4 @@ public:
 	MatrixXd backPropagate(MatrixXd lastInput, MatrixXd errors);
 	bool hasBias();
 	virtual void draw(ImDrawList* canvas, ImVec2 origin, double scale);
-
-	int getNumOutputs();
 };

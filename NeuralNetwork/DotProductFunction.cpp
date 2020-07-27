@@ -7,6 +7,7 @@ using namespace std;
 DotProductFunction::DotProductFunction(int numInputs)
 {
 	this->numInputs = numInputs;
+	this->numOutputs = 1;
 	this->weights.setParametersRandom(numInputs);
 }
 
@@ -24,19 +25,14 @@ MatrixXd DotProductFunction::backPropagate(MatrixXd lastInput, MatrixXd errors)
 	weights.setDeltaParameters(-ALPHA * lastInput.transpose() * sigma);
 
 	// Strip away the bias parameter and weight the sigma by the incoming weights
-	MatrixXd weightsPrime = weights.getParameters().block(0, 0, (numInputs - 1), 1);
+	MatrixXd weightsPrime = weights.getParameters().block(0, 0, (numInputs - 1), numOutputs);
 
-	return sigma * weightsPrime.transpose();
+	return weightsPrime * sigma.transpose();
 }
 
 bool DotProductFunction::hasBias()
 {
 	return true;
-}
-
-int DotProductFunction::getNumOutputs()
-{
-	return 1;
 }
 
 void DotProductFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)

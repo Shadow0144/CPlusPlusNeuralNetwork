@@ -16,9 +16,9 @@ MatrixXd ParameterSet::getParameters()
 	return parameters;
 }
 
-void ParameterSet::setParametersRandom(int parameterCount)
+void ParameterSet::setParametersRandom(int inputCount)
 {
-	parameters = MatrixXd::Random(parameterCount, 1);
+	parameters = MatrixXd::Random(inputCount, 1);
 }
 
 void ParameterSet::setParametersRandom(int inputCount, int outputCount)
@@ -26,9 +26,9 @@ void ParameterSet::setParametersRandom(int inputCount, int outputCount)
 	parameters = MatrixXd::Random(inputCount, outputCount);
 }
 
-void ParameterSet::setParametersZero(int parameterCount)
+void ParameterSet::setParametersZero(int inputCount)
 {
-	parameters = MatrixXd::Zero(parameterCount, 1);
+	parameters = MatrixXd::Zero(inputCount, 1);
 }
 
 void ParameterSet::setParametersZero(int inputCount, int outputCount)
@@ -36,9 +36,9 @@ void ParameterSet::setParametersZero(int inputCount, int outputCount)
 	parameters = MatrixXd::Zero(inputCount, outputCount);
 }
 
-void ParameterSet::setParametersOne(int parameterCount)
+void ParameterSet::setParametersOne(int inputCount)
 {
-	parameters = MatrixXd::Ones(parameterCount, 1);
+	parameters = MatrixXd::Ones(inputCount, 1);
 }
 
 void ParameterSet::setParametersOne(int inputCount, int outputCount)

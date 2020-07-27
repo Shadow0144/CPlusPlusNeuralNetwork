@@ -3,6 +3,7 @@
 IdentityFunction::IdentityFunction(int numInputs)
 {
 	this->numInputs = numInputs;
+	this->numOutputs = numInputs;
 	this->weights.setParametersOne(numInputs);
 }
 
@@ -20,11 +21,6 @@ MatrixXd IdentityFunction::backPropagate(MatrixXd lastInput, MatrixXd errors)
 bool IdentityFunction::hasBias()
 {
 	return false;
-}
-
-int IdentityFunction::getNumOutputs()
-{
-	return numInputs;
 }
 
 void IdentityFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)

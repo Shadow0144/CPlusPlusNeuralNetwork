@@ -52,27 +52,30 @@ NeuralNetwork::~NeuralNetwork()
 MatrixXd NeuralNetwork::feedForward(MatrixXd inputs)
 {
 	// Fix: Assumes a non-zero network
-	MatrixXd result = MatrixXd(inputs.rows(), layerShapes[layerCount-1] * (layers[layerCount-1][0])->getNumOutputs()); // The final result encapsulating all examples
+	MatrixXd results = MatrixXd(inputs.rows(), layerShapes[layerCount-1] * (layers[layerCount-1][0])->getNumOutputs()); // The final result encapsulating all examples
 	if (layerCount > 0)
 	{
-		for (int i = 0; i < inputs.rows(); i++) // Loop through the examples
+		for (int n = 0; n < inputs.rows(); n++) // Loop through the examples
 		{
-			MatrixXd example = inputs.row(i); // A single example
-			for (int j = 0; j < layerCount; j++) // Loop through the layers
+			MatrixXd example = inputs.row(n); // A single example
+			for (int i = 0; i < layerCount; i++) // Loop through the layers
 			{
-				MatrixXd row_result = MatrixXd(1, layerShapes[j] * (layers[layerCount - 1][0])->getNumOutputs()); // The result of a single layer of calculation
-				for (int k = 0; k < layerShapes[j]; k++) // Loop through the neurons
+				int index = 0;
+				int width = (layers[i][0])->getNumOutputs();
+				MatrixXd row_result = MatrixXd(1, layerShapes[i] * width); // The result of a single layer of calculation
+				for (int j = 0; j < layerShapes[i]; j++) // Loop through the neurons
 				{
-					row_result = layers[j].at(k)->feedForward(example); // TODO FIX!
+					row_result.block(0, index, 1, width) = layers[i].at(j)->feedForward(example);
+					index += width;
 				}
 				example = row_result; // Feed the row_result into the next row
 			}
-			result.row(i) = example;
+			results.row(n) = example;
 		}
 	}
 	else { }
 
-	return result;
+	return results;
 }
 
 bool NeuralNetwork::backPropagate(MatrixXd inputs, MatrixXd targets)
@@ -86,15 +89,15 @@ bool NeuralNetwork::backPropagate(MatrixXd inputs, MatrixXd targets)
 			MatrixXd errors = errorFunction->getDerivativeOfError(y, targets.row(i));
 			for (int j = (layerCount - 1); j > 0; j--) // Skip the top row
 			{
-				MatrixXd newErrors = MatrixXd(layerShapes[j], layerShapes[j - 1]); // One row per neuron above
+				MatrixXd newErrors = MatrixXd(layerShapes[j - 1], layerShapes[j]); // One row per previous neuron, one col per current neuron
 				for (int k = 0; k < layerShapes[j]; k++)
 				{
-					MatrixXd newError = layers[j].at(k)->backPropagate(errors.row(k));
-					newErrors.row(k) = newError.row(0);
+					MatrixXd newError = layers[j].at(k)->backPropagate(errors.row(k)); // One row per previous neuron
+					newErrors.col(k) = newError.col(0); // Each neuron of the current layer returns a col weighted of errors
 				}
 				errors = newErrors;
 			}
-			for (int k = 0; k < layerShapes[0]; k++) // Top row
+			for (int k = 0; k < layerShapes[0]; k++) // Top row (ignore return)
 			{
 				layers[0].at(k)->backPropagate(errors.row(k));
 			}
@@ -130,7 +133,7 @@ void NeuralNetwork::train(MatrixXd inputs, MatrixXd targets)
 	bool converged = false;
 	double lastError = error;
 	double deltaError = error;
-	while (error > minError && t < maxIterations && !converged && deltaError > errorConvergenceThreshold)
+	while ((error < 0 || error > minError) && t < maxIterations && !converged && deltaError > errorConvergenceThreshold)
 	{
 		converged = backPropagate(inputs, targets);
 		predicted = feedForward(inputs);

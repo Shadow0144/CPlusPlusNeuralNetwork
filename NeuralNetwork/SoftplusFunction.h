@@ -16,8 +16,6 @@ public:
 	double getK();
 	void setK(double k);
 
-	int getNumOutputs();
-
 private:
 	MatrixXd lastOutput;
 

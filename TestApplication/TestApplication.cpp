@@ -134,7 +134,7 @@ ActivationFunction functions[] =
 { ActivationFunction::Softmax };
 #elif defined(TWO)
 int layers = 2;
-int layerShapes[] = { 1, 1 };
+int layerShapes[] = { 3, 1 };
 ActivationFunction functions[] =
 {
    ActivationFunction::Sigmoid,

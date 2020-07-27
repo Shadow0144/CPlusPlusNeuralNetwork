@@ -3,6 +3,7 @@
 ConvolutionFunction::ConvolutionFunction(int numInputs)
 {
 	this->numInputs = numInputs;
+	this->numOutputs = 1;
 	this->weights.setParametersOne(numInputs);
 }
 
@@ -20,11 +21,6 @@ MatrixXd ConvolutionFunction::backPropagate(MatrixXd lastInput, MatrixXd errors)
 bool ConvolutionFunction::hasBias()
 {
 	return false;
-}
-
-int ConvolutionFunction::getNumOutputs()
-{
-	return numInputs;
 }
 
 void ConvolutionFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)

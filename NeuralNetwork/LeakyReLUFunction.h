@@ -16,8 +16,6 @@ public:
 	double getA();
 	void setA(double a);
 
-	int getNumOutputs();
-
 private:
 	MatrixXd lastOutput;
 

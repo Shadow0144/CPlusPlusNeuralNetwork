@@ -38,19 +38,14 @@ MatrixXd SoftmaxFunction::backPropagate(MatrixXd lastInput, MatrixXd errors)
 	weights.setDeltaParameters(-ALPHA * lastInput.transpose() * sigma);
 
 	// Strip away the bias parameter and weight the sigma by the incoming weights
-	MatrixXd weightsPrime = weights.getParameters().block(0, 0, (numInputs - 1), 1);
+	MatrixXd weightsPrime = weights.getParameters().block(0, 0, (numInputs - 1), numOutputs);
 
-	return sigma.sum() * weightsPrime.transpose();
+	return weightsPrime * sigma.transpose();
 }
 
 bool SoftmaxFunction::hasBias()
 {
 	return true;
-}
-
-int SoftmaxFunction::getNumOutputs()
-{
-	return numOutputs;
 }
 
 void SoftmaxFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
