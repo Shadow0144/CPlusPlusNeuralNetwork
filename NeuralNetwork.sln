@@ -22,16 +22,16 @@ Global
 		{D3C4B197-2A03-4210-B9E8-938DEB754C8E}.Debug|x64.Build.0 = Debug|x64
 		{D3C4B197-2A03-4210-B9E8-938DEB754C8E}.Debug|x86.ActiveCfg = Debug|x64
 		{D3C4B197-2A03-4210-B9E8-938DEB754C8E}.Debug|x86.Build.0 = Debug|x64
-		{D3C4B197-2A03-4210-B9E8-938DEB754C8E}.Release|x64.ActiveCfg = Debug|x64
-		{D3C4B197-2A03-4210-B9E8-938DEB754C8E}.Release|x64.Build.0 = Debug|x64
+		{D3C4B197-2A03-4210-B9E8-938DEB754C8E}.Release|x64.ActiveCfg = Release|x64
+		{D3C4B197-2A03-4210-B9E8-938DEB754C8E}.Release|x64.Build.0 = Release|x64
 		{D3C4B197-2A03-4210-B9E8-938DEB754C8E}.Release|x86.ActiveCfg = Debug|x64
 		{D3C4B197-2A03-4210-B9E8-938DEB754C8E}.Release|x86.Build.0 = Debug|x64
 		{84B5891F-3DCC-4EB9-B520-B21AE97ACEFF}.Debug|x64.ActiveCfg = Debug|x64
 		{84B5891F-3DCC-4EB9-B520-B21AE97ACEFF}.Debug|x64.Build.0 = Debug|x64
 		{84B5891F-3DCC-4EB9-B520-B21AE97ACEFF}.Debug|x86.ActiveCfg = Debug|x64
 		{84B5891F-3DCC-4EB9-B520-B21AE97ACEFF}.Debug|x86.Build.0 = Debug|x64
-		{84B5891F-3DCC-4EB9-B520-B21AE97ACEFF}.Release|x64.ActiveCfg = Debug|x64
-		{84B5891F-3DCC-4EB9-B520-B21AE97ACEFF}.Release|x64.Build.0 = Debug|x64
+		{84B5891F-3DCC-4EB9-B520-B21AE97ACEFF}.Release|x64.ActiveCfg = Release|x64
+		{84B5891F-3DCC-4EB9-B520-B21AE97ACEFF}.Release|x64.Build.0 = Release|x64
 		{84B5891F-3DCC-4EB9-B520-B21AE97ACEFF}.Release|x86.ActiveCfg = Debug|x64
 		{84B5891F-3DCC-4EB9-B520-B21AE97ACEFF}.Release|x86.Build.0 = Debug|x64
 	EndGlobalSection
@@ -39,7 +39,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		Qt5Version = msvc2019_64
 		SolutionGuid = {CD40F767-BC5E-4E1D-926B-9CE33BBD70A6}
+		Qt5Version = msvc2019_64
 	EndGlobalSection
 EndGlobal

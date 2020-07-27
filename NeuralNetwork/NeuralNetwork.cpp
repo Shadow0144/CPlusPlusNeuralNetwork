@@ -127,7 +127,7 @@ void NeuralNetwork::train(MatrixXd inputs, MatrixXd targets)
 	double error = abs(getError(predicted, targets));
 	Output(LearningState::untrained, 0, inputs, targets, predicted);
 
-	cout << "Beginning training" << endl;
+	cout << "Beginning training" << endl << endl;
 
 	int t = 0;
 	bool converged = false;
@@ -161,19 +161,19 @@ void NeuralNetwork::train(MatrixXd inputs, MatrixXd targets)
 	{
 		if (deltaError <= errorConvergenceThreshold)
 		{
-			cout << endl << "Error has converged" << endl;
+			cout << "Error has converged" << endl << endl;
 		}
 		else if (converged)
 		{
-			cout << endl << "Weights have converged" << endl;
+			cout << "Weights have converged" << endl << endl;
 		}
-		else if (error <= minError)
+		else if (error >= 0 && error <= minError)
 		{
-			cout << endl << "Minimum loss condition reached" << endl;
+			cout << "Minimum loss condition reached" << endl << endl;
 		}
 		else if (t == maxIterations)
 		{
-			cout << endl << "Maximum iterations reached" << endl;
+			cout << "Maximum iterations reached" << endl << endl;
 		}
 		else { }
 	}
@@ -181,7 +181,7 @@ void NeuralNetwork::train(MatrixXd inputs, MatrixXd targets)
 
 	Output(LearningState::trained, t, inputs, targets, predicted);
 
-	cout << "Training complete" << endl;
+	cout << "Training complete" << endl << endl;
 
 	// Infinite loop
 	if (drawingEnabled)
@@ -193,7 +193,6 @@ void NeuralNetwork::train(MatrixXd inputs, MatrixXd targets)
 	}
 	else 
 	{ 
-		cout << endl;
 		system("pause");
 	}
 }
@@ -215,7 +214,7 @@ void NeuralNetwork::Output(LearningState state, int iteration, MatrixXd inputs, 
 				stateString = "Trained";
 				break;
 		}
-		cout << endl << stateString << ": " << endl;
+		cout << stateString << ": " << endl;
 		if (verbosity >= 2)
 		{
 			for (int i = 0; i < inputs.rows(); i++)
@@ -226,6 +225,7 @@ void NeuralNetwork::Output(LearningState state, int iteration, MatrixXd inputs, 
 		else { }
 		cout << "Iterations: " << iteration << endl;
 		cout << "Error: " << getError(predicted, targets) << endl;
+		cout << endl;
 	}
 	else { }
 }

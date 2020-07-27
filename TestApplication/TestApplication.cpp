@@ -18,8 +18,8 @@ using namespace std;
 //#define ALL
 //#define FIVE
 //#define FOUR
-//#define THREE
-#define TWO
+#define THREE
+//#define TWO
 //#define ONE
 #define IRIS
 
@@ -47,7 +47,7 @@ void print_iris_results(MatrixXd predicted, MatrixXd actual)
     hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
 
     int correct = 0;
-    cout << endl << "Predicted | Actual" << endl;
+    cout << "Predicted | Actual" << endl;
     for (int i = 0; i < predicted.rows(); i++)
     {
         int p = 0;
@@ -137,6 +137,15 @@ int layers = 2;
 int layerShapes[] = { 3, 1 };
 ActivationFunction functions[] =
 {
+   ActivationFunction::Sigmoid,
+   ActivationFunction::Softmax
+}; 
+#elif defined(THREE)
+int layers = 3;
+int layerShapes[] = { 6, 3, 1 };
+ActivationFunction functions[] =
+{
+   ActivationFunction::WeightedDotProduct,
    ActivationFunction::Sigmoid,
    ActivationFunction::Softmax
 };
@@ -231,6 +240,8 @@ ActivationFunction functions[] =
     MatrixXd irisLabels = iris.getLabelsOneHot();
 
     MatrixXd irisPredictions = network.feedForward(irisFeatures);
+
+    cout << "Training on Iris Dataset" << endl << endl;
 
     print_iris_results(irisPredictions, irisLabels);
 
