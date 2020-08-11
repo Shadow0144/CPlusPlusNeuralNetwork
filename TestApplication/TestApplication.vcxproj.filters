@@ -20,9 +20,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <CopyFileToFolders Include="iris.dat">
-      <Filter>Resource Files</Filter>
-    </CopyFileToFolders>
     <CopyFileToFolders Include="mnist_test.csv" />
     <CopyFileToFolders Include="mnist_train.csv" />
   </ItemGroup>
@@ -35,9 +32,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="mnist_mini.csv">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="data\iris.dat">
       <Filter>Resource Files</Filter>
     </None>

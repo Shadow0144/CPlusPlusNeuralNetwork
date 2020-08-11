@@ -154,28 +154,22 @@
     <ClCompile Include="TestApplication.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <CopyFileToFolders Include="iris.dat">
-      <FileType>Document</FileType>
-    </CopyFileToFolders>
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="IrisDataset.h" />
     <ClInclude Include="MNISTDataset.h" />
   </ItemGroup>
   <ItemGroup>
-    <CopyFileToFolders Include="mnist_test.csv">
+    <CopyFileToFolders Include="data\iris.dat">
       <FileType>Document</FileType>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="mnist_train.csv">
+    <CopyFileToFolders Include="data\mnist_mini.csv">
       <FileType>Document</FileType>
     </CopyFileToFolders>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="data\iris.dat" />
-    <None Include="data\mnist_mini.csv" />
-    <None Include="data\mnist_test.csv" />
-    <None Include="data\mnist_train.csv" />
-    <None Include="mnist_mini.csv" />
+    <CopyFileToFolders Include="data\mnist_test.csv">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="data\mnist_train.csv">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
