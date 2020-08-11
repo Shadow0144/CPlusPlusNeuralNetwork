@@ -1,26 +1,46 @@
 #include "ConvolutionFunction.h"
 
-ConvolutionFunction::ConvolutionFunction(int numInputs)
+#pragma warning(push, 0)
+#include <xtensor/xview.hpp>
+#pragma warning(pop)
+
+ConvolutionFunction::ConvolutionFunction(std::vector<size_t> numInputs, std::vector<size_t> convolutionShape, int stride)
 {
-	this->numInputs = numInputs;
-	this->numOutputs = 1;
-	this->weights.setParametersOne(numInputs);
+	//this->hasBias = false;
+	//this->inputDims = numInputs.size();
+	//this->numInputs = numInputs;
+	//this->convolutionShape = convolutionShape;
+	//this->stride = stride;
+	//this->numOutputs[inputDims-1] = numInputs[inputDims-1] - convolutionShape[0] + 1; // FIX: Stride and non-square etc
+	//this->weights.setParametersRandom(convolutionShape);
 }
 
-MatrixXd ConvolutionFunction::feedForward(MatrixXd input)
+xt::xarray<double> ConvolutionFunction::feedForward(xt::xarray<double> input)
 {
-	return input;
+	lastInput = input;
+	auto inputShape = input.shape();
+	size_t stopi = inputShape[0] - convolutionShape[0];
+	size_t stopj = inputShape[1] - convolutionShape[1];
+	xt::xarray<double>::shape_type shape = { stopi + 1, stopj + 1 };
+	xt::xarray<double> lastOutput(shape);
+
+	for (size_t i = 0; i < stopi; i++)
+	{
+		for (size_t j = 0; j < stopj; j++)
+		{
+			auto block = xt::view(input, (i, j, convolutionShape[0], convolutionShape[1]));
+			auto prod = block * weights.getParameters();
+			lastOutput(i, j) = xt::sum(prod)();
+		}
+	}
+
+	return lastOutput;
 }
 
-MatrixXd ConvolutionFunction::backPropagate(MatrixXd lastInput, MatrixXd errors)
+xt::xarray<double> ConvolutionFunction::backPropagate(xt::xarray<double> errors)
 {
-	weights.setDeltaParameters(-ALPHA * lastInput.transpose() * 0.0);
+	//weights.incrementDeltaParameters(-ALPHA * lastInput.transpose() * 0.0);
 	return errors;
-}
-
-bool ConvolutionFunction::hasBias()
-{
-	return false;
 }
 
 void ConvolutionFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)

@@ -23,10 +23,32 @@
     <CopyFileToFolders Include="iris.dat">
       <Filter>Resource Files</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="mnist_test.csv" />
+    <CopyFileToFolders Include="mnist_train.csv" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="IrisDataset.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MNISTDataset.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="mnist_mini.csv">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="data\iris.dat">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="data\mnist_mini.csv">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="data\mnist_test.csv">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="data\mnist_train.csv">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -1,9 +1,65 @@
 #include "Function.h"
 
+#pragma warning(push, 0)
+#include <iostream>
+#include <xtensor-blas/xlinalg.hpp>
+#pragma warning(pop)
+
+using namespace std;
+
 double Function::applyBackProgate()
 {
+	double deltaWeight = xt::sum(xt::abs(weights.getDeltaParameters()))();
 	weights.applyDeltaParameters();
-	return weights.getDeltaParameters().cwiseAbs().sum(); // Return the sum of how much the parameters have changed
+	return deltaWeight; // Return the sum of how much the parameters have changed
+}
+
+xt::xarray<double> Function::dotProduct(xt::xarray<double> inputs)
+{
+	if (hasBias)
+	{
+		size_t inputDims = inputs.dimension();
+		auto inputShape = inputs.shape();
+		inputShape.at(inputDims - 1)++;
+		xt::xstrided_slice_vector biaslessView;
+		for (int i = 0; i < (inputDims - 1); i++)
+		{
+			biaslessView.push_back(xt::all());
+		}
+		biaslessView.push_back(xt::range(0, (numInputs - 1)));
+
+		lastInput = xt::ones<double>(inputShape);
+		xt::strided_view(lastInput, biaslessView) = inputs;
+	}
+	else
+	{
+		lastInput = inputs;
+	}
+
+	return xt::linalg::tensordot(lastInput, weights.getParameters(), 1); // The last dimension of the input with the first dimension of the weights
+}
+
+xt::xarray<double> Function::activationDerivative()
+{
+	return xt::xarray<double>();
+}
+
+xt::xarray<double> Function::denseBackpropagate(xt::xarray<double> sigmas)
+{
+	//cout << "Input dimension: " << lastInput.dimension() << " shape: " << lastInput.shape()[0] << ", " << lastInput.shape()[1] << endl;
+	//cout << "Sigma dimension: " << sigmas.dimension() << " shape: " << sigmas.shape()[0] << ", " << sigmas.shape()[1] << endl;
+	auto delta = xt::linalg::tensordot(xt::transpose(lastInput), sigmas, 1);
+
+	weights.incrementDeltaParameters(-ALPHA * delta);
+	auto biaslessWeights = xt::view(weights.getParameters(), xt::range(0, (numInputs - 1)), xt::all());
+
+	//cout << "Weights dimension: " << biaslessWeights.dimension() << " shape: " << biaslessWeights.shape()[0] << ", " << biaslessWeights.shape()[1] << endl;
+	auto newSigmas = xt::linalg::tensordot(sigmas, xt::transpose(biaslessWeights), 1); // The last {1} axes of errors and the first {1} axes of the weights transposed
+	//cout << "New sigma dimension: " << newSigmas.dimension() << " shape: " << newSigmas.shape()[0] << ", " << newSigmas.shape()[1] << endl;
+
+	//cout << endl;
+
+	return newSigmas;
 }
 
 MatrixXd Function::approximateBezier(MatrixXd points)

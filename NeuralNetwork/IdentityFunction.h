@@ -5,10 +5,9 @@
 class IdentityFunction : public Function
 {
 public:
-	IdentityFunction(int numInputs);
+	IdentityFunction(size_t numUnits, size_t incomingUnits);
 
-	MatrixXd feedForward(MatrixXd input);
-	MatrixXd backPropagate(MatrixXd lastInput, MatrixXd errors);
-	bool hasBias();
+	xt::xarray<double> feedForward(xt::xarray<double> input);
+	xt::xarray<double> backPropagate(xt::xarray<double> errors);
 	virtual void draw(ImDrawList* canvas, ImVec2 origin, double scale);
 };

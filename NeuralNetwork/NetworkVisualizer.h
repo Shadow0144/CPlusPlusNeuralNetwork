@@ -19,7 +19,7 @@ public:
 
 	void addClassificationVisualization(int rows, int cols, ImColor* classColors);
 
-	void draw(MatrixXd* predicted = NULL, MatrixXd* actual = NULL);
+	void draw(xt::xarray<double> predicted = NULL, xt::xarray<double> actual = NULL);
 
 private:
 	void setup();

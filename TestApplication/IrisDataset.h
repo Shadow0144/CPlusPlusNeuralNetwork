@@ -1,8 +1,10 @@
 #pragma once
 
-#include <Eigen/Core>
+#pragma warning(push, 0)
+#include <xtensor/xarray.hpp>
 #include <iostream>
 #include <fstream>
+#pragma warning(pop)
 
 using namespace std;
 
@@ -22,14 +24,14 @@ public:
 		irisFile.open("iris.dat");
 		string line;
 
-		columnNames = new string[colCount];
+		columnNames = new string[COL_COUNT];
 
 		// Header containing the column names
 		getline(irisFile, line);
 		size_t pos = 0;
 		size_t last = 0;
 		string token = "";
-		for (int i = 0; i < colCount; i++)
+		for (int i = 0; i < COL_COUNT; i++)
 		{
 			pos = line.find(",", last);
 			token = line.substr(last, (pos-last));
@@ -37,27 +39,29 @@ public:
 			last = pos + 1;
 		}
 
-		const int featureCount = 4;
-		features = MatrixXd(rowCount, featureCount);
-		labels = MatrixXd(rowCount, 1);
+		const int FEATURE_COUNT = 4;
+		xt::xarray<int>::shape_type shapeFeatures = { ROW_COUNT, FEATURE_COUNT };
+		features = xt::xarray<double>(shapeFeatures);
+		xt::xarray<int>::shape_type shapeLabels = { ROW_COUNT, 1 };
+		labels = xt::xarray<double>(shapeLabels);
 		int c = -1;
-		for (int i = 0; i < rowCount; i++)
+		for (int i = 0; i < ROW_COUNT; i++)
 		{
 			c = (i % 50 == 0) ? c+1 : c;
 			int k = i % 50;
 			int index = (k * 3 + c) % 150;
 			getline(irisFile, line);
 			last = 0;
-			for (int j = 0; j < featureCount; j++)
+			for (int j = 0; j < FEATURE_COUNT; j++)
 			{
 				pos = line.find(",", last);
 				token = line.substr(last, (pos - last));
-				features(index, j) = stod(token); // TODO
+				features(index, j) = stod(token);
 				last = pos + 1;
 			}
 			pos = line.find(",", last);
 			token = line.substr(last, (pos - last));
-			labels(index, 0) = getIrisSpeciesNum(token); // TODO
+			labels(index, 0) = getIrisSpeciesNum(token);
 		}
 
 		irisFile.close();
@@ -110,22 +114,22 @@ public:
 		return species;
 	}
 
-	MatrixXd getFeatures()
+	xt::xarray<double> getFeatures()
 	{
 		return features;
 	}
 
-	MatrixXd getLabels()
+	xt::xarray<double> getLabels()
 	{
 		return labels;
 	}
 
-	MatrixXd getLabelsOneHot()
+	xt::xarray<double> getLabelsOneHot()
 	{
-		int r = labels.rows();
-		MatrixXd oneHot = MatrixXd::Zero(r, 3);
+		xt::xarray<int>::shape_type labelShape = { ROW_COUNT, 3 };
+		xt::xarray<double> oneHot = xt::zeros<double>(labelShape);
 
-		for (int i = 0; i < r; i++)
+		for (int i = 0; i < ROW_COUNT; i++)
 		{
 			oneHot(i, labels(i)) = 1.0;
 		}
@@ -135,9 +139,9 @@ public:
 
 private:
 	string* columnNames;
-	const int rowCount = 150; // Excluding header
-	const int colCount = 5;
+	const size_t ROW_COUNT = 150; // Excluding header
+	const size_t COL_COUNT = 5;
 
-	MatrixXd features;
-	MatrixXd labels;
+	xt::xarray<double> features;
+	xt::xarray<double> labels;
 };

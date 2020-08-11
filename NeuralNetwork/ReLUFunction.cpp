@@ -4,38 +4,37 @@
 
 using namespace std;
 
-ReLUFunction::ReLUFunction(int numInputs)
+ReLUFunction::ReLUFunction(size_t incomingUnits, size_t numUnits)
 {
-	this->numInputs = numInputs;
-	this->numOutputs = 1;
-	this->weights.setParametersRandom(numInputs);
+	this->hasBias = true;
+	this->numUnits = numUnits;
+	this->numInputs = incomingUnits + 1; // Plus bias
+	std::vector<size_t> paramShape;
+	// incoming x current -shaped
+	paramShape.push_back(this->numInputs);
+	paramShape.push_back(this->numUnits);
+	this->weights.setParametersRandom(paramShape);
 }
 
-MatrixXd ReLUFunction::feedForward(MatrixXd inputs)
+xt::xarray<double> ReLUFunction::reLU(xt::xarray<double> z)
 {
-	lastOutput = inputs * weights.getParameters();
-	lastOutput(0) = max(0.0, lastOutput(0));
-	return lastOutput;
+	return xt::maximum(0.0, z);
 }
 
-MatrixXd ReLUFunction::backPropagate(MatrixXd lastInput, MatrixXd errors)
+xt::xarray<double> ReLUFunction::feedForward(xt::xarray<double> inputs)
 {
-	double errorSum = errors.sum();
-	double reLUPrime = (lastOutput(0) > 0.0) ? 1.0 : 0.0;
-	MatrixXd prime = MatrixXd::Ones(1, 1) * reLUPrime;
-	MatrixXd sigma = errorSum * prime;
-
-	weights.setDeltaParameters(-ALPHA * lastInput.transpose() * sigma);
-
-	// Strip away the bias parameter and weight the sigma by the incoming weights
-	MatrixXd weightsPrime = weights.getParameters().block(0, 0, (numInputs - 1), numOutputs);
-
-	return weightsPrime * sigma.transpose();
+	auto dotProductResult = dotProduct(inputs);
+	return reLU(dotProductResult);
 }
 
-bool ReLUFunction::hasBias()
+xt::xarray<double> ReLUFunction::backPropagate(xt::xarray<double> sigmas)
 {
-	return true;
+	return denseBackpropagate(sigmas * activationDerivative());
+}
+
+xt::xarray<double> ReLUFunction::activationDerivative()
+{
+	return ((lastOutput(0) > 0.0) ? 1.0 : 0.0); // TODO
 }
 
 void ReLUFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)

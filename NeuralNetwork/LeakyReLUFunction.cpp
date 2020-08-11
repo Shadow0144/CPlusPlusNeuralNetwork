@@ -4,39 +4,37 @@
 
 using namespace std;
 
-LeakyReLUFunction::LeakyReLUFunction(int numInputs)
+LeakyReLUFunction::LeakyReLUFunction(size_t incomingUnits, size_t numUnits)
 {
-	this->numInputs = numInputs;
-	this->numOutputs = 1;
-	this->weights.setParametersRandom(numInputs);
+	this->hasBias = true;
+	this->numUnits = numUnits;
+	this->numInputs = incomingUnits + 1; // Plus bias
+	std::vector<size_t> paramShape;
+	// incoming x current -shaped
+	paramShape.push_back(this->numInputs);
+	paramShape.push_back(this->numUnits);
+	this->weights.setParametersRandom(paramShape);
 }
 
-MatrixXd LeakyReLUFunction::feedForward(MatrixXd inputs)
+xt::xarray<double> LeakyReLUFunction::leakyReLU(xt::xarray<double> z)
 {
-	lastOutput = inputs * weights.getParameters();
-	double lOut = lastOutput(0);
-	lastOutput(0) = max(a * lOut, lOut);
-	return lastOutput;
+	return xt::maximum(a * z, z);
 }
 
-MatrixXd LeakyReLUFunction::backPropagate(MatrixXd lastInput, MatrixXd errors)
+xt::xarray<double> LeakyReLUFunction::feedForward(xt::xarray<double> inputs)
 {
-	double errorSum = errors.sum();
-	double reLUPrime = (lastOutput(0) > 0.0) ? 1.0 : a;
-	MatrixXd prime = MatrixXd::Ones(1, 1) * reLUPrime;
-	MatrixXd sigma = errorSum * prime;
-
-	weights.setDeltaParameters(-ALPHA * lastInput.transpose() * sigma);
-
-	// Strip away the bias parameter and weight the sigma by the incoming weights
-	MatrixXd weightsPrime = weights.getParameters().block(0, 0, (numInputs - 1), numOutputs);
-
-	return weightsPrime * sigma.transpose();
+	auto dotProductResult = dotProduct(inputs);
+	return leakyReLU(dotProductResult);
 }
 
-bool LeakyReLUFunction::hasBias()
+xt::xarray<double> LeakyReLUFunction::backPropagate(xt::xarray<double> sigmas)
 {
-	return true;
+	return denseBackpropagate(sigmas * activationDerivative());
+}
+
+xt::xarray<double> LeakyReLUFunction::activationDerivative()
+{
+	return ((lastOutput(0) > 0.0) ? 1.0 : a); // TODO
 }
 
 double LeakyReLUFunction::getA() 

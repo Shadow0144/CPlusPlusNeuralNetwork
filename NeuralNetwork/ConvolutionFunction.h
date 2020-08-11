@@ -5,10 +5,13 @@
 class ConvolutionFunction : public Function
 {
 public:
-	ConvolutionFunction(int numInputs);
+	ConvolutionFunction(std::vector<size_t> numInputs, std::vector<size_t> convolutionShape, int stride);
 
-	MatrixXd feedForward(MatrixXd input);
-	MatrixXd backPropagate(MatrixXd lastInput, MatrixXd errors);
-	bool hasBias();
+	xt::xarray<double> feedForward(xt::xarray<double> input);
+	xt::xarray<double> backPropagate(xt::xarray<double> errors);
 	virtual void draw(ImDrawList* canvas, ImVec2 origin, double scale);
+
+private:
+	std::vector<size_t> convolutionShape;
+	int stride;
 };

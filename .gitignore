@@ -42,3 +42,12 @@
 *.tlog
 *.FileListAbsolute.txt
 *.user
+
+# Compilation folders
+x86/
+x64/
+NeuralNetwork/x86/
+NeuralNetwork/x64/
+TestApplication/x86/
+TestApplication/x64/
+PreviousBuilds/

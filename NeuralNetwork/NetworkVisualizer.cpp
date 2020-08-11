@@ -137,14 +137,14 @@ void test_draw(ImDrawList* draw_list)
         y += sz + spacing;
         y += sz + spacing;
 
-        TanhFunction thf(1);
+        /*TanhFunction thf(1);
         thf.draw(draw_list, ImVec2(x, y), sz);
         y += sz + spacing;
         y += sz + spacing;
         y += sz + spacing;
 
         SigmoidFunction sgf(1);
-        sgf.draw(draw_list, ImVec2(x, y), sz);
+        sgf.draw(draw_list, ImVec2(x, y), sz);*/
     }
 }
 
@@ -160,7 +160,7 @@ void NetworkVisualizer::addClassificationVisualization(int rows, int cols, ImCol
     displayClasses = true;
 }
 
-void NetworkVisualizer::draw(MatrixXd* predicted, MatrixXd* actual)
+void NetworkVisualizer::draw(xt::xarray<double> predicted, xt::xarray<double> actual)
 {
     const ImVec4 CLEAR_COLOR(0.45, 0.55, 0.60, 1.0);
     const ImVec4 VERY_LIGHT_GRAY(0.8, 0.8, 0.8, 1.0);
@@ -228,13 +228,13 @@ void NetworkVisualizer::draw(MatrixXd* predicted, MatrixXd* actual)
 
     ImDrawList* draw_list = ImGui::GetWindowDrawList();
 
-    network->draw(draw_list, origin, scale, MatrixXd(), MatrixXd());
+    network->draw(draw_list, origin, scale, xt::xarray<double>(), xt::xarray<double>());
 
-    if (displayClasses && predicted != NULL && actual != NULL)
+    /*if (displayClasses && predicted != NULL && actual != NULL)
     {
         classifier->draw(draw_list, *predicted, *actual);
     }
-    else { }
+    else { }*/
 
     ImGui::End();
     ImGui::PopStyleColor();

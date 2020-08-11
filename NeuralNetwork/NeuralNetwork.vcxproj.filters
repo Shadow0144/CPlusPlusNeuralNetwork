@@ -40,12 +40,15 @@
     <Filter Include="Header Files\Visualizer">
       <UniqueIdentifier>{4a59ead0-00f7-4043-aed8-15dbabf9d437}</UniqueIdentifier>
     </Filter>
+    <Filter Include="NeuralLayer">
+      <UniqueIdentifier>{7cbaa276-8fb7-4154-9a4c-125599373b3c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\NeuralLayer">
+      <UniqueIdentifier>{c7798580-57a4-4aef-855c-4af2e7c941fd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="NeuralNetwork.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Neuron.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DotProductFunction.cpp">
@@ -114,12 +117,15 @@
     <ClCompile Include="ClassifierVisualizer.cpp">
       <Filter>Source Files\Visualizer</Filter>
     </ClCompile>
+    <ClCompile Include="DenseNeuralLayer.cpp">
+      <Filter>Source Files\NeuralLayer</Filter>
+    </ClCompile>
+    <ClCompile Include="InputNeuralLayer.cpp">
+      <Filter>Source Files\NeuralLayer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NeuralNetwork.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Neuron.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Function.h">
@@ -200,6 +206,15 @@
     <ClInclude Include="ClassifierVisualizer.h">
       <Filter>Header Files\Visualizer</Filter>
     </ClInclude>
+    <ClInclude Include="DenseNeuralLayer.h">
+      <Filter>NeuralLayer</Filter>
+    </ClInclude>
+    <ClInclude Include="NeuralLayer.h">
+      <Filter>NeuralLayer</Filter>
+    </ClInclude>
+    <ClInclude Include="InputNeuralLayer.h">
+      <Filter>NeuralLayer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="SuccessVisualStudioWindows.jpg">
@@ -208,5 +223,8 @@
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="SDL2.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="openblas.lib" />
   </ItemGroup>
 </Project>

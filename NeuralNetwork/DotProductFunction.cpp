@@ -1,38 +1,32 @@
 #include "DotProductFunction.h"
 
+#pragma warning(push, 0)
 #include <iostream>
+#include <xtensor/xview.hpp>
+#pragma warning(pop)
 
 using namespace std;
 
-DotProductFunction::DotProductFunction(int numInputs)
+DotProductFunction::DotProductFunction(size_t incomingUnits, size_t numUnits)
 {
-	this->numInputs = numInputs;
-	this->numOutputs = 1;
-	this->weights.setParametersRandom(numInputs);
+	this->hasBias = true;
+	this->numUnits = numUnits;
+	this->numInputs = incomingUnits + 1; // Plus bias
+	std::vector<size_t> paramShape;
+	// incoming x current -shaped
+	paramShape.push_back(this->numInputs);
+	paramShape.push_back(this->numUnits);
+	this->weights.setParametersRandom(paramShape);
 }
 
-MatrixXd DotProductFunction::feedForward(MatrixXd inputs)
+xt::xarray<double> DotProductFunction::feedForward(xt::xarray<double> inputs)
 {
-	return inputs * weights.getParameters();
+	return dotProduct(inputs);
 }
 
-MatrixXd DotProductFunction::backPropagate(MatrixXd lastInput, MatrixXd errors)
+xt::xarray<double> DotProductFunction::backPropagate(xt::xarray<double> sigmas)
 {
-	double errorSum = errors.sum();
-	MatrixXd prime = MatrixXd::Ones(1, 1);
-	MatrixXd sigma = errorSum * prime;
-	
-	weights.setDeltaParameters(-ALPHA * lastInput.transpose() * sigma);
-
-	// Strip away the bias parameter and weight the sigma by the incoming weights
-	MatrixXd weightsPrime = weights.getParameters().block(0, 0, (numInputs - 1), numOutputs);
-
-	return weightsPrime * sigma.transpose();
-}
-
-bool DotProductFunction::hasBias()
-{
-	return true;
+	return denseBackpropagate(sigmas);
 }
 
 void DotProductFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)

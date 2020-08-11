@@ -1,62 +1,96 @@
 #include "ParameterSet.h"
 #include "NeuralNetwork.h"
 
+#pragma warning(push, 0)
 #include <iostream>
 #include <time.h>
+#include <xtensor/xrandom.hpp>
+#pragma warning(pop)
 
 using namespace std;
 
+
+static bool seedSet; // Defaults to false
 ParameterSet::ParameterSet()
 {
-	srand((unsigned int)time(0));
+	if (!seedSet)
+	{
+		xt::random::seed(time(NULL));
+		seedSet = true;
+	}
+	else { }
+	parameters = xt::xarray<double>();
+	deltaParameters = xt::xarray<double>();
+	batchSize = 0;
 }
 
-MatrixXd ParameterSet::getParameters()
+xt::xarray<double> ParameterSet::getParameters()
 { 
 	return parameters;
 }
 
-void ParameterSet::setParametersRandom(int inputCount)
+void ParameterSet::setParametersRandom(size_t numParameters)
 {
-	parameters = MatrixXd::Random(inputCount, 1);
+	std::vector<size_t> pSize;
+	pSize.push_back(numParameters);
+	parameters = 2.0 * (xt::random::rand<double>(pSize) - 0.5);
+	deltaParameters = xt::zeros<double>(parameters.shape());
+	batchSize = 0;
 }
 
-void ParameterSet::setParametersRandom(int inputCount, int outputCount)
+void ParameterSet::setParametersRandom(std::vector<size_t> numParameters)
 {
-	parameters = MatrixXd::Random(inputCount, outputCount);
+	parameters = 2.0 * (xt::random::rand<double>(numParameters) - 0.5);
+	deltaParameters = xt::zeros<double>(parameters.shape());
+	batchSize = 0;
 }
 
-void ParameterSet::setParametersZero(int inputCount)
+void ParameterSet::setParametersZero(size_t numParameters)
 {
-	parameters = MatrixXd::Zero(inputCount, 1);
+	std::vector<size_t> pSize;
+	pSize.push_back(numParameters);
+	parameters = xt::zeros<double>(pSize);
+	deltaParameters = xt::zeros<double>(parameters.shape());
+	batchSize = 0;
 }
 
-void ParameterSet::setParametersZero(int inputCount, int outputCount)
+void ParameterSet::setParametersZero(std::vector<size_t> numParameters)
 {
-	parameters = MatrixXd::Zero(inputCount, outputCount);
+	parameters = xt::zeros<double>(numParameters);
+	deltaParameters = xt::zeros<double>(parameters.shape());
+	batchSize = 0;
 }
 
-void ParameterSet::setParametersOne(int inputCount)
+void ParameterSet::setParametersOne(size_t numParameters)
 {
-	parameters = MatrixXd::Ones(inputCount, 1);
+	std::vector<size_t> pSize;
+	pSize.push_back(numParameters);
+	parameters = xt::ones<double>(pSize);
+	deltaParameters = xt::zeros<double>(parameters.shape());
+	batchSize = 0;
 }
 
-void ParameterSet::setParametersOne(int inputCount, int outputCount)
+void ParameterSet::setParametersOne(std::vector<size_t> numParameters)
 {
-	parameters = MatrixXd::Ones(inputCount, outputCount);
+	parameters = xt::ones<double>(numParameters);
+	deltaParameters = xt::zeros<double>(parameters.shape());
+	batchSize = 0;
 }
 
-MatrixXd ParameterSet::getDeltaParameters()
+xt::xarray<double> ParameterSet::getDeltaParameters()
 {
 	return deltaParameters;
 }
 
-void ParameterSet::setDeltaParameters(MatrixXd deltaParameters)
+void ParameterSet::incrementDeltaParameters(xt::xarray<double> deltaParameters)
 {
-	this->deltaParameters = deltaParameters;
+	this->deltaParameters += deltaParameters;
+	batchSize++;
 }
 
 void ParameterSet::applyDeltaParameters()
 {
-	parameters -= deltaParameters;
+	parameters += (deltaParameters / batchSize);
+	deltaParameters = xt::zeros<double>(parameters.shape());
+	batchSize = 0;
 }

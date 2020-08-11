@@ -1,14 +1,12 @@
 #pragma once
 
 #pragma warning(push, 0)
-#include <Eigen/Core>
+#include <xtensor/xarray.hpp>
 #pragma warning(pop)
-
-using namespace Eigen;
 
 class ErrorFunction
 {
 public:
-	virtual double getError(MatrixXd predicted, MatrixXd actual) = 0;
-	virtual MatrixXd getDerivativeOfError(MatrixXd predicted, MatrixXd actual) = 0;
+	virtual double getError(xt::xarray<double> predicted, xt::xarray<double> actual) = 0;
+	virtual xt::xarray<double> getDerivativeOfError(xt::xarray<double> predicted, xt::xarray<double> actual) = 0;
 };

@@ -12,9 +12,9 @@ ClassifierVisualizer::~ClassifierVisualizer()
 
 }
 
-MatrixXi ClassifierVisualizer::convertToIndices(MatrixXd matrix)
+xt::xarray<int> ClassifierVisualizer::convertToIndices(xt::xarray<double> matrix)
 {
-	int c = matrix.cols();
+	/*int c = matrix.cols();
 	MatrixXi r = MatrixXi(matrix.rows(), 1);
 	for (int i = 0; i < matrix.rows(); i++)
 	{
@@ -31,10 +31,11 @@ MatrixXi ClassifierVisualizer::convertToIndices(MatrixXd matrix)
 		}
 		r(i) = index;
 	}
-	return r;
+	return r;*/
+	return xt::xarray<int>();
 }
 
-void ClassifierVisualizer::draw(ImDrawList* canvas, MatrixXd predicted, MatrixXd actual)
+void ClassifierVisualizer::draw(ImDrawList* canvas, xt::xarray<double> predicted, xt::xarray<double> actual)
 {
 	const float BUFFER = 50;
 	const float ROW_SIZE = 15;
@@ -54,7 +55,7 @@ void ClassifierVisualizer::draw(ImDrawList* canvas, MatrixXd predicted, MatrixXd
 		bottomRight.x - (COL_SIZE * cols) - (2 * CELL_BUFFER), 
 		bottomRight.y - (ROW_SIZE * rows) - (2 * CELL_BUFFER) - (2 * TEXT_BUFFER));
 
-	MatrixXi predictedIndices = convertToIndices(predicted);
+	/*MatrixXi predictedIndices = convertToIndices(predicted);
 	MatrixXi actualIndices = convertToIndices(actual);
 
 	canvas->AddRectFilled(topLeft, bottomRight, EXTRA_LIGHT_GRAY);
@@ -89,5 +90,5 @@ void ClassifierVisualizer::draw(ImDrawList* canvas, MatrixXd predicted, MatrixXd
 				canvas->AddRect(cellTopLeft, cellBottomRight, WRONG_COLOR);
 			}
 		}
-	}
+	}*/
 }

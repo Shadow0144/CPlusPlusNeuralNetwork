@@ -1,26 +1,18 @@
 #include "IdentityFunction.h"
 
-IdentityFunction::IdentityFunction(int numInputs)
+IdentityFunction::IdentityFunction(size_t numUnits, size_t incomingUnits)
 {
-	this->numInputs = numInputs;
-	this->numOutputs = numInputs;
-	this->weights.setParametersOne(numInputs);
+	this->hasBias = false;
 }
 
-MatrixXd IdentityFunction::feedForward(MatrixXd input)
+xt::xarray<double> IdentityFunction::feedForward(xt::xarray<double> input)
 {
 	return input;
 }
 
-MatrixXd IdentityFunction::backPropagate(MatrixXd lastInput, MatrixXd errors)
+xt::xarray<double> IdentityFunction::backPropagate(xt::xarray<double> errors)
 {
-	weights.setDeltaParameters(-ALPHA * lastInput.transpose() * 0.0);
 	return errors;
-}
-
-bool IdentityFunction::hasBias()
-{
-	return false;
 }
 
 void IdentityFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)

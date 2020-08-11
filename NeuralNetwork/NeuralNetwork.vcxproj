@@ -90,11 +90,11 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level1</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(EIGEN_PATH);$(SDL2_DIR)\include;gl3w;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(EIGEN_PATH);$(XTL_PATH);$(XTENSOR_PATH);$(XTENSOR_BLAS_PATH);$(SDL2_DIR)\include;gl3w;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -103,13 +103,13 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level1</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(EIGEN_PATH);$(SDL2_DIR)\include;gl3w;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(EIGEN_PATH);$(XTL_PATH);$(XTENSOR_PATH);$(XTENSOR_BLAS_PATH);$(SDL2_DIR)\include;gl3w;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -120,11 +120,11 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level1</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(EIGEN_PATH);$(SDL2_DIR)\include;gl3w;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(EIGEN_PATH);$(XTL_PATH);$(XTENSOR_PATH);$(XTENSOR_BLAS_PATH);$(SDL2_DIR)\include;gl3w;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -135,13 +135,13 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level1</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(EIGEN_PATH);$(SDL2_DIR)\include;gl3w;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(EIGEN_PATH);$(XTL_PATH);$(XTENSOR_PATH);$(XTENSOR_BLAS_PATH);$(SDL2_DIR)\include;gl3w;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -165,11 +165,12 @@
     <ClCompile Include="imgui_impl_opengl3.cpp" />
     <ClCompile Include="imgui_impl_sdl.cpp" />
     <ClCompile Include="imgui_widgets.cpp" />
+    <ClCompile Include="InputNeuralLayer.cpp" />
     <ClCompile Include="LeakyReLUFunction.cpp" />
     <ClCompile Include="MSEFunction.cpp" />
     <ClCompile Include="NetworkVisualizer.cpp" />
     <ClCompile Include="NeuralNetwork.cpp" />
-    <ClCompile Include="Neuron.cpp" />
+    <ClCompile Include="DenseNeuralLayer.cpp" />
     <ClCompile Include="ParameterSet.cpp" />
     <ClCompile Include="ReLUFunction.cpp" />
     <ClCompile Include="SigmoidFunction.cpp" />
@@ -192,15 +193,17 @@
     <ClInclude Include="imstb_rectpack.h" />
     <ClInclude Include="imstb_textedit.h" />
     <ClInclude Include="imstb_truetype.h" />
+    <ClInclude Include="InputNeuralLayer.h" />
     <ClInclude Include="LeakyReLUFunction.h" />
     <ClInclude Include="MSEFunction.h" />
     <ClInclude Include="NetworkVisualizer.h" />
+    <ClInclude Include="NeuralLayer.h" />
     <ClInclude Include="ParameterSet.h" />
     <ClInclude Include="DotProductFunction.h" />
     <ClInclude Include="Function.h" />
     <ClInclude Include="IdentityFunction.h" />
     <ClInclude Include="NeuralNetwork.h" />
-    <ClInclude Include="Neuron.h" />
+    <ClInclude Include="DenseNeuralLayer.h" />
     <ClInclude Include="ReLUFunction.h" />
     <ClInclude Include="SigmoidFunction.h" />
     <ClInclude Include="SoftmaxFunction.h" />
@@ -214,6 +217,9 @@
     <CopyFileToFolders Include="SDL2.dll">
       <FileType>Document</FileType>
     </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="openblas.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

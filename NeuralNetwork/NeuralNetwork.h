@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#include "Neuron.h"
+#include "NeuralLayer.h"
 #include "ErrorFunction.h"
 
 class NetworkVisualizer;
@@ -11,41 +11,48 @@ using namespace std;
 class NeuralNetwork
 {
 public:
-	NeuralNetwork(int layerCount, int* layerShapes, ActivationFunction* layerFunctions, int inputCount, int outputCount, bool drawingEnabled = true);
+	NeuralNetwork(bool drawingEnabled = true);
 	~NeuralNetwork();
 
-	MatrixXd feedForward(MatrixXd inputs);
-	bool backPropagate(MatrixXd inputs, MatrixXd targets); // Single step
-	void train(MatrixXd inputs, MatrixXd targets); // Train until a condition is met
+	void addInputLayer(std::vector<size_t> inputShape);
+	void addDenseLayer(ActivationFunction layerFunction, size_t numUnits);
+	
+	xt::xarray<double> feedForward(xt::xarray<double> inputs);
+	bool backPropagate(xt::xarray<double> inputs, xt::xarray<double> targets); // Single step
+	void train(xt::xarray<double> inputs, xt::xarray<double> targets); // Train until a condition is met
 
 	void setTrainingParameters(ErrorFunction* errorFunction, int maxIterations,
 		double minError, double errorConvergenceThreshold, double weightConvergenceThreshold);
 
 	void setClassificationVisualizationParameters(int rows, int cols, ImColor* classColors);
 
-	double getError(MatrixXd predicted, MatrixXd actual);
+	double getError(xt::xarray<double> predicted, xt::xarray<double> actual);
 
 	int getVerbosity();
 	void setVerbosity(int verbosity);
+
+	int getBatchSize();
+	void setBatchSize(int batchSize);
 
 	int getOutputRate();
 	void setOutputRate(int outputRate);
 	bool getDrawingEnabled();
 	void setDrawingEnabled(bool drawingEnabled);
-	void draw(ImDrawList* canvas, ImVec2 origin, double scale, MatrixXd target_xs, MatrixXd target_ys);
+	void draw(ImDrawList* canvas, ImVec2 origin, double scale, xt::xarray<double> target_xs, xt::xarray<double> target_ys);
 
 private:
 	int verbosity;
 	bool drawingEnabled;
-	int layerCount;
-	int* layerShapes;
-	vector<Neuron*>* layers;
+	size_t layerCount;
+	vector<size_t> inputShape;
+	vector<NeuralLayer*>* layers;
 	ErrorFunction* errorFunction;
 	int maxIterations;
 	double minError;
 	double errorConvergenceThreshold;
 	double weightConvergenceThreshold;
 	int outputRate;
+	int batchSize;
 	NetworkVisualizer* visualizer;
 
 	enum class LearningState // For printing output
@@ -55,7 +62,7 @@ private:
 		trained
 	};
 
-	void Output(LearningState state, int iteration, MatrixXd inputs, MatrixXd targets, MatrixXd predicted);
+	void output(LearningState state, int iteration, xt::xarray<double> inputs, xt::xarray<double> targets, xt::xarray<double> predicted);
 
 	friend class NetworkVisualizer;
 };

@@ -1,22 +1,19 @@
 #pragma once
 
 #pragma warning(push, 0)
-#include <Eigen/Core>
-#pragma warning(pop)
-
+#include <xtensor/xarray.hpp>
 #include "imgui.h"
-
-using namespace Eigen;
+#pragma warning(pop)
 
 class ClassifierVisualizer
 {
 public:
 	ClassifierVisualizer(int rows, int cols, ImColor* classColors);
 	~ClassifierVisualizer();
+	
+	xt::xarray<int> convertToIndices(xt::xarray<double> matrix);
 
-	MatrixXi convertToIndices(MatrixXd matrix);
-
-	void draw(ImDrawList* canvas, MatrixXd predicted, MatrixXd actual);
+	void draw(ImDrawList* canvas, xt::xarray<double> predicted, xt::xarray<double> actual);
 
 private:
 	int rows;

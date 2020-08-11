@@ -1,19 +1,17 @@
 #include "CrossEntropyFunction.h"
 
-#include <unsupported/Eigen/MatrixFunctions>
-
 const double c = pow(10, -8);
 
-double CrossEntropyFunction::getError(MatrixXd predicted, MatrixXd actual)
+double CrossEntropyFunction::getError(xt::xarray<double> predicted, xt::xarray<double> actual)
 {
-	int n = predicted.rows();
-	MatrixXd errors = actual * MatrixXd(log(predicted.transpose().array() + c));
-	double error = errors.sum() / n;
-	return error;
+	size_t n = predicted.shape()[0];
+	auto errors = actual * xt::log(xt::transpose(predicted) + c);
+	auto error = xt::sum(errors) / n;
+	return error();
 }
 
-MatrixXd CrossEntropyFunction::getDerivativeOfError(MatrixXd predicted, MatrixXd actual)
+xt::xarray<double> CrossEntropyFunction::getDerivativeOfError(xt::xarray<double> predicted, xt::xarray<double> actual)
 {
-	MatrixXd errors = (predicted - actual);
+	auto errors = (predicted - actual);
 	return errors;
 }

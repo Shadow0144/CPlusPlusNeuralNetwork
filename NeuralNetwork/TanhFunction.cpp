@@ -4,37 +4,32 @@
 
 using namespace std;
 
-TanhFunction::TanhFunction(int numInputs)
+TanhFunction::TanhFunction(size_t incomingUnits, size_t numUnits)
 {
-	this->numInputs = numInputs;
-	this->numOutputs = 1;
-	this->weights.setParametersRandom(numInputs);
+	this->hasBias = true;
+	this->numUnits = numUnits;
+	this->numInputs = incomingUnits + 1; // Plus bias
+	std::vector<size_t> paramShape;
+	// incoming x current -shaped
+	paramShape.push_back(this->numInputs);
+	paramShape.push_back(this->numUnits);
+	this->weights.setParametersRandom(paramShape);
 }
 
-MatrixXd TanhFunction::feedForward(MatrixXd inputs)
+xt::xarray<double> TanhFunction::feedForward(xt::xarray<double> inputs)
 {
-	lastOutput = inputs * weights.getParameters();
-	lastOutput(0) = tanh(lastOutput(0));
-	return lastOutput;
+	auto dotProductResult = dotProduct(inputs);
+	return xt::tanh(dotProductResult);
 }
 
-MatrixXd TanhFunction::backPropagate(MatrixXd lastInput, MatrixXd errors)
+xt::xarray<double> TanhFunction::backPropagate(xt::xarray<double> sigmas)
 {
-	double errorSum = errors.sum();
-	MatrixXd prime = MatrixXd::Ones(lastOutput.rows(), lastOutput.cols()) -(lastOutput * lastOutput);
-	MatrixXd sigma = errorSum * prime;
-
-	weights.setDeltaParameters(-ALPHA * lastInput.transpose() * sigma);
-
-	// Strip away the bias parameter and weight the sigma by the incoming weights
-	MatrixXd weightsPrime = weights.getParameters().block(0, 0, (numInputs - 1), numOutputs);
-
-	return weightsPrime * sigma.transpose();
+	return denseBackpropagate(sigmas * activationDerivative());
 }
 
-bool TanhFunction::hasBias()
+xt::xarray<double> TanhFunction::activationDerivative()
 {
-	return true;
+	return (1.0 - xt::pow(lastOutput, 2));
 }
 
 void TanhFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)

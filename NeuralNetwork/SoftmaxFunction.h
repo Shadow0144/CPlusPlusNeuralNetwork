@@ -5,13 +5,13 @@
 class SoftmaxFunction : public Function
 {
 public:
-	SoftmaxFunction(int numInputs, int numOutputs);
+	SoftmaxFunction(std::vector<size_t> numInputs, std::vector<size_t> numOutputs);
 
-	MatrixXd feedForward(MatrixXd input);
-	MatrixXd backPropagate(MatrixXd lastInput, MatrixXd errors);
-	bool hasBias();
+	xt::xarray<double> feedForward(xt::xarray<double> input);
+	xt::xarray<double> backPropagate(xt::xarray<double> errors);
 	virtual void draw(ImDrawList* canvas, ImVec2 origin, double scale);
 
 private:
-	MatrixXd lastOutput;
+	std::vector<int> sumIndices;
+	xt::xarray<double> lastOutput;
 };

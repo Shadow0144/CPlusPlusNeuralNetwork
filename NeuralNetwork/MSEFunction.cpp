@@ -1,23 +1,20 @@
 #include "MSEFunction.h"
 
-#include <unsupported/Eigen/MatrixFunctions>
+#include <iostream>
 
-double MSEFunction::getError(MatrixXd predicted, MatrixXd actual)
+using namespace std;
+
+double MSEFunction::getError(xt::xarray<double> predicted, xt::xarray<double> actual)
 {
-	int n = predicted.rows();
-	int m = predicted.cols();
-	MatrixXd errors = predicted - actual;
-	errors = errors.array().pow(2);
-	errors /= (n * m);
-	double error = errors.sum();
+	size_t n = actual.shape()[0];
+	auto errors = predicted - actual;
+	auto sq_errors = xt::square(errors);
+	double error = xt::sum(sq_errors)();
+	error /= n; // TODO divide by features as well
 	return error;
 }
 
-MatrixXd MSEFunction::getDerivativeOfError(MatrixXd predicted, MatrixXd actual)
+xt::xarray<double> MSEFunction::getDerivativeOfError(xt::xarray<double> predicted, xt::xarray<double> actual)
 {
-	int n = predicted.rows();
-	int m = predicted.cols();
-	MatrixXd sum = (predicted - actual).colwise().sum(); // Sum across the columns giving one error per example (row)
-	MatrixXd errors = (2.0 / (n * m)) * sum;
-	return errors;
+	return 2.0 * (predicted - actual); // TODO Scale?
 }

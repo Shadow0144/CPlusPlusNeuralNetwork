@@ -1,46 +1,41 @@
 #include "SigmoidFunction.h"
 
-SigmoidFunction::SigmoidFunction(int numInputs)
+SigmoidFunction::SigmoidFunction(size_t incomingUnits, size_t numUnits)
 {
-	this->numInputs = numInputs;
-	this->numOutputs = 1;
-	this->weights.setParametersRandom(numInputs);
+	this->hasBias = true;
+	this->numUnits = numUnits;
+	this->numInputs = incomingUnits + 1; // Plus bias
+	std::vector<size_t> paramShape;
+	// incoming x current -shaped
+	paramShape.push_back(this->numInputs);
+	paramShape.push_back(this->numUnits);
+	this->weights.setParametersRandom(paramShape);
+}
+	
+xt::xarray<double> SigmoidFunction::sigmoid(xt::xarray<double> z)
+{
+	return (1.0 / (1.0 + exp(-z)));
 }
 
-double sigmoid(double value)
+xt::xarray<double> SigmoidFunction::feedForward(xt::xarray<double> inputs)
 {
-	return (1.0f / (1.0f + exp(-value)));
+	auto dotProductResult = dotProduct(inputs);
+	return sigmoid(dotProductResult);
 }
 
-MatrixXd SigmoidFunction::feedForward(MatrixXd inputs)
+xt::xarray<double> SigmoidFunction::backPropagate(xt::xarray<double> sigmas)
 {
-	lastOutput = inputs * weights.getParameters();
-	lastOutput(0) = sigmoid(lastOutput(0));
-	return lastOutput;
+	return denseBackpropagate(sigmas * activationDerivative());
 }
 
-MatrixXd SigmoidFunction::backPropagate(MatrixXd lastInput, MatrixXd errors)
+xt::xarray<double> SigmoidFunction::activationDerivative()
 {
-	double errorSum = errors.sum();
-	MatrixXd prime = lastOutput * (MatrixXd::Ones(lastOutput.rows(), lastOutput.cols()) - lastOutput);
-	MatrixXd sigma = errorSum * prime;
-
-	weights.setDeltaParameters(-ALPHA * lastInput.transpose() * sigma);
-
-	// Strip away the bias parameter and weight the sigma by the incoming weights
-	MatrixXd weightsPrime = weights.getParameters().block(0, 0, (numInputs - 1), numOutputs);
-
-	return weightsPrime * sigma.transpose();
-}
-
-bool SigmoidFunction::hasBias()
-{
-	return true;
+	return lastOutput * (1.0 - lastOutput);
 }
 
 void SigmoidFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
 {
-	Function::draw(canvas, origin, scale);
+	/*Function::draw(canvas, origin, scale);
 
 	const ImColor BLACK(0.0f, 0.0f, 0.0f, 1.0f);
 
@@ -65,5 +60,5 @@ void SigmoidFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
 			ImVec2(origin.x + (points(2, 0) * rescale), origin.y - (points(2, 1) * rescale)),
 			ImVec2(origin.x + (points(3, 0) * rescale), origin.y - (points(3, 1) * rescale)),
 			BLACK, 1);
-	}
+	}*/
 }
