@@ -23,6 +23,9 @@ NetworkVisualizer::NetworkVisualizer(NeuralNetwork* network)
     origin = ImVec2(0.0, 0.0);
     scale = 1.0;
 
+    function = NULL;
+    displayFunctions = false;
+
     classifier = NULL;
     displayClasses = false;
 
@@ -32,6 +35,12 @@ NetworkVisualizer::NetworkVisualizer(NeuralNetwork* network)
 
 NetworkVisualizer::~NetworkVisualizer()
 {
+    if (function != NULL)
+    {
+        delete function;
+    }
+    else { }
+
     if (classifier != NULL)
     {
         delete classifier;
@@ -55,6 +64,11 @@ bool NetworkVisualizer::getWindowClosed()
 
 void NetworkVisualizer::setup()
 {
+    const int WINDOW_WIDTH = 1080;
+    const int WINDOW_HEIGHT = 720;
+
+    winSize = ImVec2(WINDOW_WIDTH, WINDOW_HEIGHT);
+
     // Setup SDL
     // (Some versions of SDL before <2.0.10 appears to have performance/stalling issues on a minority of Windows systems,
     // depending on whether SDL_INIT_GAMECONTROLLER is enabled or disabled.. updating to latest version of SDL is recommended!)
@@ -76,7 +90,7 @@ void NetworkVisualizer::setup()
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
     SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
     SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
-    window = SDL_CreateWindow("Neural Network", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, window_flags);
+    window = SDL_CreateWindow("Neural Network", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, winSize.x, winSize.y, window_flags);
     gl_context = SDL_GL_CreateContext(window);
     SDL_GL_MakeCurrent(window, gl_context);
     SDL_GL_SetSwapInterval(1); // Enable vsync
@@ -156,14 +170,33 @@ void NetworkVisualizer::addClassificationVisualization(int rows, int cols, ImCol
     }
     else { }
 
-    classifier = new ClassifierVisualizer(rows, cols, classColors);
+    classifier = new ClassifierVisualizer(this, rows, cols, classColors);
     displayClasses = true;
 }
 
-void NetworkVisualizer::draw(xt::xarray<double> predicted, xt::xarray<double> actual)
+void NetworkVisualizer::addFunctionVisualization()
+{
+    if (displayFunctions)
+    {
+        delete function;
+    }
+    else { }
+
+    function = new FunctionVisualizer(this, network);
+    displayFunctions = true;
+}
+
+ImVec2 NetworkVisualizer::getWindowSize()
+{
+    return winSize;
+}
+
+void NetworkVisualizer::draw(xt::xarray<double> inputs, xt::xarray<double> targets)
 {
     const ImVec4 CLEAR_COLOR(0.45, 0.55, 0.60, 1.0);
     const ImVec4 VERY_LIGHT_GRAY(0.8, 0.8, 0.8, 1.0);
+
+    const int HALF_BORDER = 10;
 
     // Poll and handle events (inputs, window resize, etc.)
     // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
@@ -219,16 +252,25 @@ void NetworkVisualizer::draw(xt::xarray<double> predicted, xt::xarray<double> ac
     }
     else { }
 
-    // Start the Dear ImGui frame
     ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplSDL2_NewFrame(window);
+    ImGui_ImplSDL2_NewFrame(window); 
     ImGui::NewFrame();
     ImGui::PushStyleColor(ImGuiCol_WindowBg, VERY_LIGHT_GRAY);
+
+    ImGui::SetNextWindowPos(ImVec2(HALF_BORDER, HALF_BORDER));
+    ImGui::SetNextWindowSize(ImVec2(winSize.x - (2 * HALF_BORDER), winSize.y - (2 * HALF_BORDER)));
+
     ImGui::Begin("Network", 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
 
     ImDrawList* draw_list = ImGui::GetWindowDrawList();
 
-    network->draw(draw_list, origin, scale, xt::xarray<double>(), xt::xarray<double>());
+    network->draw(draw_list, origin, scale, inputs, targets);
+
+    if (displayFunctions)
+    {
+        function->draw(draw_list, inputs, targets);
+    }
+    else { }
 
     /*if (displayClasses && predicted != NULL && actual != NULL)
     {

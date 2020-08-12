@@ -24,7 +24,8 @@ xt::xarray<double> ReLUFunction::reLU(xt::xarray<double> z)
 xt::xarray<double> ReLUFunction::feedForward(xt::xarray<double> inputs)
 {
 	auto dotProductResult = dotProduct(inputs);
-	return reLU(dotProductResult);
+	lastOutput = reLU(dotProductResult);
+	return lastOutput;
 }
 
 xt::xarray<double> ReLUFunction::backPropagate(xt::xarray<double> sigmas)
@@ -34,7 +35,7 @@ xt::xarray<double> ReLUFunction::backPropagate(xt::xarray<double> sigmas)
 
 xt::xarray<double> ReLUFunction::activationDerivative()
 {
-	return ((lastOutput(0) > 0.0) ? 1.0 : 0.0); // TODO
+	return (lastOutput > 0.0);
 }
 
 void ReLUFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)

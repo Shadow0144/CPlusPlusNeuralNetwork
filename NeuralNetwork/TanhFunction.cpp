@@ -19,7 +19,8 @@ TanhFunction::TanhFunction(size_t incomingUnits, size_t numUnits)
 xt::xarray<double> TanhFunction::feedForward(xt::xarray<double> inputs)
 {
 	auto dotProductResult = dotProduct(inputs);
-	return xt::tanh(dotProductResult);
+	lastOutput = xt::tanh(dotProductResult);
+	return lastOutput;
 }
 
 xt::xarray<double> TanhFunction::backPropagate(xt::xarray<double> sigmas)

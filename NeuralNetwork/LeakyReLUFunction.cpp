@@ -24,7 +24,8 @@ xt::xarray<double> LeakyReLUFunction::leakyReLU(xt::xarray<double> z)
 xt::xarray<double> LeakyReLUFunction::feedForward(xt::xarray<double> inputs)
 {
 	auto dotProductResult = dotProduct(inputs);
-	return leakyReLU(dotProductResult);
+	lastOutput = leakyReLU(dotProductResult);
+	return lastOutput;
 }
 
 xt::xarray<double> LeakyReLUFunction::backPropagate(xt::xarray<double> sigmas)
@@ -34,7 +35,8 @@ xt::xarray<double> LeakyReLUFunction::backPropagate(xt::xarray<double> sigmas)
 
 xt::xarray<double> LeakyReLUFunction::activationDerivative()
 {
-	return ((lastOutput(0) > 0.0) ? 1.0 : a); // TODO
+	auto mask = (lastOutput > 0.0);
+	return (mask + (a * (xt::ones<double>(mask.shape()) - mask)));
 }
 
 double LeakyReLUFunction::getA() 

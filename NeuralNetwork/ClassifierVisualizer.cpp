@@ -1,7 +1,9 @@
 #include "ClassifierVisualizer.h"
+#include "NetworkVisualizer.h"
 
-ClassifierVisualizer::ClassifierVisualizer(int rows, int cols, ImColor* classColors)
+ClassifierVisualizer::ClassifierVisualizer(NetworkVisualizer* visualizer, int rows, int cols, ImColor* classColors)
 {
+	this->visualizer = visualizer;
 	this->rows = rows;
 	this->cols = cols;
 	this->classColors = classColors;

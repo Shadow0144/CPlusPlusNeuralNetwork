@@ -123,6 +123,9 @@
     <ClCompile Include="InputNeuralLayer.cpp">
       <Filter>Source Files\NeuralLayer</Filter>
     </ClCompile>
+    <ClCompile Include="FunctionVisualizer.cpp">
+      <Filter>Source Files\Visualizer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NeuralNetwork.h">
@@ -214,6 +217,9 @@
     </ClInclude>
     <ClInclude Include="InputNeuralLayer.h">
       <Filter>NeuralLayer</Filter>
+    </ClInclude>
+    <ClInclude Include="FunctionVisualizer.h">
+      <Filter>Header Files\Visualizer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

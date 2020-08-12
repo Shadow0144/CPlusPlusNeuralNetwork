@@ -5,6 +5,7 @@
 #include "imgui.h"
 #pragma warning(pop)
 
+#include "FunctionVisualizer.h"
 #include "ClassifierVisualizer.h"
 
 class NeuralNetwork;
@@ -17,9 +18,12 @@ public:
 
 	bool getWindowClosed();
 
+	void addFunctionVisualization();
 	void addClassificationVisualization(int rows, int cols, ImColor* classColors);
 
-	void draw(xt::xarray<double> predicted = NULL, xt::xarray<double> actual = NULL);
+	ImVec2 getWindowSize();
+
+	void draw(xt::xarray<double> inputs = NULL, xt::xarray<double> targets = NULL);
 
 private:
 	void setup();
@@ -34,6 +38,10 @@ private:
 	ClassifierVisualizer* classifier;
 	bool displayClasses;
 
+	FunctionVisualizer* function;
+	bool displayFunctions;
+
+	ImVec2 winSize;
 	ImVec2 origin;
 	ImVec2 drag;
 	bool startDrag;

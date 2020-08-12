@@ -157,6 +157,7 @@
     <ClCompile Include="CrossEntropyFunction.cpp" />
     <ClCompile Include="DotProductFunction.cpp" />
     <ClCompile Include="Function.cpp" />
+    <ClCompile Include="FunctionVisualizer.cpp" />
     <ClCompile Include="gl3w\GL\gl3w.c" />
     <ClCompile Include="IdentityFunction.cpp" />
     <ClCompile Include="imgui.cpp" />
@@ -183,6 +184,7 @@
     <ClInclude Include="ConvolutionFunction.h" />
     <ClInclude Include="CrossEntropyFunction.h" />
     <ClInclude Include="ErrorFunction.h" />
+    <ClInclude Include="FunctionVisualizer.h" />
     <ClInclude Include="gl3w\GL\gl3w.h" />
     <ClInclude Include="gl3w\GL\glcorearb.h" />
     <ClInclude Include="imconfig.h" />

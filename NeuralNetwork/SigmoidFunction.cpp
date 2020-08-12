@@ -20,7 +20,8 @@ xt::xarray<double> SigmoidFunction::sigmoid(xt::xarray<double> z)
 xt::xarray<double> SigmoidFunction::feedForward(xt::xarray<double> inputs)
 {
 	auto dotProductResult = dotProduct(inputs);
-	return sigmoid(dotProductResult);
+	lastOutput = sigmoid(dotProductResult);
+	return lastOutput;
 }
 
 xt::xarray<double> SigmoidFunction::backPropagate(xt::xarray<double> sigmas)

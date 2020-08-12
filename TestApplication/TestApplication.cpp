@@ -165,7 +165,7 @@ void test_signal(int layers)
         case 4:
             layerShapes = new size_t[layers] { 1, 3, 3, 1 };
             functions = new ActivationFunction[layers]
-            { ActivationFunction::Identity,
+            { ActivationFunction::WeightedDotProduct, //Identity, // TODO
               ActivationFunction::Tanh,
               ActivationFunction::ReLU,
               ActivationFunction::WeightedDotProduct };
@@ -174,7 +174,7 @@ void test_signal(int layers)
             layerShapes = new size_t[layers] { 1, 3, 1 };
             functions = new ActivationFunction[layers]
             { ActivationFunction::WeightedDotProduct,
-              ActivationFunction::Tanh,
+              ActivationFunction::Sigmoid,
               ActivationFunction::WeightedDotProduct };
             break;
         case 2:
@@ -193,7 +193,7 @@ void test_signal(int layers)
     }
 
     ErrorFunction* errorFunction = new MSEFunction();
-    NeuralNetwork network = NeuralNetwork(false);
+    NeuralNetwork network = NeuralNetwork();
     network.setTrainingParameters(errorFunction, MAX_ITERATIONS, MIN_ERROR, CONVERGENCE_E, CONVERGENCE_W);
 
     vector<size_t> inputShapes;
@@ -389,7 +389,7 @@ void test_network(network type, int layers)
 
 int main(int argc, char** argv)
 {
-    test_network(network::signal, 3);
+    test_network(network::signal, 4);
 
     return 0;
 }
