@@ -1,6 +1,9 @@
 #include "LeakyReLUFunction.h"
+#include "NeuralLayer.h"
 
+#pragma warning(push, 0)
 #include <iostream>
+#pragma warning(pop)
 
 using namespace std;
 
@@ -55,28 +58,35 @@ void LeakyReLUFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
 
 	const ImColor BLACK(0.0f, 0.0f, 0.0f, 1.0f);
 
-	double slope = weights.getParameters()(0);
-	double inv_slope = 1.0 / abs(slope);
-	double x1, x2, y1, y2;
-	if (slope > 0.0f)
+	ImVec2 position(0, origin.y);
+	const double LAYER_WIDTH = NeuralLayer::getLayerWidth(numUnits, scale);
+	for (int i = 0; i < numUnits; i++)
 	{
-		x1 = -1.0;
-		x2 = +min(1.0, inv_slope);
-		y1 = -a;
-		y2 = (x2 * slope);
-	}
-	else
-	{
-		x1 = -min(1.0, inv_slope);
-		x2 = 1.0;
-		y1 = (x1 * slope);
-		y2 = a;
-	}
+		position.x = NeuralLayer::getNeuronX(origin.x, LAYER_WIDTH, i, scale);
 
-	ImVec2 l_start(origin.x + (DRAW_LEN * x1 * scale), origin.y - (DRAW_LEN * y1 * scale));
-	ImVec2 l_mid(origin.x, origin.y);
-	ImVec2 l_end(origin.x + (DRAW_LEN * x2 * scale), origin.y - (DRAW_LEN * y2 * scale));
+		double slope = weights.getParameters()(0, i);
+		double inv_slope = 1.0 / abs(slope);
+		double x1, x2, y1, y2;
+		if (slope > 0.0f)
+		{
+			x1 = -1.0;
+			x2 = +min(1.0, inv_slope);
+			y1 = -a;
+			y2 = (x2 * slope);
+		}
+		else
+		{
+			x1 = -min(1.0, inv_slope);
+			x2 = 1.0;
+			y1 = (x1 * slope);
+			y2 = a;
+		}
 
-	canvas->AddLine(l_start, l_mid, BLACK);
-	canvas->AddLine(l_mid, l_end, BLACK);
+		ImVec2 l_start(position.x + (DRAW_LEN * x1 * scale), position.y - (DRAW_LEN * y1 * scale));
+		ImVec2 l_mid(position.x, position.y);
+		ImVec2 l_end(position.x + (DRAW_LEN * x2 * scale), position.y - (DRAW_LEN * y2 * scale));
+
+		canvas->AddLine(l_start, l_mid, BLACK);
+		canvas->AddLine(l_mid, l_end, BLACK);
+	}
 }

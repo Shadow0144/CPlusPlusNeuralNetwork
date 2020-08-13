@@ -2,7 +2,7 @@
 
 #include "Function.h"
 
-// Leaky ReLU / Parametric ReLU
+// Leaky ReLU
 class LeakyReLUFunction : public Function
 {
 public:
@@ -10,7 +10,7 @@ public:
 
 	xt::xarray<double> feedForward(xt::xarray<double> input);
 	xt::xarray<double> backPropagate(xt::xarray<double> errors);
-	virtual void draw(ImDrawList* canvas, ImVec2 origin, double scale);
+	void draw(ImDrawList* canvas, ImVec2 origin, double scale);
 
 	double getA();
 	void setA(double a);

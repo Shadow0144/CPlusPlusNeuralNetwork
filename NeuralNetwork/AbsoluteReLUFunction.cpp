@@ -1,11 +1,11 @@
-#include "ReLUFunction.h"
+#include "AbsoluteReLUFunction.h"
 #include "NeuralLayer.h"
 
 #include <iostream>
 
 using namespace std;
 
-ReLUFunction::ReLUFunction(size_t incomingUnits, size_t numUnits)
+AbsoluteReLUFunction::AbsoluteReLUFunction(size_t incomingUnits, size_t numUnits)
 {
 	this->hasBias = true;
 	this->numUnits = numUnits;
@@ -17,57 +17,48 @@ ReLUFunction::ReLUFunction(size_t incomingUnits, size_t numUnits)
 	this->weights.setParametersRandom(paramShape);
 }
 
-xt::xarray<double> ReLUFunction::reLU(xt::xarray<double> z)
+xt::xarray<double> AbsoluteReLUFunction::absoluteReLU(xt::xarray<double> z)
 {
-	return xt::maximum(0.0, z);
+	return xt::abs(z);
 }
 
-xt::xarray<double> ReLUFunction::feedForward(xt::xarray<double> inputs)
+xt::xarray<double> AbsoluteReLUFunction::feedForward(xt::xarray<double> inputs)
 {
 	auto dotProductResult = dotProduct(inputs);
-	lastOutput = reLU(dotProductResult);
+	lastOutput = absoluteReLU(dotProductResult);
 	return lastOutput;
 }
 
-xt::xarray<double> ReLUFunction::backPropagate(xt::xarray<double> sigmas)
+xt::xarray<double> AbsoluteReLUFunction::backPropagate(xt::xarray<double> sigmas)
 {
 	return denseBackpropagate(sigmas * activationDerivative());
 }
 
-xt::xarray<double> ReLUFunction::activationDerivative()
+xt::xarray<double> AbsoluteReLUFunction::activationDerivative()
 {
-	return (lastOutput > 0.0);
+	auto mask = (lastOutput > 0.0);
+	return (mask + (mask - (xt::ones<double>(mask.shape()))));
 }
 
-void ReLUFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
+void AbsoluteReLUFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
 {
 	Function::draw(canvas, origin, scale);
 
-	const ImColor BLACK(0.0f, 0.0f, 0.0f, 1.0f); 
-	
+	const ImColor BLACK(0.0f, 0.0f, 0.0f, 1.0f);
+
 	ImVec2 position(0, origin.y);
 	const double LAYER_WIDTH = NeuralLayer::getLayerWidth(numUnits, scale);
 	for (int i = 0; i < numUnits; i++)
 	{
 		position.x = NeuralLayer::getNeuronX(origin.x, LAYER_WIDTH, i, scale);
 
-		double slope = weights.getParameters()(0, i);
+		double slope = abs(weights.getParameters()(0, i));
 		double inv_slope = 1.0 / abs(slope);
 		double x1, x2, y1, y2;
-		if (slope > 0.0)
-		{
-			x1 = -1.0;
-			x2 = +min(1.0, inv_slope);
-			y1 = 0.0;
-			y2 = (x2 * slope);
-		}
-		else
-		{
-			x1 = -min(1.0, inv_slope);
-			x2 = 1.0;
-			y1 = (x1 * slope);
-			y2 = 0.0;
-		}
+		x1 = -min(1.0, inv_slope);
+		x2 = +min(1.0, inv_slope);
+		y1 = abs(x1 * slope);
+		y2 = abs(x2 * slope);
 
 		ImVec2 l_start(position.x + (DRAW_LEN * x1 * scale), position.y - (DRAW_LEN * y1 * scale));
 		ImVec2 l_mid(position.x, position.y);

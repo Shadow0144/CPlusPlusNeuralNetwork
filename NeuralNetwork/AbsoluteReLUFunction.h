@@ -2,10 +2,11 @@
 
 #include "Function.h"
 
-class TanhFunction : public Function
+// Absolute ReLU / Absolute Value ReLU
+class AbsoluteReLUFunction : public Function
 {
 public:
-	TanhFunction(size_t incomingUnits, size_t numUnits);
+	AbsoluteReLUFunction(size_t incomingUnits, size_t numUnits);
 
 	xt::xarray<double> feedForward(xt::xarray<double> input);
 	xt::xarray<double> backPropagate(xt::xarray<double> errors);
@@ -15,4 +16,6 @@ private:
 	xt::xarray<double> lastOutput;
 
 	xt::xarray<double> activationDerivative();
+
+	xt::xarray<double> absoluteReLU(xt::xarray<double> z);
 };

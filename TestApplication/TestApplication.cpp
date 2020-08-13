@@ -166,7 +166,7 @@ void test_signal(int layers)
             layerShapes = new size_t[layers] { 1, 3, 3, 1 };
             functions = new ActivationFunction[layers]
             { ActivationFunction::WeightedDotProduct, //Identity, // TODO
-              ActivationFunction::Tanh,
+              ActivationFunction::ParametricReLU,
               ActivationFunction::ReLU,
               ActivationFunction::WeightedDotProduct };
             break;

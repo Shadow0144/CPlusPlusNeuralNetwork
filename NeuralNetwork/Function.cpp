@@ -1,4 +1,5 @@
 #include "Function.h"
+#include "NeuralLayer.h"
 
 #pragma warning(push, 0)
 #include <iostream>
@@ -7,7 +8,7 @@
 
 using namespace std;
 
-double Function::applyBackProgate()
+double Function::applyBackPropagate()
 {
 	double deltaWeight = xt::sum(xt::abs(weights.getDeltaParameters()))();
 	weights.applyDeltaParameters();
@@ -111,35 +112,41 @@ void Function::draw(ImDrawList* canvas, ImVec2 origin, double scale)
 	const ImColor GRAY(0.3f, 0.3f, 0.3f, 1.0f);
 	const ImColor LIGHT_GRAY(0.6f, 0.6f, 0.6f, 1.0f);
 	const ImColor WHITE(1.0f, 1.0f, 1.0f, 1.0f);
-	const double DOT_LENGTH = 4;
+	//const double DOT_LENGTH = 4;
 
-	double rescale = DRAW_LEN * scale;
+	const double RESCALE = DRAW_LEN * scale;
 
-	ImVec2 start(origin.x - rescale, origin.y + rescale);
-	ImVec2 end(origin.x + rescale, origin.y - rescale);
-
-	canvas->AddRectFilled(start, end, WHITE);
-	canvas->AddRect(start, end, BLACK);
-
-	ImVec2 zero_x_left(origin.x - rescale, origin.y);
-	ImVec2 zero_x_right(origin.x + rescale, origin.y);
-	canvas->AddLine(zero_x_left, zero_x_right, LIGHT_GRAY);
-	//LineIterator itX(canvas.canvas, zero_x_left, zero_x_right, LINE_8);
-	ImVec2 zero_y_base(origin.x, origin.y + rescale);
-	ImVec2 zero_y_top(origin.x, origin.y - rescale);
-	canvas->AddLine(zero_y_base, zero_y_top, LIGHT_GRAY);
-	//LineIterator itY(canvas.canvas, zero_y_base, zero_y_top, LINE_8);
-	/*for (int i = 0; i < itX.count; i++, itX++, itY++)
+	ImVec2 position(0, origin.y);
+	const double LAYER_WIDTH = (((NeuralLayer::DIAMETER + NeuralLayer::NEURON_SPACING) * numUnits) + NeuralLayer::NEURON_SPACING) * scale;
+	for (int i = 0; i < numUnits; i++)
 	{
-		if (i % DOT_LENGTH != 0)
+		position.x = origin.x - (LAYER_WIDTH * 0.5) + (((NeuralLayer::DIAMETER + NeuralLayer::NEURON_SPACING) * i) * scale);
+		ImVec2 start(position.x - RESCALE, position.y + RESCALE);
+		ImVec2 end(position.x + RESCALE, position.y - RESCALE);
+
+		canvas->AddRectFilled(start, end, WHITE);
+		canvas->AddRect(start, end, BLACK);
+
+		ImVec2 zero_x_left(position.x - RESCALE, position.y);
+		ImVec2 zero_x_right(position.x + RESCALE, position.y);
+		canvas->AddLine(zero_x_left, zero_x_right, LIGHT_GRAY);
+		//LineIterator itX(canvas.canvas, zero_x_left, zero_x_right, LINE_8);
+		ImVec2 zero_y_base(position.x, position.y + RESCALE);
+		ImVec2 zero_y_top(position.x, position.y - RESCALE);
+		canvas->AddLine(zero_y_base, zero_y_top, LIGHT_GRAY);
+		//LineIterator itY(canvas.canvas, zero_y_base, zero_y_top, LINE_8);
+		/*for (int i = 0; i < itX.count; i++, itX++, itY++)
 		{
-			(*itX)[0] = DARK_GRAY;
-			(*itX)[1] = DARK_GRAY;
-			(*itX)[2] = DARK_GRAY;
-			(*itY)[0] = DARK_GRAY;
-			(*itY)[1] = DARK_GRAY;
-			(*itY)[2] = DARK_GRAY;
-		}
-		else { }
-	}*/
+			if (i % DOT_LENGTH != 0)
+			{
+				(*itX)[0] = DARK_GRAY;
+				(*itX)[1] = DARK_GRAY;
+				(*itX)[2] = DARK_GRAY;
+				(*itY)[0] = DARK_GRAY;
+				(*itY)[1] = DARK_GRAY;
+				(*itY)[2] = DARK_GRAY;
+			}
+			else { }
+		}*/
+	}
 }

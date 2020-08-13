@@ -168,7 +168,7 @@ void NeuralNetwork::train(xt::xarray<double> inputs, xt::xarray<double> targets)
 	{
 		while (!visualizer->getWindowClosed())
 		{
-			visualizer->draw(predicted, targets);
+			visualizer->draw(inputs, targets);
 		}
 	}
 	else 
@@ -290,21 +290,16 @@ void NeuralNetwork::draw(ImDrawList* canvas, ImVec2 origin, double scale, xt::xa
 	const double HALF_HEIGHT = HEIGHT * 0.5;
 	const double Y_SHIFT = scale * 120.0;
 	const double X_SHIFT = scale * 120.0;
-	double y = 0.0;
-	double x = 0.0;
-
-	double previous_y = 0.0;
-	double previous_count = 0.0;
 	
 	// Draw the network
 	// Find the vertical start point
-	y = origin.y + HALF_HEIGHT - (layerCount * Y_SHIFT / 2) - (Y_SHIFT / 2);
+	double x = origin.x + HALF_WIDTH;
+	double y = origin.y + HALF_HEIGHT - (layerCount * Y_SHIFT / 2) - (Y_SHIFT / 2);
 	for (int l = 0; l < layerCount; l++)
 	{
 		// Set the offset and draw the layer
 		ImVec2 offset = ImVec2(x, y);
 		layers->at(l)->draw(canvas, offset, scale, (l == (layerCount-1)));
-		previous_y = y;
 		y += Y_SHIFT;
 	}
 }
