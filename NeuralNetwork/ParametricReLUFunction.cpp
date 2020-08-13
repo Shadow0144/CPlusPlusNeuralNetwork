@@ -38,7 +38,7 @@ xt::xarray<double> ParametricReLUFunction::feedForward(xt::xarray<double> inputs
 xt::xarray<double> ParametricReLUFunction::backPropagate(xt::xarray<double> sigmas)
 {
 	auto mask = (lastOutput <= 0.0);
-	deltaA += -xt::sum<double>(lastOutput * mask)();
+	deltaA += xt::sum<double>(lastOutput * mask)();
 	return denseBackpropagate(sigmas * activationDerivative());
 }
 

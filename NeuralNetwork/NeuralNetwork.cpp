@@ -284,17 +284,13 @@ void NeuralNetwork::setClassificationVisualizationParameters(int rows, int cols,
 void NeuralNetwork::draw(ImDrawList* canvas, ImVec2 origin, double scale, xt::xarray<double> target_xs, xt::xarray<double> target_ys)
 {
 	// Calculate the drawing space parameters
-	const double WIDTH = scale * 1280.0;
-	const double HEIGHT = scale * 720.0;
-	const double HALF_WIDTH = WIDTH * 0.5;
-	const double HALF_HEIGHT = HEIGHT * 0.5;
 	const double Y_SHIFT = scale * 120.0;
 	const double X_SHIFT = scale * 120.0;
 	
 	// Draw the network
 	// Find the vertical start point
-	double x = origin.x + HALF_WIDTH;
-	double y = origin.y + HALF_HEIGHT - (layerCount * Y_SHIFT / 2) - (Y_SHIFT / 2);
+	double x = origin.x;
+	double y = origin.y - (layerCount * Y_SHIFT / 2.0) + (Y_SHIFT / 2.0);
 	for (int l = 0; l < layerCount; l++)
 	{
 		// Set the offset and draw the layer

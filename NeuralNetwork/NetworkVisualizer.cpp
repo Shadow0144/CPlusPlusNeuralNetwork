@@ -117,6 +117,9 @@ void NetworkVisualizer::setup()
     // Setup Platform/Renderer bindings
     ImGui_ImplSDL2_InitForOpenGL(window, gl_context);
     ImGui_ImplOpenGL3_Init(glsl_version);
+
+    // Setup the origin
+    origin = ImVec2(winSize.x / 2.0, winSize.y / 2.0);
 }
 
 void test_draw(ImDrawList* draw_list)
