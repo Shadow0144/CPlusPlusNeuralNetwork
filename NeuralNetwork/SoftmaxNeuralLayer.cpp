@@ -93,6 +93,9 @@ void SoftmaxNeuralLayer::draw(ImDrawList* canvas, ImVec2 origin, double scale, b
 		}
 	} // for (int i = 0; i < numUnits; i++)
 
+	// Draw the softmax function
+	softmaxFunction->draw(canvas, origin, scale);
+
 	if (output)
 	{
 		for (int i = 0; i < numUnits; i++)

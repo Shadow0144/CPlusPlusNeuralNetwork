@@ -127,26 +127,30 @@ void Function::draw(ImDrawList* canvas, ImVec2 origin, double scale)
 		canvas->AddRectFilled(start, end, WHITE);
 		canvas->AddRect(start, end, BLACK);
 
-		ImVec2 zero_x_left(position.x - RESCALE, position.y);
-		ImVec2 zero_x_right(position.x + RESCALE, position.y);
-		canvas->AddLine(zero_x_left, zero_x_right, LIGHT_GRAY);
-		//LineIterator itX(canvas.canvas, zero_x_left, zero_x_right, LINE_8);
-		ImVec2 zero_y_base(position.x, position.y + RESCALE);
-		ImVec2 zero_y_top(position.x, position.y - RESCALE);
-		canvas->AddLine(zero_y_base, zero_y_top, LIGHT_GRAY);
-		//LineIterator itY(canvas.canvas, zero_y_base, zero_y_top, LINE_8);
-		/*for (int i = 0; i < itX.count; i++, itX++, itY++)
+		if (drawAxes)
 		{
-			if (i % DOT_LENGTH != 0)
+			ImVec2 zero_x_left(position.x - RESCALE, position.y);
+			ImVec2 zero_x_right(position.x + RESCALE, position.y);
+			canvas->AddLine(zero_x_left, zero_x_right, LIGHT_GRAY);
+			//LineIterator itX(canvas.canvas, zero_x_left, zero_x_right, LINE_8);
+			ImVec2 zero_y_base(position.x, position.y + RESCALE);
+			ImVec2 zero_y_top(position.x, position.y - RESCALE);
+			canvas->AddLine(zero_y_base, zero_y_top, LIGHT_GRAY);
+			//LineIterator itY(canvas.canvas, zero_y_base, zero_y_top, LINE_8);
+			/*for (int i = 0; i < itX.count; i++, itX++, itY++)
 			{
-				(*itX)[0] = DARK_GRAY;
-				(*itX)[1] = DARK_GRAY;
-				(*itX)[2] = DARK_GRAY;
-				(*itY)[0] = DARK_GRAY;
-				(*itY)[1] = DARK_GRAY;
-				(*itY)[2] = DARK_GRAY;
-			}
-			else { }
-		}*/
+				if (i % DOT_LENGTH != 0)
+				{
+					(*itX)[0] = DARK_GRAY;
+					(*itX)[1] = DARK_GRAY;
+					(*itX)[2] = DARK_GRAY;
+					(*itY)[0] = DARK_GRAY;
+					(*itY)[1] = DARK_GRAY;
+					(*itY)[2] = DARK_GRAY;
+				}
+				else { }
+			}*/
+		}
+		else { }
 	}
 }

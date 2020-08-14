@@ -1,4 +1,5 @@
 #include "SoftmaxFunction.h"
+#include "NeuralLayer.h"
 
 #include <iostream>
 #include <math.h>
@@ -9,8 +10,10 @@ SoftmaxFunction::SoftmaxFunction(size_t incomingUnits, int axis)
 {
 	this->hasBias = false;
 	this->numInputs = incomingUnits;
+	this->numUnits = 1;
 	this->numOutputs = numInputs;
 	this->axis = axis;
+	this->drawAxes = false;
 }
 
 xt::xarray<double> SoftmaxFunction::feedForward(xt::xarray<double> inputs)
@@ -50,32 +53,34 @@ void SoftmaxFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
 {
 	Function::draw(canvas, origin, scale);
 
-	const ImColor BLACK(0.0f, 0.0f, 0.0f, 1.0f);
+	const ImColor GRAY(0.3f, 0.3f, 0.3f, 1.0f);
+	const ImColor LIGHT_GRAY(0.6f, 0.6f, 0.6f, 1.0f);
 
-	int r = 3;
-	double range = 3.0;
+	const double RESCALE = DRAW_LEN * scale;
+	double yHeight = 2.0 * RESCALE;
+	double xWidth = 2.0 * RESCALE / numOutputs;
 
-	int resolution = (r * 4) + 1;
-	/*MatrixXd simInput = MatrixXd::Zero(1, numInputs);
-	simInput(0, numInputs - 1) = 1; // Bias
-	MatrixXd sP(resolution, 2);
-	for (int r = 0; r < resolution; r++)
+	auto shape = lastOutput.shape(); // Show the first example
+	xt::xstrided_slice_vector sv;
+	for (int i = 0; i < (lastOutput.dimension() - 1); i++)
 	{
-		// TODO: Clip if exceeds range
-		sP(r, 0) = range * (2.0 * r) / (resolution - 1.0) - range;
-		simInput(0, 0) = sP(r, 0);
-		sP(r, 1) = feedForward(simInput)(0);
+		//sv.push_back(shape[i] - 1);
+		sv.push_back(0);
 	}
-
-	float rescale = (1.0 / range) * DRAW_LEN * scale;
-	for (int d = 0; d < (resolution - 3); d += 3)
+	sv.push_back(xt::all());
+	ImVec2 position(0, origin.y + RESCALE);
+	const double LAYER_WIDTH = NeuralLayer::getLayerWidth(numUnits, scale);
+	for (int i = 0; i < numUnits; i++)
 	{
-		MatrixXd points = approximateBezier(sP.block(d, 0, 4, 2));
-		canvas->AddBezierCurve(
-			ImVec2(origin.x + (points(0, 0) * rescale), origin.y - (points(0, 1) * rescale)),
-			ImVec2(origin.x + (points(1, 0) * rescale), origin.y - (points(1, 1) * rescale)),
-			ImVec2(origin.x + (points(2, 0) * rescale), origin.y - (points(2, 1) * rescale)),
-			ImVec2(origin.x + (points(3, 0) * rescale), origin.y - (points(3, 1) * rescale)),
-			BLACK, 1);
-	}*/
+		position.x = NeuralLayer::getNeuronX(origin.x, LAYER_WIDTH, i, scale);
+
+		double x = -RESCALE;
+		for (int j = 0; j < numOutputs; j++)
+		{
+			ImColor color = (j % 2 == 0) ? GRAY : LIGHT_GRAY;
+			double y = xt::strided_view(lastOutput, sv)(j) * RESCALE * 2;
+			canvas->AddRectFilled(ImVec2(position.x + x, position.y), ImVec2(position.x + x + xWidth, position.y - y), color);
+			x += xWidth;
+		}
+	}
 }

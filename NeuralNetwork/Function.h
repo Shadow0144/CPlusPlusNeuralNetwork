@@ -30,6 +30,7 @@ protected:
 	const double DRAW_LEN = 16;
 
 	bool hasBias = false;
+	bool drawAxes = true;
 
 	xt::xarray<double> dotProduct(xt::xarray<double> inputs);
 	xt::xarray<double> denseBackpropagate(xt::xarray<double> sigmas);
