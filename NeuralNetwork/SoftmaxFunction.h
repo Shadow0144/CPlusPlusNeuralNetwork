@@ -5,13 +5,14 @@
 class SoftmaxFunction : public Function
 {
 public:
-	SoftmaxFunction(std::vector<size_t> numInputs, std::vector<size_t> numOutputs);
+	SoftmaxFunction(size_t incomingUnits, int axis = -1);
 
 	xt::xarray<double> feedForward(xt::xarray<double> input);
-	xt::xarray<double> backPropagate(xt::xarray<double> errors);
+	xt::xarray<double> backPropagate(xt::xarray<double> sigmas);
 	void draw(ImDrawList* canvas, ImVec2 origin, double scale);
 
 private:
-	std::vector<int> sumIndices;
+	int axis;
+	size_t numOutputs;
 	xt::xarray<double> lastOutput;
 };

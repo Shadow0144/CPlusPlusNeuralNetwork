@@ -21,50 +21,58 @@ public:
 	IrisDataset()
 	{
 		ifstream irisFile;
-		irisFile.open("iris.dat");
-		string line;
-
+		irisFile.open("iris.dat"); 
 		columnNames = new string[COL_COUNT];
 
-		// Header containing the column names
-		getline(irisFile, line);
-		size_t pos = 0;
-		size_t last = 0;
-		string token = "";
-		for (int i = 0; i < COL_COUNT; i++)
-		{
-			pos = line.find(",", last);
-			token = line.substr(last, (pos-last));
-			columnNames[i] = token;
-			last = pos + 1;
+		if (!irisFile) 
+		{ 
+			cout << "Could not open file" << endl;
+			system("pause");
 		}
-
-		const int FEATURE_COUNT = 4;
-		xt::xarray<int>::shape_type shapeFeatures = { ROW_COUNT, FEATURE_COUNT };
-		features = xt::xarray<double>(shapeFeatures);
-		xt::xarray<int>::shape_type shapeLabels = { ROW_COUNT, 1 };
-		labels = xt::xarray<double>(shapeLabels);
-		int c = -1;
-		for (int i = 0; i < ROW_COUNT; i++)
+		else
 		{
-			c = (i % 50 == 0) ? c+1 : c;
-			int k = i % 50;
-			int index = (k * 3 + c) % 150;
+			string line;
+
+			// Header containing the column names
 			getline(irisFile, line);
-			last = 0;
-			for (int j = 0; j < FEATURE_COUNT; j++)
+			size_t pos = 0;
+			size_t last = 0;
+			string token = "";
+			for (int i = 0; i < COL_COUNT; i++)
 			{
 				pos = line.find(",", last);
 				token = line.substr(last, (pos - last));
-				features(index, j) = stod(token);
+				columnNames[i] = token;
 				last = pos + 1;
 			}
-			pos = line.find(",", last);
-			token = line.substr(last, (pos - last));
-			labels(index, 0) = getIrisSpeciesNum(token);
-		}
 
-		irisFile.close();
+			const int FEATURE_COUNT = 4;
+			xt::xarray<int>::shape_type shapeFeatures = { ROW_COUNT, FEATURE_COUNT };
+			features = xt::xarray<double>(shapeFeatures);
+			xt::xarray<int>::shape_type shapeLabels = { ROW_COUNT, 1 };
+			labels = xt::xarray<double>(shapeLabels);
+			int c = -1;
+			for (int i = 0; i < ROW_COUNT; i++)
+			{
+				c = (i % 50 == 0) ? c + 1 : c;
+				int k = i % 50;
+				int index = (k * 3 + c) % 150;
+				getline(irisFile, line);
+				last = 0;
+				for (int j = 0; j < FEATURE_COUNT; j++)
+				{
+					pos = line.find(",", last);
+					token = line.substr(last, (pos - last));
+					features(index, j) = stod(token);
+					last = pos + 1;
+				}
+				pos = line.find(",", last);
+				token = line.substr(last, (pos - last));
+				labels(index, 0) = getIrisSpeciesNum(token);
+			}
+
+			irisFile.close();
+		}
 	};
 
 	~IrisDataset()
@@ -131,7 +139,7 @@ public:
 
 		for (int i = 0; i < ROW_COUNT; i++)
 		{
-			oneHot(i, labels(i)) = 1.0;
+			oneHot(i, labels(i, 0)) = 1.0;
 		}
 
 		return oneHot;

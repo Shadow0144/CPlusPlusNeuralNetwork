@@ -29,9 +29,6 @@ DenseNeuralLayer::DenseNeuralLayer(ActivationFunction function, NeuralLayer* par
 	functionType = function;
 	switch (functionType)
 	{
-		case ActivationFunction::Identity:
-			//activationFunction = new IdentityFunction();
-			break;
 		case ActivationFunction::WeightedDotProduct:
 			activationFunction = new DotProductFunction(parent->getNumUnits(), numUnits);
 			break;
@@ -57,7 +54,7 @@ DenseNeuralLayer::DenseNeuralLayer(ActivationFunction function, NeuralLayer* par
 			activationFunction = new TanhFunction(parent->getNumUnits(), numUnits);
 			break;
 		default:
-			//activationFunction = new IdentityFunction();
+			activationFunction = new DotProductFunction(parent->getNumUnits(), numUnits);
 			break;
 	}
 }
@@ -112,7 +109,7 @@ void DenseNeuralLayer::draw(ImDrawList* canvas, ImVec2 origin, double scale, boo
 	const double BIAS_TEXT_Y = 20;
 
 	// Draw the neurons
-	position = ImVec2(origin);
+	ImVec2 position = ImVec2(origin);
 	const double LAYER_WIDTH = getLayerWidth(numUnits, scale);
 	for (int i = 0; i < numUnits; i++)
 	{

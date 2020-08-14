@@ -7,7 +7,6 @@
 
 enum class ActivationFunction
 {
-	Identity,
 	WeightedDotProduct,
 	ReLU,
 	LeakyReLU,
@@ -15,10 +14,7 @@ enum class ActivationFunction
 	ParametricReLU,
 	Softplus,
 	Sigmoid,
-	Tanh,
-	Softmax,
-	Convolution,
-	Max
+	Tanh
 };
 
 class NeuralLayer

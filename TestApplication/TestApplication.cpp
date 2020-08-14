@@ -145,10 +145,10 @@ void test_signal(int layers)
             layers = 7;
             layerShapes = new size_t[layers] { 1, 3, 3, 3, 3, 3, 1 };
             functions = new ActivationFunction[layers]
-            { ActivationFunction::WeightedDotProduct, // Identity, // TODO
-                ActivationFunction::WeightedDotProduct, // LeakyReLU, // TODO
-                ActivationFunction::WeightedDotProduct, // Softplus, // TODO
-                ActivationFunction::WeightedDotProduct, // ReLU, // TODO
+            { ActivationFunction::WeightedDotProduct,
+                ActivationFunction::LeakyReLU,
+                ActivationFunction::Softplus,
+                ActivationFunction::ReLU,
                 ActivationFunction::Sigmoid,
                 ActivationFunction::Tanh,
                 ActivationFunction::WeightedDotProduct };
@@ -156,7 +156,7 @@ void test_signal(int layers)
         case 5:
             layerShapes = new size_t[layers] { 5, 3, 3, 3, 1 };
             functions = new ActivationFunction[layers]
-            { ActivationFunction::Identity,
+            { ActivationFunction::WeightedDotProduct,
               ActivationFunction::ReLU,
               ActivationFunction::Sigmoid,
               ActivationFunction::Tanh,
@@ -165,7 +165,7 @@ void test_signal(int layers)
         case 4:
             layerShapes = new size_t[layers] { 1, 3, 3, 1 };
             functions = new ActivationFunction[layers]
-            { ActivationFunction::WeightedDotProduct, //Identity, // TODO
+            { ActivationFunction::WeightedDotProduct,
               ActivationFunction::ParametricReLU,
               ActivationFunction::ReLU,
               ActivationFunction::WeightedDotProduct };
@@ -247,80 +247,83 @@ void test_signal(int layers)
 
 void test_iris(int layers)
 {
-    //size_t* layerShapes;
-    //ActivationFunction* functions;
+    size_t* layerShapes;
+    ActivationFunction* functions;
 
-    //switch (layers)
-    //{
-    //    case 4:
-    //        layerShapes = new size_t[layers] { 6, 6, 6, 1 };
-    //        functions = new ActivationFunction[layers]
-    //            {
-    //               ActivationFunction::WeightedDotProduct,
-    //               ActivationFunction::LeakyReLU,
-    //               ActivationFunction::Sigmoid,
-    //               ActivationFunction::Softmax
-    //            };
-    //        break;
-    //    case 3:
-    //        layerShapes = new size_t[layers] { 6, 3, 1 };
-    //        functions = new ActivationFunction[layers]
-    //            {
-    //               ActivationFunction::WeightedDotProduct,
-    //               ActivationFunction::Sigmoid,
-    //               ActivationFunction::Softmax
-    //            };
-    //        break;
-    //    case 2:
-    //        layerShapes = new size_t[layers] { 3, 1 };
-    //        functions = new ActivationFunction[layers]
-    //            {
-    //               ActivationFunction::Sigmoid,
-    //               ActivationFunction::Softmax
-    //            };
-    //        break;
-    //    case 1:
-    //    default:
-    //        layers = 1;
-    //        layerShapes = new size_t[layers] { 1 };
-    //        functions = new ActivationFunction[layers]
-    //            { ActivationFunction::Softmax };
-    //        break;
-    //}
+    switch (layers)
+    {
+        case 4:
+            layerShapes = new size_t[layers] { 6, 6, 6, 3 };
+            functions = new ActivationFunction[layers]
+                {
+                   ActivationFunction::WeightedDotProduct,
+                   ActivationFunction::LeakyReLU,
+                   ActivationFunction::Sigmoid,
+                   ActivationFunction::WeightedDotProduct
+                };
+            break;
+        case 3:
+            layerShapes = new size_t[layers] { 6, 3, 3 };
+            functions = new ActivationFunction[layers]
+                {
+                   ActivationFunction::WeightedDotProduct,
+                   ActivationFunction::Sigmoid,
+                   ActivationFunction::WeightedDotProduct
+                };
+            break;
+        case 2:
+            layerShapes = new size_t[layers] { 3, 3 };
+            functions = new ActivationFunction[layers]
+                {
+                   ActivationFunction::WeightedDotProduct,
+                   ActivationFunction::Sigmoid
+                };
+            break;
+        case 1:
+        default:
+            layers = 1;
+            layerShapes = new size_t[layers]{ 3 };
+            functions = new ActivationFunction[layers]
+            { ActivationFunction::WeightedDotProduct };
+            break;
+    }
 
-    //ErrorFunction* errorFunction = new CrossEntropyFunction();
-    //NeuralNetwork network = NeuralNetwork();
-    //network.setTrainingParameters(errorFunction, 1000, MIN_ERROR, CONVERGENCE_E, CONVERGENCE_W);
-    //ImColor* classColors = new ImColor[3]
-    //    { ImColor(1.0f, 0.0f, 0.0f, 1.0f),
-    //        ImColor(0.0f, 1.0f, 0.0f, 1.0f),
-    //        ImColor(0.0f, 0.0f, 1.0f, 1.0f) };
-    //network.setClassificationVisualizationParameters(30, 5, classColors);
+    ErrorFunction* errorFunction = new CrossEntropyFunction();
+    NeuralNetwork network = NeuralNetwork();
+    network.setTrainingParameters(errorFunction, 100, MIN_ERROR, CONVERGENCE_E, CONVERGENCE_W);
+    ImColor* classColors = new ImColor[3]
+        { ImColor(1.0f, 0.0f, 0.0f, 1.0f),
+            ImColor(0.0f, 1.0f, 0.0f, 1.0f),
+            ImColor(0.0f, 0.0f, 1.0f, 1.0f) };
+    network.setClassificationVisualizationParameters(30, 5, classColors);
 
-    ///*network.addDenseLayer(functions[0], layerShapes[0], 4);
-    //for (int i = 1; i < layers; i++)
-    //{
-    //    network.addDenseLayer(functions[i], layerShapes[i], layerShapes[i - 1]);
-    //}*/
+    IrisDataset iris;
+    xt::xarray<double> irisFeatures = iris.getFeatures();
+    xt::xarray<double> irisLabels = iris.getLabelsOneHot();
 
-    //IrisDataset iris;
-    //xt::xarray<double> irisFeatures = iris.getFeatures();
-    //xt::xarray<double> irisLabels = iris.getLabelsOneHot();
+    vector<size_t> inputShapes;
+    inputShapes.push_back(4);
+    network.addInputLayer(inputShapes);
+    for (int i = 0; i < layers; i++)
+    {
+        network.addDenseLayer(functions[i], layerShapes[i]);
+    }
+    network.addSoftmaxLayer();
 
-    //xt::xarray<double> irisPredictions = network.feedForward(irisFeatures);
+    xt::xarray<double> irisPredictions = network.feedForward(irisFeatures);
 
-    //cout << "Training on Iris Dataset" << endl << endl;
+    cout << "Training on Iris Dataset" << endl << endl;
 
     //network.setBatchSize(30);
 
-    //print_iris_results(irisPredictions, irisLabels);
+    print_iris_results(irisPredictions, irisLabels);
 
-    //network.train(irisFeatures, irisLabels);
+    network.train(irisFeatures, irisLabels);
 
-    //irisPredictions = network.feedForward(irisFeatures);
-    //print_iris_results(irisPredictions, irisLabels);
+    irisPredictions = network.feedForward(irisFeatures);
+    print_iris_results(irisPredictions, irisLabels);
 
-    //system("pause");
+    system("pause");
 }
 
 void test_mnist(int layers)
@@ -389,7 +392,7 @@ void test_network(network type, int layers)
 
 int main(int argc, char** argv)
 {
-    test_network(network::signal, 4);
+    test_network(network::iris, 1);
 
     return 0;
 }

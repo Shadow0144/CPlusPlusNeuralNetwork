@@ -17,7 +17,7 @@ class Function
 {
 public:
 	virtual xt::xarray<double> feedForward(xt::xarray<double> inputs) = 0;
-	virtual xt::xarray<double> backPropagate(xt::xarray<double> errors) = 0;
+	virtual xt::xarray<double> backPropagate(xt::xarray<double> sigmas) = 0;
 	virtual double applyBackPropagate(); // Returns the sum of the change in the weights
 	bool getHasBias() { return hasBias; }
 	virtual void draw(ImDrawList* canvas, ImVec2 origin, double scale);

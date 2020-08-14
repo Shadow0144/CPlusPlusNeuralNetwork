@@ -178,6 +178,7 @@
     <ClCompile Include="ReLUFunction.cpp" />
     <ClCompile Include="SigmoidFunction.cpp" />
     <ClCompile Include="SoftmaxFunction.cpp" />
+    <ClCompile Include="SoftmaxNeuralLayer.cpp" />
     <ClCompile Include="SoftplusFunction.cpp" />
     <ClCompile Include="AbsoluteReLUFunction.cpp" />
     <ClCompile Include="TanhFunction.cpp" />
@@ -215,6 +216,7 @@
     <ClInclude Include="SigmoidFunction.h" />
     <ClInclude Include="SoftmaxFunction.h" />
     <ClInclude Include="SoftplusFunction.h" />
+    <ClInclude Include="SoftmaxNeuralLayer.h" />
     <ClInclude Include="TanhFunction.h" />
   </ItemGroup>
   <ItemGroup>

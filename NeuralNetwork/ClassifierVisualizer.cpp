@@ -14,32 +14,48 @@ ClassifierVisualizer::~ClassifierVisualizer()
 
 }
 
-xt::xarray<int> ClassifierVisualizer::convertToIndices(xt::xarray<double> matrix)
+xt::xarray<size_t> ClassifierVisualizer::convertToIndices(xt::xarray<double> results)
 {
-	/*int c = matrix.cols();
-	MatrixXi r = MatrixXi(matrix.rows(), 1);
-	for (int i = 0; i < matrix.rows(); i++)
+	xt::xstrided_slice_vector sv({ 0 });
+	for (int i = 1; i < (results.dimension() - 1); i++)
+	{
+		sv.push_back(0);
+	}
+	sv.push_back(xt::all());
+	size_t c = results.shape()[results.dimension() - 1];
+	const size_t N = results.shape()[0];
+	std::vector<size_t> shape = { N };
+	xt::xarray<size_t> r(shape);
+	for (int i = 0; i < N; i++)
 	{
 		int index = 0;
-		double indexValue = matrix(i, 0);
+		sv[0] = i;
+		double indexValue = xt::strided_view(results, sv)(0);
 		for (int j = 1; j < c; j++)
 		{
-			if (matrix(i, j) > indexValue)
+			double t = xt::strided_view(results, sv)(j);
+			if (xt::strided_view(results, sv)(j) > indexValue)
 			{
-				indexValue = matrix(i, j);
+				indexValue = xt::strided_view(results, sv)(j);
 				index = j;
 			}
 			else { }
 		}
 		r(i) = index;
 	}
-	return r;*/
-	return xt::xarray<int>();
+	return r;
 }
 
 void ClassifierVisualizer::draw(ImDrawList* canvas, xt::xarray<double> predicted, xt::xarray<double> actual)
 {
-	const float BUFFER = 50;
+	// Calculate the drawing space parameters
+	ImVec2 winSize = visualizer->getWindowSize();
+	const double WIDTH = winSize.x;
+	const double HEIGHT = winSize.y;
+	const double HALF_WIDTH = WIDTH * 0.5;
+	const double HALF_HEIGHT = HEIGHT * 0.5;
+
+	const float BUFFER = 20;
 	const float ROW_SIZE = 15;
 	const float COL_SIZE = 50;
 	const float CELL_BUFFER = 2;
@@ -52,13 +68,13 @@ void ClassifierVisualizer::draw(ImDrawList* canvas, xt::xarray<double> predicted
 	const ImColor RIGHT_COLOR(0.0f, 1.0f, 0.0f, 1.0f);
 	const ImColor WRONG_COLOR(1.0f, 0.0f, 0.0f, 1.0f);
 
-	ImVec2 bottomRight = ImVec2(1280 - BUFFER, 720 - BUFFER);
+	ImVec2 bottomRight = ImVec2(WIDTH - BUFFER, HEIGHT - BUFFER);
 	ImVec2 topLeft = ImVec2(
 		bottomRight.x - (COL_SIZE * cols) - (2 * CELL_BUFFER), 
 		bottomRight.y - (ROW_SIZE * rows) - (2 * CELL_BUFFER) - (2 * TEXT_BUFFER));
 
-	/*MatrixXi predictedIndices = convertToIndices(predicted);
-	MatrixXi actualIndices = convertToIndices(actual);
+	xt::xarray<size_t> predictedIndices = convertToIndices(predicted);
+	xt::xarray<size_t> actualIndices = convertToIndices(actual);
 
 	canvas->AddRectFilled(topLeft, bottomRight, EXTRA_LIGHT_GRAY);
 	canvas->AddRect(topLeft, bottomRight, BLACK);
@@ -67,6 +83,7 @@ void ClassifierVisualizer::draw(ImDrawList* canvas, xt::xarray<double> predicted
 	canvas->AddText(ImGui::GetFont(), TEXT_SIZE, ImVec2(midX, topLeft.y + (TEXT_BUFFER / 2.0f)), BLACK, "Predicted");
 	canvas->AddText(ImGui::GetFont(), TEXT_SIZE, ImVec2(midX, bottomRight.y - TEXT_BUFFER), BLACK, "Actual");
 
+	size_t index = 0;
 	for (int i = 0; i < cols; i++)
 	{
 		float xl = CELL_BUFFER + topLeft.x + (i * COL_SIZE) + CELL_BUFFER;
@@ -79,7 +96,6 @@ void ClassifierVisualizer::draw(ImDrawList* canvas, xt::xarray<double> predicted
 			ImVec2 cellTopRight = ImVec2(xr, yt);
 			ImVec2 cellBottomLeft = ImVec2(xl, yb);
 			ImVec2 cellBottomRight = ImVec2(xr, yb);
-			int index = (i * rows) + j;
 			canvas->AddTriangleFilled(cellTopLeft, cellTopRight, cellBottomLeft, classColors[predictedIndices(index)]);
 			canvas->AddTriangleFilled(cellBottomRight, cellBottomLeft, cellTopRight, classColors[actualIndices(index)]);
 			canvas->AddLine(cellBottomLeft, cellTopRight, GRAY);
@@ -91,6 +107,7 @@ void ClassifierVisualizer::draw(ImDrawList* canvas, xt::xarray<double> predicted
 			{
 				canvas->AddRect(cellTopLeft, cellBottomRight, WRONG_COLOR);
 			}
+			index++;
 		}
-	}*/
+	}
 }

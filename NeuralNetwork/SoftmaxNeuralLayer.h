@@ -7,11 +7,11 @@
 
 using namespace std;
 
-class DenseNeuralLayer : public NeuralLayer
+class SoftmaxNeuralLayer : public NeuralLayer
 {
 public:
-	DenseNeuralLayer(ActivationFunction function, NeuralLayer* parent, size_t numUnits);
-	~DenseNeuralLayer();
+	SoftmaxNeuralLayer(NeuralLayer* parent, int axis = -1);
+	~SoftmaxNeuralLayer();
 
 	xt::xarray<double> feedForward(xt::xarray<double> input);
 	xt::xarray<double> backPropagate(xt::xarray<double> errors);
@@ -22,11 +22,17 @@ public:
 	void draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output);
 
 private:
-	ActivationFunction functionType;
-	Function* activationFunction;
+	Function* softmaxFunction;
 	NeuralLayer* parent;
 	NeuralLayer* children;
 	std::vector<size_t> inputShape;
-	
+	size_t numOutputs;
+
+	ParameterSet weights;
+
+	bool hasBias;
+	std::vector<int> sumIndices;
+	xt::xarray<double> lastOutput;
+
 	void addChildren(NeuralLayer* children);
 };

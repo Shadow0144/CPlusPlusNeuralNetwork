@@ -275,11 +275,11 @@ void NetworkVisualizer::draw(xt::xarray<double> inputs, xt::xarray<double> targe
     }
     else { }
 
-    /*if (displayClasses && predicted != NULL && actual != NULL)
+    if (displayClasses)
     {
-        classifier->draw(draw_list, *predicted, *actual);
+        classifier->draw(draw_list, network->feedForward(inputs), targets);
     }
-    else { }*/
+    else { }
 
     ImGui::End();
     ImGui::PopStyleColor();

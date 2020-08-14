@@ -2,6 +2,7 @@
 #include "NetworkVisualizer.h"
 #include "InputNeuralLayer.h"
 #include "DenseNeuralLayer.h"
+#include "SoftmaxNeuralLayer.h"
 
 #pragma warning(push, 0)
 #include <iostream>
@@ -23,10 +24,13 @@ NeuralNetwork::NeuralNetwork(bool drawingEnabled)
 	this->errorConvergenceThreshold = 0.00000001;
 	this->weightConvergenceThreshold = 0.001;
 
+	colors = NULL;
 	if (drawingEnabled)
 	{
 		visualizer = new NetworkVisualizer(this);
-		visualizer->addFunctionVisualization(); // TODO
+		colors = new ImColor[3]{ ImColor(1.0f, 0.0f, 0.0f, 1.0f), ImColor(0.0f, 1.0f, 0.0f, 1.0f), ImColor(0.0f, 0.0f, 1.0f, 1.0f) };
+		//visualizer->addFunctionVisualization(); // TODO
+		visualizer->addClassificationVisualization(50, 3, colors);
 	}
 	else 
 	{
@@ -41,6 +45,7 @@ NeuralNetwork::~NeuralNetwork()
 {
 	delete layers;
 	delete visualizer;
+	if (colors != NULL) delete colors; // TODO
 }
 
 void NeuralNetwork::addInputLayer(std::vector<size_t> inputShape)
@@ -54,6 +59,13 @@ void NeuralNetwork::addInputLayer(std::vector<size_t> inputShape)
 void NeuralNetwork::addDenseLayer(ActivationFunction layerFunction, size_t numUnits)
 {
 	DenseNeuralLayer* layer = new DenseNeuralLayer(layerFunction, layers->at(layerCount-1), numUnits);
+	layers->push_back(layer);
+	layerCount++;
+}
+
+void NeuralNetwork::addSoftmaxLayer(int axis)
+{
+	SoftmaxNeuralLayer* layer = new SoftmaxNeuralLayer(layers->at(layerCount - 1), axis);
 	layers->push_back(layer);
 	layerCount++;
 }

@@ -10,9 +10,9 @@ xt::xarray<double> IdentityFunction::feedForward(xt::xarray<double> input)
 	return input;
 }
 
-xt::xarray<double> IdentityFunction::backPropagate(xt::xarray<double> errors)
+xt::xarray<double> IdentityFunction::backPropagate(xt::xarray<double> sigmas)
 {
-	return errors;
+	return sigmas;
 }
 
 void IdentityFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)

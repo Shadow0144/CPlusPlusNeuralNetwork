@@ -135,6 +135,9 @@
     <ClCompile Include="AbsoluteReLUFunction.cpp">
       <Filter>Source Files\ActivationFunction</Filter>
     </ClCompile>
+    <ClCompile Include="SoftmaxNeuralLayer.cpp">
+      <Filter>Source Files\NeuralLayer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NeuralNetwork.h">
@@ -235,6 +238,9 @@
     </ClInclude>
     <ClInclude Include="ParametricReLUFunction.h">
       <Filter>Header Files\ActivationFunction</Filter>
+    </ClInclude>
+    <ClInclude Include="SoftmaxNeuralLayer.h">
+      <Filter>NeuralLayer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

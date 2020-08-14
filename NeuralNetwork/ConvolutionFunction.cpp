@@ -37,10 +37,10 @@ xt::xarray<double> ConvolutionFunction::feedForward(xt::xarray<double> input)
 	return lastOutput;
 }
 
-xt::xarray<double> ConvolutionFunction::backPropagate(xt::xarray<double> errors)
+xt::xarray<double> ConvolutionFunction::backPropagate(xt::xarray<double> sigmas)
 {
 	//weights.incrementDeltaParameters(-ALPHA * lastInput.transpose() * 0.0);
-	return errors;
+	return sigmas;
 }
 
 void ConvolutionFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)

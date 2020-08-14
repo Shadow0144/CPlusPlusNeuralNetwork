@@ -16,6 +16,7 @@ public:
 
 	void addInputLayer(std::vector<size_t> inputShape);
 	void addDenseLayer(ActivationFunction layerFunction, size_t numUnits);
+	void addSoftmaxLayer(int axis = -1);
 	
 	xt::xarray<double> feedForward(xt::xarray<double> inputs);
 	bool backPropagate(xt::xarray<double> inputs, xt::xarray<double> targets); // Single step
@@ -54,6 +55,7 @@ private:
 	int outputRate;
 	int batchSize;
 	NetworkVisualizer* visualizer;
+	ImColor* colors; // TODO
 
 	enum class LearningState // For printing output
 	{
@@ -63,6 +65,4 @@ private:
 	};
 
 	void output(LearningState state, int iteration, xt::xarray<double> inputs, xt::xarray<double> targets, xt::xarray<double> predicted);
-
-	friend class NetworkVisualizer;
 };

@@ -1,58 +1,49 @@
 #include "SoftmaxFunction.h"
 
 #include <iostream>
+#include <math.h>
 
 using namespace std;
 
-SoftmaxFunction::SoftmaxFunction(std::vector<size_t> numInputs, std::vector<size_t> numOutputs)
+SoftmaxFunction::SoftmaxFunction(size_t incomingUnits, int axis)
 {
-	/*this->hasBias = true;
-	this->inputDims = numInputs.size();
-	this->numInputs = std::vector<size_t>(numInputs);
-	this->numOutputs = std::vector<size_t>(numOutputs);
-	this->weights.setParametersRandom(numInputs);
-	for (int i = 0; i < inputDims - 1; i++)
-	{
-		this->sumIndices.push_back(i);
-		this->biaslessView.push_back(xt::all());
-	}
-	this->biaslessView.push_back(xt::range(0, numInputs[inputDims - 1] - 1));
-	this->lastInput = xt::ones<double>(numInputs);*/
+	this->hasBias = false;
+	this->numInputs = incomingUnits;
+	this->numOutputs = numInputs;
+	this->axis = axis;
 }
 
 xt::xarray<double> SoftmaxFunction::feedForward(xt::xarray<double> inputs)
 {
-	//xt::strided_view(lastInput, biaslessView) = inputs;
-	/*double total = 0.0;
+	int sumAxis = (axis > 0) ? (axis) : (inputs.dimension() + axis);
 
-	lastOutput = MatrixXd(1, numOutputs);
-	double c = -inputs.maxCoeff();
-	for (int i = 0; i < numOutputs; i++)
+	double c = 0;// -0.1; // negative max per axis // TODO
+	auto z = xt::exp(inputs + c);
+
+	// We lose a dimension when summing, so broadcasting won't work without this trick
+	auto shape = z.shape();
+	shape[sumAxis] = 1;
+	xt::xstrided_slice_vector dimensionView;
+	for (int i = 0; i < sumAxis; i++)
 	{
-		MatrixXd z = inputs * weights.getParameters().col(i);
-		lastOutput(i) = exp(z(0) + c);
-		total += lastOutput(i);
+		dimensionView.push_back(xt::all());
 	}
-	lastOutput /= total;
+	dimensionView.push_back(0);
+	dimensionView.push_back(xt::ellipsis());
+	xt::xarray<double> total(shape);
+	xt::strided_view(total, dimensionView) = xt::sum<double>(z, { sumAxis });
+	
+	lastOutput = z / total;
 
-	return lastOutput;*/
-	return inputs;
+	return lastOutput;
 }
 
-xt::xarray<double> SoftmaxFunction::backPropagate(xt::xarray<double> errors)
+xt::xarray<double> SoftmaxFunction::backPropagate(xt::xarray<double> sigmas)
 {
-	/*MatrixXd outputDiagonal = lastOutput.row(0).asDiagonal();
-	MatrixXd lastOutputRep = lastOutput.replicate(numOutputs, 1);
-	MatrixXd prime = -lastOutputRep.cwiseProduct(MatrixXd::Identity(numOutputs, numOutputs) - lastOutputRep.transpose());
-	MatrixXd sigma = errors * prime;
-
-	weights.incrementDeltaParameters(-ALPHA * lastInput.transpose() * sigma);
-
-	// Strip away the bias parameter and weight the sigma by the incoming weights
-	MatrixXd weightsPrime = weights.getParameters().block(0, 0, (numInputs - 1), numOutputs);
-
-	return weightsPrime * sigma.transpose();*/
-	return errors;
+	//auto shape = lastOutput.shape();
+	//auto broadcasted = sigmas * xt::ones<double>(shape);
+	auto newSigmas = sigmas;
+	return newSigmas;
 }
 
 void SoftmaxFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
