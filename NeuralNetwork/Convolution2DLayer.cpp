@@ -1,14 +1,13 @@
 #define _USE_MATH_DEFINES
 
-#include "SoftmaxNeuralLayer.h"
-#include "SoftmaxFunction.h"
+#include "Convolution2DLayer.h"
+#include "Convolution2DFunction.h"
 
 #include <math.h>
 #include <tuple>
 
-SoftmaxNeuralLayer::SoftmaxNeuralLayer(NeuralLayer* parent, int axis)
+Convolution2DLayer::Convolution2DLayer(NeuralLayer* parent, size_t numFilters, std::vector<size_t> convolutionShape, size_t stride)
 {
-	this->hasBias = false;
 	this->parent = parent;
 	this->children = NULL;
 	if (parent != NULL)
@@ -16,47 +15,44 @@ SoftmaxNeuralLayer::SoftmaxNeuralLayer(NeuralLayer* parent, int axis)
 		parent->addChildren(this);
 	}
 	else { }
-	this->numUnits = 1;
-	this->numOutputs = parent->getNumUnits();
+	this->numUnits = numUnits;
 
-	this->softmaxFunction = new SoftmaxFunction(parent->getNumUnits(), axis);
+	this->convolution2DFunction = new Convolution2DFunction(parent->getNumUnits(), numFilters, convolutionShape, stride);
 }
 
-SoftmaxNeuralLayer::~SoftmaxNeuralLayer()
+Convolution2DLayer::~Convolution2DLayer()
 {
-	delete softmaxFunction;
+
 }
 
-void SoftmaxNeuralLayer::addChildren(NeuralLayer* children)
+void Convolution2DLayer::addChildren(NeuralLayer* children)
 {
 	this->children = children;
 }
 
-xt::xarray<double> SoftmaxNeuralLayer::feedForward(xt::xarray<double> input)
+xt::xarray<double> Convolution2DLayer::feedForward(xt::xarray<double> input)
 {
-	return softmaxFunction->feedForward(input);
+	return input;
 }
 
-xt::xarray<double> SoftmaxNeuralLayer::backPropagate(xt::xarray<double> sigmas)
+xt::xarray<double> Convolution2DLayer::backPropagate(xt::xarray<double> sigma)
 {
-	return softmaxFunction->backPropagate(sigmas);
+	return sigma;
 }
 
-double SoftmaxNeuralLayer::applyBackPropagate()
+double Convolution2DLayer::applyBackPropagate()
 {
-	//return activationFunction->applyBackPropagate();
-	return 0;
+	return 0.0;
 }
 
-std::vector<size_t> SoftmaxNeuralLayer::getOutputShape()
+std::vector<size_t> Convolution2DLayer::getOutputShape()
 {
 	std::vector<size_t> outputShape;
 	outputShape.push_back(numUnits);
-	outputShape.push_back(numOutputs);
 	return outputShape;
 }
 
-void SoftmaxNeuralLayer::draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output)
+void Convolution2DLayer::draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output)
 {
 	const ImColor BLACK(0.0f, 0.0f, 0.0f, 1.0f);
 	const ImColor GRAY(0.3f, 0.3f, 0.3f, 1.0f);
@@ -64,6 +60,14 @@ void SoftmaxNeuralLayer::draw(ImDrawList* canvas, ImVec2 origin, double scale, b
 	const ImColor VERY_LIGHT_GRAY(0.8f, 0.8f, 0.8f, 1.0f);
 	const ImColor WHITE(1.0f, 1.0f, 1.0f, 1.0f);
 	const double LINE_LENGTH = 15;
+	const double WEIGHT_RADIUS = 10;
+	const double BIAS_OFFSET_X = 40;
+	const double BIAS_OFFSET_Y = -52;
+	const double BIAS_FONT_SIZE = 24;
+	const double BIAS_WIDTH = 20;
+	const double BIAS_HEIGHT = BIAS_FONT_SIZE;
+	const double BIAS_TEXT_X = 4;
+	const double BIAS_TEXT_Y = 20;
 
 	// Draw the neurons
 	ImVec2 position = ImVec2(origin);
@@ -74,12 +78,19 @@ void SoftmaxNeuralLayer::draw(ImDrawList* canvas, ImVec2 origin, double scale, b
 		canvas->AddCircleFilled(position, RADIUS * scale, LIGHT_GRAY, 32);
 	}
 
+	// Draw the activation function
+
 	// Draw the links to the previous neurons
 	double previousX, previousY;
 	int parentCount = parent->getNumUnits();
 	const double PARENT_LAYER_WIDTH = NeuralLayer::getLayerWidth(parentCount, scale);
 	ImVec2 currentNeuronPt(0, origin.y - (RADIUS * scale));
 	previousY = origin.y - (DIAMETER * scale);
+
+	// Set up bias parameters
+	double biasX = NeuralLayer::getNeuronX(origin.x, PARENT_LAYER_WIDTH, parentCount, scale);
+	double biasY = previousY - RADIUS * scale;
+	ImVec2 biasPt(biasX + 0.5 * (BIAS_WIDTH * scale), biasY + (BIAS_HEIGHT * scale));
 
 	// Draw each neuron
 	for (int i = 0; i < numUnits; i++)
@@ -89,12 +100,11 @@ void SoftmaxNeuralLayer::draw(ImDrawList* canvas, ImVec2 origin, double scale, b
 		{
 			previousX = NeuralLayer::getNeuronX(origin.x, PARENT_LAYER_WIDTH, j, scale);
 			ImVec2 previousNeuronPt(previousX, previousY);
-			canvas->AddLine(previousNeuronPt, currentNeuronPt, GRAY, 1.0f);
+
+			// Decide line color and width
+			canvas->AddLine(previousNeuronPt, currentNeuronPt, BLACK, 1.0f);
 		}
 	} // for (int i = 0; i < numUnits; i++)
-
-	// Draw the softmax function
-	softmaxFunction->draw(canvas, origin, scale);
 
 	if (output)
 	{

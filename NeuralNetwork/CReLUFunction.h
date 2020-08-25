@@ -2,11 +2,11 @@
 
 #include "Function.h"
 
-// Rectified Linear Unit
-class ReLUFunction : public Function
+// Concatenated Rectified Linear Unit
+class CReLUFunction : public Function
 {
 public:
-	ReLUFunction(size_t incomingUnits, size_t numUnits);
+	CReLUFunction(size_t incomingUnits, size_t numUnits);
 
 	xt::xarray<double> feedForward(xt::xarray<double> input);
 	xt::xarray<double> backPropagate(xt::xarray<double> sigmas);
@@ -17,5 +17,5 @@ private:
 
 	xt::xarray<double> activationDerivative();
 
-	xt::xarray<double> reLU(xt::xarray<double> z);
+	xt::xarray<double> CReLU(xt::xarray<double> z);
 };

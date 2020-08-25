@@ -2,6 +2,7 @@
 
 #include "Function.h"
 
+// Softmax
 class SoftmaxFunction : public Function
 {
 public:

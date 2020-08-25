@@ -2,14 +2,15 @@
 
 #include "Function.h"
 
-// Rectified Linear Unit
-class ReLUFunction : public Function
+// Parametric Rectified Linear Unit
+class PReLUFunction : public Function
 {
 public:
-	ReLUFunction(size_t incomingUnits, size_t numUnits);
+	PReLUFunction(size_t incomingUnits, size_t numUnits);
 
 	xt::xarray<double> feedForward(xt::xarray<double> input);
 	xt::xarray<double> backPropagate(xt::xarray<double> sigmas);
+	double applyBackPropagate();
 	void draw(ImDrawList* canvas, ImVec2 origin, double scale);
 
 private:
@@ -17,5 +18,8 @@ private:
 
 	xt::xarray<double> activationDerivative();
 
-	xt::xarray<double> reLU(xt::xarray<double> z);
+	xt::xarray<double> PReLU(xt::xarray<double> z);
+
+	double a; // Leak coefficient
+	double deltaA;
 };

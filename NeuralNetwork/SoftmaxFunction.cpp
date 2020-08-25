@@ -1,8 +1,10 @@
 #include "SoftmaxFunction.h"
 #include "NeuralLayer.h"
 
+#pragma warning(push, 0)
 #include <iostream>
-#include <math.h>
+#include <cmath>
+#pragma warning(pop)
 
 using namespace std;
 

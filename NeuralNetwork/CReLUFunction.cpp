@@ -1,4 +1,4 @@
-#include "ReLUFunction.h"
+#include "CReLUFunction.h"
 #include "NeuralLayer.h"
 
 #pragma warning(push, 0)
@@ -7,7 +7,8 @@
 
 using namespace std;
 
-ReLUFunction::ReLUFunction(size_t incomingUnits, size_t numUnits)
+// TODO: Concatenate!
+CReLUFunction::CReLUFunction(size_t incomingUnits, size_t numUnits)
 {
 	this->hasBias = true;
 	this->numUnits = numUnits;
@@ -19,34 +20,34 @@ ReLUFunction::ReLUFunction(size_t incomingUnits, size_t numUnits)
 	this->weights.setParametersRandom(paramShape);
 }
 
-xt::xarray<double> ReLUFunction::reLU(xt::xarray<double> z)
+xt::xarray<double> CReLUFunction::CReLU(xt::xarray<double> z)
 {
 	return xt::maximum(0.0, z);
 }
 
-xt::xarray<double> ReLUFunction::feedForward(xt::xarray<double> inputs)
+xt::xarray<double> CReLUFunction::feedForward(xt::xarray<double> inputs)
 {
 	auto dotProductResult = dotProduct(inputs);
-	lastOutput = reLU(dotProductResult);
+	lastOutput = CReLU(dotProductResult);
 	return lastOutput;
 }
 
-xt::xarray<double> ReLUFunction::backPropagate(xt::xarray<double> sigmas)
+xt::xarray<double> CReLUFunction::backPropagate(xt::xarray<double> sigmas)
 {
 	return denseBackpropagate(sigmas * activationDerivative());
 }
 
-xt::xarray<double> ReLUFunction::activationDerivative()
+xt::xarray<double> CReLUFunction::activationDerivative()
 {
 	return (lastOutput > 0.0);
 }
 
-void ReLUFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
+void CReLUFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
 {
 	Function::draw(canvas, origin, scale);
 
-	const ImColor BLACK(0.0f, 0.0f, 0.0f, 1.0f); 
-	
+	const ImColor BLACK(0.0f, 0.0f, 0.0f, 1.0f);
+
 	ImVec2 position(0, origin.y);
 	const double LAYER_WIDTH = NeuralLayer::getLayerWidth(numUnits, scale);
 	for (int i = 0; i < numUnits; i++)

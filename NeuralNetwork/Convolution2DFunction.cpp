@@ -1,21 +1,21 @@
-#include "ConvolutionFunction.h"
+#include "Convolution2DFunction.h"
 
 #pragma warning(push, 0)
 #include <xtensor/xview.hpp>
 #pragma warning(pop)
 
-ConvolutionFunction::ConvolutionFunction(std::vector<size_t> numInputs, std::vector<size_t> convolutionShape, int stride)
+Convolution2DFunction::Convolution2DFunction(size_t incomingUnits, size_t numFilters, std::vector<size_t> convolutionShape, int stride)
 {
-	//this->hasBias = false;
-	//this->inputDims = numInputs.size();
-	//this->numInputs = numInputs;
-	//this->convolutionShape = convolutionShape;
-	//this->stride = stride;
-	//this->numOutputs[inputDims-1] = numInputs[inputDims-1] - convolutionShape[0] + 1; // FIX: Stride and non-square etc
-	//this->weights.setParametersRandom(convolutionShape);
+	this->hasBias = false;
+	this->numInputs = incomingUnits;
+	this->numUnits = 1;
+	this->numFilters = numFilters;
+	this->convolutionShape = convolutionShape;
+	this->stride = stride;
+	this->drawAxes = false;
 }
 
-xt::xarray<double> ConvolutionFunction::feedForward(xt::xarray<double> input)
+xt::xarray<double> Convolution2DFunction::feedForward(xt::xarray<double> input)
 {
 	lastInput = input;
 	auto inputShape = input.shape();
@@ -37,13 +37,13 @@ xt::xarray<double> ConvolutionFunction::feedForward(xt::xarray<double> input)
 	return lastOutput;
 }
 
-xt::xarray<double> ConvolutionFunction::backPropagate(xt::xarray<double> sigmas)
+xt::xarray<double> Convolution2DFunction::backPropagate(xt::xarray<double> sigmas)
 {
 	//weights.incrementDeltaParameters(-ALPHA * lastInput.transpose() * 0.0);
 	return sigmas;
 }
 
-void ConvolutionFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
+void Convolution2DFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
 {
 	Function::draw(canvas, origin, scale);
 

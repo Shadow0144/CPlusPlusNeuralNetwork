@@ -2,11 +2,11 @@
 
 #include "Function.h"
 
-// Rectified Linear Unit
-class ReLUFunction : public Function
+// Swish
+class SwishFunction : public Function
 {
 public:
-	ReLUFunction(size_t incomingUnits, size_t numUnits);
+	SwishFunction(size_t incomingUnits, size_t numUnits);
 
 	xt::xarray<double> feedForward(xt::xarray<double> input);
 	xt::xarray<double> backPropagate(xt::xarray<double> sigmas);
@@ -14,8 +14,14 @@ public:
 
 private:
 	xt::xarray<double> lastOutput;
+	xt::xarray<double> lastSigmoid;
 
+	double activate(double z);
 	xt::xarray<double> activationDerivative();
 
-	xt::xarray<double> reLU(xt::xarray<double> z);
+	double swish(double z);
+	xt::xarray<double> swish(xt::xarray<double> z);
+
+	double sigmoid(double z);
+	xt::xarray<double> sigmoid(xt::xarray<double> z);
 };

@@ -2,25 +2,22 @@
 
 #include "Function.h"
 
-// Softplus / Smooth Rectified Linear Unit
-class SoftplusFunction : public Function
+// Softsign
+class SoftsignFunction : public Function
 {
 public:
-	SoftplusFunction(size_t incomingUnits, size_t numUnits);
+	SoftsignFunction(size_t incomingUnits, size_t numUnits);
 
 	xt::xarray<double> feedForward(xt::xarray<double> input);
 	xt::xarray<double> backPropagate(xt::xarray<double> sigmas);
 	void draw(ImDrawList* canvas, ImVec2 origin, double scale);
 
-	double getK();
-	void setK(double k);
-
 private:
+	xt::xarray<double> lastZ;
+
 	double activate(double z);
 	xt::xarray<double> activationDerivative();
 
-	double softplus(double z);
-	xt::xarray<double> softplus(xt::xarray<double> z);
-
-	double k = 1.0; // Sharpness coefficient
+	double softsign(double z);
+	xt::xarray<double> softsign(xt::xarray<double> z);
 };

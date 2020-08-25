@@ -1,13 +1,15 @@
-#include "ReLUFunction.h"
+#include "PReLUFunction.h"
 #include "NeuralLayer.h"
 
 #pragma warning(push, 0)
 #include <iostream>
+#include <random>
+#include <xtensor/xrandom.hpp>
 #pragma warning(pop)
 
 using namespace std;
 
-ReLUFunction::ReLUFunction(size_t incomingUnits, size_t numUnits)
+PReLUFunction::PReLUFunction(size_t incomingUnits, size_t numUnits)
 {
 	this->hasBias = true;
 	this->numUnits = numUnits;
@@ -17,36 +19,47 @@ ReLUFunction::ReLUFunction(size_t incomingUnits, size_t numUnits)
 	paramShape.push_back(this->numInputs);
 	paramShape.push_back(this->numUnits);
 	this->weights.setParametersRandom(paramShape);
+	this->a = 2.0 * (xt::random::rand<double>({ 1 }) - 0.5)(0);
+	this->deltaA = 0.0;
 }
 
-xt::xarray<double> ReLUFunction::reLU(xt::xarray<double> z)
+xt::xarray<double> PReLUFunction::PReLU(xt::xarray<double> z)
 {
-	return xt::maximum(0.0, z);
+	return xt::maximum(a * z, z);
 }
 
-xt::xarray<double> ReLUFunction::feedForward(xt::xarray<double> inputs)
+xt::xarray<double> PReLUFunction::feedForward(xt::xarray<double> inputs)
 {
 	auto dotProductResult = dotProduct(inputs);
-	lastOutput = reLU(dotProductResult);
+	lastOutput = PReLU(dotProductResult);
 	return lastOutput;
 }
 
-xt::xarray<double> ReLUFunction::backPropagate(xt::xarray<double> sigmas)
+xt::xarray<double> PReLUFunction::backPropagate(xt::xarray<double> sigmas)
 {
+	auto mask = (lastOutput <= 0.0);
+	deltaA += xt::sum<double>(lastOutput * mask)();
 	return denseBackpropagate(sigmas * activationDerivative());
 }
 
-xt::xarray<double> ReLUFunction::activationDerivative()
+double PReLUFunction::applyBackPropagate() // Returns the sum of the change in the weights
 {
-	return (lastOutput > 0.0);
+	a += -ALPHA * deltaA;
+	return Function::applyBackPropagate();
 }
 
-void ReLUFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
+xt::xarray<double> PReLUFunction::activationDerivative()
+{
+	auto mask = (lastOutput > 0.0);
+	return (mask + (a * (xt::ones<double>(mask.shape()) - mask)));
+}
+
+void PReLUFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
 {
 	Function::draw(canvas, origin, scale);
 
-	const ImColor BLACK(0.0f, 0.0f, 0.0f, 1.0f); 
-	
+	const ImColor BLACK(0.0f, 0.0f, 0.0f, 1.0f);
+
 	ImVec2 position(0, origin.y);
 	const double LAYER_WIDTH = NeuralLayer::getLayerWidth(numUnits, scale);
 	for (int i = 0; i < numUnits; i++)
@@ -56,11 +69,11 @@ void ReLUFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
 		double slope = weights.getParameters()(0, i);
 		double inv_slope = 1.0 / abs(slope);
 		double x1, x2, y1, y2;
-		if (slope > 0.0)
+		if (slope > 0.0f)
 		{
 			x1 = -1.0;
 			x2 = +min(1.0, inv_slope);
-			y1 = 0.0;
+			y1 = -a;
 			y2 = (x2 * slope);
 		}
 		else
@@ -68,7 +81,7 @@ void ReLUFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
 			x1 = -min(1.0, inv_slope);
 			x2 = 1.0;
 			y1 = (x1 * slope);
-			y2 = 0.0;
+			y2 = a;
 		}
 
 		ImVec2 l_start(position.x + (DRAW_LEN * x1 * scale), position.y - (DRAW_LEN * y1 * scale));

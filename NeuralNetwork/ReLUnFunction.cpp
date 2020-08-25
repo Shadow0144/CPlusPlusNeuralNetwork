@@ -1,15 +1,13 @@
-#include "ParametricReLUFunction.h"
+#include "ReLUnFunction.h"
 #include "NeuralLayer.h"
 
 #pragma warning(push, 0)
 #include <iostream>
-#include <random>
-#include <xtensor/xrandom.hpp>
 #pragma warning(pop)
 
 using namespace std;
 
-ParametricReLUFunction::ParametricReLUFunction(size_t incomingUnits, size_t numUnits)
+ReLUnFunction::ReLUnFunction(size_t incomingUnits, size_t numUnits)
 {
 	this->hasBias = true;
 	this->numUnits = numUnits;
@@ -19,42 +17,41 @@ ParametricReLUFunction::ParametricReLUFunction(size_t incomingUnits, size_t numU
 	paramShape.push_back(this->numInputs);
 	paramShape.push_back(this->numUnits);
 	this->weights.setParametersRandom(paramShape);
-	this->a = 2.0 * (xt::random::rand<double>({ 1 }) - 0.5)(0);
-	this->deltaA = 0.0;
 }
 
-xt::xarray<double> ParametricReLUFunction::leakyReLU(xt::xarray<double> z)
+xt::xarray<double> ReLUnFunction::reLUn(xt::xarray<double> z)
 {
-	return xt::maximum(a * z, z);
+	return xt::minimum(xt::maximum(0.0, z), n);
 }
 
-xt::xarray<double> ParametricReLUFunction::feedForward(xt::xarray<double> inputs)
+xt::xarray<double> ReLUnFunction::feedForward(xt::xarray<double> inputs)
 {
 	auto dotProductResult = dotProduct(inputs);
-	lastOutput = leakyReLU(dotProductResult);
+	lastOutput = reLUn(dotProductResult);
 	return lastOutput;
 }
 
-xt::xarray<double> ParametricReLUFunction::backPropagate(xt::xarray<double> sigmas)
+xt::xarray<double> ReLUnFunction::backPropagate(xt::xarray<double> sigmas)
 {
-	auto mask = (lastOutput <= 0.0);
-	deltaA += xt::sum<double>(lastOutput * mask)();
 	return denseBackpropagate(sigmas * activationDerivative());
 }
 
-double ParametricReLUFunction::applyBackPropagate() // Returns the sum of the change in the weights
+xt::xarray<double> ReLUnFunction::activationDerivative()
 {
-	a += -ALPHA * deltaA;
-	return Function::applyBackPropagate();
+	return ((lastOutput > 0.0) < n);
 }
 
-xt::xarray<double> ParametricReLUFunction::activationDerivative()
+double ReLUnFunction::getN()
 {
-	auto mask = (lastOutput > 0.0);
-	return (mask + (a * (xt::ones<double>(mask.shape()) - mask)));
+	return n;
 }
 
-void ParametricReLUFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
+void ReLUnFunction::setN(double n)
+{
+	this->n = n;
+}
+
+void ReLUnFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
 {
 	Function::draw(canvas, origin, scale);
 
@@ -69,19 +66,19 @@ void ParametricReLUFunction::draw(ImDrawList* canvas, ImVec2 origin, double scal
 		double slope = weights.getParameters()(0, i);
 		double inv_slope = 1.0 / abs(slope);
 		double x1, x2, y1, y2;
-		if (slope > 0.0f)
+		if (slope > 0.0)
 		{
 			x1 = -1.0;
 			x2 = +min(1.0, inv_slope);
-			y1 = -a;
-			y2 = (x2 * slope);
+			y1 = 0.0;
+			y2 = min((x2 * slope), n);
 		}
 		else
 		{
 			x1 = -min(1.0, inv_slope);
 			x2 = 1.0;
-			y1 = (x1 * slope);
-			y2 = a;
+			y1 = min((x1 * slope), n);
+			y2 = 0.0;
 		}
 
 		ImVec2 l_start(position.x + (DRAW_LEN * x1 * scale), position.y - (DRAW_LEN * y1 * scale));

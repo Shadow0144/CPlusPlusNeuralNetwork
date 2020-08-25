@@ -2,6 +2,7 @@
 
 #include "Function.h"
 
+// Sigmoid
 class SigmoidFunction : public Function
 {
 public:
@@ -14,6 +15,7 @@ public:
 private:
 	xt::xarray<double> lastOutput;
 
+	double activate(double z);
 	xt::xarray<double> activationDerivative();
 
 	double sigmoid(double z);

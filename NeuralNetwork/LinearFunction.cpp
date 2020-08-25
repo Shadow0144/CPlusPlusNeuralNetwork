@@ -1,4 +1,4 @@
-#include "DotProductFunction.h"
+#include "LinearFunction.h"
 #include "NeuralLayer.h"
 
 #pragma warning(push, 0)
@@ -8,7 +8,7 @@
 
 using namespace std;
 
-DotProductFunction::DotProductFunction(size_t incomingUnits, size_t numUnits)
+LinearFunction::LinearFunction(size_t incomingUnits, size_t numUnits)
 {
 	this->hasBias = true;
 	this->numUnits = numUnits;
@@ -20,17 +20,17 @@ DotProductFunction::DotProductFunction(size_t incomingUnits, size_t numUnits)
 	this->weights.setParametersRandom(paramShape);
 }
 
-xt::xarray<double> DotProductFunction::feedForward(xt::xarray<double> inputs)
+xt::xarray<double> LinearFunction::feedForward(xt::xarray<double> inputs)
 {
 	return dotProduct(inputs);
 }
 
-xt::xarray<double> DotProductFunction::backPropagate(xt::xarray<double> sigmas)
+xt::xarray<double> LinearFunction::backPropagate(xt::xarray<double> sigmas)
 {
 	return denseBackpropagate(sigmas);
 }
 
-void DotProductFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
+void LinearFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
 {
 	Function::draw(canvas, origin, scale);
 

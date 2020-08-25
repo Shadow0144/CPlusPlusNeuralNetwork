@@ -36,7 +36,9 @@ protected:
 	xt::xarray<double> denseBackpropagate(xt::xarray<double> sigmas);
 	virtual xt::xarray<double> activationDerivative();
 
-	MatrixXd approximateBezier(MatrixXd points);
+	virtual double activate(double z); // For drawing
+	MatrixXd approximateBezier(MatrixXd points); // For drawing
+	void approximateFunction(ImDrawList* canvas, ImVec2 origin, double scale); // For drawing
 
 	const double ALPHA = 0.1; // Learning rate
 };

@@ -2,24 +2,22 @@
 
 #include "Function.h"
 
-// Parametric ReLU
-class ParametricReLUFunction : public Function
+// Gaussian Error Linear Unit
+class GELUFunction : public Function
 {
 public:
-	ParametricReLUFunction(size_t incomingUnits, size_t numUnits);
+	GELUFunction(size_t incomingUnits, size_t numUnits);
 
 	xt::xarray<double> feedForward(xt::xarray<double> input);
 	xt::xarray<double> backPropagate(xt::xarray<double> sigmas);
-	double applyBackPropagate();
 	void draw(ImDrawList* canvas, ImVec2 origin, double scale);
 
 private:
 	xt::xarray<double> lastOutput;
 
+	double activate(double z);
 	xt::xarray<double> activationDerivative();
 
-	xt::xarray<double> leakyReLU(xt::xarray<double> z);
-
-	double a; // Leak coefficient
-	double deltaA;
+	double GELU(double z);
+	xt::xarray<double> GELU(xt::xarray<double> z);
 };

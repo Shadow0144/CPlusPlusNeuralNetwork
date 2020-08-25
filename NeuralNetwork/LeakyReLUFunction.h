@@ -2,7 +2,7 @@
 
 #include "Function.h"
 
-// Leaky ReLU
+// Leaky Rectified Linear Unit
 class LeakyReLUFunction : public Function
 {
 public:

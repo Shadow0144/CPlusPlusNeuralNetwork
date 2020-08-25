@@ -2,6 +2,7 @@
 
 #include "Function.h"
 
+// Tanh
 class TanhFunction : public Function
 {
 public:
@@ -14,5 +15,6 @@ public:
 private:
 	xt::xarray<double> lastOutput;
 
+	double activate(double z);
 	xt::xarray<double> activationDerivative();
 };

@@ -3,6 +3,7 @@
 #include "InputNeuralLayer.h"
 #include "DenseNeuralLayer.h"
 #include "SoftmaxNeuralLayer.h"
+#include "Convolution2DLayer.h"
 
 #pragma warning(push, 0)
 #include <iostream>
@@ -29,8 +30,8 @@ NeuralNetwork::NeuralNetwork(bool drawingEnabled)
 	{
 		visualizer = new NetworkVisualizer(this);
 		colors = new ImColor[3]{ ImColor(1.0f, 0.0f, 0.0f, 1.0f), ImColor(0.0f, 1.0f, 0.0f, 1.0f), ImColor(0.0f, 0.0f, 1.0f, 1.0f) };
-		//visualizer->addFunctionVisualization(); // TODO
-		visualizer->addClassificationVisualization(50, 3, colors);
+		visualizer->addFunctionVisualization(); // TODO
+		//visualizer->addClassificationVisualization(50, 3, colors);
 	}
 	else 
 	{
@@ -66,6 +67,13 @@ void NeuralNetwork::addDenseLayer(ActivationFunction layerFunction, size_t numUn
 void NeuralNetwork::addSoftmaxLayer(int axis)
 {
 	SoftmaxNeuralLayer* layer = new SoftmaxNeuralLayer(layers->at(layerCount - 1), axis);
+	layers->push_back(layer);
+	layerCount++;
+}
+
+void NeuralNetwork::addConvolution2DLayer(size_t numFilters, std::vector<size_t> convolutionShape, size_t stride)
+{
+	Convolution2DLayer* layer = new Convolution2DLayer(layers->at(layerCount - 1), numFilters, convolutionShape, stride);
 	layers->push_back(layer);
 	layerCount++;
 }

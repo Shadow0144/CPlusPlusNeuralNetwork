@@ -1,4 +1,4 @@
-#include "TanhFunction.h"
+#include "ExponentialFunction.h"
 #include "NeuralLayer.h"
 
 #pragma warning(push, 0)
@@ -7,7 +7,7 @@
 
 using namespace std;
 
-TanhFunction::TanhFunction(size_t incomingUnits, size_t numUnits)
+ExponentialFunction::ExponentialFunction(size_t incomingUnits, size_t numUnits)
 {
 	this->hasBias = true;
 	this->numUnits = numUnits;
@@ -19,29 +19,29 @@ TanhFunction::TanhFunction(size_t incomingUnits, size_t numUnits)
 	this->weights.setParametersRandom(paramShape);
 }
 
-double TanhFunction::activate(double z)
+double ExponentialFunction::activate(double z)
 {
-	return tanh(z);
+	return exp(z);
 }
 
-xt::xarray<double> TanhFunction::feedForward(xt::xarray<double> inputs)
+xt::xarray<double> ExponentialFunction::feedForward(xt::xarray<double> inputs)
 {
 	auto dotProductResult = dotProduct(inputs);
-	lastOutput = xt::tanh(dotProductResult);
+	lastOutput = exp(dotProductResult);
 	return lastOutput;
 }
 
-xt::xarray<double> TanhFunction::backPropagate(xt::xarray<double> sigmas)
+xt::xarray<double> ExponentialFunction::backPropagate(xt::xarray<double> sigmas)
 {
 	return denseBackpropagate(sigmas * activationDerivative());
 }
 
-xt::xarray<double> TanhFunction::activationDerivative()
+xt::xarray<double> ExponentialFunction::activationDerivative()
 {
-	return (1.0 - xt::pow(lastOutput, 2.0));
+	return lastOutput;
 }
 
-void TanhFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
+void ExponentialFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
 {
 	Function::draw(canvas, origin, scale);
 

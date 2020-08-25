@@ -153,9 +153,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ClassifierVisualizer.cpp" />
-    <ClCompile Include="ConvolutionFunction.cpp" />
+    <ClCompile Include="CReLUFunction.cpp" />
+    <ClCompile Include="Convolution2DLayer.cpp" />
+    <ClCompile Include="Convolution2DFunction.cpp" />
     <ClCompile Include="CrossEntropyFunction.cpp" />
-    <ClCompile Include="DotProductFunction.cpp" />
+    <ClCompile Include="ELUFunction.cpp" />
+    <ClCompile Include="ExponentialFunction.cpp" />
+    <ClCompile Include="GELUFunction.cpp" />
+    <ClCompile Include="HardSigmoidFunction.cpp" />
+    <ClCompile Include="LinearFunction.cpp" />
     <ClCompile Include="Function.cpp" />
     <ClCompile Include="FunctionVisualizer.cpp" />
     <ClCompile Include="gl3w\GL\gl3w.c" />
@@ -174,24 +180,36 @@
     <ClCompile Include="NeuralNetwork.cpp" />
     <ClCompile Include="DenseNeuralLayer.cpp" />
     <ClCompile Include="ParameterSet.cpp" />
-    <ClCompile Include="ParametricReLUFunction.cpp" />
+    <ClCompile Include="PReLUFunction.cpp" />
+    <ClCompile Include="QuadraticFunction.cpp" />
+    <ClCompile Include="ReLU6Function.cpp" />
     <ClCompile Include="ReLUFunction.cpp" />
+    <ClCompile Include="ReLUnFunction.cpp" />
+    <ClCompile Include="SELUFunction.cpp" />
     <ClCompile Include="SigmoidFunction.cpp" />
     <ClCompile Include="SoftmaxFunction.cpp" />
     <ClCompile Include="SoftmaxNeuralLayer.cpp" />
     <ClCompile Include="SoftplusFunction.cpp" />
     <ClCompile Include="AbsoluteReLUFunction.cpp" />
+    <ClCompile Include="SoftsignFunction.cpp" />
+    <ClCompile Include="SwishFunction.cpp" />
     <ClCompile Include="TanhFunction.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AbsoluteReLUFunction.h" />
     <ClInclude Include="ClassifierVisualizer.h" />
-    <ClInclude Include="ConvolutionFunction.h" />
+    <ClInclude Include="CReLUFunction.h" />
+    <ClInclude Include="Convolution2DLayer.h" />
+    <ClInclude Include="Convolution2DFunction.h" />
     <ClInclude Include="CrossEntropyFunction.h" />
     <ClInclude Include="ErrorFunction.h" />
+    <ClInclude Include="ExponentialFunction.h" />
+    <ClInclude Include="ELUFunction.h" />
     <ClInclude Include="FunctionVisualizer.h" />
+    <ClInclude Include="GELUFunction.h" />
     <ClInclude Include="gl3w\GL\gl3w.h" />
     <ClInclude Include="gl3w\GL\glcorearb.h" />
+    <ClInclude Include="HardSigmoidFunction.h" />
     <ClInclude Include="imconfig.h" />
     <ClInclude Include="imgui.h" />
     <ClInclude Include="imgui_impl_opengl3.h" />
@@ -202,21 +220,28 @@
     <ClInclude Include="imstb_truetype.h" />
     <ClInclude Include="InputNeuralLayer.h" />
     <ClInclude Include="LeakyReLUFunction.h" />
+    <ClInclude Include="MaxoutFunction.h" />
     <ClInclude Include="MSEFunction.h" />
     <ClInclude Include="NetworkVisualizer.h" />
     <ClInclude Include="NeuralLayer.h" />
     <ClInclude Include="ParameterSet.h" />
-    <ClInclude Include="DotProductFunction.h" />
+    <ClInclude Include="LinearFunction.h" />
     <ClInclude Include="Function.h" />
     <ClInclude Include="IdentityFunction.h" />
     <ClInclude Include="NeuralNetwork.h" />
     <ClInclude Include="DenseNeuralLayer.h" />
-    <ClInclude Include="ParametricReLUFunction.h" />
+    <ClInclude Include="PReLUFunction.h" />
+    <ClInclude Include="QuadraticFunction.h" />
+    <ClInclude Include="ReLU6Function.h" />
     <ClInclude Include="ReLUFunction.h" />
+    <ClInclude Include="ReLUnFunction.h" />
+    <ClInclude Include="SELUFunction.h" />
     <ClInclude Include="SigmoidFunction.h" />
     <ClInclude Include="SoftmaxFunction.h" />
     <ClInclude Include="SoftplusFunction.h" />
     <ClInclude Include="SoftmaxNeuralLayer.h" />
+    <ClInclude Include="SoftsignFunction.h" />
+    <ClInclude Include="SwishFunction.h" />
     <ClInclude Include="TanhFunction.h" />
   </ItemGroup>
   <ItemGroup>

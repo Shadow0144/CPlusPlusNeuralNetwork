@@ -2,7 +2,7 @@
 
 #include "Function.h"
 
-// Absolute ReLU / Absolute Value ReLU
+// Absolute Rectified Linear Unit / Absolute Value Rectified Linear Unit
 class AbsoluteReLUFunction : public Function
 {
 public:

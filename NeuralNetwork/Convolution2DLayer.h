@@ -7,14 +7,14 @@
 
 using namespace std;
 
-class DenseNeuralLayer : public NeuralLayer
+class Convolution2DLayer : public NeuralLayer
 {
 public:
-	DenseNeuralLayer(ActivationFunction function, NeuralLayer* parent, size_t numUnits);
-	~DenseNeuralLayer();
+	Convolution2DLayer(NeuralLayer* parent, size_t numFilters, std::vector<size_t> convolutionShape, size_t stride = 1);
+	~Convolution2DLayer();
 
 	xt::xarray<double> feedForward(xt::xarray<double> input);
-	xt::xarray<double> backPropagate(xt::xarray<double> sigmas);
+	xt::xarray<double> backPropagate(xt::xarray<double> errors);
 	double applyBackPropagate();
 
 	std::vector<size_t> getOutputShape();
@@ -22,11 +22,10 @@ public:
 	void draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output);
 
 private:
-	ActivationFunction functionType;
-	Function* activationFunction;
+	Function* convolution2DFunction;
 	NeuralLayer* parent;
 	NeuralLayer* children;
 	std::vector<size_t> inputShape;
-	
+
 	void addChildren(NeuralLayer* children);
 };

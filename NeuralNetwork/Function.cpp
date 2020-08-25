@@ -63,6 +63,11 @@ xt::xarray<double> Function::denseBackpropagate(xt::xarray<double> sigmas)
 	return newSigmas;
 }
 
+double Function::activate(double z)
+{
+	return z;
+}
+
 MatrixXd Function::approximateBezier(MatrixXd points)
 {
 	//int pCount = points.rows();
@@ -104,6 +109,103 @@ MatrixXd Function::approximateBezier(MatrixXd points)
 	MatrixXd A = Mi * (TT * T).inverse() * TT;
 
 	return A * points;
+}
+
+void Function::approximateFunction(ImDrawList* canvas, ImVec2 origin, double scale)
+{
+	const ImColor BLACK(0.0f, 0.0f, 0.0f, 1.0f);
+
+	const double RANGE = 3.0; // Controls the range of the plot to display (-RANGE, RANGE)
+
+	const int R = 3; // Controls the number of points to estimate
+	const int RESOLUTION = (R * 4) + 1; // Resolution must be 4r+1 points
+	ImVec2 position(0, origin.y);
+	const double LAYER_WIDTH = NeuralLayer::getLayerWidth(numUnits, scale);
+	for (int i = 0; i < numUnits; i++)
+	{
+		position.x = NeuralLayer::getNeuronX(origin.x, LAYER_WIDTH, i, scale);
+
+		double x, y;
+		double lastX = -1.0;
+		int pointCount = 0;
+		int inflection = 0;
+		MatrixXd graphPoints(RESOLUTION, 2);
+		for (int r = 0; r < RESOLUTION; r++)
+		{
+			double x = RANGE * (2.0 * r) / (RESOLUTION - 1.0) - RANGE;
+			double y = activate(x * weights.getParameters()(0, i));
+			if (y < -RANGE)
+			{
+				if (inflection == -1 || r == 0)
+				{
+					// Skip to next point
+				}
+				else // inflection was 0 or 1
+				{
+					// Estimate a point between this one and last
+					graphPoints(pointCount, 0) = (lastX + x) / 2.0;
+					graphPoints(pointCount, 1) = -RANGE;
+					pointCount++;
+				}
+				inflection = -1;
+			}
+			else if (y > RANGE)
+			{
+				if (inflection == 1 || r == 0)
+				{
+					// Skip to next point
+				}
+				else // inflection was 0 or -1
+				{
+					// Estimate a point between this one and last
+					graphPoints(pointCount, 0) = (lastX + x) / 2.0;
+					graphPoints(pointCount, 1) = RANGE;
+					pointCount++;
+				}
+				inflection = 1;
+			}
+			else
+			{
+				if (inflection == -1 || inflection == 1)
+				{
+					// Estimate a point between this one and last
+					graphPoints(pointCount, 0) = (lastX + x) / 2.0;
+					graphPoints(pointCount, 1) = inflection * RANGE;
+					pointCount++;
+				}
+				else { }
+				graphPoints(pointCount, 0) = x;
+				graphPoints(pointCount, 1) = y;
+				pointCount++;
+				inflection = 0;
+			}
+			lastX = x;
+		}
+
+		// If there's a number of points not divisible by 3, but the last inflection is 0, add another point
+		if ((((pointCount - 1) % 3) != 0) && (inflection == 0))
+		{
+			double x = RANGE;
+			double y = activate(x * weights.getParameters()(0, i));
+			graphPoints(pointCount, 0) = x;
+			graphPoints(pointCount, 1) = y;
+			pointCount++;
+		}
+		else { }
+
+		float rescale = (1.0 / RANGE) * DRAW_LEN * scale;
+		pointCount = pointCount - 2; // Do not go over
+		for (int d = 0; d < pointCount; d += 3) // Use the last point as a start of the next line
+		{
+			MatrixXd points = approximateBezier(graphPoints.block(d, 0, 4, 2)); // Grab 4 points
+			canvas->AddBezierCurve(
+				ImVec2(position.x + (points(0, 0) * rescale), position.y - (points(0, 1) * rescale)),
+				ImVec2(position.x + (points(1, 0) * rescale), position.y - (points(1, 1) * rescale)),
+				ImVec2(position.x + (points(2, 0) * rescale), position.y - (points(2, 1) * rescale)),
+				ImVec2(position.x + (points(3, 0) * rescale), position.y - (points(3, 1) * rescale)),
+				BLACK, 1);
+		}
+	}
 }
 
 void Function::draw(ImDrawList* canvas, ImVec2 origin, double scale)

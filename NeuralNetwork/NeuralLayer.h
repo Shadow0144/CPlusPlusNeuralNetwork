@@ -7,14 +7,24 @@
 
 enum class ActivationFunction
 {
-	WeightedDotProduct,
+	Linear,
 	ReLU,
-	LeakyReLU,
 	AbsoluteReLU,
-	ParametricReLU,
+	ELU,
+	SELU,
+	GELU,
+	LeakyReLU,
+	PReLU,
+	ReLU6,
+	ReLUn,
 	Softplus,
+	Exponential,
+	Quadratic,
 	Sigmoid,
-	Tanh
+	Tanh,
+	HardSigmoid,
+	Softsign,
+	Swish
 };
 
 class NeuralLayer
@@ -24,7 +34,7 @@ public:
 	size_t getNumUnits() { return numUnits; }
 
 	virtual xt::xarray<double> feedForward(xt::xarray<double> input) = 0;
-	virtual xt::xarray<double> backPropagate(xt::xarray<double> errors) = 0;
+	virtual xt::xarray<double> backPropagate(xt::xarray<double> sigmas) = 0;
 	virtual double applyBackPropagate() = 0;
 
 	virtual std::vector<size_t> getOutputShape() = 0;

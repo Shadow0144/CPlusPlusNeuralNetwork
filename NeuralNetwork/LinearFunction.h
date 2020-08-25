@@ -2,10 +2,11 @@
 
 #include "Function.h"
 
-class DotProductFunction : public Function
+// Linear / Pass-through
+class LinearFunction : public Function
 {
 public:
-	DotProductFunction(size_t incomingUnits, size_t numUnits);
+	LinearFunction(size_t incomingUnits, size_t numUnits);
 
 	xt::xarray<double> feedForward(xt::xarray<double> input);
 	xt::xarray<double> backPropagate(xt::xarray<double> sigmas);

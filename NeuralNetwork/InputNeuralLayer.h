@@ -13,7 +13,7 @@ public:
 	~InputNeuralLayer();
 
 	xt::xarray<double> feedForward(xt::xarray<double> input);
-	xt::xarray<double> backPropagate(xt::xarray<double> errors);
+	xt::xarray<double> backPropagate(xt::xarray<double> sigmas);
 	double applyBackPropagate();
 
 	std::vector<size_t> getOutputShape();

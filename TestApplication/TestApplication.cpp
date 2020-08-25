@@ -35,7 +35,7 @@ using namespace std;
 
 const int PRINT = 100;
 const double MIN_ERROR = 0.001f;
-const int MAX_ITERATIONS = 1000;// 10000;
+const int MAX_ITERATIONS = 10000;
 const double CONVERGENCE_W = 0.001;
 const double CONVERGENCE_E = 0.00000001;
 
@@ -145,60 +145,60 @@ void test_signal(int layers)
             layers = 7;
             layerShapes = new size_t[layers] { 1, 3, 3, 3, 3, 3, 1 };
             functions = new ActivationFunction[layers]
-            { ActivationFunction::WeightedDotProduct,
+            { ActivationFunction::Linear,
                 ActivationFunction::LeakyReLU,
                 ActivationFunction::Softplus,
                 ActivationFunction::ReLU,
                 ActivationFunction::Sigmoid,
                 ActivationFunction::Tanh,
-                ActivationFunction::WeightedDotProduct };
+                ActivationFunction::Linear };
             break;
         case 5:
             layerShapes = new size_t[layers] { 5, 3, 3, 3, 1 };
             functions = new ActivationFunction[layers]
-            { ActivationFunction::WeightedDotProduct,
+            { ActivationFunction::Linear,
               ActivationFunction::ReLU,
               ActivationFunction::Sigmoid,
               ActivationFunction::Tanh,
-              ActivationFunction::WeightedDotProduct };
+              ActivationFunction::Linear };
             break;
         case 4:
             layerShapes = new size_t[layers] { 1, 3, 3, 1 };
             functions = new ActivationFunction[layers]
-            { ActivationFunction::WeightedDotProduct,
-              ActivationFunction::ParametricReLU,
+            { ActivationFunction::Linear,
+              ActivationFunction::PReLU,
               ActivationFunction::ReLU,
-              ActivationFunction::WeightedDotProduct };
+              ActivationFunction::Linear };
             break;
         case 3:
             layerShapes = new size_t[layers] { 1, 3, 1 };
             functions = new ActivationFunction[layers]
-            { ActivationFunction::WeightedDotProduct,
-              ActivationFunction::Sigmoid,
-              ActivationFunction::WeightedDotProduct };
+            { ActivationFunction::Linear,
+              ActivationFunction::Swish,
+              ActivationFunction::Linear };
             break;
         case 2:
             layerShapes = new size_t[layers] { 1, 1 };
             functions = new ActivationFunction[layers]
-            { ActivationFunction::WeightedDotProduct,
-              ActivationFunction::WeightedDotProduct };
+            { ActivationFunction::Linear,
+              ActivationFunction::Linear };
             break;
         case 1:
         default:
             layers = 1;
             layerShapes = new size_t[layers] { 1 };
             functions = new ActivationFunction[layers]
-            { ActivationFunction::WeightedDotProduct };
+            { ActivationFunction::Linear };
             break;
     }
 
     ErrorFunction* errorFunction = new MSEFunction();
     NeuralNetwork network = NeuralNetwork();
-    network.setTrainingParameters(errorFunction, MAX_ITERATIONS, MIN_ERROR, CONVERGENCE_E, CONVERGENCE_W);
+    network.setTrainingParameters(errorFunction, MAX_ITERATIONS, MIN_ERROR, -CONVERGENCE_E, -CONVERGENCE_W);
 
-    vector<size_t> inputShapes;
-    inputShapes.push_back(1);
-    network.addInputLayer(inputShapes);
+    vector<size_t> inputShape;
+    inputShape.push_back(1);
+    network.addInputLayer(inputShape);
     for (int i = 0; i < layers; i++)
     {
         network.addDenseLayer(functions[i], layerShapes[i]);
@@ -256,26 +256,26 @@ void test_iris(int layers)
             layerShapes = new size_t[layers] { 6, 6, 6, 3 };
             functions = new ActivationFunction[layers]
                 {
-                   ActivationFunction::WeightedDotProduct,
+                   ActivationFunction::Linear,
                    ActivationFunction::LeakyReLU,
                    ActivationFunction::Sigmoid,
-                   ActivationFunction::WeightedDotProduct
+                   ActivationFunction::Linear
                 };
             break;
         case 3:
             layerShapes = new size_t[layers] { 6, 3, 3 };
             functions = new ActivationFunction[layers]
                 {
-                   ActivationFunction::WeightedDotProduct,
+                   ActivationFunction::Linear,
                    ActivationFunction::Sigmoid,
-                   ActivationFunction::WeightedDotProduct
+                   ActivationFunction::Linear
                 };
             break;
         case 2:
             layerShapes = new size_t[layers] { 3, 3 };
             functions = new ActivationFunction[layers]
                 {
-                   ActivationFunction::WeightedDotProduct,
+                   ActivationFunction::Linear,
                    ActivationFunction::Sigmoid
                 };
             break;
@@ -284,7 +284,7 @@ void test_iris(int layers)
             layers = 1;
             layerShapes = new size_t[layers]{ 3 };
             functions = new ActivationFunction[layers]
-            { ActivationFunction::WeightedDotProduct };
+            { ActivationFunction::Linear };
             break;
     }
 
@@ -301,9 +301,9 @@ void test_iris(int layers)
     xt::xarray<double> irisFeatures = iris.getFeatures();
     xt::xarray<double> irisLabels = iris.getLabelsOneHot();
 
-    vector<size_t> inputShapes;
-    inputShapes.push_back(4);
-    network.addInputLayer(inputShapes);
+    vector<size_t> inputShape;
+    inputShape.push_back(4);
+    network.addInputLayer(inputShape);
     for (int i = 0; i < layers; i++)
     {
         network.addDenseLayer(functions[i], layerShapes[i]);
@@ -328,40 +328,48 @@ void test_iris(int layers)
 
 void test_mnist(int layers)
 {
-    //int* layerShapes;
-    //ActivationFunction* functions;
+    int* layerShapes;
+    ActivationFunction* functions;
 
-    //switch (layers)
-    //{
-    //    case 1:
-    //    default:
-    //        layers = 1;
-    //        layerShapes = new int[layers] { 1 };
-    //        functions = new ActivationFunction[layers]
-    //            { ActivationFunction::Convolution };
-    //        break;
-    //}
+    switch (layers)
+    {
+        case 1:
+            layers = 1;
+            layerShapes = new int[layers] { 1 };
+            functions = new ActivationFunction[layers]
+            { ActivationFunction::Linear };
+            break;
+        default:
+            layers = 0;
+            layerShapes = new int[layers] {  };
+            functions = new ActivationFunction[layers]
+            {  };
+            break;
+    }
 
-    //ErrorFunction* errorFunction = new CrossEntropyFunction();
-    //NeuralNetwork network = NeuralNetwork();
-    //xt::xarray<int> inputShape = { 28, 28 };
-    //xt::xarray<int> parameterShape = { 2, 2 };
-    ////network.addDenseLayer(functions[0], layerShapes[0], inputShape, parameterShape, 1);
-    //network.setTrainingParameters(errorFunction, MAX_ITERATIONS, MIN_ERROR, CONVERGENCE_E, CONVERGENCE_W);
+    ErrorFunction* errorFunction = new CrossEntropyFunction();
+    NeuralNetwork network = NeuralNetwork(false);
+    vector<size_t> inputShape = { 28, 28 };
+    vector<size_t> convolutionShape = { 2, 2 };
+    size_t stride = 1;
+    network.setTrainingParameters(errorFunction, MAX_ITERATIONS, MIN_ERROR, CONVERGENCE_E, CONVERGENCE_W);
 
-    //ifstream in_file;
-    //in_file.open("mnist_mini.csv");
-    //auto data = xt::load_csv<double>(in_file);
-    //int examples = ((int)(data.shape()[0])); // 28 x 28
-    //int width = ((int)(data.shape()[1])); // 28 x 28
-    //auto mini_classes = xt::col(data, 1);
-    //xt::xarray<double> mini_features = xt::reshape_view(xt::view(data, xt::all(), xt::range(1, _)), { examples, 28, 28 });
+    network.addInputLayer(inputShape);
+    network.addConvolution2DLayer(10, convolutionShape, stride);
 
-    //xt::xarray<double> converted = network.feedForward(mini_features);
+    ifstream in_file;
+    in_file.open("mnist_mini.csv");
+    auto data = xt::load_csv<double>(in_file);
+    int examples = ((int)(data.shape()[0])); // 28 x 28
+    int width = ((int)(data.shape()[1])); // 28 x 28
+    auto mini_classes = xt::col(data, 1);
+    xt::xarray<double> mini_features = xt::reshape_view(xt::view(data, xt::all(), xt::range(1, _)), { examples, 28, 28 });
 
-    ////cout << xt::view(converted, 0, xt::all(), xt::all()) << endl;
+    xt::xarray<double> converted = network.feedForward(mini_features);
 
-    //system("pause");
+    //cout << xt::view(converted, 0, xt::all(), xt::all()) << endl;
+
+    system("pause");
 }
 
 enum class network
@@ -392,7 +400,7 @@ void test_network(network type, int layers)
 
 int main(int argc, char** argv)
 {
-    test_network(network::iris, 1);
+    test_network(network::signal, 3);
 
     return 0;
 }

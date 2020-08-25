@@ -28,9 +28,9 @@ xt::xarray<double> InputNeuralLayer::feedForward(xt::xarray<double> input)
 	return input;
 }
 
-xt::xarray<double> InputNeuralLayer::backPropagate(xt::xarray<double> errors)
+xt::xarray<double> InputNeuralLayer::backPropagate(xt::xarray<double> sigmas)
 {
-	return errors;
+	return sigmas;
 }
 
 double InputNeuralLayer::applyBackPropagate()

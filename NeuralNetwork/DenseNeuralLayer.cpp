@@ -1,17 +1,24 @@
 #define _USE_MATH_DEFINES
 
 #include "DenseNeuralLayer.h"
-#include "IdentityFunction.h"
-#include "DotProductFunction.h"
+#include "LinearFunction.h"
 #include "ReLUFunction.h"
-#include "LeakyReLUFunction.h"
 #include "AbsoluteReLUFunction.h"
-#include "ParametricReLUFunction.h"
+#include "ELUFunction.h"
+#include "SELUFunction.h"
+#include "GELUFunction.h"
+#include "LeakyReLUFunction.h"
+#include "PReLUFunction.h"
+#include "ReLU6Function.h"
+#include "ReLUnFunction.h"
 #include "SoftplusFunction.h"
+#include "ExponentialFunction.h"
+#include "QuadraticFunction.h"
 #include "SigmoidFunction.h"
 #include "TanhFunction.h"
-#include "SoftmaxFunction.h"
-#include "ConvolutionFunction.h"
+#include "HardSigmoidFunction.h"
+#include "SoftsignFunction.h"
+#include "SwishFunction.h"
 
 #include <math.h>
 #include <tuple>
@@ -29,23 +36,44 @@ DenseNeuralLayer::DenseNeuralLayer(ActivationFunction function, NeuralLayer* par
 	functionType = function;
 	switch (functionType)
 	{
-		case ActivationFunction::WeightedDotProduct:
-			activationFunction = new DotProductFunction(parent->getNumUnits(), numUnits);
+		case ActivationFunction::Linear:
+			activationFunction = new LinearFunction(parent->getNumUnits(), numUnits);
 			break;
 		case ActivationFunction::ReLU:
 			activationFunction = new ReLUFunction(parent->getNumUnits(), numUnits);
 			break;
-		case ActivationFunction::LeakyReLU:
-			activationFunction = new LeakyReLUFunction(parent->getNumUnits(), numUnits);
-			break;
 		case ActivationFunction::AbsoluteReLU:
 			activationFunction = new AbsoluteReLUFunction(parent->getNumUnits(), numUnits);
 			break;
-		case ActivationFunction::ParametricReLU:
-			activationFunction = new ParametricReLUFunction(parent->getNumUnits(), numUnits);
+		case ActivationFunction::ELU:
+			activationFunction = new ELUFunction(parent->getNumUnits(), numUnits);
+			break;		
+		case ActivationFunction::SELU:
+				activationFunction = new SELUFunction(parent->getNumUnits(), numUnits);
+				break;
+		case ActivationFunction::GELU:
+			activationFunction = new GELUFunction(parent->getNumUnits(), numUnits);
+			break;
+		case ActivationFunction::LeakyReLU:
+			activationFunction = new LeakyReLUFunction(parent->getNumUnits(), numUnits);
+			break;
+		case ActivationFunction::PReLU:
+			activationFunction = new PReLUFunction(parent->getNumUnits(), numUnits);
+			break;
+		case ActivationFunction::ReLU6:
+			activationFunction = new ReLU6Function(parent->getNumUnits(), numUnits);
+			break;
+		case ActivationFunction::ReLUn:
+			activationFunction = new ReLUnFunction(parent->getNumUnits(), numUnits);
 			break;
 		case ActivationFunction::Softplus:
 			activationFunction = new SoftplusFunction(parent->getNumUnits(), numUnits);
+			break;
+		case ActivationFunction::Exponential:
+			activationFunction = new ExponentialFunction(parent->getNumUnits(), numUnits);
+			break;
+		case ActivationFunction::Quadratic:
+			activationFunction = new QuadraticFunction(parent->getNumUnits(), numUnits);
 			break;
 		case ActivationFunction::Sigmoid:
 			activationFunction = new SigmoidFunction(parent->getNumUnits(), numUnits);
@@ -53,8 +81,17 @@ DenseNeuralLayer::DenseNeuralLayer(ActivationFunction function, NeuralLayer* par
 		case ActivationFunction::Tanh:
 			activationFunction = new TanhFunction(parent->getNumUnits(), numUnits);
 			break;
+		case ActivationFunction::HardSigmoid:
+			activationFunction = new HardSigmoidFunction(parent->getNumUnits(), numUnits);
+			break;
+		case ActivationFunction::Softsign:
+			activationFunction = new SoftsignFunction(parent->getNumUnits(), numUnits);
+			break;
+		case ActivationFunction::Swish:
+			activationFunction = new SwishFunction(parent->getNumUnits(), numUnits);
+			break;
 		default:
-			activationFunction = new DotProductFunction(parent->getNumUnits(), numUnits);
+			activationFunction = new LinearFunction(parent->getNumUnits(), numUnits);
 			break;
 	}
 }
@@ -74,9 +111,9 @@ xt::xarray<double> DenseNeuralLayer::feedForward(xt::xarray<double> input)
 	return activationFunction->feedForward(input);
 }
 
-xt::xarray<double> DenseNeuralLayer::backPropagate(xt::xarray<double> errors)
+xt::xarray<double> DenseNeuralLayer::backPropagate(xt::xarray<double> sigmas)
 {
-	return activationFunction->backPropagate(errors);
+	return activationFunction->backPropagate(sigmas);
 }
 
 double DenseNeuralLayer::applyBackPropagate()

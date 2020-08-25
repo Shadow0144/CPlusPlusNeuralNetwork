@@ -1,4 +1,4 @@
-#include "ReLUFunction.h"
+#include "ReLU6Function.h"
 #include "NeuralLayer.h"
 
 #pragma warning(push, 0)
@@ -7,7 +7,7 @@
 
 using namespace std;
 
-ReLUFunction::ReLUFunction(size_t incomingUnits, size_t numUnits)
+ReLU6Function::ReLU6Function(size_t incomingUnits, size_t numUnits)
 {
 	this->hasBias = true;
 	this->numUnits = numUnits;
@@ -19,34 +19,34 @@ ReLUFunction::ReLUFunction(size_t incomingUnits, size_t numUnits)
 	this->weights.setParametersRandom(paramShape);
 }
 
-xt::xarray<double> ReLUFunction::reLU(xt::xarray<double> z)
+xt::xarray<double> ReLU6Function::reLU6(xt::xarray<double> z)
 {
-	return xt::maximum(0.0, z);
+	return xt::minimum(xt::maximum(0.0, z), 6.0);
 }
 
-xt::xarray<double> ReLUFunction::feedForward(xt::xarray<double> inputs)
+xt::xarray<double> ReLU6Function::feedForward(xt::xarray<double> inputs)
 {
 	auto dotProductResult = dotProduct(inputs);
-	lastOutput = reLU(dotProductResult);
+	lastOutput = reLU6(dotProductResult);
 	return lastOutput;
 }
 
-xt::xarray<double> ReLUFunction::backPropagate(xt::xarray<double> sigmas)
+xt::xarray<double> ReLU6Function::backPropagate(xt::xarray<double> sigmas)
 {
 	return denseBackpropagate(sigmas * activationDerivative());
 }
 
-xt::xarray<double> ReLUFunction::activationDerivative()
+xt::xarray<double> ReLU6Function::activationDerivative()
 {
-	return (lastOutput > 0.0);
+	return ((lastOutput > 0.0) < 6.0);
 }
 
-void ReLUFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
+void ReLU6Function::draw(ImDrawList* canvas, ImVec2 origin, double scale)
 {
 	Function::draw(canvas, origin, scale);
 
-	const ImColor BLACK(0.0f, 0.0f, 0.0f, 1.0f); 
-	
+	const ImColor BLACK(0.0f, 0.0f, 0.0f, 1.0f);
+
 	ImVec2 position(0, origin.y);
 	const double LAYER_WIDTH = NeuralLayer::getLayerWidth(numUnits, scale);
 	for (int i = 0; i < numUnits; i++)
@@ -61,13 +61,13 @@ void ReLUFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
 			x1 = -1.0;
 			x2 = +min(1.0, inv_slope);
 			y1 = 0.0;
-			y2 = (x2 * slope);
+			y2 = min((x2 * slope), 6.0);
 		}
 		else
 		{
 			x1 = -min(1.0, inv_slope);
 			x2 = 1.0;
-			y1 = (x1 * slope);
+			y1 = min((x1 * slope), 6.0);
 			y2 = 0.0;
 		}
 
