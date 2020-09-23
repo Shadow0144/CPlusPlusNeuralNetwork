@@ -24,7 +24,8 @@ enum class ActivationFunction
 	Tanh,
 	HardSigmoid,
 	Softsign,
-	Swish
+	Swish,
+	Maxout
 };
 
 class NeuralLayer

@@ -20,8 +20,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <CopyFileToFolders Include="mnist_test.csv" />
-    <CopyFileToFolders Include="mnist_train.csv" />
+    <CopyFileToFolders Include="data\iris.dat" />
+    <CopyFileToFolders Include="data\mnist_mini.csv" />
+    <CopyFileToFolders Include="data\mnist_test.csv" />
+    <CopyFileToFolders Include="data\mnist_train.csv" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="IrisDataset.h">
@@ -30,19 +32,5 @@
     <ClInclude Include="MNISTDataset.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="data\iris.dat">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="data\mnist_mini.csv">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="data\mnist_test.csv">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="data\mnist_train.csv">
-      <Filter>Resource Files</Filter>
-    </None>
   </ItemGroup>
 </Project>

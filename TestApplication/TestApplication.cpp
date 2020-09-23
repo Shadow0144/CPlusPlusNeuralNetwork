@@ -18,6 +18,8 @@
 #include "NetworkVisualizer.h"
 #include "IrisDataset.h"
 
+#include "Test.h"
+
 //#define ALL
 //#define FIVE
 //#define FOUR
@@ -174,7 +176,7 @@ void test_signal(int layers)
             layerShapes = new size_t[layers] { 1, 3, 1 };
             functions = new ActivationFunction[layers]
             { ActivationFunction::Linear,
-              ActivationFunction::Swish,
+              ActivationFunction::Maxout,
               ActivationFunction::Linear };
             break;
         case 2:
@@ -188,13 +190,15 @@ void test_signal(int layers)
             layers = 1;
             layerShapes = new size_t[layers] { 1 };
             functions = new ActivationFunction[layers]
-            { ActivationFunction::Linear };
+            { ActivationFunction::Maxout };
             break;
     }
 
     ErrorFunction* errorFunction = new MSEFunction();
     NeuralNetwork network = NeuralNetwork();
-    network.setTrainingParameters(errorFunction, MAX_ITERATIONS, MIN_ERROR, -CONVERGENCE_E, -CONVERGENCE_W);
+    network.setTrainingParameters(errorFunction, MAX_ITERATIONS, -MIN_ERROR, -CONVERGENCE_E, -CONVERGENCE_W); // TODO: Remove negatives
+    network.setBatchSize(1);
+    network.displayRegressionEstimation();
 
     vector<size_t> inputShape;
     inputShape.push_back(1);
@@ -226,6 +230,19 @@ void test_signal(int layers)
         //training_y(i, 0) = (0.3 * t + 0.5) * rescale;
         training_y(i, 0) = tanh(3.0 * sin(0.5 * t + 0.5)) * rescale;
         i++;
+    }
+
+    // Shuffle
+    const size_t N = training_x.shape()[0];
+    for (size_t i = N - 1; i > 0; i--)
+    {
+        size_t j = rand() % i;
+        double x = training_x(i, 0);
+        training_x(i, 0) = training_x(j, 0);
+        training_x(j, 0) = x;
+        double y = training_y(i, 0);
+        training_y(i, 0) = training_y(j, 0);
+        training_y(j, 0) = y;
     }
 
     network.feedForward(training_x);
@@ -296,6 +313,7 @@ void test_iris(int layers)
             ImColor(0.0f, 1.0f, 0.0f, 1.0f),
             ImColor(0.0f, 0.0f, 1.0f, 1.0f) };
     network.setClassificationVisualizationParameters(30, 5, classColors);
+    network.displayClassificationEstimation();
 
     IrisDataset iris;
     xt::xarray<double> irisFeatures = iris.getFeatures();
@@ -401,6 +419,8 @@ void test_network(network type, int layers)
 int main(int argc, char** argv)
 {
     test_network(network::signal, 3);
+
+    //test();
 
     return 0;
 }

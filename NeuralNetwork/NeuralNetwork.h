@@ -40,6 +40,8 @@ public:
 	void setOutputRate(int outputRate);
 	bool getDrawingEnabled();
 	void setDrawingEnabled(bool drawingEnabled);
+	void displayRegressionEstimation();
+	void displayClassificationEstimation();
 	void draw(ImDrawList* canvas, ImVec2 origin, double scale, xt::xarray<double> target_xs, xt::xarray<double> target_ys);
 
 private:

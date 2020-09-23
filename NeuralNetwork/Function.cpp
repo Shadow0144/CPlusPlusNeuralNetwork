@@ -111,16 +111,20 @@ MatrixXd Function::approximateBezier(MatrixXd points)
 	return A * points;
 }
 
+// TODO: Cap vertical draw
 void Function::approximateFunction(ImDrawList* canvas, ImVec2 origin, double scale)
 {
 	const ImColor BLACK(0.0f, 0.0f, 0.0f, 1.0f);
 
 	const double RANGE = 3.0; // Controls the range of the plot to display (-RANGE, RANGE)
 
-	const int R = 3; // Controls the number of points to estimate
+	const int R = 6; // Controls the number of points to estimate
 	const int RESOLUTION = (R * 4) + 1; // Resolution must be 4r+1 points
+	const float RESCALE = (1.0 / RANGE) * DRAW_LEN * scale;
+
 	ImVec2 position(0, origin.y);
 	const double LAYER_WIDTH = NeuralLayer::getLayerWidth(numUnits, scale);
+
 	for (int i = 0; i < numUnits; i++)
 	{
 		position.x = NeuralLayer::getNeuronX(origin.x, LAYER_WIDTH, i, scale);
@@ -193,16 +197,15 @@ void Function::approximateFunction(ImDrawList* canvas, ImVec2 origin, double sca
 		}
 		else { }
 
-		float rescale = (1.0 / RANGE) * DRAW_LEN * scale;
 		pointCount = pointCount - 2; // Do not go over
 		for (int d = 0; d < pointCount; d += 3) // Use the last point as a start of the next line
 		{
 			MatrixXd points = approximateBezier(graphPoints.block(d, 0, 4, 2)); // Grab 4 points
 			canvas->AddBezierCurve(
-				ImVec2(position.x + (points(0, 0) * rescale), position.y - (points(0, 1) * rescale)),
-				ImVec2(position.x + (points(1, 0) * rescale), position.y - (points(1, 1) * rescale)),
-				ImVec2(position.x + (points(2, 0) * rescale), position.y - (points(2, 1) * rescale)),
-				ImVec2(position.x + (points(3, 0) * rescale), position.y - (points(3, 1) * rescale)),
+				ImVec2(position.x + (points(0, 0) * RESCALE), position.y - (points(0, 1) * RESCALE)),
+				ImVec2(position.x + (points(1, 0) * RESCALE), position.y - (points(1, 1) * RESCALE)),
+				ImVec2(position.x + (points(2, 0) * RESCALE), position.y - (points(2, 1) * RESCALE)),
+				ImVec2(position.x + (points(3, 0) * RESCALE), position.y - (points(3, 1) * RESCALE)),
 				BLACK, 1);
 		}
 	}

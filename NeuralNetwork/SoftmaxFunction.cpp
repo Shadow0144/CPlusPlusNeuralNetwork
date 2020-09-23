@@ -64,23 +64,27 @@ void SoftmaxFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
 
 	auto shape = lastOutput.shape(); // Show the first example
 	xt::xstrided_slice_vector sv;
-	for (int i = 0; i < (lastOutput.dimension() - 1); i++)
+	int dims = lastOutput.dimension();
+	int stop = dims - 1;
+	for (int i = 0; i < stop; i++)
 	{
 		//sv.push_back(shape[i] - 1);
 		sv.push_back(0);
 	}
 	sv.push_back(xt::all());
+
 	ImVec2 position(0, origin.y + RESCALE);
 	const double LAYER_WIDTH = NeuralLayer::getLayerWidth(numUnits, scale);
 	for (int i = 0; i < numUnits; i++)
 	{
 		position.x = NeuralLayer::getNeuronX(origin.x, LAYER_WIDTH, i, scale);
 
+		sv[dims - 2] = i; // Select correct neuron
 		double x = -RESCALE;
 		for (int j = 0; j < numOutputs; j++)
 		{
 			ImColor color = (j % 2 == 0) ? GRAY : LIGHT_GRAY;
-			double y = xt::strided_view(lastOutput, sv)(j) * RESCALE * 2;
+			double y = xt::strided_view(lastOutput, sv)(j) * RESCALE * 2; // Select correct output and calculate scale
 			canvas->AddRectFilled(ImVec2(position.x + x, position.y), ImVec2(position.x + x + xWidth, position.y - y), color);
 			x += xWidth;
 		}

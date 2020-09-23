@@ -19,6 +19,7 @@
 #include "HardSigmoidFunction.h"
 #include "SoftsignFunction.h"
 #include "SwishFunction.h"
+#include "MaxoutFunction.h"
 
 #include <math.h>
 #include <tuple>
@@ -49,8 +50,8 @@ DenseNeuralLayer::DenseNeuralLayer(ActivationFunction function, NeuralLayer* par
 			activationFunction = new ELUFunction(parent->getNumUnits(), numUnits);
 			break;		
 		case ActivationFunction::SELU:
-				activationFunction = new SELUFunction(parent->getNumUnits(), numUnits);
-				break;
+			activationFunction = new SELUFunction(parent->getNumUnits(), numUnits);
+			break;
 		case ActivationFunction::GELU:
 			activationFunction = new GELUFunction(parent->getNumUnits(), numUnits);
 			break;
@@ -89,6 +90,9 @@ DenseNeuralLayer::DenseNeuralLayer(ActivationFunction function, NeuralLayer* par
 			break;
 		case ActivationFunction::Swish:
 			activationFunction = new SwishFunction(parent->getNumUnits(), numUnits);
+			break;
+		case ActivationFunction::Maxout:
+			activationFunction = new MaxoutFunction(parent->getNumUnits(), numUnits, 5); // TODO
 			break;
 		default:
 			activationFunction = new LinearFunction(parent->getNumUnits(), numUnits);

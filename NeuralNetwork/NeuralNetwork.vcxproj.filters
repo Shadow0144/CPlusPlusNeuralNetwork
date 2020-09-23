@@ -180,6 +180,12 @@
     <ClCompile Include="SwishFunction.cpp">
       <Filter>Source Files\ActivationFunction\DenseFunction</Filter>
     </ClCompile>
+    <ClCompile Include="MaxoutFunction.cpp">
+      <Filter>Source Files\ActivationFunction\DenseFunction</Filter>
+    </ClCompile>
+    <ClCompile Include="Test.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NeuralNetwork.h">
@@ -322,6 +328,9 @@
     </ClInclude>
     <ClInclude Include="SELUFunction.h">
       <Filter>Header Files\ActivationFunction\DenseFunction</Filter>
+    </ClInclude>
+    <ClInclude Include="Test.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

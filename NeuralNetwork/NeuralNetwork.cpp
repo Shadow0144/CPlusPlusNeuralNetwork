@@ -29,9 +29,6 @@ NeuralNetwork::NeuralNetwork(bool drawingEnabled)
 	if (drawingEnabled)
 	{
 		visualizer = new NetworkVisualizer(this);
-		colors = new ImColor[3]{ ImColor(1.0f, 0.0f, 0.0f, 1.0f), ImColor(0.0f, 1.0f, 0.0f, 1.0f), ImColor(0.0f, 0.0f, 1.0f, 1.0f) };
-		visualizer->addFunctionVisualization(); // TODO
-		//visualizer->addClassificationVisualization(50, 3, colors);
 	}
 	else 
 	{
@@ -94,16 +91,17 @@ bool NeuralNetwork::backPropagate(xt::xarray<double> inputs, xt::xarray<double> 
 {
 	bool converged = true;
 
-	//// Create views for the inputs and outputs
+	// Feed forward and calculate the gradient
 	xt::xarray<double> y = feedForward(inputs);
 	xt::xarray<double> errors = errorFunction->getDerivativeOfError(y, targets);
 
+	// Backpropagate through the layers
 	for (int l = layerCount - 1; l > 0; l--)
 	{
-		//cout << "Layer: " << l << endl;
 		errors = layers->at(l)->backPropagate(errors);
 	}
 
+	// Apply the backpropagation
 	for (int l = 0; l < layerCount; l++)
 	{
 		double deltaSum = layers->at(l)->applyBackPropagate();
@@ -125,18 +123,19 @@ void NeuralNetwork::train(xt::xarray<double> inputs, xt::xarray<double> targets)
 	bool converged = false;
 	double lastError = error;
 	double deltaError = error;
+	const int BATCHES = inputs.shape()[0] / batchSize;
 	while ((error < 0 || error > minError) && t < maxIterations && !converged && deltaError > errorConvergenceThreshold)
 	{
 		converged = true;
-		const int BATCHES = inputs.shape()[0] / batchSize;
 		for (int i = 0; i < BATCHES; i++)
 		{
 			xt::xstrided_slice_vector batchSV({ xt::range(i * batchSize, (i + 1) * batchSize), xt::ellipsis() });
 			xt::xarray<double> examples = xt::strided_view(inputs, batchSV);
 			xt::xarray<double> exampleTargets = xt::strided_view(targets, batchSV);
 			converged = backPropagate(examples, exampleTargets) && converged;
-			predicted = feedForward(examples);
 		}
+
+		predicted = feedForward(inputs);
 		error = getError(predicted, targets);
 		deltaError = abs(lastError - error);
 		lastError = error;
@@ -299,6 +298,17 @@ void NeuralNetwork::setDrawingEnabled(bool drawingEnabled)
 void NeuralNetwork::setClassificationVisualizationParameters(int rows, int cols, ImColor* classColors)
 {
 	visualizer->addClassificationVisualization(rows, cols, classColors);
+}
+
+void NeuralNetwork::displayRegressionEstimation()
+{
+	visualizer->addFunctionVisualization();
+}
+
+void NeuralNetwork::displayClassificationEstimation()
+{
+	colors = new ImColor[3]{ ImColor(1.0f, 0.0f, 0.0f, 1.0f), ImColor(0.0f, 1.0f, 0.0f, 1.0f), ImColor(0.0f, 0.0f, 1.0f, 1.0f) };
+	visualizer->addClassificationVisualization(50, 3, colors);
 }
 
 void NeuralNetwork::draw(ImDrawList* canvas, ImVec2 origin, double scale, xt::xarray<double> target_xs, xt::xarray<double> target_ys)
