@@ -2,16 +2,15 @@
 
 #include "NeuralLayer.h"
 #include "Function.h"
-#include "imgui.h"
 #include <vector>
 
 using namespace std;
 
-class DenseNeuralLayer : public NeuralLayer
+class SqueezeNeuralLayer : public NeuralLayer
 {
 public:
-	DenseNeuralLayer(DenseActivationFunction function, NeuralLayer* parent, size_t numUnits);
-	~DenseNeuralLayer();
+	SqueezeNeuralLayer(std::vector<size_t> squeezeDims = std::vector<size_t>());
+	~SqueezeNeuralLayer();
 
 	xt::xarray<double> feedForward(xt::xarray<double> input);
 	xt::xarray<double> backPropagate(xt::xarray<double> sigmas);
@@ -22,11 +21,14 @@ public:
 	void draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output);
 
 private:
-	DenseActivationFunction functionType;
-	Function* activationFunction;
-	NeuralLayer* parent;
 	NeuralLayer* children;
-	std::vector<size_t> inputShape;
-	
+	std::vector<size_t> squeezeDims;
+
+	xt::xarray<double> result; // Results of feedforward
+
+	ImVec2 position; // For drawing
+
 	void addChildren(NeuralLayer* children);
+
+	friend class NetworkVisualizer;
 };

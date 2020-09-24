@@ -2,11 +2,11 @@
 
 #include "Function.h"
 
-// Concatenated Rectified Linear Unit
-class CReLUFunction : public Function
+// Max Pooling
+class MaxPoolingFunction : public Function
 {
 public:
-	CReLUFunction(size_t incomingUnits, size_t numUnits);
+	MaxPoolingFunction(size_t incomingUnits, size_t numUnits);
 
 	xt::xarray<double> feedForward(xt::xarray<double> input);
 	xt::xarray<double> backPropagate(xt::xarray<double> sigmas);
@@ -16,7 +16,4 @@ private:
 	xt::xarray<double> lastOutput;
 
 	xt::xarray<double> activationDerivative();
-	std::vector<size_t> getOutputShape();
-
-	xt::xarray<double> CReLU(xt::xarray<double> z);
 };

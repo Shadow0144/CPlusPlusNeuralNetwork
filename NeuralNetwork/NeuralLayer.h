@@ -5,11 +5,12 @@
 #include <xtensor/xarray.hpp>
 #pragma warning(pop)
 
-enum class ActivationFunction
+enum class DenseActivationFunction
 {
 	Linear,
 	ReLU,
 	AbsoluteReLU,
+	CReLU,
 	ELU,
 	SELU,
 	GELU,
@@ -26,6 +27,11 @@ enum class ActivationFunction
 	Softsign,
 	Swish,
 	Maxout
+};
+
+enum class PoolingActivationFunction
+{
+	Max
 };
 
 class NeuralLayer

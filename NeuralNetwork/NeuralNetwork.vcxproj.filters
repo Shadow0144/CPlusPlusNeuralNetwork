@@ -52,6 +52,12 @@
     <Filter Include="Source Files\ActivationFunction\DenseFunction">
       <UniqueIdentifier>{d35e1f50-dbbc-4ca3-9827-c25ef58b7fda}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\ActivationFunction\PoolingFunction">
+      <UniqueIdentifier>{88701528-5668-4ddf-995a-25e138bb02e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ActivationFunction\PoolingFunction">
+      <UniqueIdentifier>{9c40a60e-7172-4416-94af-5300109e500b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="NeuralNetwork.cpp">
@@ -185,6 +191,15 @@
     </ClCompile>
     <ClCompile Include="Test.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PoolingNeuralLayer.cpp">
+      <Filter>Source Files\NeuralLayer</Filter>
+    </ClCompile>
+    <ClCompile Include="MaxPoolingFunction.cpp">
+      <Filter>Source Files\ActivationFunction\PoolingFunction</Filter>
+    </ClCompile>
+    <ClCompile Include="SqueezeNeuralLayer.cpp">
+      <Filter>Source Files\NeuralLayer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -331,6 +346,15 @@
     </ClInclude>
     <ClInclude Include="Test.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PoolingNeuralLayer.h">
+      <Filter>NeuralLayer</Filter>
+    </ClInclude>
+    <ClInclude Include="MaxPoolingFunction.h">
+      <Filter>Header Files\ActivationFunction\PoolingFunction</Filter>
+    </ClInclude>
+    <ClInclude Include="SqueezeNeuralLayer.h">
+      <Filter>NeuralLayer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

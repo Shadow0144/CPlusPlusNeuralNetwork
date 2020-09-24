@@ -1,31 +1,11 @@
-#define _USE_MATH_DEFINES
+#include "PoolingNeuralLayer.h"
 
-#include "DenseNeuralLayer.h"
-#include "LinearFunction.h"
-#include "ReLUFunction.h"
-#include "AbsoluteReLUFunction.h"
-#include "CReLUFunction.h"
-#include "ELUFunction.h"
-#include "SELUFunction.h"
-#include "GELUFunction.h"
-#include "LeakyReLUFunction.h"
-#include "PReLUFunction.h"
-#include "ReLU6Function.h"
-#include "ReLUnFunction.h"
-#include "SoftplusFunction.h"
-#include "ExponentialFunction.h"
-#include "QuadraticFunction.h"
-#include "SigmoidFunction.h"
-#include "TanhFunction.h"
-#include "HardSigmoidFunction.h"
-#include "SoftsignFunction.h"
-#include "SwishFunction.h"
-#include "MaxoutFunction.h"
+#include "MaxPoolingFunction.h"
 
 #include <math.h>
 #include <tuple>
 
-DenseNeuralLayer::DenseNeuralLayer(DenseActivationFunction function, NeuralLayer* parent, size_t numUnits)
+PoolingNeuralLayer::PoolingNeuralLayer(PoolingActivationFunction function, NeuralLayer* parent, size_t numUnits)
 {
 	this->parent = parent;
 	this->children = NULL;
@@ -38,103 +18,46 @@ DenseNeuralLayer::DenseNeuralLayer(DenseActivationFunction function, NeuralLayer
 	functionType = function;
 	switch (functionType)
 	{
-		case DenseActivationFunction::Linear:
-			activationFunction = new LinearFunction(parent->getNumUnits(), numUnits);
-			break;
-		case DenseActivationFunction::ReLU:
-			activationFunction = new ReLUFunction(parent->getNumUnits(), numUnits);
-			break;
-		case DenseActivationFunction::AbsoluteReLU:
-			activationFunction = new AbsoluteReLUFunction(parent->getNumUnits(), numUnits);
-			break;
-		case DenseActivationFunction::CReLU:
-			activationFunction = new CReLUFunction(parent->getNumUnits(), numUnits);
-			break;
-		case DenseActivationFunction::ELU:
-			activationFunction = new ELUFunction(parent->getNumUnits(), numUnits);
-			break;		
-		case DenseActivationFunction::SELU:
-			activationFunction = new SELUFunction(parent->getNumUnits(), numUnits);
-			break;
-		case DenseActivationFunction::GELU:
-			activationFunction = new GELUFunction(parent->getNumUnits(), numUnits);
-			break;
-		case DenseActivationFunction::LeakyReLU:
-			activationFunction = new LeakyReLUFunction(parent->getNumUnits(), numUnits);
-			break;
-		case DenseActivationFunction::PReLU:
-			activationFunction = new PReLUFunction(parent->getNumUnits(), numUnits);
-			break;
-		case DenseActivationFunction::ReLU6:
-			activationFunction = new ReLU6Function(parent->getNumUnits(), numUnits);
-			break;
-		case DenseActivationFunction::ReLUn:
-			activationFunction = new ReLUnFunction(parent->getNumUnits(), numUnits);
-			break;
-		case DenseActivationFunction::Softplus:
-			activationFunction = new SoftplusFunction(parent->getNumUnits(), numUnits);
-			break;
-		case DenseActivationFunction::Exponential:
-			activationFunction = new ExponentialFunction(parent->getNumUnits(), numUnits);
-			break;
-		case DenseActivationFunction::Quadratic:
-			activationFunction = new QuadraticFunction(parent->getNumUnits(), numUnits);
-			break;
-		case DenseActivationFunction::Sigmoid:
-			activationFunction = new SigmoidFunction(parent->getNumUnits(), numUnits);
-			break;
-		case DenseActivationFunction::Tanh:
-			activationFunction = new TanhFunction(parent->getNumUnits(), numUnits);
-			break;
-		case DenseActivationFunction::HardSigmoid:
-			activationFunction = new HardSigmoidFunction(parent->getNumUnits(), numUnits);
-			break;
-		case DenseActivationFunction::Softsign:
-			activationFunction = new SoftsignFunction(parent->getNumUnits(), numUnits);
-			break;
-		case DenseActivationFunction::Swish:
-			activationFunction = new SwishFunction(parent->getNumUnits(), numUnits);
-			break;
-		case DenseActivationFunction::Maxout:
-			activationFunction = new MaxoutFunction(parent->getNumUnits(), numUnits, 5); // TODO
+		case PoolingActivationFunction::Max:
+			activationFunction = new MaxPoolingFunction(parent->getNumUnits(), numUnits);
 			break;
 		default:
-			activationFunction = new LinearFunction(parent->getNumUnits(), numUnits);
+			activationFunction = new MaxPoolingFunction(parent->getNumUnits(), numUnits);
 			break;
 	}
 }
 
-DenseNeuralLayer::~DenseNeuralLayer()
+PoolingNeuralLayer::~PoolingNeuralLayer()
 {
 	delete activationFunction;
 }
 
-void DenseNeuralLayer::addChildren(NeuralLayer* children)
+void PoolingNeuralLayer::addChildren(NeuralLayer* children)
 {
 	this->children = children;
 }
 
-xt::xarray<double> DenseNeuralLayer::feedForward(xt::xarray<double> input)
+xt::xarray<double> PoolingNeuralLayer::feedForward(xt::xarray<double> input)
 {
 	return activationFunction->feedForward(input);
 }
 
-xt::xarray<double> DenseNeuralLayer::backPropagate(xt::xarray<double> sigmas)
+xt::xarray<double> PoolingNeuralLayer::backPropagate(xt::xarray<double> sigmas)
 {
 	return activationFunction->backPropagate(sigmas);
 }
 
-double DenseNeuralLayer::applyBackPropagate()
+double PoolingNeuralLayer::applyBackPropagate()
 {
 	return activationFunction->applyBackPropagate();
 }
 
-std::vector<size_t> DenseNeuralLayer::getOutputShape()
+std::vector<size_t> PoolingNeuralLayer::getOutputShape()
 {
 	return activationFunction->getOutputShape();
 }
 
-void DenseNeuralLayer::draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output)
+void PoolingNeuralLayer::draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output)
 {
 	const ImColor BLACK(0.0f, 0.0f, 0.0f, 1.0f);
 	const ImColor GRAY(0.3f, 0.3f, 0.3f, 1.0f);

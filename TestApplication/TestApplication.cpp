@@ -138,7 +138,7 @@ void print_iris_results(xt::xarray<double> predicted, xt::xarray<double> actual)
 void test_signal(int layers)
 {
     size_t* layerShapes;
-    ActivationFunction* functions;
+    DenseActivationFunction* functions;
 
     switch (layers)
     {
@@ -146,51 +146,51 @@ void test_signal(int layers)
         case 6:
             layers = 7;
             layerShapes = new size_t[layers] { 1, 3, 3, 3, 3, 3, 1 };
-            functions = new ActivationFunction[layers]
-            { ActivationFunction::Linear,
-                ActivationFunction::LeakyReLU,
-                ActivationFunction::Softplus,
-                ActivationFunction::ReLU,
-                ActivationFunction::Sigmoid,
-                ActivationFunction::Tanh,
-                ActivationFunction::Linear };
+            functions = new DenseActivationFunction[layers]
+            { DenseActivationFunction::Linear,
+                DenseActivationFunction::LeakyReLU,
+                DenseActivationFunction::Softplus,
+                DenseActivationFunction::ReLU,
+                DenseActivationFunction::Sigmoid,
+                DenseActivationFunction::Tanh,
+                DenseActivationFunction::Linear };
             break;
         case 5:
             layerShapes = new size_t[layers] { 5, 3, 3, 3, 1 };
-            functions = new ActivationFunction[layers]
-            { ActivationFunction::Linear,
-              ActivationFunction::ReLU,
-              ActivationFunction::Sigmoid,
-              ActivationFunction::Tanh,
-              ActivationFunction::Linear };
+            functions = new DenseActivationFunction[layers]
+            { DenseActivationFunction::Linear,
+              DenseActivationFunction::ReLU,
+              DenseActivationFunction::Sigmoid,
+              DenseActivationFunction::Tanh,
+              DenseActivationFunction::Linear };
             break;
         case 4:
             layerShapes = new size_t[layers] { 1, 3, 3, 1 };
-            functions = new ActivationFunction[layers]
-            { ActivationFunction::Linear,
-              ActivationFunction::PReLU,
-              ActivationFunction::ReLU,
-              ActivationFunction::Linear };
+            functions = new DenseActivationFunction[layers]
+            { DenseActivationFunction::Linear,
+              DenseActivationFunction::PReLU,
+              DenseActivationFunction::ReLU,
+              DenseActivationFunction::Linear };
             break;
         case 3:
             layerShapes = new size_t[layers] { 1, 3, 1 };
-            functions = new ActivationFunction[layers]
-            { ActivationFunction::Linear,
-              ActivationFunction::Maxout,
-              ActivationFunction::Linear };
+            functions = new DenseActivationFunction[layers]
+            { DenseActivationFunction::Linear,
+              DenseActivationFunction::Maxout,
+              DenseActivationFunction::Linear };
             break;
         case 2:
             layerShapes = new size_t[layers] { 1, 1 };
-            functions = new ActivationFunction[layers]
-            { ActivationFunction::Linear,
-              ActivationFunction::Linear };
+            functions = new DenseActivationFunction[layers]
+            { DenseActivationFunction::Linear,
+              DenseActivationFunction::Linear };
             break;
         case 1:
         default:
             layers = 1;
             layerShapes = new size_t[layers] { 1 };
-            functions = new ActivationFunction[layers]
-            { ActivationFunction::Maxout };
+            functions = new DenseActivationFunction[layers]
+            { DenseActivationFunction::CReLU };
             break;
     }
 
@@ -220,33 +220,39 @@ void test_signal(int layers)
     double twoPi = (2.0 * M_PI);
     double inc = 2.0 * twoPi / SAMPLES;
     int i = 0;
-    xt::xarray<int>::shape_type shape = { SAMPLES, 1 };
-    xt::xarray<double> training_x = xt::xarray<double>(shape);
-    xt::xarray<double> training_y = xt::xarray<double>(shape);
+    xt::xarray<int>::shape_type shape_x = { SAMPLES, 1 };
+    xt::xarray<double> training_x = xt::xarray<double>(shape_x);
+    xt::xarray<int>::shape_type shape_y = { SAMPLES, 1, 2 };
+    xt::xarray<double> training_y = xt::xarray<double>(shape_y);
     for (double t = -twoPi; t < twoPi; t += inc)
     {
         training_x(i, 0) = t * rescale;
         //training_y(i, 0) = t * rescale;
         //training_y(i, 0) = (0.3 * t + 0.5) * rescale;
-        training_y(i, 0) = tanh(3.0 * sin(0.5 * t + 0.5)) * rescale;
+        training_y(i, 0, 0) = tanh(3.0 * sin(0.5 * t + 0.5)) * rescale;
+        training_y(i, 0, 1) = cosh(3.0 * sin(0.5 * t + 0.5)) * rescale;
         i++;
     }
 
     // Shuffle
+    xt::xstrided_slice_vector svI({ 0, xt::ellipsis() });
+    xt::xstrided_slice_vector svJ({ 0, xt::ellipsis() });
     const size_t N = training_x.shape()[0];
     for (size_t i = N - 1; i > 0; i--)
     {
         size_t j = rand() % i;
-        double x = training_x(i, 0);
-        training_x(i, 0) = training_x(j, 0);
-        training_x(j, 0) = x;
-        double y = training_y(i, 0);
-        training_y(i, 0) = training_y(j, 0);
-        training_y(j, 0) = y;
+        svI[0] = i;
+        svJ[0] = j;
+        auto x = xt::strided_view(training_x, svI);
+        xt::strided_view(training_x, svI) = xt::strided_view(training_x, svJ);
+        xt::strided_view(training_x, svJ) = x;
+        auto y = xt::strided_view(training_y, svI);
+        xt::strided_view(training_y, svI) = xt::strided_view(training_y, svJ);
+        xt::strided_view(training_y, svJ) = y;
     }
 
-    network.feedForward(training_x);
-    //network.backPropagate(training_x, training_y);
+    //network.feedForward(training_x);
+    network.backPropagate(training_x, training_y);
 
     network.train(training_x, training_y);
 
@@ -265,43 +271,43 @@ void test_signal(int layers)
 void test_iris(int layers)
 {
     size_t* layerShapes;
-    ActivationFunction* functions;
+    DenseActivationFunction* functions;
 
     switch (layers)
     {
         case 4:
             layerShapes = new size_t[layers] { 6, 6, 6, 3 };
-            functions = new ActivationFunction[layers]
+            functions = new DenseActivationFunction[layers]
                 {
-                   ActivationFunction::Linear,
-                   ActivationFunction::LeakyReLU,
-                   ActivationFunction::Sigmoid,
-                   ActivationFunction::Linear
+                   DenseActivationFunction::Linear,
+                   DenseActivationFunction::LeakyReLU,
+                   DenseActivationFunction::Sigmoid,
+                   DenseActivationFunction::Linear
                 };
             break;
         case 3:
             layerShapes = new size_t[layers] { 6, 3, 3 };
-            functions = new ActivationFunction[layers]
+            functions = new DenseActivationFunction[layers]
                 {
-                   ActivationFunction::Linear,
-                   ActivationFunction::Sigmoid,
-                   ActivationFunction::Linear
+                   DenseActivationFunction::Linear,
+                   DenseActivationFunction::Sigmoid,
+                   DenseActivationFunction::Linear
                 };
             break;
         case 2:
             layerShapes = new size_t[layers] { 3, 3 };
-            functions = new ActivationFunction[layers]
+            functions = new DenseActivationFunction[layers]
                 {
-                   ActivationFunction::Linear,
-                   ActivationFunction::Sigmoid
+                   DenseActivationFunction::Linear,
+                   DenseActivationFunction::Sigmoid
                 };
             break;
         case 1:
         default:
             layers = 1;
             layerShapes = new size_t[layers]{ 3 };
-            functions = new ActivationFunction[layers]
-            { ActivationFunction::Linear };
+            functions = new DenseActivationFunction[layers]
+            { DenseActivationFunction::Linear };
             break;
     }
 
@@ -347,20 +353,20 @@ void test_iris(int layers)
 void test_mnist(int layers)
 {
     int* layerShapes;
-    ActivationFunction* functions;
+    DenseActivationFunction* functions;
 
     switch (layers)
     {
         case 1:
             layers = 1;
             layerShapes = new int[layers] { 1 };
-            functions = new ActivationFunction[layers]
-            { ActivationFunction::Linear };
+            functions = new DenseActivationFunction[layers]
+            { DenseActivationFunction::Linear };
             break;
         default:
             layers = 0;
             layerShapes = new int[layers] {  };
-            functions = new ActivationFunction[layers]
+            functions = new DenseActivationFunction[layers]
             {  };
             break;
     }
@@ -418,7 +424,7 @@ void test_network(network type, int layers)
 
 int main(int argc, char** argv)
 {
-    test_network(network::signal, 3);
+    test_network(network::signal, 1);
 
     //test();
 

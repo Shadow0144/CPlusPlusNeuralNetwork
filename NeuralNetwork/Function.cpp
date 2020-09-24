@@ -211,6 +211,13 @@ void Function::approximateFunction(ImDrawList* canvas, ImVec2 origin, double sca
 	}
 }
 
+std::vector<size_t> Function::getOutputShape()
+{
+	std::vector<size_t> outputShape;
+	outputShape.push_back(numUnits);
+	return outputShape;
+}
+
 void Function::draw(ImDrawList* canvas, ImVec2 origin, double scale)
 {
 	const ImColor BLACK(0.0f, 0.0f, 0.0f, 1.0f);

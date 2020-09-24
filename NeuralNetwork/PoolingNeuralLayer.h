@@ -7,11 +7,11 @@
 
 using namespace std;
 
-class DenseNeuralLayer : public NeuralLayer
+class PoolingNeuralLayer : public NeuralLayer
 {
 public:
-	DenseNeuralLayer(DenseActivationFunction function, NeuralLayer* parent, size_t numUnits);
-	~DenseNeuralLayer();
+	PoolingNeuralLayer(PoolingActivationFunction function, NeuralLayer* parent, size_t numUnits);
+	~PoolingNeuralLayer();
 
 	xt::xarray<double> feedForward(xt::xarray<double> input);
 	xt::xarray<double> backPropagate(xt::xarray<double> sigmas);
@@ -22,11 +22,11 @@ public:
 	void draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output);
 
 private:
-	DenseActivationFunction functionType;
+	PoolingActivationFunction functionType;
 	Function* activationFunction;
 	NeuralLayer* parent;
 	NeuralLayer* children;
 	std::vector<size_t> inputShape;
-	
+
 	void addChildren(NeuralLayer* children);
 };

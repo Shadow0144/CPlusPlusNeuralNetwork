@@ -20,9 +20,10 @@ CReLUFunction::CReLUFunction(size_t incomingUnits, size_t numUnits)
 	this->weights.setParametersRandom(paramShape);
 }
 
+// Returns a concatenated result of a ReLU that selects only positive results with a ReLU that selects only negative results
 xt::xarray<double> CReLUFunction::CReLU(xt::xarray<double> z)
 {
-	return xt::maximum(0.0, z);
+	return xt::stack(xt::xtuple(xt::maximum(0.0, z), xt::maximum(0.0, -z)), z.dimension());
 }
 
 xt::xarray<double> CReLUFunction::feedForward(xt::xarray<double> inputs)
@@ -34,12 +35,21 @@ xt::xarray<double> CReLUFunction::feedForward(xt::xarray<double> inputs)
 
 xt::xarray<double> CReLUFunction::backPropagate(xt::xarray<double> sigmas)
 {
-	return denseBackpropagate(sigmas * activationDerivative());
+	sigmas = xt::sum(sigmas, -1);
+	return denseBackpropagate(sigmas);
 }
 
 xt::xarray<double> CReLUFunction::activationDerivative()
 {
-	return (lastOutput > 0.0);
+	return xt::ones<double>({ 1 });
+}
+
+std::vector<size_t> CReLUFunction::getOutputShape()
+{
+	std::vector<size_t> outputShape;
+	outputShape.push_back(numUnits);
+	outputShape.push_back(2);
+	return outputShape;
 }
 
 void CReLUFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
@@ -47,6 +57,7 @@ void CReLUFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
 	Function::draw(canvas, origin, scale);
 
 	const ImColor BLACK(0.0f, 0.0f, 0.0f, 1.0f);
+	const ImColor LIGHT_GRAY(0.6f, 0.6f, 0.6f, 1.0f);
 
 	ImVec2 position(0, origin.y);
 	const double LAYER_WIDTH = NeuralLayer::getLayerWidth(numUnits, scale);
@@ -57,26 +68,25 @@ void CReLUFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
 		double slope = weights.getParameters()(0, i);
 		double inv_slope = 1.0 / abs(slope);
 		double x1, x2, y1, y2;
-		if (slope > 0.0)
-		{
-			x1 = -1.0;
-			x2 = +min(1.0, inv_slope);
-			y1 = 0.0;
-			y2 = (x2 * slope);
-		}
-		else
-		{
-			x1 = -min(1.0, inv_slope);
-			x2 = 1.0;
-			y1 = (x1 * slope);
-			y2 = 0.0;
-		}
+
+		x1 = -min(1.0, inv_slope);
+		x2 = min(1.0, inv_slope);
+		y1 = abs(x1 * slope);
+		y2 = abs(x2 * slope);
 
 		ImVec2 l_start(position.x + (DRAW_LEN * x1 * scale), position.y - (DRAW_LEN * y1 * scale));
 		ImVec2 l_mid(position.x, position.y);
 		ImVec2 l_end(position.x + (DRAW_LEN * x2 * scale), position.y - (DRAW_LEN * y2 * scale));
 
-		canvas->AddLine(l_start, l_mid, BLACK);
-		canvas->AddLine(l_mid, l_end, BLACK);
+		if (slope < 0.0)
+		{
+			canvas->AddLine(l_start, l_mid, BLACK);
+			canvas->AddLine(l_mid, l_end, LIGHT_GRAY);
+		}
+		else
+		{
+			canvas->AddLine(l_start, l_mid, LIGHT_GRAY);
+			canvas->AddLine(l_mid, l_end, BLACK);
+		}
 	}
 }

@@ -22,6 +22,8 @@ public:
 	bool getHasBias() { return hasBias; }
 	virtual void draw(ImDrawList* canvas, ImVec2 origin, double scale);
 	ParameterSet getWeights() { return weights; }
+	virtual std::vector<size_t> getOutputShape();
+
 protected:
 	size_t numUnits;
 	size_t numInputs;

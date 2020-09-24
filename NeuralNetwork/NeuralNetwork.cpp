@@ -54,7 +54,7 @@ void NeuralNetwork::addInputLayer(std::vector<size_t> inputShape)
 	layerCount++;
 }
 
-void NeuralNetwork::addDenseLayer(ActivationFunction layerFunction, size_t numUnits)
+void NeuralNetwork::addDenseLayer(DenseActivationFunction layerFunction, size_t numUnits)
 {
 	DenseNeuralLayer* layer = new DenseNeuralLayer(layerFunction, layers->at(layerCount-1), numUnits);
 	layers->push_back(layer);

@@ -181,6 +181,8 @@
     <ClCompile Include="NeuralNetwork.cpp" />
     <ClCompile Include="DenseNeuralLayer.cpp" />
     <ClCompile Include="ParameterSet.cpp" />
+    <ClCompile Include="MaxPoolingFunction.cpp" />
+    <ClCompile Include="PoolingNeuralLayer.cpp" />
     <ClCompile Include="PReLUFunction.cpp" />
     <ClCompile Include="QuadraticFunction.cpp" />
     <ClCompile Include="ReLU6Function.cpp" />
@@ -193,6 +195,7 @@
     <ClCompile Include="SoftplusFunction.cpp" />
     <ClCompile Include="AbsoluteReLUFunction.cpp" />
     <ClCompile Include="SoftsignFunction.cpp" />
+    <ClCompile Include="SqueezeNeuralLayer.cpp" />
     <ClCompile Include="Test.cpp" />
     <ClCompile Include="SwishFunction.cpp" />
     <ClCompile Include="TanhFunction.cpp" />
@@ -232,6 +235,8 @@
     <ClInclude Include="IdentityFunction.h" />
     <ClInclude Include="NeuralNetwork.h" />
     <ClInclude Include="DenseNeuralLayer.h" />
+    <ClInclude Include="MaxPoolingFunction.h" />
+    <ClInclude Include="PoolingNeuralLayer.h" />
     <ClInclude Include="PReLUFunction.h" />
     <ClInclude Include="QuadraticFunction.h" />
     <ClInclude Include="ReLU6Function.h" />
@@ -243,6 +248,7 @@
     <ClInclude Include="SoftplusFunction.h" />
     <ClInclude Include="SoftmaxNeuralLayer.h" />
     <ClInclude Include="SoftsignFunction.h" />
+    <ClInclude Include="SqueezeNeuralLayer.h" />
     <ClInclude Include="SwishFunction.h" />
     <ClInclude Include="TanhFunction.h" />
     <ClInclude Include="Test.h" />
