@@ -152,6 +152,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AveragePooling1DFunction.cpp" />
+    <ClCompile Include="AveragePooling2DFunction.cpp" />
+    <ClCompile Include="AveragePooling3DFunction.cpp" />
     <ClCompile Include="ClassifierVisualizer.cpp" />
     <ClCompile Include="CReLUFunction.cpp" />
     <ClCompile Include="Convolution2DLayer.cpp" />
@@ -203,6 +206,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AbsoluteReLUFunction.h" />
+    <ClInclude Include="AveragePooling1DFunction.h" />
+    <ClInclude Include="AveragePooling2DFunction.h" />
+    <ClInclude Include="AveragePooling3DFunction.h" />
     <ClInclude Include="ClassifierVisualizer.h" />
     <ClInclude Include="CReLUFunction.h" />
     <ClInclude Include="Convolution2DLayer.h" />

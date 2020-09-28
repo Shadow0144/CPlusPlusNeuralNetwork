@@ -204,6 +204,15 @@
     <ClCompile Include="MaxPooling2DFunction.cpp">
       <Filter>Source Files\ActivationFunction\PoolingFunction</Filter>
     </ClCompile>
+    <ClCompile Include="AveragePooling1DFunction.cpp">
+      <Filter>Source Files\ActivationFunction\PoolingFunction</Filter>
+    </ClCompile>
+    <ClCompile Include="AveragePooling2DFunction.cpp">
+      <Filter>Source Files\ActivationFunction\PoolingFunction</Filter>
+    </ClCompile>
+    <ClCompile Include="AveragePooling3DFunction.cpp">
+      <Filter>Source Files\ActivationFunction\PoolingFunction</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NeuralNetwork.h">
@@ -366,6 +375,15 @@
       <Filter>Source Files\ActivationFunction\PoolingFunction</Filter>
     </ClInclude>
     <ClInclude Include="MaxPooling3DFunction.h">
+      <Filter>Header Files\ActivationFunction\PoolingFunction</Filter>
+    </ClInclude>
+    <ClInclude Include="AveragePooling1DFunction.h">
+      <Filter>Header Files\ActivationFunction\PoolingFunction</Filter>
+    </ClInclude>
+    <ClInclude Include="AveragePooling2DFunction.h">
+      <Filter>Header Files\ActivationFunction\PoolingFunction</Filter>
+    </ClInclude>
+    <ClInclude Include="AveragePooling3DFunction.h">
       <Filter>Header Files\ActivationFunction\PoolingFunction</Filter>
     </ClInclude>
   </ItemGroup>

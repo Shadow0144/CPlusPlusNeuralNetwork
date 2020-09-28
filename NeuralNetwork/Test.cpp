@@ -1,7 +1,10 @@
 #include "Test.h"
-//#include "MaxPooling1DFunction.h"
-//#include "MaxPooling2DFunction.h"
+#include "MaxPooling1DFunction.h"
+#include "MaxPooling2DFunction.h"
 #include "MaxPooling3DFunction.h"
+#include "AveragePooling1DFunction.h"
+#include "AveragePooling2DFunction.h"
+#include "AveragePooling3DFunction.h"
 
 #pragma warning(push, 0)
 #include <iostream>
@@ -44,7 +47,7 @@ void test()
     }
     cout << endl;
 
-    MaxPooling3DFunction func(2, 1);
+    AveragePooling3DFunction func(2, 1);
 
     auto result = func.feedForward(input);
 
