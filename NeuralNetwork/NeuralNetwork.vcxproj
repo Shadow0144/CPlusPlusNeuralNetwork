@@ -175,6 +175,7 @@
     <ClCompile Include="InputNeuralLayer.cpp" />
     <ClCompile Include="LeakyReLUFunction.cpp" />
     <ClCompile Include="MaxoutFunction.cpp" />
+    <ClCompile Include="MaxPooling2DFunction.cpp" />
     <ClCompile Include="MSEFunction.cpp" />
     <ClCompile Include="NetworkVisualizer.cpp" />
     <ClCompile Include="NeuralLayer.cpp" />
@@ -226,6 +227,9 @@
     <ClInclude Include="InputNeuralLayer.h" />
     <ClInclude Include="LeakyReLUFunction.h" />
     <ClInclude Include="MaxoutFunction.h" />
+    <ClInclude Include="MaxPooling2DFunction.h" />
+    <ClCompile Include="MaxPooling3DFunction.cpp" />
+    <ClInclude Include="MaxPooling3DFunction.h" />
     <ClInclude Include="MSEFunction.h" />
     <ClInclude Include="NetworkVisualizer.h" />
     <ClInclude Include="NeuralLayer.h" />

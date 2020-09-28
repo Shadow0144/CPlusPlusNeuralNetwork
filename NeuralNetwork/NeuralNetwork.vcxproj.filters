@@ -201,6 +201,9 @@
     <ClCompile Include="MaxPooling1DFunction.cpp">
       <Filter>Source Files\ActivationFunction\PoolingFunction</Filter>
     </ClCompile>
+    <ClCompile Include="MaxPooling2DFunction.cpp">
+      <Filter>Source Files\ActivationFunction\PoolingFunction</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NeuralNetwork.h">
@@ -354,6 +357,15 @@
       <Filter>NeuralLayer</Filter>
     </ClInclude>
     <ClInclude Include="MaxPooling1DFunction.h">
+      <Filter>Header Files\ActivationFunction\PoolingFunction</Filter>
+    </ClInclude>
+    <ClInclude Include="MaxPooling2DFunction.h">
+      <Filter>Header Files\ActivationFunction\PoolingFunction</Filter>
+    </ClInclude>
+    <ClInclude Include="MaxPooling3DFunction.cpp">
+      <Filter>Source Files\ActivationFunction\PoolingFunction</Filter>
+    </ClInclude>
+    <ClInclude Include="MaxPooling3DFunction.h">
       <Filter>Header Files\ActivationFunction\PoolingFunction</Filter>
     </ClInclude>
   </ItemGroup>

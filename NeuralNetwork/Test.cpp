@@ -1,5 +1,7 @@
 #include "Test.h"
-#include "MaxPooling1DFunction.h"
+//#include "MaxPooling1DFunction.h"
+//#include "MaxPooling2DFunction.h"
+#include "MaxPooling3DFunction.h"
 
 #pragma warning(push, 0)
 #include <iostream>
@@ -13,7 +15,7 @@ using namespace std;
 
 void test()
 {
-    const int n1 = 4;
+    const int n1 = 3;
     const int n2 = 4;
     const int n3 = 6;
 
@@ -36,12 +38,13 @@ void test()
                 cout << input(i, j, k) << " ";
             }
             cout << "]";
+            cout << endl;
         }
         cout << endl;
     }
     cout << endl;
 
-    MaxPooling1DFunction func = MaxPooling1DFunction(2, 1);
+    MaxPooling3DFunction func(2, 1);
 
     auto result = func.feedForward(input);
 
@@ -57,6 +60,7 @@ void test()
                 cout << result(i, j, k) << " ";
             }
             cout << "]";
+            cout << endl;
         }
         cout << endl;
     }

@@ -175,7 +175,7 @@ void test_signal(int layers)
         case 3:
             layerShapes = new size_t[layers] { 1, 3, 1 };
             functions = new DenseActivationFunction[layers]
-            { DenseActivationFunction::Linear,
+            { DenseActivationFunction::CReLU,
               DenseActivationFunction::Maxout,
               DenseActivationFunction::Linear };
             break;
@@ -424,7 +424,7 @@ void test_network(network type, int layers)
 
 int main(int argc, char** argv)
 {
-    //test_network(network::signal, 1);
+    //test_network(network::mnist, 1);
 
     test();
 

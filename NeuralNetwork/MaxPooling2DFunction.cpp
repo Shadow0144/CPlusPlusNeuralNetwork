@@ -1,4 +1,4 @@
-#include "MaxPooling1DFunction.h"
+#include "MaxPooling2DFunction.h"
 #include "NeuralLayer.h"
 
 #pragma warning(push, 0)
@@ -10,50 +10,60 @@
 using namespace std;
 
 // TODO: Padding and dimensions
-MaxPooling1DFunction::MaxPooling1DFunction(size_t filterSize, size_t stride)
+MaxPooling2DFunction::MaxPooling2DFunction(size_t filterSize, size_t stride)
 {
 	this->hasBias = false;
 	this->filterSize = filterSize;
 	this->stride = stride;
 }
 
-xt::xarray<double> MaxPooling1DFunction::feedForward(xt::xarray<double> inputs)
+xt::xarray<double> MaxPooling2DFunction::feedForward(xt::xarray<double> inputs)
 {
 	lastInput = inputs;
 
-	const int DIM1 = inputs.dimension() - 1;
+	const int DIM1 = inputs.dimension() - 2;
+	const int DIM2 = inputs.dimension() - 1;
 	auto shape = inputs.shape();
 	shape[DIM1] = ceil((shape[DIM1] - (filterSize - 1)) / stride);
+	shape[DIM2] = ceil((shape[DIM2] - (filterSize - 1)) / stride);
 	lastOutput = xt::xarray<double>(shape);
 
 	xt::xstrided_slice_vector inputWindowView;
 	xt::xstrided_slice_vector outputWindowView;
-	for (int f = 0; f <= DIM1; f++)
+	for (int f = 0; f <= DIM2; f++)
 	{
 		inputWindowView.push_back(xt::all());
 		outputWindowView.push_back(xt::all());
 	}
 
-	int j = 0;
+	int k = 0;
+	int l = 0;
 	const int I = (inputs.shape()[DIM1] - filterSize + 1);
+	const int J = (inputs.shape()[DIM2] - filterSize + 1);
 	for (int i = 0; i < I; i += stride)
 	{
 		inputWindowView[DIM1] = xt::range(i, i + filterSize);
-		outputWindowView[DIM1] = j++; // Increment after assignment
-		auto window = xt::xarray<double>(xt::strided_view(inputs, inputWindowView));
-		xt::strided_view(lastOutput, outputWindowView) = xt::amax(window, { DIM1 });
+		outputWindowView[DIM1] = k++; // Increment after assignment
+		for (int j = 0; j < J; j += stride)
+		{
+			inputWindowView[DIM2] = xt::range(j, j + filterSize);
+			outputWindowView[DIM2] = l++; // Increment after assignment
+			auto window = xt::xarray<double>(xt::strided_view(inputs, inputWindowView));
+			xt::strided_view(lastOutput, outputWindowView) = xt::amax(window, { DIM1, DIM2 });
+		}
+		l = 0;
 	}
 
 	return lastOutput;
 }
 
-xt::xarray<double> MaxPooling1DFunction::backPropagate(xt::xarray<double> sigmas)
+xt::xarray<double> MaxPooling2DFunction::backPropagate(xt::xarray<double> sigmas)
 {
 	xt::xarray<double> sigmasPrime = xt::where(xt::equal(lastInput, lastOutput), 1, 0) * sigmas;
 	return sigmasPrime;
 }
 
-void MaxPooling1DFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
+void MaxPooling2DFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
 {
 	Function::draw(canvas, origin, scale);
 
