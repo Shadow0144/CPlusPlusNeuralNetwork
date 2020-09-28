@@ -1,6 +1,6 @@
 #include "PoolingNeuralLayer.h"
 
-#include "MaxPoolingFunction.h"
+#include "MaxPooling1DFunction.h"
 
 #include <math.h>
 #include <tuple>
@@ -18,11 +18,11 @@ PoolingNeuralLayer::PoolingNeuralLayer(PoolingActivationFunction function, Neura
 	functionType = function;
 	switch (functionType)
 	{
-		case PoolingActivationFunction::Max:
-			activationFunction = new MaxPoolingFunction(parent->getNumUnits(), numUnits);
+		case PoolingActivationFunction::Max1D:
+			activationFunction = new MaxPooling1DFunction(parent->getNumUnits(), numUnits);
 			break;
 		default:
-			activationFunction = new MaxPoolingFunction(parent->getNumUnits(), numUnits);
+			activationFunction = new MaxPooling1DFunction(parent->getNumUnits(), numUnits);
 			break;
 	}
 }

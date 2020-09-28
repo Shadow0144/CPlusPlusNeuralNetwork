@@ -18,7 +18,7 @@ MaxoutFunction::MaxoutFunction(size_t incomingUnits, size_t numUnits, size_t num
 	this->numFunctions = numFunctions;
 	this->numInputs = incomingUnits + 1; // Plus bias
 	std::vector<size_t> paramShape;
-	// incoming x (output x functions) -shaped
+	// input x (output x functions) -shaped
 	paramShape.push_back(this->numInputs);
 	paramShape.push_back(this->numUnits * this->numFunctions);
 	this->weights.setParametersRandom(paramShape);

@@ -11,7 +11,7 @@ SoftsignFunction::SoftsignFunction(size_t incomingUnits, size_t numUnits)
 	this->numUnits = numUnits;
 	this->numInputs = incomingUnits + 1; // Plus bias
 	std::vector<size_t> paramShape;
-	// incoming x current -shaped
+	// input x output -shaped
 	paramShape.push_back(this->numInputs);
 	paramShape.push_back(this->numUnits);
 	this->weights.setParametersRandom(paramShape);

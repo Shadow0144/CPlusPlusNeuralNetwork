@@ -31,7 +31,7 @@ enum class DenseActivationFunction
 
 enum class PoolingActivationFunction
 {
-	Max
+	Max1D
 };
 
 class NeuralLayer

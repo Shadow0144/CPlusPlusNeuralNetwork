@@ -181,7 +181,7 @@
     <ClCompile Include="NeuralNetwork.cpp" />
     <ClCompile Include="DenseNeuralLayer.cpp" />
     <ClCompile Include="ParameterSet.cpp" />
-    <ClCompile Include="MaxPoolingFunction.cpp" />
+    <ClCompile Include="MaxPooling1DFunction.cpp" />
     <ClCompile Include="PoolingNeuralLayer.cpp" />
     <ClCompile Include="PReLUFunction.cpp" />
     <ClCompile Include="QuadraticFunction.cpp" />
@@ -235,7 +235,7 @@
     <ClInclude Include="IdentityFunction.h" />
     <ClInclude Include="NeuralNetwork.h" />
     <ClInclude Include="DenseNeuralLayer.h" />
-    <ClInclude Include="MaxPoolingFunction.h" />
+    <ClInclude Include="MaxPooling1DFunction.h" />
     <ClInclude Include="PoolingNeuralLayer.h" />
     <ClInclude Include="PReLUFunction.h" />
     <ClInclude Include="QuadraticFunction.h" />

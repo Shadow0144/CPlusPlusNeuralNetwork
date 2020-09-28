@@ -424,9 +424,9 @@ void test_network(network type, int layers)
 
 int main(int argc, char** argv)
 {
-    test_network(network::signal, 1);
+    //test_network(network::signal, 1);
 
-    //test();
+    test();
 
     return 0;
 }

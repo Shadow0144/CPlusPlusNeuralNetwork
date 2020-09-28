@@ -195,11 +195,11 @@
     <ClCompile Include="PoolingNeuralLayer.cpp">
       <Filter>Source Files\NeuralLayer</Filter>
     </ClCompile>
-    <ClCompile Include="MaxPoolingFunction.cpp">
-      <Filter>Source Files\ActivationFunction\PoolingFunction</Filter>
-    </ClCompile>
     <ClCompile Include="SqueezeNeuralLayer.cpp">
       <Filter>Source Files\NeuralLayer</Filter>
+    </ClCompile>
+    <ClCompile Include="MaxPooling1DFunction.cpp">
+      <Filter>Source Files\ActivationFunction\PoolingFunction</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -350,11 +350,11 @@
     <ClInclude Include="PoolingNeuralLayer.h">
       <Filter>NeuralLayer</Filter>
     </ClInclude>
-    <ClInclude Include="MaxPoolingFunction.h">
-      <Filter>Header Files\ActivationFunction\PoolingFunction</Filter>
-    </ClInclude>
     <ClInclude Include="SqueezeNeuralLayer.h">
       <Filter>NeuralLayer</Filter>
+    </ClInclude>
+    <ClInclude Include="MaxPooling1DFunction.h">
+      <Filter>Header Files\ActivationFunction\PoolingFunction</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

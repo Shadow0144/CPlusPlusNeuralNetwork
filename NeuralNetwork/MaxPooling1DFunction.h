@@ -2,18 +2,19 @@
 
 #include "Function.h"
 
-// Max Pooling
-class MaxPoolingFunction : public Function
+// Max Pooling 1-D
+class MaxPooling1DFunction : public Function
 {
 public:
-	MaxPoolingFunction(size_t incomingUnits, size_t numUnits);
+	MaxPooling1DFunction(size_t filterSize, size_t stride);
 
 	xt::xarray<double> feedForward(xt::xarray<double> input);
 	xt::xarray<double> backPropagate(xt::xarray<double> sigmas);
 	void draw(ImDrawList* canvas, ImVec2 origin, double scale);
 
 private:
-	xt::xarray<double> lastOutput;
+	size_t filterSize;
+	size_t stride;
 
-	xt::xarray<double> activationDerivative();
+	xt::xarray<double> lastOutput;
 };
