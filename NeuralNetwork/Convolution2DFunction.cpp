@@ -1,4 +1,5 @@
 #include "Convolution2DFunction.h"
+#include "NeuralLayer.h"
 
 #pragma warning(push, 0)
 #include <iostream>
@@ -14,7 +15,7 @@ using namespace std;
 Convolution2DFunction::Convolution2DFunction(std::vector<size_t> convolutionShape, size_t inputChannels, size_t stride, size_t numKernels)
 {
 	this->hasBias = false;
-	this->numUnits = 1;
+	this->numUnits = numKernels;
 	this->convolutionShape = convolutionShape;
 	this->stride = stride;
 	this->inputChannels = inputChannels;
@@ -329,12 +330,34 @@ void Convolution2DFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale
 {
 	Function::draw(canvas, origin, scale);
 
-	/*const Scalar BLACK(0, 0, 0);
+	const int X = convolutionShape.at(0);
+	const int Y = convolutionShape.at(1);
 
-	Point l_start(canvas.offset.x - DRAW_LEN, canvas.offset.y - ((int)(-DRAW_LEN)));
-	Point l_end(canvas.offset.x + DRAW_LEN, canvas.offset.y - ((int)(DRAW_LEN)));
+	const double RESCALE = DRAW_LEN * scale;
+	double yHeight = 2.0 * RESCALE / Y;
+	double xWidth = 2.0 * RESCALE / X;
 
-	Function::draw(canvas);
+	auto weights = this->getWeights().getParameters();
 
-	line(canvas.canvas, l_start, l_end, BLACK, 1, LINE_8);*/
+	const double LAYER_WIDTH = NeuralLayer::getLayerWidth(numUnits, scale);
+	ImVec2 position(0, origin.y);
+	for (int n = 0; n < numUnits; n++) // TODO: Fix padding issues
+	{
+		position.x = NeuralLayer::getNeuronX(origin.x, LAYER_WIDTH, n, scale);
+		int y = RESCALE - yHeight;
+		for (int i = 0; i < Y; i++)
+		{
+			int x = -RESCALE;
+			for (int j = 0; j < X; j++)
+			{
+				float colorValue = ((float)(weights(i, j, 0, n)));
+				ImColor color(colorValue, colorValue, colorValue);
+				canvas->AddRectFilled(ImVec2(position.x + x, position.y - y),
+					ImVec2(position.x + x + xWidth, position.y - y - yHeight),
+					color);
+				x += xWidth;
+			}
+			y -= yHeight;
+		}
+	}
 }

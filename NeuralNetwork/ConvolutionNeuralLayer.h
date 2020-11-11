@@ -7,12 +7,12 @@
 
 using namespace std;
 
-class ConvolutionLayer : public NeuralLayer
+class ConvolutionNeuralLayer : public NeuralLayer
 {
 public:
-	ConvolutionLayer(ConvolutionActivationFunction function, NeuralLayer* parent, 
+	ConvolutionNeuralLayer(ConvolutionActivationFunction function, NeuralLayer* parent, 
 						size_t numKernels, std::vector<size_t> convolutionShape, size_t inputChannels, size_t stride = 1);
-	~ConvolutionLayer();
+	~ConvolutionNeuralLayer();
 
 	xt::xarray<double> feedForward(xt::xarray<double> input);
 	xt::xarray<double> backPropagate(xt::xarray<double> errors);

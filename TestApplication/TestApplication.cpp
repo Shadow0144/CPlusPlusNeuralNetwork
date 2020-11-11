@@ -504,6 +504,7 @@ void test_network(network type, int layers)
 
 void test_binary()
 {
+    // Set up the data
     ifstream in_file;
     in_file.open("mnist_binary.csv");
     auto data = xt::load_csv<double>(in_file);
@@ -519,16 +520,23 @@ void test_binary()
     xt::xarray<double> features = xt::reshape_view(xt::view(data, xt::all(), xt::range(1, _)), { N, IMG_DIM, IMG_DIM });
     features /= 255.0;
 
-    Convolution2DFunction convfunc1({ 5, 5 }, C, 1, 16); // 28x28x1 -> 24x24x16
-    MaxPooling2DFunction poolfunc1({ 24, 24 }); // 24x24x16 -> 1x1x16
-    FlattenFunction flatfunc1; // 1x1x16 -> 16
-    ReLUFunction densefunc1(16, CLASSES); // 1 -> 2
-    SoftmaxFunction softfunc1(CLASSES, -1); // 2 -> 2
+    // Create the network
+    NeuralNetwork network(true);
+    network.addInputLayer({ (size_t)IMG_DIM, (size_t)IMG_DIM, C });
+    network.addConvolutionLayer(ConvolutionActivationFunction::Convolution2D, 16, { 5, 5 }, 1);
+    network.addPoolingLayer(PoolingActivationFunction::Max2D, { 24, 24 });
+    network.addFlattenLayer(16);
+    network.addDenseLayer(DenseActivationFunction::ReLU, CLASSES);
+    network.addSoftmaxLayer(-1);
+
+    ErrorFunction* errorFunction = new CrossEntropyFunction();
+    network.setTrainingParameters(errorFunction, 100, MIN_ERROR, CONVERGENCE_E, CONVERGENCE_W);
 
     cv::Mat resultMat;
     xt::xarray<double> batch;
     xt::xarray<double> result;
 
+    // Get an initial accuracy
     double correct = 0;
     const double ACCURACY_COUNT = 100;
     for (int i = 0; i < ACCURACY_COUNT; i++)
@@ -536,11 +544,7 @@ void test_binary()
         batch = xt::strided_view(features, { i, xt::all(), xt::all() });
         batch.reshape({ 1, batch.shape()[0], batch.shape()[1], 1 });
 
-        result = convfunc1.feedForward(batch);
-        result = poolfunc1.feedForward(result);
-        result = flatfunc1.feedForward(result);
-        result = densefunc1.feedForward(result);
-        result = softfunc1.feedForward(result);
+        result = network.feedForward(batch);
 
         correct += (labels(i) == xt::argmax(result)(0)) ? 1 : 0;
     }
@@ -550,6 +554,7 @@ void test_binary()
     const int ITERATIONS = 20000;
     for (int i = 0; i < ITERATIONS; i++)
     {
+        // Setup the batch
         int batchStart = ((i + 0) * BATCH_SIZE) % N;
         int batchEnd = ((i + 1) * BATCH_SIZE) % N;
         if ((batchEnd - batchStart) != BATCH_SIZE)
@@ -568,37 +573,19 @@ void test_binary()
             batchLabels(j, labels(batchStart + j)) = 1.0;
         }
 
-        auto results = convfunc1.feedForward(batch);
-        //cv::imshow("Conv", convertToMat(results));
-        results = poolfunc1.feedForward(results);
-        //cv::imshow("Pool", convertToMat(results));
-        results = flatfunc1.feedForward(results);
-        results = densefunc1.feedForward(results);
-        results = softfunc1.feedForward(results);
-        //cv::waitKey(0);
-
-        xt::xarray<double> back = (results - batchLabels);
-        back = softfunc1.backPropagateCrossEntropy(back);
-        back = densefunc1.backPropagate(back);
-        back = flatfunc1.backPropagate(back);
-        back = poolfunc1.backPropagate(back);
-        back = convfunc1.backPropagate(back);
-
-        softfunc1.applyBackPropagate();
-        densefunc1.applyBackPropagate();
-        flatfunc1.applyBackPropagate();
-        //poolfunc1.applyBackPropagate();
-        //convfunc1.applyBackPropagate();
+        network.backPropagate(batch, batchLabels);
+        network.draw(batch, batchLabels);
 
         const int ITERATION_PRINT = 10;
         if (i % ITERATION_PRINT == (ITERATION_PRINT - 1))
         {
             std::cout << "Iteration " << (i + 1) << " complete" << endl;
-            cv::imshow("Weights", convertWeightsToMat3(convfunc1.getWeights().getParameters(), 0, 1, 0));
-            cv::waitKey(1);
+            //cv::imshow("Weights", convertWeightsToMat3(convfunc1.getWeights().getParameters(), 0, 1, 0));
+            //cv::waitKey(1);
         }
         else { }
 
+        // Show the current accuracy
         const int ACCURACY_PRINT = 100;
         if (i % ACCURACY_PRINT == (ACCURACY_PRINT - 1))
         {
@@ -608,17 +595,14 @@ void test_binary()
             {
                 batch = xt::strided_view(features, { i, xt::all(), xt::all() });
                 batch.reshape({ 1, batch.shape()[0], batch.shape()[1], 1 });
-                result = convfunc1.feedForward(batch);
-                result = poolfunc1.feedForward(result);
-                result = flatfunc1.feedForward(result);
-                result = densefunc1.feedForward(result);
-                result = softfunc1.feedForward(result);
+                result = network.feedForward(batch);
                 correct += (labels(i) == xt::argmax(result)(0)) ? 1 : 0;
             }
             std::cout << "Accuracy: " << (correct / ACCURACY_COUNT) << endl << endl;
         }
         else { }
 
+        // Show the accuracy per class
         const int SUMS_PRINT = 2000;
         if (i % SUMS_PRINT == (SUMS_PRINT - 1))
         {
@@ -633,11 +617,7 @@ void test_binary()
                     {
                         batch = xt::strided_view(features, { j, xt::all(), xt::all() });
                         batch.reshape({ 1, batch.shape()[0], batch.shape()[1], 1 });
-                        result = convfunc1.feedForward(batch);
-                        result = poolfunc1.feedForward(result);
-                        result = flatfunc1.feedForward(result);
-                        result = densefunc1.feedForward(result);
-                        result = softfunc1.feedForward(result);
+                        result = network.feedForward(batch);
                         sums += result;
                         correct += (k == xt::argmax(result)(0)) ? 1 : 0;
                         count++;
@@ -671,7 +651,7 @@ void test_layers()
     MaxPooling2DFunction poolfunc1({ 2, 2 }); // 24x24x64 -> 12x12x64
     Convolution2DFunction convfunc2({ 5, 5 }, 16, 1, 16); // 12x12x64 -> 8x8x16
     MaxPooling2DFunction poolfunc2({ 2, 2 }); // 8x8x16 -> 4x4x16
-    FlattenFunction flatfunc1; // 4x4x16 -> 256
+    FlattenFunction flatfunc1(256); // 4x4x16 -> 256
     ReLUFunction densefunc1(256, 32); // 256 -> 32
     ReLUFunction densefunc2(32, 10); // 32 -> 10
     SoftmaxFunction softfunc1(10, -1); // 10 -> 10

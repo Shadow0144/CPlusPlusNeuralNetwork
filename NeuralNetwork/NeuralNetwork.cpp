@@ -3,7 +3,9 @@
 #include "InputNeuralLayer.h"
 #include "DenseNeuralLayer.h"
 #include "SoftmaxNeuralLayer.h"
-#include "ConvolutionLayer.h"
+#include "ConvolutionNeuralLayer.h"
+#include "PoolingNeuralLayer.h"
+#include "FlattenNeuralLayer.h"
 
 #pragma warning(push, 0)
 #include <iostream>
@@ -70,7 +72,21 @@ void NeuralNetwork::addSoftmaxLayer(int axis)
 
 void NeuralNetwork::addConvolutionLayer(ConvolutionActivationFunction layerFunction, size_t numKernels, std::vector<size_t> convolutionShape, size_t stride)
 {
-	ConvolutionLayer* layer = new ConvolutionLayer(layerFunction, layers->at(layerCount - 1), numKernels, convolutionShape, stride);
+	ConvolutionNeuralLayer* layer = new ConvolutionNeuralLayer(layerFunction, layers->at(layerCount - 1), numKernels, convolutionShape, stride);
+	layers->push_back(layer);
+	layerCount++;
+}
+
+void NeuralNetwork::addPoolingLayer(PoolingActivationFunction layerFunction, std::vector<size_t> poolingShape)
+{
+	PoolingNeuralLayer* layer = new PoolingNeuralLayer(layerFunction, layers->at(layerCount - 1), poolingShape);
+	layers->push_back(layer);
+	layerCount++;
+}
+
+void NeuralNetwork::addFlattenLayer(int numOutputs)
+{
+	FlattenNeuralLayer* layer = new FlattenNeuralLayer(layers->at(layerCount - 1), numOutputs);
 	layers->push_back(layer);
 	layerCount++;
 }
@@ -309,6 +325,14 @@ void NeuralNetwork::displayClassificationEstimation()
 {
 	colors = new ImColor[3]{ ImColor(1.0f, 0.0f, 0.0f, 1.0f), ImColor(0.0f, 1.0f, 0.0f, 1.0f), ImColor(0.0f, 0.0f, 1.0f, 1.0f) };
 	visualizer->addClassificationVisualization(50, 3, colors);
+}
+
+void NeuralNetwork::draw(xt::xarray<double> inputs, xt::xarray<double> targets)
+{
+	if (drawingEnabled)
+	{
+		visualizer->draw(inputs, targets);
+	}
 }
 
 void NeuralNetwork::draw(ImDrawList* canvas, ImVec2 origin, double scale, xt::xarray<double> target_xs, xt::xarray<double> target_ys)

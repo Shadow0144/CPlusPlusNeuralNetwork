@@ -219,9 +219,6 @@
     <ClCompile Include="Convolution2DFunction.cpp">
       <Filter>Source Files\ActivationFunction\ConvolutionFunction</Filter>
     </ClCompile>
-    <ClCompile Include="ConvolutionLayer.cpp">
-      <Filter>Source Files\NeuralLayer</Filter>
-    </ClCompile>
     <ClCompile Include="Convolution3DFunction.cpp">
       <Filter>Source Files\ActivationFunction\ConvolutionFunction</Filter>
     </ClCompile>
@@ -233,6 +230,12 @@
     </ClCompile>
     <ClCompile Include="MaxPooling3DFunction.cpp">
       <Filter>Source Files\ActivationFunction\PoolingFunction</Filter>
+    </ClCompile>
+    <ClCompile Include="ConvolutionNeuralLayer.cpp">
+      <Filter>Source Files\NeuralLayer</Filter>
+    </ClCompile>
+    <ClCompile Include="FlattenNeuralLayer.cpp">
+      <Filter>Source Files\NeuralLayer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -404,9 +407,6 @@
     <ClInclude Include="Convolution1DFunction.h">
       <Filter>Header Files\ActivationFunction\ConvolutionFunction</Filter>
     </ClInclude>
-    <ClInclude Include="ConvolutionLayer.h">
-      <Filter>NeuralLayer</Filter>
-    </ClInclude>
     <ClInclude Include="Convolution3DFunction.h">
       <Filter>Header Files\ActivationFunction\ConvolutionFunction</Filter>
     </ClInclude>
@@ -415,6 +415,12 @@
     </ClInclude>
     <ClInclude Include="FlattenFunction.h">
       <Filter>Header Files\ActivationFunction</Filter>
+    </ClInclude>
+    <ClInclude Include="ConvolutionNeuralLayer.h">
+      <Filter>NeuralLayer</Filter>
+    </ClInclude>
+    <ClInclude Include="FlattenNeuralLayer.h">
+      <Filter>NeuralLayer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -5,7 +5,7 @@
 class FlattenFunction : public Function
 {
 public:
-	FlattenFunction();
+	FlattenFunction(int numOutputs); // Provide a number of outputs for later layers
 
 	xt::xarray<double> feedForward(xt::xarray<double> input);
 	xt::xarray<double> backPropagate(xt::xarray<double> sigmas);

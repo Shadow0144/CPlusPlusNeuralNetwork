@@ -1,6 +1,6 @@
 #define _USE_MATH_DEFINES
 
-#include "ConvolutionLayer.h"
+#include "ConvolutionNeuralLayer.h"
 
 #include "Convolution1DFunction.h"
 #include "Convolution2DFunction.h"
@@ -9,7 +9,7 @@
 #include <math.h>
 #include <tuple>
 
-ConvolutionLayer::ConvolutionLayer(ConvolutionActivationFunction function, NeuralLayer* parent, 
+ConvolutionNeuralLayer::ConvolutionNeuralLayer(ConvolutionActivationFunction function, NeuralLayer* parent, 
 									size_t numKernels, std::vector<size_t> convolutionShape, size_t inputChannels, size_t stride)
 {
 	this->parent = parent;
@@ -19,7 +19,7 @@ ConvolutionLayer::ConvolutionLayer(ConvolutionActivationFunction function, Neura
 		parent->addChildren(this);
 	}
 	else { }
-	this->numUnits = numUnits;
+	this->numUnits = numKernels;
 
 	functionType = function;
 	switch (functionType)
@@ -39,39 +39,39 @@ ConvolutionLayer::ConvolutionLayer(ConvolutionActivationFunction function, Neura
 	}
 }
 
-ConvolutionLayer::~ConvolutionLayer()
+ConvolutionNeuralLayer::~ConvolutionNeuralLayer()
 {
 
 }
 
-void ConvolutionLayer::addChildren(NeuralLayer* children)
+void ConvolutionNeuralLayer::addChildren(NeuralLayer* children)
 {
 	this->children = children;
 }
 
-xt::xarray<double> ConvolutionLayer::feedForward(xt::xarray<double> input)
+xt::xarray<double> ConvolutionNeuralLayer::feedForward(xt::xarray<double> input)
 {
 	return input;
 }
 
-xt::xarray<double> ConvolutionLayer::backPropagate(xt::xarray<double> sigma)
+xt::xarray<double> ConvolutionNeuralLayer::backPropagate(xt::xarray<double> sigma)
 {
 	return sigma;
 }
 
-double ConvolutionLayer::applyBackPropagate()
+double ConvolutionNeuralLayer::applyBackPropagate()
 {
 	return 0.0;
 }
 
-std::vector<size_t> ConvolutionLayer::getOutputShape()
+std::vector<size_t> ConvolutionNeuralLayer::getOutputShape()
 {
 	std::vector<size_t> outputShape;
 	outputShape.push_back(numUnits);
 	return outputShape;
 }
 
-void ConvolutionLayer::draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output)
+void ConvolutionNeuralLayer::draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output)
 {
 	const ImColor BLACK(0.0f, 0.0f, 0.0f, 1.0f);
 	const ImColor GRAY(0.3f, 0.3f, 0.3f, 1.0f);
@@ -98,6 +98,7 @@ void ConvolutionLayer::draw(ImDrawList* canvas, ImVec2 origin, double scale, boo
 	}
 
 	// Draw the activation function
+	activationFunction->draw(canvas, origin, scale);
 
 	// Draw the links to the previous neurons
 	double previousX, previousY;

@@ -15,6 +15,8 @@ using namespace std;
 MaxPooling2DFunction::MaxPooling2DFunction(std::vector<size_t> filterShape)
 {
 	this->hasBias = false;
+	this->drawAxes = false;
+	this->numUnits = 1;
 	this->filterShape = filterShape;
 }
 
@@ -176,39 +178,42 @@ xt::xarray<double> MaxPooling2DFunction::backPropagate(xt::xarray<double> sigmas
 
 void MaxPooling2DFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
 {
-	Function::draw(canvas, origin, scale);
+	Function::drawConversion(canvas, origin, scale);
 
-	const ImColor BLACK(0.0f, 0.0f, 0.0f, 1.0f);
+	const int X = filterShape.at(0);
+	const int Y = filterShape.at(1);
 
-	ImVec2 position(0, origin.y);
+	const double RESCALE = DRAW_LEN * scale * RERESCALE;
+	double yHeight = 2.0 * RESCALE / Y;
+	double xWidth = 2.0 * RESCALE / X;
+
+	const float CENTER_X = (X - 1.0f) / 2.0f;
+	const float CENTER_Y = (Y - 1.0f) / 2.0f;
+
 	const double LAYER_WIDTH = NeuralLayer::getLayerWidth(numUnits, scale);
-	for (int i = 0; i < numUnits; i++)
+	ImVec2 position(0, origin.y);
+	for (int n = 0; n < numUnits; n++) // TODO: Fix padding issues
 	{
-		position.x = NeuralLayer::getNeuronX(origin.x, LAYER_WIDTH, i, scale);
-
-		double slope = weights.getParameters()(0, i);
-		double inv_slope = 1.0 / abs(slope);
-		double x1, x2, y1, y2;
-		if (slope > 0.0)
+		// Draw left
+		position.x = NeuralLayer::getNeuronX(origin.x, LAYER_WIDTH, n, scale) - (SHIFT * scale);
+		int y = RESCALE - yHeight;
+		for (int i = 0; i < Y; i++)
 		{
-			x1 = -1.0;
-			x2 = +min(1.0, inv_slope);
-			y1 = 0.0;
-			y2 = (x2 * slope);
-		}
-		else
-		{
-			x1 = -min(1.0, inv_slope);
-			x2 = 1.0;
-			y1 = (x1 * slope);
-			y2 = 0.0;
+			int x = -RESCALE;
+			for (int j = 0; j < X; j++)
+			{
+				float colorValue = 1.0f - (((abs(CENTER_X - j) / CENTER_X)
+										+ (abs(CENTER_Y - i) / CENTER_Y)) / 2.0f);
+				ImColor color(colorValue, colorValue, colorValue);
+				canvas->AddRectFilled(ImVec2(floor(position.x + x), floor(position.y - y)),
+					ImVec2(ceil(position.x + x + xWidth), ceil(position.y - y - yHeight)),
+					color);
+				x += xWidth;
+			}
+			y -= yHeight;
 		}
 
-		ImVec2 l_start(position.x + (DRAW_LEN * x1 * scale), position.y - (DRAW_LEN * y1 * scale));
-		ImVec2 l_mid(position.x, position.y);
-		ImVec2 l_end(position.x + (DRAW_LEN * x2 * scale), position.y - (DRAW_LEN * y2 * scale));
-
-		canvas->AddLine(l_start, l_mid, BLACK);
-		canvas->AddLine(l_mid, l_end, BLACK);
+		// Draw right
+		// The blank grid is fine
 	}
 }

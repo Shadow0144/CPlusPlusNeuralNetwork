@@ -1,16 +1,11 @@
-#include "PoolingNeuralLayer.h"
+#define _USE_MATH_DEFINES
 
-#include "MaxPooling1DFunction.h"
-#include "MaxPooling2DFunction.h"
-#include "MaxPooling3DFunction.h"
-#include "AveragePooling1DFunction.h"
-#include "AveragePooling2DFunction.h"
-#include "AveragePooling3DFunction.h"
+#include "FlattenNeuralLayer.h"
 
 #include <math.h>
 #include <tuple>
 
-PoolingNeuralLayer::PoolingNeuralLayer(PoolingActivationFunction function, NeuralLayer* parent, std::vector<size_t> filterShape)
+FlattenNeuralLayer::FlattenNeuralLayer(NeuralLayer* parent, int numOutputs)
 {
 	this->parent = parent;
 	this->children = NULL;
@@ -19,65 +14,41 @@ PoolingNeuralLayer::PoolingNeuralLayer(PoolingActivationFunction function, Neura
 		parent->addChildren(this);
 	}
 	else { }
+	this->flattenFunction = new FlattenFunction(numOutputs);
 	this->numUnits = 1;
-	functionType = function;
-	switch (functionType)
-	{
-		case PoolingActivationFunction::Max1D:
-			activationFunction = new MaxPooling1DFunction(filterShape);
-			break;
-		case PoolingActivationFunction::Max2D:
-			activationFunction = new MaxPooling2DFunction(filterShape);
-			break;
-		case PoolingActivationFunction::Max3D:
-			activationFunction = new MaxPooling3DFunction(filterShape);
-			break;
-		case PoolingActivationFunction::Average1D:
-			activationFunction = new AveragePooling1DFunction(filterShape);
-			break;
-		case PoolingActivationFunction::Average2D:
-			activationFunction = new AveragePooling2DFunction(filterShape);
-			break;
-		case PoolingActivationFunction::Average3D:
-			activationFunction = new AveragePooling3DFunction(filterShape);
-			break;
-		default:
-			activationFunction = new MaxPooling1DFunction(filterShape);
-			break;
-	}
 }
 
-PoolingNeuralLayer::~PoolingNeuralLayer()
+FlattenNeuralLayer::~FlattenNeuralLayer()
 {
-	delete activationFunction;
+	delete flattenFunction;
 }
 
-void PoolingNeuralLayer::addChildren(NeuralLayer* children)
+void FlattenNeuralLayer::addChildren(NeuralLayer* children)
 {
 	this->children = children;
 }
 
-xt::xarray<double> PoolingNeuralLayer::feedForward(xt::xarray<double> input)
+xt::xarray<double> FlattenNeuralLayer::feedForward(xt::xarray<double> input)
 {
-	return activationFunction->feedForward(input);
+	return flattenFunction->feedForward(input);
 }
 
-xt::xarray<double> PoolingNeuralLayer::backPropagate(xt::xarray<double> sigmas)
+xt::xarray<double> FlattenNeuralLayer::backPropagate(xt::xarray<double> sigmas)
 {
-	return activationFunction->backPropagate(sigmas);
+	return flattenFunction->backPropagate(sigmas);
 }
 
-double PoolingNeuralLayer::applyBackPropagate()
+double FlattenNeuralLayer::applyBackPropagate()
 {
-	return activationFunction->applyBackPropagate();
+	return flattenFunction->applyBackPropagate();
 }
 
-std::vector<size_t> PoolingNeuralLayer::getOutputShape()
+std::vector<size_t> FlattenNeuralLayer::getOutputShape()
 {
-	return activationFunction->getOutputShape();
+	return flattenFunction->getOutputShape();
 }
 
-void PoolingNeuralLayer::draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output)
+void FlattenNeuralLayer::draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output)
 {
 	const ImColor BLACK(0.0f, 0.0f, 0.0f, 1.0f);
 	const ImColor GRAY(0.3f, 0.3f, 0.3f, 1.0f);
@@ -96,7 +67,7 @@ void PoolingNeuralLayer::draw(ImDrawList* canvas, ImVec2 origin, double scale, b
 	}
 
 	// Draw the activation function
-	activationFunction->draw(canvas, origin, scale);
+	flattenFunction->draw(canvas, origin, scale);
 
 	// Draw the links to the previous neurons
 	double previousX, previousY;

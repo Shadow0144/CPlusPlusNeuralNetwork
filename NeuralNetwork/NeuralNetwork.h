@@ -18,7 +18,9 @@ public:
 	void addDenseLayer(DenseActivationFunction layerFunction, size_t numUnits);
 	void addSoftmaxLayer(int axis = -1);
 	void addConvolutionLayer(ConvolutionActivationFunction layerFunction, size_t numKernels, std::vector<size_t> convolutionShape, size_t stride = 1);
-	
+	void addPoolingLayer(PoolingActivationFunction layerFunction, std::vector<size_t> poolingShape);
+	void addFlattenLayer(int numOutputs);
+
 	xt::xarray<double> feedForward(xt::xarray<double> inputs);
 	bool backPropagate(xt::xarray<double> inputs, xt::xarray<double> targets); // Single step
 	void train(xt::xarray<double> inputs, xt::xarray<double> targets); // Train until a condition is met
@@ -42,6 +44,8 @@ public:
 	void setDrawingEnabled(bool drawingEnabled);
 	void displayRegressionEstimation();
 	void displayClassificationEstimation();
+
+	void draw(xt::xarray<double> inputs, xt::xarray<double> targets);
 	void draw(ImDrawList* canvas, ImVec2 origin, double scale, xt::xarray<double> target_xs, xt::xarray<double> target_ys);
 
 private:

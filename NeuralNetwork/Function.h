@@ -21,6 +21,7 @@ public:
 	virtual double applyBackPropagate(); // Returns the sum of the change in the weights
 	bool getHasBias() { return hasBias; }
 	virtual void draw(ImDrawList* canvas, ImVec2 origin, double scale);
+	virtual void drawConversion(ImDrawList* canvas, ImVec2 origin, double scale);
 	ParameterSet getWeights() { return weights; }
 	virtual std::vector<size_t> getOutputShape();
 
@@ -29,7 +30,9 @@ protected:
 	size_t numInputs;
 	xt::xarray<double> lastInput;
 	ParameterSet weights;
-	const double DRAW_LEN = 16;
+	const double DRAW_LEN = 16.0;
+	const double RERESCALE = 0.75;
+	const double SHIFT = 16.0;
 
 	bool hasBias = false;
 	bool drawAxes = true;
