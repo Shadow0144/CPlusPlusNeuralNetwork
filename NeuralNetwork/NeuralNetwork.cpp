@@ -7,6 +7,8 @@
 #include "PoolingNeuralLayer.h"
 #include "FlattenNeuralLayer.h"
 
+#include "Test.h"
+
 #pragma warning(push, 0)
 #include <iostream>
 #include <math.h>

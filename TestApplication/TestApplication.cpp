@@ -522,11 +522,14 @@ void test_binary()
 
     // Create the network
     NeuralNetwork network(true);
-    network.addInputLayer({ (size_t)IMG_DIM, (size_t)IMG_DIM, C });
-    network.addConvolutionLayer(ConvolutionActivationFunction::Convolution2D, 16, { 5, 5 }, 1);
-    network.addPoolingLayer(PoolingActivationFunction::Max2D, { 24, 24 });
-    network.addFlattenLayer(16);
-    network.addDenseLayer(DenseActivationFunction::ReLU, CLASSES);
+    network.addInputLayer({ (size_t)IMG_DIM, (size_t)IMG_DIM, C }); // 28x28x1
+    network.addConvolutionLayer(ConvolutionActivationFunction::Convolution2D, 64, { 5, 5 }, 1); // 28x28x1 -> 24x24x64
+    network.addPoolingLayer(PoolingActivationFunction::Max2D, { 2, 2 }); // 24x24x16 -> 12x12x16
+    network.addConvolutionLayer(ConvolutionActivationFunction::Convolution2D, 16, { 5, 5 }, 1); // 12x12x16 -> 8x8x16
+    network.addPoolingLayer(PoolingActivationFunction::Max2D, { 2, 2 }); // 8x8x16 -> 4x4x16
+    network.addFlattenLayer(256); // 4x4x16 -> 256
+    network.addDenseLayer(DenseActivationFunction::ReLU, 32); // 256 -> 32
+    network.addDenseLayer(DenseActivationFunction::ReLU, CLASSES); // 32 -> 2
     network.addSoftmaxLayer(-1);
 
     ErrorFunction* errorFunction = new CrossEntropyFunction();
@@ -647,9 +650,9 @@ void test_layers()
     xt::xarray<double> features = xt::reshape_view(xt::view(data, xt::all(), xt::range(1, _)), { exampleCount, width, width });
     features /= 255.0;
 
-    Convolution2DFunction convfunc1({ 5, 5 }, 1, 1, 16); // 28x28x1 -> 24x24x64
-    MaxPooling2DFunction poolfunc1({ 2, 2 }); // 24x24x64 -> 12x12x64
-    Convolution2DFunction convfunc2({ 5, 5 }, 16, 1, 16); // 12x12x64 -> 8x8x16
+    Convolution2DFunction convfunc1({ 5, 5 }, 1, 1, 16); // 28x28x1 -> 24x24x16
+    MaxPooling2DFunction poolfunc1({ 2, 2 }); // 24x24x16 -> 12x12x16
+    Convolution2DFunction convfunc2({ 5, 5 }, 16, 1, 16); // 12x12x16 -> 8x8x16
     MaxPooling2DFunction poolfunc2({ 2, 2 }); // 8x8x16 -> 4x4x16
     FlattenFunction flatfunc1(256); // 4x4x16 -> 256
     ReLUFunction densefunc1(256, 32); // 256 -> 32

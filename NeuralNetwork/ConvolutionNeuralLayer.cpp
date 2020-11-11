@@ -51,17 +51,17 @@ void ConvolutionNeuralLayer::addChildren(NeuralLayer* children)
 
 xt::xarray<double> ConvolutionNeuralLayer::feedForward(xt::xarray<double> input)
 {
-	return input;
+	return activationFunction->feedForward(input);
 }
 
 xt::xarray<double> ConvolutionNeuralLayer::backPropagate(xt::xarray<double> sigma)
 {
-	return sigma;
+	return activationFunction->backPropagate(sigma);
 }
 
 double ConvolutionNeuralLayer::applyBackPropagate()
 {
-	return 0.0;
+	return activationFunction->applyBackPropagate();
 }
 
 std::vector<size_t> ConvolutionNeuralLayer::getOutputShape()

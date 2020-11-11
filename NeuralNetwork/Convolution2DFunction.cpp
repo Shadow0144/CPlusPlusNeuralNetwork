@@ -201,7 +201,7 @@ xt::xarray<double> Convolution2DFunction::backPropagate(xt::xarray<double> sigma
 		}
 		cout << endl;
 	}*/
-	weights.incrementDeltaParameters(ALPHA * delta);
+	weights.incrementDeltaParameters(-ALPHA * delta);
 
 	//cout << "Delta: " << xt::sum(delta)(0) << endl;
 
