@@ -6,15 +6,14 @@
 class MaxPooling2DFunction : public Function
 {
 public:
-	MaxPooling2DFunction(size_t filterSize, size_t stride);
+	MaxPooling2DFunction(std::vector<size_t> filterShape);
 
 	xt::xarray<double> feedForward(xt::xarray<double> input);
 	xt::xarray<double> backPropagate(xt::xarray<double> sigmas);
 	void draw(ImDrawList* canvas, ImVec2 origin, double scale);
 
 private:
-	size_t filterSize;
-	size_t stride;
+	std::vector<size_t> filterShape;
 
-	xt::xarray<double> lastOutput;
+	xt::xarray<double> lastInputMask;
 };

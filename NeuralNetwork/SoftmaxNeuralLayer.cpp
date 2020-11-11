@@ -44,8 +44,7 @@ xt::xarray<double> SoftmaxNeuralLayer::backPropagate(xt::xarray<double> sigmas)
 
 double SoftmaxNeuralLayer::applyBackPropagate()
 {
-	//return activationFunction->applyBackPropagate();
-	return 0;
+	return softmaxFunction->applyBackPropagate();
 }
 
 std::vector<size_t> SoftmaxNeuralLayer::getOutputShape()

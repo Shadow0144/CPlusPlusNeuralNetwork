@@ -6,15 +6,14 @@
 class MaxPooling1DFunction : public Function
 {
 public:
-	MaxPooling1DFunction(size_t filterSize, size_t stride);
+	MaxPooling1DFunction(std::vector<size_t> filterShape);
 
 	xt::xarray<double> feedForward(xt::xarray<double> input);
 	xt::xarray<double> backPropagate(xt::xarray<double> sigmas);
 	void draw(ImDrawList* canvas, ImVec2 origin, double scale);
 
 private:
-	size_t filterSize;
-	size_t stride;
+	std::vector<size_t> filterShape;
 
 	xt::xarray<double> lastOutput;
 };

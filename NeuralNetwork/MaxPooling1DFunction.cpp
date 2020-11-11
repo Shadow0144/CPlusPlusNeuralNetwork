@@ -10,35 +10,35 @@
 using namespace std;
 
 // TODO: Padding and dimensions
-MaxPooling1DFunction::MaxPooling1DFunction(size_t filterSize, size_t stride)
+MaxPooling1DFunction::MaxPooling1DFunction(std::vector<size_t> filterShape)
 {
 	this->hasBias = false;
-	this->filterSize = filterSize;
-	this->stride = stride;
+	this->filterShape = filterShape;
 }
 
 xt::xarray<double> MaxPooling1DFunction::feedForward(xt::xarray<double> inputs)
 {
 	lastInput = inputs;
 
-	const int DIM1 = inputs.dimension() - 1;
+	const int DIM1 = inputs.dimension() - 2; // First dimension
+	const int DIMC = inputs.dimension() - 1; // Channels
 	auto shape = inputs.shape();
-	shape[DIM1] = ceil((shape[DIM1] - (filterSize - 1)) / stride);
+	shape[DIM1] = ceil((shape[DIM1] - (filterShape[0] - 1)) / filterShape[0]);
 	lastOutput = xt::xarray<double>(shape);
 
 	xt::xstrided_slice_vector inputWindowView;
 	xt::xstrided_slice_vector outputWindowView;
-	for (int f = 0; f <= DIM1; f++)
+	for (int f = 0; f <= DIMC; f++)
 	{
 		inputWindowView.push_back(xt::all());
 		outputWindowView.push_back(xt::all());
 	}
 
 	int j = 0;
-	const int I = (inputs.shape()[DIM1] - filterSize + 1);
-	for (int i = 0; i < I; i += stride)
+	const int I = (inputs.shape()[DIM1] - filterShape[0] + 1);
+	for (int i = 0; i < I; i += filterShape[0])
 	{
-		inputWindowView[DIM1] = xt::range(i, i + filterSize);
+		inputWindowView[DIM1] = xt::range(i, i + filterShape[0]);
 		outputWindowView[DIM1] = j++; // Increment after assignment
 		auto window = xt::xarray<double>(xt::strided_view(inputs, inputWindowView));
 		xt::strided_view(lastOutput, outputWindowView) = xt::amax(window, { DIM1 });

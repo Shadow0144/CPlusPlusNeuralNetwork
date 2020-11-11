@@ -1,6 +1,12 @@
 #include "SigmoidFunction.h"
 #include "NeuralLayer.h"
 
+#pragma warning(push, 0)
+#include <iostream>
+#pragma warning(pop)
+
+using namespace std;
+
 SigmoidFunction::SigmoidFunction(size_t incomingUnits, size_t numUnits)
 {
 	this->hasBias = true;

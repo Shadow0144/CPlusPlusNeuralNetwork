@@ -3,11 +3,14 @@
 #include "MaxPooling1DFunction.h"
 #include "MaxPooling2DFunction.h"
 #include "MaxPooling3DFunction.h"
+#include "AveragePooling1DFunction.h"
+#include "AveragePooling2DFunction.h"
+#include "AveragePooling3DFunction.h"
 
 #include <math.h>
 #include <tuple>
 
-PoolingNeuralLayer::PoolingNeuralLayer(PoolingActivationFunction function, NeuralLayer* parent, size_t numUnits)
+PoolingNeuralLayer::PoolingNeuralLayer(PoolingActivationFunction function, NeuralLayer* parent, std::vector<size_t> filterShape)
 {
 	this->parent = parent;
 	this->children = NULL;
@@ -16,21 +19,30 @@ PoolingNeuralLayer::PoolingNeuralLayer(PoolingActivationFunction function, Neura
 		parent->addChildren(this);
 	}
 	else { }
-	this->numUnits = numUnits;
+	this->numUnits = 1;
 	functionType = function;
 	switch (functionType)
 	{
 		case PoolingActivationFunction::Max1D:
-			activationFunction = new MaxPooling1DFunction(parent->getNumUnits(), numUnits);
+			activationFunction = new MaxPooling1DFunction(filterShape);
 			break;
 		case PoolingActivationFunction::Max2D:
-			activationFunction = new MaxPooling2DFunction(parent->getNumUnits(), numUnits);
+			activationFunction = new MaxPooling2DFunction(filterShape);
 			break;
 		case PoolingActivationFunction::Max3D:
-			activationFunction = new MaxPooling3DFunction(parent->getNumUnits(), numUnits);
+			activationFunction = new MaxPooling3DFunction(filterShape);
+			break;
+		case PoolingActivationFunction::Average1D:
+			activationFunction = new AveragePooling1DFunction(filterShape);
+			break;
+		case PoolingActivationFunction::Average2D:
+			activationFunction = new AveragePooling2DFunction(filterShape);
+			break;
+		case PoolingActivationFunction::Average3D:
+			activationFunction = new AveragePooling3DFunction(filterShape);
 			break;
 		default:
-			activationFunction = new MaxPooling1DFunction(parent->getNumUnits(), numUnits);
+			activationFunction = new MaxPooling1DFunction(filterShape);
 			break;
 	}
 }

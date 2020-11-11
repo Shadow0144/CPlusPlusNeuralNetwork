@@ -10,6 +10,7 @@
 #include <xtensor/xcsv.hpp>
 #include <xtensor/xview.hpp>
 #include <xtensor/xio.hpp>
+#include <xtensor/xsort.hpp>
 #pragma warning(pop)
 
 #include "NeuralNetwork.h"
@@ -19,6 +20,18 @@
 #include "IrisDataset.h"
 
 #include "Test.h"
+
+#include <opencv2/core.hpp>
+#include <opencv2/imgcodecs.hpp>
+#include <opencv2/highgui.hpp>
+#include <opencv2/imgproc.hpp>
+
+#include "Convolution2DFunction.h"
+#include "MaxPooling2DFunction.h"
+#include "FlattenFunction.h"
+#include "ReLUFunction.h"
+#include "SigmoidFunction.h"
+#include "SoftmaxFunction.h"
 
 //#define ALL
 //#define FIVE
@@ -63,7 +76,7 @@ void print_iris_results(xt::xarray<double> predicted, xt::xarray<double> actual)
     hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
 
     int correct = 0;
-    cout << "Predicted | Actual" << endl;
+    std::cout << "Predicted | Actual" << endl;
     const int N = ((int)(predicted.shape()[0]));
     for (int i = 0; i < N; i++)
     {
@@ -90,49 +103,49 @@ void print_iris_results(xt::xarray<double> predicted, xt::xarray<double> actual)
         {
         case 0:
             SetConsoleTextAttribute(hStdout, FOREGROUND_RED | FOREGROUND_INTENSITY);
-            cout << "Setosa";
+            std::cout << "Setosa";
             break;
         case 1:
             SetConsoleTextAttribute(hStdout, FOREGROUND_GREEN | FOREGROUND_INTENSITY);
-            cout << "Versicolor";
+            std::cout << "Versicolor";
             break;
         case 2:
             SetConsoleTextAttribute(hStdout, FOREGROUND_BLUE | FOREGROUND_INTENSITY);
-            cout << "Virginica";
+            std::cout << "Virginica";
             break;
         }
         if (p == q)
         {
             SetConsoleTextAttribute(hStdout, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
-            cout << " == ";
+            std::cout << " == ";
             correct++;
         }
         else
         {
             SetConsoleTextAttribute(hStdout, FOREGROUND_RED | FOREGROUND_INTENSITY);
-            cout << " != ";
+            std::cout << " != ";
         }
         switch (q)
         {
         case 0:
             SetConsoleTextAttribute(hStdout, FOREGROUND_RED | FOREGROUND_INTENSITY);
-            cout << "Setosa";
+            std::cout << "Setosa";
             break;
         case 1:
             SetConsoleTextAttribute(hStdout, FOREGROUND_GREEN | FOREGROUND_INTENSITY);
-            cout << "Versicolor";
+            std::cout << "Versicolor";
             break;
         case 2:
             SetConsoleTextAttribute(hStdout, FOREGROUND_BLUE | FOREGROUND_INTENSITY);
-            cout << "Virginica";
+            std::cout << "Virginica";
             break;
         }
-        cout << endl;
+        std::cout << endl;
     }
     SetConsoleTextAttribute(hStdout, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
-    cout << endl;
+    std::cout << endl;
 
-    cout << "Accuracy: " << (((double)(correct)) / ((double)(N))) << endl << endl;
+    std::cout << "Accuracy: " << (((double)(correct)) / ((double)(N))) << endl << endl;
 }
 
 void test_signal(int layers)
@@ -257,13 +270,13 @@ void test_signal(int layers)
     network.train(training_x, training_y);
 
     xt::xarray<double> results = network.feedForward(training_x);
-    cout << endl;
+    std::cout << endl;
     for (int i = 0; i < SAMPLES; i += 10)
     {
-        //cout << "Predicted: " << results(i, 0, 0) << " , " << results(i, 1, 0) << " actual: " << training_y(i, 0, 0) << " , " << training_y(i, 1, 0) << endl;
-        cout << "Predicted: " << results(i, 0) << " actual: " << training_y(i, 0) << endl;
+        //std::cout << "Predicted: " << results(i, 0, 0) << " , " << results(i, 1, 0) << " actual: " << training_y(i, 0, 0) << " , " << training_y(i, 1, 0) << endl;
+        std::cout << "Predicted: " << results(i, 0) << " actual: " << training_y(i, 0) << endl;
     }
-    cout << endl;
+    std::cout << endl;
 
     system("pause");
 }
@@ -336,7 +349,7 @@ void test_iris(int layers)
 
     xt::xarray<double> irisPredictions = network.feedForward(irisFeatures);
 
-    cout << "Training on Iris Dataset" << endl << endl;
+    std::cout << "Training on Iris Dataset" << endl << endl;
 
     //network.setBatchSize(30);
 
@@ -379,7 +392,7 @@ void test_mnist(int layers)
     network.setTrainingParameters(errorFunction, MAX_ITERATIONS, MIN_ERROR, CONVERGENCE_E, CONVERGENCE_W);
 
     network.addInputLayer(inputShape);
-    network.addConvolution2DLayer(10, convolutionShape, stride);
+    network.addConvolutionLayer(ConvolutionActivationFunction::Convolution2D, 10, convolutionShape, stride);
 
     ifstream in_file;
     in_file.open("mnist_mini.csv");
@@ -394,6 +407,73 @@ void test_mnist(int layers)
     //cout << xt::view(converted, 0, xt::all(), xt::all()) << endl;
 
     system("pause");
+}
+
+cv::Mat convertToMat(xt::xarray<double> xtensor)
+{
+    if (xtensor.dimension() == 2)
+    {
+        xtensor.reshape({ 1, xtensor.shape()[0], xtensor.shape()[1], 1 });
+    }
+    else if (xtensor.dimension() == 3)
+    {
+        xtensor.reshape({ 1, xtensor.shape()[0], xtensor.shape()[1], xtensor.shape()[2] });
+    }
+    else { }
+    const int SIZE = xtensor.shape()[1];
+    cv::Mat mat(SIZE, SIZE, CV_64F);
+    for (int i = 0; i < SIZE; i++)
+    {
+        for (int j = 0; j < SIZE; j++)
+        {
+            mat.at<double>(i, j) = xtensor(0, i, j, 0);
+        }
+    }
+    const int R = 10;
+    cv::resize(mat, mat, cv::Size(SIZE * R, SIZE * R));
+    return mat;
+}
+
+// For weights
+cv::Mat convertWeightsToMat3(xt::xarray<double> xtensor, int filter = 0, int numChannels = 1, int kernel = 0)
+{
+    auto tensor = xt::strided_view(xtensor, { xt::all(), xt::all(), xt::range(filter, filter + numChannels), kernel });
+    const int SIZE = tensor.shape()[0];
+    cv::Mat mat = cv::Mat::zeros(SIZE, SIZE, CV_64FC3);
+    for (int i = 0; i < SIZE; i++)
+    {
+        for (int j = 0; j < SIZE; j++)
+        {
+            for (int c = 0; c < numChannels; c++)
+            {
+                mat.at<cv::Vec3d>(i, j)[c] = tensor(i, j, c);
+            }
+        }
+    }
+    const int R = 10;
+    cv::resize(mat, mat, cv::Size(SIZE * R, SIZE * R));
+    return mat;
+}
+
+cv::Mat convertToMat3(xt::xarray<double> xtensor, int num = 0, int startChannel = 0, int numChannels = 1)
+{
+    print_dims(xtensor);
+    auto tensor = xt::strided_view(xtensor, { num, xt::all(), xt::all(), xt::range(startChannel, startChannel + numChannels) });
+    const int SIZE = tensor.shape()[0];
+    cv::Mat mat(SIZE, SIZE, CV_64FC3);
+    for (int i = 0; i < SIZE; i++)
+    {
+        for (int j = 0; j < SIZE; j++)
+        {
+            for (int c = 0; c < numChannels; c++)
+            {
+                mat.at<cv::Vec3d>(i, j)[c] = tensor(i, j, c);
+            }
+        }
+    }
+    const int R = 10;
+    cv::resize(mat, mat, cv::Size(SIZE * R, SIZE * R));
+    return mat;
 }
 
 enum class network
@@ -422,11 +502,402 @@ void test_network(network type, int layers)
     }
 }
 
+void test_binary()
+{
+    ifstream in_file;
+    in_file.open("mnist_binary.csv");
+    auto data = xt::load_csv<double>(in_file);
+    in_file.close();
+
+    const int N = ((int)(data.shape()[0])); // Number of examples
+    const int IMG_DIM = sqrt((int)(data.shape()[1])); // 28 x 28
+    const int C = 1;
+
+    const int CLASSES = 2;
+    
+    xt::xarray<double> labels = xt::col(data, 0);
+    xt::xarray<double> features = xt::reshape_view(xt::view(data, xt::all(), xt::range(1, _)), { N, IMG_DIM, IMG_DIM });
+    features /= 255.0;
+
+    Convolution2DFunction convfunc1({ 5, 5 }, C, 1, 16); // 28x28x1 -> 24x24x16
+    MaxPooling2DFunction poolfunc1({ 24, 24 }); // 24x24x16 -> 1x1x16
+    FlattenFunction flatfunc1; // 1x1x16 -> 16
+    ReLUFunction densefunc1(16, CLASSES); // 1 -> 2
+    SoftmaxFunction softfunc1(CLASSES, -1); // 2 -> 2
+
+    cv::Mat resultMat;
+    xt::xarray<double> batch;
+    xt::xarray<double> result;
+
+    double correct = 0;
+    const double ACCURACY_COUNT = 100;
+    for (int i = 0; i < ACCURACY_COUNT; i++)
+    {
+        batch = xt::strided_view(features, { i, xt::all(), xt::all() });
+        batch.reshape({ 1, batch.shape()[0], batch.shape()[1], 1 });
+
+        result = convfunc1.feedForward(batch);
+        result = poolfunc1.feedForward(result);
+        result = flatfunc1.feedForward(result);
+        result = densefunc1.feedForward(result);
+        result = softfunc1.feedForward(result);
+
+        correct += (labels(i) == xt::argmax(result)(0)) ? 1 : 0;
+    }
+    cout << "Initial Accuracy: " << (correct / ACCURACY_COUNT) << endl << endl;
+
+    const int BATCH_SIZE = 20;
+    const int ITERATIONS = 20000;
+    for (int i = 0; i < ITERATIONS; i++)
+    {
+        int batchStart = ((i + 0) * BATCH_SIZE) % N;
+        int batchEnd = ((i + 1) * BATCH_SIZE) % N;
+        if ((batchEnd - batchStart) != BATCH_SIZE)
+        {
+            batchEnd = N - 1;
+        }
+        else { }
+        int batchLength = batchEnd - batchStart;
+
+        batch = xt::strided_view(features, { xt::range(batchStart, batchEnd), xt::ellipsis() });
+        batch.reshape({ batchLength, IMG_DIM, IMG_DIM, C });
+
+        xt::xarray<double> batchLabels = xt::zeros<double>({ batchLength, CLASSES });
+        for (int j = 0; j < batchLength; j++)
+        {
+            batchLabels(j, labels(batchStart + j)) = 1.0;
+        }
+
+        auto results = convfunc1.feedForward(batch);
+        //cv::imshow("Conv", convertToMat(results));
+        results = poolfunc1.feedForward(results);
+        //cv::imshow("Pool", convertToMat(results));
+        results = flatfunc1.feedForward(results);
+        results = densefunc1.feedForward(results);
+        results = softfunc1.feedForward(results);
+        //cv::waitKey(0);
+
+        xt::xarray<double> back = (results - batchLabels);
+        back = softfunc1.backPropagateCrossEntropy(back);
+        back = densefunc1.backPropagate(back);
+        back = flatfunc1.backPropagate(back);
+        back = poolfunc1.backPropagate(back);
+        back = convfunc1.backPropagate(back);
+
+        softfunc1.applyBackPropagate();
+        densefunc1.applyBackPropagate();
+        flatfunc1.applyBackPropagate();
+        //poolfunc1.applyBackPropagate();
+        //convfunc1.applyBackPropagate();
+
+        const int ITERATION_PRINT = 10;
+        if (i % ITERATION_PRINT == (ITERATION_PRINT - 1))
+        {
+            std::cout << "Iteration " << (i + 1) << " complete" << endl;
+            cv::imshow("Weights", convertWeightsToMat3(convfunc1.getWeights().getParameters(), 0, 1, 0));
+            cv::waitKey(1);
+        }
+        else { }
+
+        const int ACCURACY_PRINT = 100;
+        if (i % ACCURACY_PRINT == (ACCURACY_PRINT - 1))
+        {
+            correct = 0.0;
+            std::cout << endl;
+            for (int i = 0; i < ACCURACY_COUNT; i++)
+            {
+                batch = xt::strided_view(features, { i, xt::all(), xt::all() });
+                batch.reshape({ 1, batch.shape()[0], batch.shape()[1], 1 });
+                result = convfunc1.feedForward(batch);
+                result = poolfunc1.feedForward(result);
+                result = flatfunc1.feedForward(result);
+                result = densefunc1.feedForward(result);
+                result = softfunc1.feedForward(result);
+                correct += (labels(i) == xt::argmax(result)(0)) ? 1 : 0;
+            }
+            std::cout << "Accuracy: " << (correct / ACCURACY_COUNT) << endl << endl;
+        }
+        else { }
+
+        const int SUMS_PRINT = 2000;
+        if (i % SUMS_PRINT == (SUMS_PRINT - 1))
+        {
+            for (int k = 0; k < CLASSES; k++)
+            {
+                xt::xarray<double> sums = xt::zeros<double>({ 1, CLASSES });
+                correct = 0.0;
+                double count = 0.0;
+                for (int j = 0; j < ACCURACY_COUNT; j++)
+                {
+                    if (labels(j) == k)
+                    {
+                        batch = xt::strided_view(features, { j, xt::all(), xt::all() });
+                        batch.reshape({ 1, batch.shape()[0], batch.shape()[1], 1 });
+                        result = convfunc1.feedForward(batch);
+                        result = poolfunc1.feedForward(result);
+                        result = flatfunc1.feedForward(result);
+                        result = densefunc1.feedForward(result);
+                        result = softfunc1.feedForward(result);
+                        sums += result;
+                        correct += (k == xt::argmax(result)(0)) ? 1 : 0;
+                        count++;
+                    }
+                }
+                sums /= count;
+                cout << "Accuracy: " << k << ": " << (correct / count) << endl;
+                cout << "Sums: " << k << ": ";
+                for (int n = 0; n < CLASSES; n++) cout << sums(0, n) << " ";
+                cout << endl;
+            }
+            std::cout << endl;
+        }
+        else { }
+    }
+}
+
+void test_layers()
+{
+    ifstream in_file;
+    in_file.open("mnist_test.csv");
+    auto data = xt::load_csv<double>(in_file);
+    in_file.close();
+    int exampleCount = ((int)(data.shape()[0])); // Number of examples
+    int width = sqrt((int)(data.shape()[1])); // 28 x 28
+    auto classes = xt::col(data, 0);
+    xt::xarray<double> features = xt::reshape_view(xt::view(data, xt::all(), xt::range(1, _)), { exampleCount, width, width });
+    features /= 255.0;
+
+    Convolution2DFunction convfunc1({ 5, 5 }, 1, 1, 16); // 28x28x1 -> 24x24x64
+    MaxPooling2DFunction poolfunc1({ 2, 2 }); // 24x24x64 -> 12x12x64
+    Convolution2DFunction convfunc2({ 5, 5 }, 16, 1, 16); // 12x12x64 -> 8x8x16
+    MaxPooling2DFunction poolfunc2({ 2, 2 }); // 8x8x16 -> 4x4x16
+    FlattenFunction flatfunc1; // 4x4x16 -> 256
+    ReLUFunction densefunc1(256, 32); // 256 -> 32
+    ReLUFunction densefunc2(32, 10); // 32 -> 10
+    SoftmaxFunction softfunc1(10, -1); // 10 -> 10
+
+    xt::xarray<double> example;
+    cv::Mat resultMat;
+    xt::xarray<double> result;
+
+    double correct = 0;
+    const double CASES = 100;
+    for (int i = 0; i < CASES; i++)
+    {
+        example = xt::strided_view(features, { i, xt::all(), xt::all() });
+        example.reshape({ 1, example.shape()[0], example.shape()[1], 1 });
+
+        result = convfunc1.feedForward(example);
+        //cv::imshow("C1", convertToMat3(result, 0, 0, 3));
+        result = poolfunc1.feedForward(result);
+        result = convfunc2.feedForward(result);
+        //cv::imshow("C2", convertToMat3(result, 0, 0, 3));
+        result = poolfunc2.feedForward(result);
+        result = flatfunc1.feedForward(result);
+        result = densefunc1.feedForward(result);
+        result = densefunc2.feedForward(result);
+        result = softfunc1.feedForward(result);
+
+        //std::cout << classes(i) << ": " << xt::argmax(result) << endl;
+        correct += (classes(i) == xt::argmax(result)(0)) ? 1 : 0;
+    }
+    cout << "Accuracy: " << (correct / CASES) << endl << endl;
+
+    size_t batchSize = 20;
+    const int ITERATIONS = 20000;
+    int len = classes.shape()[0];
+    for (int i = 0; i < ITERATIONS; i++)
+    {
+        xt::xarray<double> answers = xt::zeros<double>({ (int)batchSize, 10 });
+        for (int j = 0; j < batchSize; j++)
+        {
+            answers(j, classes((i * batchSize + j) % len)) = 1.0;
+        }
+
+        xt::xarray<double> examples = xt::strided_view(features, { xt::range((i * batchSize) % len, ((i + 1) * batchSize) % len), xt::ellipsis() });
+        examples.reshape({ (int)batchSize, (int)(width), (int)(width), 1 });
+
+        //cv::imshow("Example", convertToMat(examples));
+        auto results = convfunc1.feedForward(examples);
+        //cv::imshow("C1", convertToMat3(results, 0, 0, 3));
+        results = poolfunc1.feedForward(results);
+        results = convfunc2.feedForward(results);
+        //cv::imshow("C2", convertToMat3(results, 0, 0, 3));
+        results = poolfunc2.feedForward(results);
+        results = flatfunc1.feedForward(results);
+        //for (int i = 0; (i < results.shape()[1] && i < 20); i++)
+        //{
+        //    cout << results(0, i) << " ";
+        //}
+        //cout << endl;
+        results = densefunc1.feedForward(results);
+        results = densefunc2.feedForward(results);
+        results = softfunc1.feedForward(results);
+        //std::cout << "Waiting..." << endl;
+        //cv::waitKey(1);
+        //std::cout << "Continuing..." << endl;
+
+        xt::xarray<double> back = (results - answers);
+
+        /*for (int j = 0; j < batchSize; j++)
+        {
+            for (int k = 0; k < 10; k++)
+            {
+                cout << back(j, k) << " ";
+            }
+            cout << endl;
+        }*/
+
+        back = softfunc1.backPropagateCrossEntropy(back);
+        back = densefunc2.backPropagate(back);
+        back = densefunc1.backPropagate(back);
+        /*back = flatfunc1.backPropagate(back);
+        back = poolfunc2.backPropagate(back);
+        back = convfunc2.backPropagate(back);
+        back = poolfunc1.backPropagate(back);
+        back = convfunc1.backPropagate(back);*/
+
+        /*cout << "Delta2: " << endl;
+        xt::xarray<double> ddf2 = densefunc2.getWeights().getDeltaParameters();
+        for (int i = 0; i < ddf2.shape()[0]; i++)
+        {
+            for (int j = 0; j < ddf2.shape()[1]; j++)
+            {
+                cout << ddf2(i, j) << " ";
+            }
+            cout << endl;
+        }*/
+
+        /*cout << "Delta1: " << endl;
+        xt::xarray<double> ddf1 = densefunc1.getWeights().getDeltaParameters();
+        for (int i = 0; i < ddf1.shape()[0]; i++)
+        {
+            for (int j = 0; j < ddf1.shape()[1]; j++)
+            {
+                cout << ddf1(i, j) << " ";
+            }
+            cout << endl;
+        }*/
+
+        softfunc1.applyBackPropagate();
+        densefunc2.applyBackPropagate();
+        densefunc1.applyBackPropagate();
+        flatfunc1.applyBackPropagate();
+        poolfunc2.applyBackPropagate();
+        convfunc2.applyBackPropagate();
+        poolfunc1.applyBackPropagate();
+        convfunc1.applyBackPropagate();
+
+        const int ITERATION_PRINT = 100;
+        if (i % ITERATION_PRINT == (ITERATION_PRINT - 1))
+        {
+            std::cout << "Iteration " << (i + 1) << " complete" << endl;
+        }
+        else { }
+
+        const int ACCURACY_PRINT = 100;
+        if (i % ACCURACY_PRINT == (ACCURACY_PRINT-1))
+        {
+            correct = 0.0;
+            std::cout << endl;
+            for (int i = 0; i < CASES; i++)
+            {
+                example = xt::strided_view(features, { i, xt::all(), xt::all() });
+                example.reshape({ 1, example.shape()[0], example.shape()[1], 1 });
+                result = convfunc1.feedForward(example);
+                result = poolfunc1.feedForward(result);
+                result = convfunc2.feedForward(result);
+                result = poolfunc2.feedForward(result);
+                result = flatfunc1.feedForward(result);
+                result = densefunc1.feedForward(result);
+                result = densefunc2.feedForward(result);
+                result = softfunc1.feedForward(result);
+                correct += (classes(i) == xt::argmax(result)(0)) ? 1 : 0;
+            }
+            std::cout << "Accuracy: " << (correct / CASES) << endl << endl;
+        }
+        else { }
+
+        const int SUMS_PRINT = 2000;
+        if (i % SUMS_PRINT == (SUMS_PRINT-1))
+        {
+            for (int k = 0; k < 10; k++)
+            {
+                xt::xarray<double> sums = xt::zeros<double>({ 1, 10 });
+                correct = 0.0;
+                double count = 0.0;
+                for (int j = 0; j < CASES; j++)
+                {
+                    if (classes(j) == k)
+                    {
+                        example = xt::strided_view(features, { j, xt::all(), xt::all() });
+                        example.reshape({ 1, example.shape()[0], example.shape()[1], 1 });
+                        result = convfunc1.feedForward(example);
+                        result = poolfunc1.feedForward(result);
+                        result = convfunc2.feedForward(result);
+                        result = poolfunc2.feedForward(result);
+                        result = flatfunc1.feedForward(result);
+                        result = densefunc1.feedForward(result);
+                        result = densefunc2.feedForward(result);
+                        result = softfunc1.feedForward(result);
+                        sums += result;
+                        correct += (k == xt::argmax(result)(0)) ? 1 : 0;
+                        count++;
+                    }
+                }
+                sums /= count;
+                cout << "Accuracy: " << k << ": " << (correct / count) << endl;
+                cout << "Sums: " << k << ": ";
+                for (int n = 0; n < 10; n++) cout << sums(0, n) << " ";
+                cout << endl;
+            }
+            std::cout << endl;
+        }
+        else { }
+    }
+
+    correct = 0;
+    std::cout << endl;
+    for (int i = 0; i < CASES; i++)
+    {
+        example = xt::strided_view(features, { i, xt::all(), xt::all() });
+        example.reshape({ 1, example.shape()[0], example.shape()[1], 1 });
+
+        result = convfunc1.feedForward(example);
+        //cv::imshow("C1", convertToMat3(result, 0, 0, 3));
+        result = poolfunc1.feedForward(result);
+        result = convfunc2.feedForward(result);
+        //cv::imshow("C2", convertToMat3(result, 0, 0, 3));
+        result = poolfunc2.feedForward(result);
+        result = flatfunc1.feedForward(result);
+        result = densefunc1.feedForward(result);
+        result = densefunc2.feedForward(result);
+        result = softfunc1.feedForward(result);
+
+        //std::cout << classes(i) << ": " << xt::argmax(result) << endl;
+        correct += (classes(i) == xt::argmax(result)(0)) ? 1 : 0;
+    }
+    cout << "Accuracy: " << (correct / CASES) << endl;
+
+    result = convfunc2.getWeights().getParameters();
+    for (int i = 0; i < 10; i++)
+    {
+        resultMat = convertWeightsToMat3(result, 0, 1, i);
+        //cv::imshow("Weight-"+i, resultMat);
+    }
+    std::cout << "Waiting..." << endl;
+    //cv::waitKey();
+    std::cout << "Continuing..." << endl;
+    system("pause");
+}
+
 int main(int argc, char** argv)
 {
-    //test_network(network::mnist, 1);
+    //test_network(network::iris, 1);
 
-    test();
+    //test_layers();
+
+    test_binary();
 
     return 0;
 }

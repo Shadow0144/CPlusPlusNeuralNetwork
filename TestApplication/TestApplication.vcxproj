@@ -88,7 +88,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\NeuralNetwork;$(XTL_PATH);$(XTENSOR_PATH);$(EIGEN_PATH);$(SDL2_DIR)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\NeuralNetwork;$(XTL_PATH);$(XTENSOR_PATH);$(EIGEN_PATH);$(SDL2_DIR)\include;$(OPENCV_DIR)\..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -105,7 +105,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\NeuralNetwork;$(XTL_PATH);$(XTENSOR_PATH);$(EIGEN_PATH);$(SDL2_DIR)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\NeuralNetwork;$(XTL_PATH);$(XTENSOR_PATH);$(EIGEN_PATH);$(SDL2_DIR)\include;$(OPENCV_DIR)\..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -122,13 +122,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\NeuralNetwork;$(XTL_PATH);$(XTENSOR_PATH);$(EIGEN_PATH);$(SDL2_DIR)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\NeuralNetwork;$(XTL_PATH);$(XTENSOR_PATH);$(EIGEN_PATH);$(SDL2_DIR)\include;$(OPENCV_DIR)\..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>C:\SDL2\SDL2-2.0.12\lib\x64;</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;..\x64\Debug\NeuralNetworkd.lib;$(SDL2_DIR)\lib\x64\SDL2.lib;$(SDL2_DIR)\lib\x64\SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;..\x64\Debug\NeuralNetworkd.lib;$(SDL2_DIR)\lib\x64\SDL2.lib;$(SDL2_DIR)\lib\x64\SDL2main.lib;$(OPENCV_DIR)\lib\opencv_world430d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -139,7 +139,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\NeuralNetwork;$(XTL_PATH);$(XTENSOR_PATH);$(EIGEN_PATH);$(SDL2_DIR)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\NeuralNetwork;$(XTL_PATH);$(XTENSOR_PATH);$(EIGEN_PATH);$(SDL2_DIR)\include;$(OPENCV_DIR)\..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -147,7 +147,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>C:\SDL2\SDL2-2.0.12\lib\x64;</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;..\x64\Release\NeuralNetwork.lib;$(SDL2_DIR)\lib\x64\SDL2.lib;$(SDL2_DIR)\lib\x64\SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;..\x64\Release\NeuralNetwork.lib;$(SDL2_DIR)\lib\x64\SDL2.lib;$(SDL2_DIR)\lib\x64\SDL2main.lib;$(OPENCV_DIR)\lib\opencv_world430.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -168,6 +168,16 @@
       <FileType>Document</FileType>
     </CopyFileToFolders>
     <CopyFileToFolders Include="data\mnist_train.csv">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="data\mnist_dev.csv">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="data\mnist_binary.csv">
       <FileType>Document</FileType>
     </CopyFileToFolders>
   </ItemGroup>

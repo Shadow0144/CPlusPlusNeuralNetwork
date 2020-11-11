@@ -58,6 +58,12 @@
     <Filter Include="Header Files\ActivationFunction\PoolingFunction">
       <UniqueIdentifier>{9c40a60e-7172-4416-94af-5300109e500b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\ActivationFunction\ConvolutionFunction">
+      <UniqueIdentifier>{aa53d764-29a6-4741-8787-b6e8ba496a91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ActivationFunction\ConvolutionFunction">
+      <UniqueIdentifier>{377ca32e-3272-4f08-84a0-76e63e05f280}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="NeuralNetwork.cpp">
@@ -119,12 +125,6 @@
     </ClCompile>
     <ClCompile Include="SoftmaxNeuralLayer.cpp">
       <Filter>Source Files\NeuralLayer</Filter>
-    </ClCompile>
-    <ClCompile Include="Convolution2DLayer.cpp">
-      <Filter>Source Files\NeuralLayer</Filter>
-    </ClCompile>
-    <ClCompile Include="Convolution2DFunction.cpp">
-      <Filter>Source Files\ActivationFunction</Filter>
     </ClCompile>
     <ClCompile Include="AbsoluteReLUFunction.cpp">
       <Filter>Source Files\ActivationFunction\DenseFunction</Filter>
@@ -213,6 +213,27 @@
     <ClCompile Include="AveragePooling3DFunction.cpp">
       <Filter>Source Files\ActivationFunction\PoolingFunction</Filter>
     </ClCompile>
+    <ClCompile Include="Convolution1DFunction.cpp">
+      <Filter>Source Files\ActivationFunction\ConvolutionFunction</Filter>
+    </ClCompile>
+    <ClCompile Include="Convolution2DFunction.cpp">
+      <Filter>Source Files\ActivationFunction\ConvolutionFunction</Filter>
+    </ClCompile>
+    <ClCompile Include="ConvolutionLayer.cpp">
+      <Filter>Source Files\NeuralLayer</Filter>
+    </ClCompile>
+    <ClCompile Include="Convolution3DFunction.cpp">
+      <Filter>Source Files\ActivationFunction\ConvolutionFunction</Filter>
+    </ClCompile>
+    <ClCompile Include="SqueezeFunction.cpp">
+      <Filter>Source Files\ActivationFunction</Filter>
+    </ClCompile>
+    <ClCompile Include="FlattenFunction.cpp">
+      <Filter>Source Files\ActivationFunction</Filter>
+    </ClCompile>
+    <ClCompile Include="MaxPooling3DFunction.cpp">
+      <Filter>Source Files\ActivationFunction\PoolingFunction</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NeuralNetwork.h">
@@ -286,12 +307,6 @@
     </ClInclude>
     <ClInclude Include="SoftmaxNeuralLayer.h">
       <Filter>NeuralLayer</Filter>
-    </ClInclude>
-    <ClInclude Include="Convolution2DLayer.h">
-      <Filter>NeuralLayer</Filter>
-    </ClInclude>
-    <ClInclude Include="Convolution2DFunction.h">
-      <Filter>Header Files\ActivationFunction</Filter>
     </ClInclude>
     <ClInclude Include="AbsoluteReLUFunction.h">
       <Filter>Header Files\ActivationFunction\DenseFunction</Filter>
@@ -371,9 +386,6 @@
     <ClInclude Include="MaxPooling2DFunction.h">
       <Filter>Header Files\ActivationFunction\PoolingFunction</Filter>
     </ClInclude>
-    <ClInclude Include="MaxPooling3DFunction.cpp">
-      <Filter>Source Files\ActivationFunction\PoolingFunction</Filter>
-    </ClInclude>
     <ClInclude Include="MaxPooling3DFunction.h">
       <Filter>Header Files\ActivationFunction\PoolingFunction</Filter>
     </ClInclude>
@@ -385,6 +397,24 @@
     </ClInclude>
     <ClInclude Include="AveragePooling3DFunction.h">
       <Filter>Header Files\ActivationFunction\PoolingFunction</Filter>
+    </ClInclude>
+    <ClInclude Include="Convolution2DFunction.h">
+      <Filter>Header Files\ActivationFunction\ConvolutionFunction</Filter>
+    </ClInclude>
+    <ClInclude Include="Convolution1DFunction.h">
+      <Filter>Header Files\ActivationFunction\ConvolutionFunction</Filter>
+    </ClInclude>
+    <ClInclude Include="ConvolutionLayer.h">
+      <Filter>NeuralLayer</Filter>
+    </ClInclude>
+    <ClInclude Include="Convolution3DFunction.h">
+      <Filter>Header Files\ActivationFunction\ConvolutionFunction</Filter>
+    </ClInclude>
+    <ClInclude Include="SqueezeFunction.h">
+      <Filter>Header Files\ActivationFunction</Filter>
+    </ClInclude>
+    <ClInclude Include="FlattenFunction.h">
+      <Filter>Header Files\ActivationFunction</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

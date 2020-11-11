@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Data">
+      <UniqueIdentifier>{572e026f-e11d-49de-af12-bcff4cd47d6e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestApplication.cpp">
@@ -20,10 +23,24 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <CopyFileToFolders Include="data\iris.dat" />
-    <CopyFileToFolders Include="data\mnist_mini.csv" />
-    <CopyFileToFolders Include="data\mnist_test.csv" />
-    <CopyFileToFolders Include="data\mnist_train.csv" />
+    <CopyFileToFolders Include="data\iris.dat">
+      <Filter>Data</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="data\mnist_dev.csv">
+      <Filter>Data</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="data\mnist_mini.csv">
+      <Filter>Data</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="data\mnist_test.csv">
+      <Filter>Data</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="data\mnist_train.csv">
+      <Filter>Data</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="data\mnist_binary.csv">
+      <Filter>Data</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="IrisDataset.h">

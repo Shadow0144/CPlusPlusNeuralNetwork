@@ -10,6 +10,8 @@ public:
 
 	xt::xarray<double> feedForward(xt::xarray<double> input);
 	xt::xarray<double> backPropagate(xt::xarray<double> sigmas);
+	// Special case where the error function is cross entropy
+	xt::xarray<double> backPropagateCrossEntropy(xt::xarray<double> sigmas);
 	void draw(ImDrawList* canvas, ImVec2 origin, double scale);
 
 private:

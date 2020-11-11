@@ -10,7 +10,7 @@ using namespace std;
 class PoolingNeuralLayer : public NeuralLayer
 {
 public:
-	PoolingNeuralLayer(PoolingActivationFunction function, NeuralLayer* parent, size_t numUnits);
+	PoolingNeuralLayer(PoolingActivationFunction function, NeuralLayer* parent, std::vector<size_t> filterShape);
 	~PoolingNeuralLayer();
 
 	xt::xarray<double> feedForward(xt::xarray<double> input);

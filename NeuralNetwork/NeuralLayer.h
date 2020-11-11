@@ -33,7 +33,17 @@ enum class PoolingActivationFunction
 {
 	Max1D,
 	Max2D,
-	Max3D
+	Max3D,
+	Average1D,
+	Average2D,
+	Average3D
+};
+
+enum class ConvolutionActivationFunction
+{
+	Convolution1D,
+	Convolution2D,
+	Convolution3D
 };
 
 class NeuralLayer

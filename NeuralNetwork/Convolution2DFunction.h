@@ -5,14 +5,20 @@
 class Convolution2DFunction : public Function
 {
 public:
-	Convolution2DFunction(size_t incomingUnits, size_t numFilters, std::vector<size_t> convolutionShape, int stride);
+	Convolution2DFunction(std::vector<size_t> convolutionShape, size_t inputChannels, size_t stride, size_t numKernels);
 
-	xt::xarray<double> feedForward(xt::xarray<double> input);
+	xt::xarray<double> feedForward(xt::xarray<double> inputs);
 	xt::xarray<double> backPropagate(xt::xarray<double> sigmas);
 	void draw(ImDrawList* canvas, ImVec2 origin, double scale);
 
 private:
-	size_t numFilters;
+	size_t numKernels;
 	std::vector<size_t> convolutionShape;
-	int stride;
+	size_t stride;
+	size_t inputChannels;
+	xt::xarray<double> lastOutput;
+
+	xt::xstrided_slice_vector kernelWindowView;
+
+	xt::xarray<double> convolude(xt::xarray<double> f, xt::xarray<double> g);
 };

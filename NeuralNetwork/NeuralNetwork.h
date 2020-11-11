@@ -17,7 +17,7 @@ public:
 	void addInputLayer(std::vector<size_t> inputShape);
 	void addDenseLayer(DenseActivationFunction layerFunction, size_t numUnits);
 	void addSoftmaxLayer(int axis = -1);
-	void addConvolution2DLayer(size_t numFilters, std::vector<size_t> convolutionShape, size_t stride = 1);
+	void addConvolutionLayer(ConvolutionActivationFunction layerFunction, size_t numKernels, std::vector<size_t> convolutionShape, size_t stride = 1);
 	
 	xt::xarray<double> feedForward(xt::xarray<double> inputs);
 	bool backPropagate(xt::xarray<double> inputs, xt::xarray<double> targets); // Single step

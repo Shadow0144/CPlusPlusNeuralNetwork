@@ -6,6 +6,8 @@
 #include <xtensor-blas/xlinalg.hpp>
 #pragma warning(pop)
 
+#include "Test.h"
+
 using namespace std;
 
 double Function::applyBackPropagate()
@@ -47,6 +49,15 @@ xt::xarray<double> Function::activationDerivative()
 
 xt::xarray<double> Function::denseBackpropagate(xt::xarray<double> sigmas)
 {
+	/*print_dims(lastInput);
+	for (int i = 0; i < lastInput.shape()[0]; i++)
+	{
+		for (int j = 0; j < lastInput.shape()[1]; j++)
+		{
+			cout << lastInput(i, j) << " ";
+		}
+	}
+	cout << endl;*/
 	//cout << "Input dimension: " << lastInput.dimension() << " shape: " << lastInput.shape()[0] << ", " << lastInput.shape()[1] << endl;
 	//cout << "Sigma dimension: " << sigmas.dimension() << " shape: " << sigmas.shape()[0] << ", " << sigmas.shape()[1] << endl;
 	auto delta = xt::linalg::tensordot(xt::transpose(lastInput), sigmas, 1);

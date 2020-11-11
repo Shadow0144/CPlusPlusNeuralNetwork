@@ -1,6 +1,8 @@
 #include "SoftmaxFunction.h"
 #include "NeuralLayer.h"
 
+#include "Test.h"
+
 #pragma warning(push, 0)
 #include <iostream>
 #include <cmath>
@@ -39,16 +41,20 @@ xt::xarray<double> SoftmaxFunction::feedForward(xt::xarray<double> inputs)
 	xt::strided_view(total, dimensionView) = xt::sum<double>(z, { sumAxis });
 	
 	lastOutput = z / total;
+	lastOutput = xt::nan_to_num(lastOutput);
 
 	return lastOutput;
 }
 
 xt::xarray<double> SoftmaxFunction::backPropagate(xt::xarray<double> sigmas)
 {
-	//auto shape = lastOutput.shape();
-	//auto broadcasted = sigmas * xt::ones<double>(shape);
-	auto newSigmas = sigmas;
+	auto newSigmas = xt::pow(sigmas, 2.0); // TODO? Potentially wrong equation
 	return newSigmas;
+}
+
+xt::xarray<double> SoftmaxFunction::backPropagateCrossEntropy(xt::xarray<double> sigmas)
+{
+	return sigmas;
 }
 
 void SoftmaxFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)

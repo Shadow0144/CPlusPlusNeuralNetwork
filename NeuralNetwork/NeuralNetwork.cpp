@@ -3,7 +3,7 @@
 #include "InputNeuralLayer.h"
 #include "DenseNeuralLayer.h"
 #include "SoftmaxNeuralLayer.h"
-#include "Convolution2DLayer.h"
+#include "ConvolutionLayer.h"
 
 #pragma warning(push, 0)
 #include <iostream>
@@ -68,9 +68,9 @@ void NeuralNetwork::addSoftmaxLayer(int axis)
 	layerCount++;
 }
 
-void NeuralNetwork::addConvolution2DLayer(size_t numFilters, std::vector<size_t> convolutionShape, size_t stride)
+void NeuralNetwork::addConvolutionLayer(ConvolutionActivationFunction layerFunction, size_t numKernels, std::vector<size_t> convolutionShape, size_t stride)
 {
-	Convolution2DLayer* layer = new Convolution2DLayer(layers->at(layerCount - 1), numFilters, convolutionShape, stride);
+	ConvolutionLayer* layer = new ConvolutionLayer(layerFunction, layers->at(layerCount - 1), numKernels, convolutionShape, stride);
 	layers->push_back(layer);
 	layerCount++;
 }
