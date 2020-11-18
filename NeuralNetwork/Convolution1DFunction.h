@@ -15,5 +15,4 @@ private:
 	std::vector<size_t> convolutionShape;
 	size_t stride;
 	size_t numKernels;
-	xt::xarray<double> lastOutput;
 };

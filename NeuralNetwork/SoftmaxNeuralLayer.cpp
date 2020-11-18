@@ -37,6 +37,11 @@ xt::xarray<double> SoftmaxNeuralLayer::feedForward(xt::xarray<double> input)
 	return softmaxFunction->feedForward(input);
 }
 
+xt::xarray<double> SoftmaxNeuralLayer::feedForwardTrain(xt::xarray<double> input)
+{
+	return softmaxFunction->feedForwardTrain(input);
+}
+
 xt::xarray<double> SoftmaxNeuralLayer::backPropagate(xt::xarray<double> sigmas)
 {
 	return softmaxFunction->backPropagate(sigmas);

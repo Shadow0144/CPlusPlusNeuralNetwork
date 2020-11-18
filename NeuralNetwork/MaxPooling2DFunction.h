@@ -14,6 +14,4 @@ public:
 
 private:
 	std::vector<size_t> filterShape;
-
-	xt::xarray<double> lastInputMask;
 };

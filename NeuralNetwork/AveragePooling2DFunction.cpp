@@ -18,15 +18,13 @@ AveragePooling2DFunction::AveragePooling2DFunction(std::vector<size_t> filterSha
 
 xt::xarray<double> AveragePooling2DFunction::feedForward(xt::xarray<double> inputs)
 {
-	lastInput = inputs;
-
 	const int DIM1 = inputs.dimension() - 3; // First dimension
 	const int DIM2 = inputs.dimension() - 2; // Second dimension
 	const int DIMC = inputs.dimension() - 1; // Channels
 	auto shape = inputs.shape();
 	shape[DIM1] = ceil((shape[DIM1] - (filterShape[0] - 1)) / filterShape[0]);
 	shape[DIM2] = ceil((shape[DIM2] - (filterShape[1] - 1)) / filterShape[1]);
-	lastOutput = xt::xarray<double>(shape);
+	xt::xarray<double> output = xt::xarray<double>(shape);
 
 	xt::xstrided_slice_vector inputWindowView;
 	xt::xstrided_slice_vector outputWindowView;
@@ -49,12 +47,12 @@ xt::xarray<double> AveragePooling2DFunction::feedForward(xt::xarray<double> inpu
 			inputWindowView[DIM2] = xt::range(j, j + filterShape[1]);
 			outputWindowView[DIM2] = l++; // Increment after assignment
 			auto window = xt::xarray<double>(xt::strided_view(inputs, inputWindowView));
-			xt::strided_view(lastOutput, outputWindowView) = xt::mean(window, { DIM1, DIM2 });
+			xt::strided_view(output, outputWindowView) = xt::mean(window, { DIM1, DIM2 });
 		}
 		l = 0;
 	}
 
-	return lastOutput;
+	return output;
 }
 
 xt::xarray<double> AveragePooling2DFunction::backPropagate(xt::xarray<double> sigmas)
@@ -69,13 +67,15 @@ void AveragePooling2DFunction::draw(ImDrawList* canvas, ImVec2 origin, double sc
 
 	const ImColor BLACK(0.0f, 0.0f, 0.0f, 1.0f);
 
+	xt::xarray<double> drawWeights = weights.getParameters();
+
 	ImVec2 position(0, origin.y);
 	const double LAYER_WIDTH = NeuralLayer::getLayerWidth(numUnits, scale);
 	for (int i = 0; i < numUnits; i++)
 	{
 		position.x = NeuralLayer::getNeuronX(origin.x, LAYER_WIDTH, i, scale);
 
-		double slope = weights.getParameters()(0, i);
+		double slope = drawWeights(0, i);
 		double inv_slope = 1.0 / abs(slope);
 		double x1, x2, y1, y2;
 		if (slope > 0.0)

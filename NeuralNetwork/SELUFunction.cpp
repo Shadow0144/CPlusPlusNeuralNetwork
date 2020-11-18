@@ -31,15 +31,14 @@ double SELUFunction::SELU(double z)
 
 xt::xarray<double> SELUFunction::SELU(xt::xarray<double> z)
 {
-	mask = (z > 0.0);
+	auto mask = (z > 0.0);
 	return (SCALE * ((1.0 - mask) * (ALPHA * (exp(z) - 1.0)) + (mask * z)));
 }
 
 xt::xarray<double> SELUFunction::feedForward(xt::xarray<double> inputs)
 {
 	auto dotProductResult = dotProduct(inputs);
-	lastOutput = SELU(dotProductResult);
-	return lastOutput;
+	return SELU(dotProductResult);
 }
 
 xt::xarray<double> SELUFunction::backPropagate(xt::xarray<double> sigmas)
@@ -49,7 +48,8 @@ xt::xarray<double> SELUFunction::backPropagate(xt::xarray<double> sigmas)
 
 xt::xarray<double> SELUFunction::activationDerivative()
 {
-	return (mask * SCALE) + ((1.0 - mask) * lastOutput);
+	auto mask = (dotProduct(lastInput) > 0.0);
+	return ((mask * SCALE) + ((1.0 - mask) * lastOutput));
 }
 
 void SELUFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)

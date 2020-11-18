@@ -17,8 +17,8 @@ QuadraticFunction::QuadraticFunction(size_t incomingUnits, size_t numUnits)
 
 xt::xarray<double> QuadraticFunction::feedForward(xt::xarray<double> inputs)
 {
-	lastZ = dotProduct(inputs);
-	return pow(lastZ, 2.0);
+	auto dotProductResult = dotProduct(inputs);
+	return pow(dotProductResult, 2.0);
 }
 
 xt::xarray<double> QuadraticFunction::backPropagate(xt::xarray<double> sigmas)
@@ -28,7 +28,7 @@ xt::xarray<double> QuadraticFunction::backPropagate(xt::xarray<double> sigmas)
 
 xt::xarray<double> QuadraticFunction::activationDerivative()
 {
-	return (2.0 * lastZ);
+	return (2.0 * dotProduct(lastInput));
 }
 
 void QuadraticFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)

@@ -21,7 +21,8 @@ public:
 	void addPoolingLayer(PoolingActivationFunction layerFunction, std::vector<size_t> poolingShape);
 	void addFlattenLayer(int numOutputs);
 
-	xt::xarray<double> feedForward(xt::xarray<double> inputs);
+	xt::xarray<double> feedForward(xt::xarray<double> inputs); // Does not update internal values
+	xt::xarray<double> feedForwardTrain(xt::xarray<double> inputs); // Updates internal values such as last input and last output
 	bool backPropagate(xt::xarray<double> inputs, xt::xarray<double> targets); // Single step
 	void train(xt::xarray<double> inputs, xt::xarray<double> targets); // Train until a condition is met
 

@@ -27,8 +27,7 @@ double ExponentialFunction::activate(double z)
 xt::xarray<double> ExponentialFunction::feedForward(xt::xarray<double> inputs)
 {
 	auto dotProductResult = dotProduct(inputs);
-	lastOutput = exp(dotProductResult);
-	return lastOutput;
+	return exp(dotProductResult);
 }
 
 xt::xarray<double> ExponentialFunction::backPropagate(xt::xarray<double> sigmas)

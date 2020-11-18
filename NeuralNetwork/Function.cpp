@@ -10,6 +10,31 @@
 
 using namespace std;
 
+xt::xarray<double> Function::feedForwardTrain(xt::xarray<double> inputs)
+{
+	lastInput = inputs;
+	lastOutput = feedForward(inputs);
+	return lastOutput;
+}
+
+xt::xarray<double> Function::addBias(xt::xarray<double> input)
+{
+	size_t inputDims = input.dimension();
+	auto inputShape = input.shape();
+	inputShape.at(inputDims - 1)++;
+	xt::xstrided_slice_vector biaslessView;
+	for (int i = 0; i < (inputDims - 1); i++)
+	{
+		biaslessView.push_back(xt::all());
+	}
+	biaslessView.push_back(xt::range(0, (numInputs - 1)));
+
+	xt::xarray<double> biasedInput = xt::ones<double>(inputShape);
+	xt::strided_view(biasedInput, biaslessView) = input;
+
+	return biasedInput;
+}
+
 double Function::applyBackPropagate()
 {
 	double deltaWeight = xt::sum(xt::abs(weights.getDeltaParameters()))();
@@ -19,27 +44,7 @@ double Function::applyBackPropagate()
 
 xt::xarray<double> Function::dotProduct(xt::xarray<double> inputs)
 {
-	if (hasBias)
-	{
-		size_t inputDims = inputs.dimension();
-		auto inputShape = inputs.shape();
-		inputShape.at(inputDims - 1)++;
-		xt::xstrided_slice_vector biaslessView;
-		for (int i = 0; i < (inputDims - 1); i++)
-		{
-			biaslessView.push_back(xt::all());
-		}
-		biaslessView.push_back(xt::range(0, (numInputs - 1)));
-
-		lastInput = xt::ones<double>(inputShape);
-		xt::strided_view(lastInput, biaslessView) = inputs;
-	}
-	else
-	{
-		lastInput = inputs;
-	}
-
-	return xt::linalg::tensordot(lastInput, weights.getParameters(), 1); // The last dimension of the input with the first dimension of the weights
+	return xt::linalg::tensordot(inputs, weights.getParameters(), 1); // The last dimension of the input with the first dimension of the weights
 }
 
 xt::xarray<double> Function::activationDerivative()

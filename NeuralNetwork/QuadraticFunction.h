@@ -13,7 +13,5 @@ public:
 	void draw(ImDrawList* canvas, ImVec2 origin, double scale);
 
 private:
-	xt::xarray<double> lastZ;
-
 	xt::xarray<double> activationDerivative();
 };

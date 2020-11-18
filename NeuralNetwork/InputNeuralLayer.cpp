@@ -28,6 +28,11 @@ xt::xarray<double> InputNeuralLayer::feedForward(xt::xarray<double> input)
 	return input;
 }
 
+xt::xarray<double> InputNeuralLayer::feedForwardTrain(xt::xarray<double> input)
+{
+	return input;
+}
+
 xt::xarray<double> InputNeuralLayer::backPropagate(xt::xarray<double> sigmas)
 {
 	return sigmas;

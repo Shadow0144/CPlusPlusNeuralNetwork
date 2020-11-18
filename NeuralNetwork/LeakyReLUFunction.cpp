@@ -27,8 +27,7 @@ xt::xarray<double> LeakyReLUFunction::leakyReLU(xt::xarray<double> z)
 xt::xarray<double> LeakyReLUFunction::feedForward(xt::xarray<double> inputs)
 {
 	auto dotProductResult = dotProduct(inputs);
-	lastOutput = leakyReLU(dotProductResult);
-	return lastOutput;
+	return leakyReLU(dotProductResult);
 }
 
 xt::xarray<double> LeakyReLUFunction::backPropagate(xt::xarray<double> sigmas)

@@ -41,11 +41,18 @@ xt::xarray<double> SoftmaxFunction::feedForward(xt::xarray<double> inputs)
 	xt::xarray<double> total(shape);
 	xt::strided_view(total, dimensionView) = xt::sum<double>(z, { sumAxis });
 	
-	unique_lock<shared_mutex> lock(outputMutex);
-	lastOutput = z / total;
-	lastOutput = xt::nan_to_num(lastOutput);
-	lock.unlock();
+	xt::xarray<double> output = z / total;
+	output = xt::nan_to_num(output);
 
+	return output;
+}
+
+xt::xarray<double> SoftmaxFunction::feedForwardTrain(xt::xarray<double> inputs)
+{
+	lastInput = inputs; // No bias
+	outputMutex.lock();
+	lastOutput = feedForward(lastInput);
+	outputMutex.unlock();
 	return lastOutput;
 }
 
@@ -71,9 +78,9 @@ void SoftmaxFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
 	double yHeight = 2.0 * RESCALE;
 	double xWidth = 2.0 * RESCALE / numOutputs;
 
-	shared_lock<shared_mutex> lock(outputMutex);
+	outputMutex.lock_shared();
 	xt::xarray<double> output = xt::xarray<double>(lastOutput);
-	lock.unlock();
+	outputMutex.unlock();
 
 	auto shape = output.shape(); // Show the first example
 	xt::xstrided_slice_vector sv;

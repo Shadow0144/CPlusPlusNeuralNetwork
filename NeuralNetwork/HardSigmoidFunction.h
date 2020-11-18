@@ -12,8 +12,6 @@ public:
 	void draw(ImDrawList* canvas, ImVec2 origin, double scale);
 
 private:
-	xt::xarray<double> lastOutput;
-
 	xt::xarray<double> activationDerivative();
 
 	xt::xarray<double> hard_sigmoid(xt::xarray<double> z);

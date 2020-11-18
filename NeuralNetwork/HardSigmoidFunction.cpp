@@ -27,8 +27,7 @@ xt::xarray<double> HardSigmoidFunction::hard_sigmoid(xt::xarray<double> z)
 xt::xarray<double> HardSigmoidFunction::feedForward(xt::xarray<double> inputs)
 {
 	auto dotProductResult = dotProduct(inputs);
-	lastOutput = hard_sigmoid(dotProductResult);
-	return lastOutput;
+	return hard_sigmoid(dotProductResult);
 }
 
 xt::xarray<double> HardSigmoidFunction::backPropagate(xt::xarray<double> sigmas)

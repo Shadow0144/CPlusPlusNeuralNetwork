@@ -13,8 +13,6 @@ public:
 	void draw(ImDrawList* canvas, ImVec2 origin, double scale);
 
 private:
-	xt::xarray<size_t> lastIndices;
-	xt::xarray<double> lastOutput;
 	size_t numFunctions;
 
 	xt::xarray<double> activationDerivative();

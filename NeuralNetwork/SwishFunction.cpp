@@ -39,15 +39,13 @@ double SwishFunction::swish(double z)
 
 xt::xarray<double> SwishFunction::swish(xt::xarray<double> z)
 {
-	lastSigmoid = sigmoid(z);
-	return (z * lastSigmoid);
+	return (z * sigmoid(z));
 }
 
 xt::xarray<double> SwishFunction::feedForward(xt::xarray<double> inputs)
 {
 	auto dotProductResult = dotProduct(inputs);
-	lastOutput = swish(dotProductResult);
-	return lastOutput;
+	return swish(dotProductResult);
 }
 
 xt::xarray<double> SwishFunction::backPropagate(xt::xarray<double> sigmas)
@@ -57,7 +55,8 @@ xt::xarray<double> SwishFunction::backPropagate(xt::xarray<double> sigmas)
 
 xt::xarray<double> SwishFunction::activationDerivative()
 {
-	return (lastOutput + (lastSigmoid * (1.0 - lastOutput)));
+	auto sig = sigmoid(dotProduct(lastInput));
+	return (lastOutput + (sig * (1.0 - lastOutput)));
 }
 
 void SwishFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)

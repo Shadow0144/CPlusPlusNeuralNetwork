@@ -28,6 +28,11 @@ xt::xarray<double> SqueezeNeuralLayer::feedForward(xt::xarray<double> input)
 	return input;
 }
 
+xt::xarray<double> SqueezeNeuralLayer::feedForwardTrain(xt::xarray<double> input)
+{
+	return input;
+}
+
 xt::xarray<double> SqueezeNeuralLayer::backPropagate(xt::xarray<double> sigmas)
 {
 	return sigmas;

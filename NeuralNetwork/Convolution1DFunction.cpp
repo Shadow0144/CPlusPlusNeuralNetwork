@@ -27,8 +27,6 @@ Convolution1DFunction::Convolution1DFunction(std::vector<size_t> convolutionShap
 
 xt::xarray<double> Convolution1DFunction::feedForward(xt::xarray<double> inputs)
 {
-	lastInput = inputs;
-
 	// Assume the last dimension is the channel dimension
 	const int DIMS = inputs.dimension();
 	const int DIM1 = DIMS - 2;
@@ -36,7 +34,7 @@ xt::xarray<double> Convolution1DFunction::feedForward(xt::xarray<double> inputs)
 	auto shape = inputs.shape();
 	shape[DIM1] = ceil((shape[DIM1] - (convolutionShape[0] - 1)) / stride);
 	shape[DIMF] = numKernels;
-	lastOutput = xt::xarray<double>(shape);
+	xt::xarray<double> output = xt::xarray<double>(shape);
 
 	xt::xstrided_slice_vector kernelWindowView;
 	kernelWindowView.push_back(0); // Current filter
@@ -63,11 +61,11 @@ xt::xarray<double> Convolution1DFunction::feedForward(xt::xarray<double> inputs)
 			outputWindowView[DIM1] = j++; // Increment after assignment
 			auto window = xt::xarray<double>(xt::strided_view(inputs, inputWindowView));
 			auto filter = xt::xarray<double>(xt::strided_view(weights.getParameters(), kernelWindowView));
-			xt::strided_view(lastOutput, outputWindowView) = xt::sum(window * filter);
+			xt::strided_view(output, outputWindowView) = xt::sum(window * filter);
 		}
 	}
 
-	return lastOutput;
+	return output;
 }
 
 xt::xarray<double> Convolution1DFunction::backPropagate(xt::xarray<double> sigmas)

@@ -27,8 +27,7 @@ xt::xarray<double> ReLU6Function::reLU6(xt::xarray<double> z)
 xt::xarray<double> ReLU6Function::feedForward(xt::xarray<double> inputs)
 {
 	auto dotProductResult = dotProduct(inputs);
-	lastOutput = reLU6(dotProductResult);
-	return lastOutput;
+	return reLU6(dotProductResult);
 }
 
 xt::xarray<double> ReLU6Function::backPropagate(xt::xarray<double> sigmas)

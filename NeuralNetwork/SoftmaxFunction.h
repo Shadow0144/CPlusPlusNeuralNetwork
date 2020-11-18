@@ -10,6 +10,7 @@ public:
 	SoftmaxFunction(size_t incomingUnits, int axis = -1);
 
 	xt::xarray<double> feedForward(xt::xarray<double> input);
+	xt::xarray<double> feedForwardTrain(xt::xarray<double> inputs); // Overriding to get a mutex lock
 	xt::xarray<double> backPropagate(xt::xarray<double> sigmas);
 	// Special case where the error function is cross entropy
 	xt::xarray<double> backPropagateCrossEntropy(xt::xarray<double> sigmas);
@@ -18,7 +19,6 @@ public:
 private:
 	int axis;
 	size_t numOutputs;
-	xt::xarray<double> lastOutput;
 
 	mutable std::shared_mutex outputMutex;
 };

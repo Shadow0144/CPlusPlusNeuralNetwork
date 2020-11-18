@@ -16,8 +16,6 @@ public:
 	void setA(double a);
 
 private:
-	xt::xarray<double> lastOutput;
-
 	xt::xarray<double> activationDerivative();
 
 	xt::xarray<double> leakyReLU(xt::xarray<double> z);

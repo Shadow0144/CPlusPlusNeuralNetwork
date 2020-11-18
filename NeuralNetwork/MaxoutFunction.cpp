@@ -27,8 +27,7 @@ MaxoutFunction::MaxoutFunction(size_t incomingUnits, size_t numUnits, size_t num
 xt::xarray<double> MaxoutFunction::feedForward(xt::xarray<double> inputs)
 {
 	// h_i(x) = max(W_i * x)
-	lastInput = inputs;
-	lastOutput = dotProduct(inputs);
+	auto output = dotProduct(inputs);
 
 	// n x ... x [input -> output] x functions -shaped
 	auto outputShape = inputs.shape();
@@ -37,14 +36,17 @@ xt::xarray<double> MaxoutFunction::feedForward(xt::xarray<double> inputs)
 	outputShape.push_back(numFunctions);
 
 	// Reduce the last dimension to produce one output per neuron
-	lastOutput.reshape(outputShape);
-	lastIndices = xt::argmax(lastOutput, { features });
-	lastOutput = xt::amax(lastOutput, { features });
-	return lastOutput;
+	output.reshape(outputShape);
+	
+	output = xt::amax(output, { features });
+	return output;
 }
 
 xt::xarray<double> MaxoutFunction::backPropagate(xt::xarray<double> sigmas)
 {
+	int features = lastOutput.size();
+	auto indices = xt::argmax(lastOutput, { features });
+
 	int N = lastInput.shape()[0];
 	std::vector<size_t> primeShape;
 	primeShape.push_back(N);
@@ -55,7 +57,7 @@ xt::xarray<double> MaxoutFunction::backPropagate(xt::xarray<double> sigmas)
 	{
 		for (int o = 0; o < numUnits; o++)
 		{
-			int index = (o * numFunctions) + lastIndices(n, o);
+			int index = (o * numFunctions) + indices(n, o);
 			sigmasPrime(n, index) = sigmas(n, o);
 		}
 	}
@@ -72,7 +74,7 @@ xt::xarray<double> MaxoutFunction::backPropagate(xt::xarray<double> sigmas)
 
 xt::xarray<double> MaxoutFunction::activationDerivative()
 {
-	int dims = lastIndices.dimension();
+	int dims = lastOutput.dimension()-1; // TODO ?
 	int functionDim = dims - 2;
 	xt::xstrided_slice_vector maskedView;
 	for (int i = 0; i < functionDim; i++)

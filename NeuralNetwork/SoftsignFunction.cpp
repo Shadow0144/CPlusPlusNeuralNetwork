@@ -34,8 +34,8 @@ xt::xarray<double> SoftsignFunction::softsign(xt::xarray<double> z)
 
 xt::xarray<double> SoftsignFunction::feedForward(xt::xarray<double> inputs)
 {
-	lastZ = dotProduct(inputs);
-	return softsign(lastZ);
+	auto dotProductResult = dotProduct(inputs);
+	return softsign(dotProductResult);
 }
 
 xt::xarray<double> SoftsignFunction::backPropagate(xt::xarray<double> sigmas)
@@ -45,7 +45,8 @@ xt::xarray<double> SoftsignFunction::backPropagate(xt::xarray<double> sigmas)
 
 xt::xarray<double> SoftsignFunction::activationDerivative()
 {
-	return (1.0 / pow((1.0 + abs(lastZ)), 2.0));
+	auto z = dotProduct(lastInput);
+	return (1.0 / pow((1.0 + abs(z)), 2.0));
 }
 
 void SoftsignFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)

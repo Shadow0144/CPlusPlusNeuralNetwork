@@ -105,12 +105,24 @@ xt::xarray<double> NeuralNetwork::feedForward(xt::xarray<double> inputs)
 	return predicted;
 }
 
+xt::xarray<double> NeuralNetwork::feedForwardTrain(xt::xarray<double> inputs)
+{
+	xt::xarray<double> predicted = inputs;
+
+	for (int i = 0; i < layerCount; i++) // Loop through the layers
+	{
+		predicted = layers->at(i)->feedForwardTrain(predicted);
+	}
+
+	return predicted;
+}
+
 bool NeuralNetwork::backPropagate(xt::xarray<double> inputs, xt::xarray<double> targets)
 {
 	bool converged = true;
 
 	// Feed forward and calculate the gradient
-	xt::xarray<double> predicted = feedForward(inputs);
+	xt::xarray<double> predicted = feedForwardTrain(inputs);
 	xt::xarray<double> errors = errorFunction->getDerivativeOfError(predicted, targets);
 
 	// Backpropagate through the layers

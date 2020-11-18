@@ -28,8 +28,7 @@ xt::xarray<double> CReLUFunction::CReLU(xt::xarray<double> z)
 xt::xarray<double> CReLUFunction::feedForward(xt::xarray<double> inputs)
 {
 	auto dotProductResult = dotProduct(inputs);
-	lastOutput = CReLU(dotProductResult);
-	return lastOutput;
+	return CReLU(dotProductResult);
 }
 
 xt::xarray<double> CReLUFunction::backPropagate(xt::xarray<double> sigmas)

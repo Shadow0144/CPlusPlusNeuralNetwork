@@ -17,6 +17,7 @@ class Function
 {
 public:
 	virtual xt::xarray<double> feedForward(xt::xarray<double> inputs) = 0;
+	virtual xt::xarray<double> feedForwardTrain(xt::xarray<double> inputs);
 	virtual xt::xarray<double> backPropagate(xt::xarray<double> sigmas) = 0;
 	virtual double applyBackPropagate(); // Returns the sum of the change in the weights
 	bool getHasBias() { return hasBias; }
@@ -25,10 +26,13 @@ public:
 	ParameterSet getWeights() { return weights; }
 	virtual std::vector<size_t> getOutputShape();
 
+	xt::xarray<double> addBias(xt::xarray<double> input);
+
 protected:
 	size_t numUnits;
 	size_t numInputs;
 	xt::xarray<double> lastInput;
+	xt::xarray<double> lastOutput;
 	ParameterSet weights;
 	const double DRAW_LEN = 16.0;
 	const double RERESCALE = 0.75;

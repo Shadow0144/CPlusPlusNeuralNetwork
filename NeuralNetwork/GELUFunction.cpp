@@ -42,8 +42,7 @@ double GELUFunction::activate(double z)
 xt::xarray<double> GELUFunction::feedForward(xt::xarray<double> inputs)
 {
 	auto dotProductResult = dotProduct(inputs);
-	lastOutput = GELU(dotProductResult);
-	return lastOutput;
+	return GELU(dotProductResult);
 }
 
 xt::xarray<double> GELUFunction::backPropagate(xt::xarray<double> sigmas)

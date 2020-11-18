@@ -16,8 +16,6 @@ public:
 	void setAlpha(double alpha);
 
 private:
-	xt::xarray<double> lastOutput;
-
 	double activate(double z);
 	xt::xarray<double> activationDerivative();
 

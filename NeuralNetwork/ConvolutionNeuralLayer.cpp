@@ -54,6 +54,11 @@ xt::xarray<double> ConvolutionNeuralLayer::feedForward(xt::xarray<double> input)
 	return activationFunction->feedForward(input);
 }
 
+xt::xarray<double> ConvolutionNeuralLayer::feedForwardTrain(xt::xarray<double> input)
+{
+	return activationFunction->feedForwardTrain(input);
+}
+
 xt::xarray<double> ConvolutionNeuralLayer::backPropagate(xt::xarray<double> sigma)
 {
 	return activationFunction->backPropagate(sigma);

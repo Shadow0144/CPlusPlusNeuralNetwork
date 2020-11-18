@@ -16,7 +16,6 @@ private:
 	std::vector<size_t> convolutionShape;
 	size_t stride;
 	size_t inputChannels;
-	xt::xarray<double> lastOutput;
 
 	xt::xstrided_slice_vector kernelWindowView;
 

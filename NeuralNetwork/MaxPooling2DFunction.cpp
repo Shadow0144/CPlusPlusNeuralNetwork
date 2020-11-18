@@ -22,15 +22,13 @@ MaxPooling2DFunction::MaxPooling2DFunction(std::vector<size_t> filterShape)
 
 xt::xarray<double> MaxPooling2DFunction::feedForward(xt::xarray<double> inputs)
 {
-	lastInput = inputs;
-
-	const int DIMS = lastInput.dimension();
+	const int DIMS = inputs.dimension();
 	const int DIM1 = DIMS - 3; // First dimension
 	const int DIM2 = DIMS - 2; // Second dimension
 	const int DIMC = DIMS - 1; // Channels
-	auto shape = lastInput.shape();
+	auto shape = inputs.shape();
 	auto maxShape = xt::svector<size_t>(shape);
-	lastInputMask = xt::xarray<double>(shape); // Same shape as the input
+	auto inputMask = xt::xarray<double>(shape); // Same shape as the input
 	shape[DIM1] = ceil(shape[DIM1] / filterShape[0]);
 	shape[DIM2] = ceil(shape[DIM2] / filterShape[1]);
 	xt::xarray<double> output = xt::xarray<double>(shape);
@@ -88,7 +86,7 @@ xt::xarray<double> MaxPooling2DFunction::feedForward(xt::xarray<double> inputs)
 					t.shape()[2] << " x " <<
 					t.shape()[3] << endl;*/
 			}
-			xt::strided_view(lastInputMask, inputWindowView) = xt::equal(window, maxesComp);
+			xt::strided_view(inputMask, inputWindowView) = xt::equal(window, maxesComp);
 			xt::strided_view(output, outputWindowView) = maxes;
 		}
 		l = 0;
@@ -160,14 +158,14 @@ xt::xarray<double> MaxPooling2DFunction::backPropagate(xt::xarray<double> sigmas
 		{
 			primeWindowView[DIM2] = xt::range(j, j + filterShape[1]);
 			sigmaWindowView[DIM2] = l++; // Increment after assignment
-			auto window = xt::strided_view(lastInputMask, primeWindowView);
+			//auto window = xt::strided_view(lastInputMask, primeWindowView); // TODO!!!
 			auto sigma = xt::xarray<double>(xt::strided_view(sigmas, sigmaWindowView));
 			sigma.reshape(sigmaShape);
 			/*cout << "W: " << window.dimension() << ", " << window.shape()[0] << " x "
 				<< window.shape()[1] << " x " << window.shape()[2] << " x " << window.shape()[3] << endl;
 			cout << "S: " << sigma.dimension() << ", " << sigma.shape()[0] << " x "
 				<< sigma.shape()[1] << " x " << sigma.shape()[2] << " x " << sigma.shape()[3] << endl;*/
-			xt::strided_view(sigmasPrime, primeWindowView) = window * sigma;
+			//xt::strided_view(sigmasPrime, primeWindowView) = window * sigma; // TODO!!!
 		}
 		l = 0;
 	}

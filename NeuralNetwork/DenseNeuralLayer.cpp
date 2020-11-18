@@ -116,7 +116,22 @@ void DenseNeuralLayer::addChildren(NeuralLayer* children)
 
 xt::xarray<double> DenseNeuralLayer::feedForward(xt::xarray<double> input)
 {
+	if (activationFunction->getHasBias())
+	{
+		input = activationFunction->addBias(input);
+	}
+	else { }
 	return activationFunction->feedForward(input);
+}
+
+xt::xarray<double> DenseNeuralLayer::feedForwardTrain(xt::xarray<double> input)
+{
+	if (activationFunction->getHasBias())
+	{
+		input = activationFunction->addBias(input);
+	}
+	else { }
+	return activationFunction->feedForwardTrain(input);
 }
 
 xt::xarray<double> DenseNeuralLayer::backPropagate(xt::xarray<double> sigmas)

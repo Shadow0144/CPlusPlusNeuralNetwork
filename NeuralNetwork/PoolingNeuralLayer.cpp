@@ -62,6 +62,11 @@ xt::xarray<double> PoolingNeuralLayer::feedForward(xt::xarray<double> input)
 	return activationFunction->feedForward(input);
 }
 
+xt::xarray<double> PoolingNeuralLayer::feedForwardTrain(xt::xarray<double> input)
+{
+	return activationFunction->feedForwardTrain(input);
+}
+
 xt::xarray<double> PoolingNeuralLayer::backPropagate(xt::xarray<double> sigmas)
 {
 	return activationFunction->backPropagate(sigmas);

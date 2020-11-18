@@ -16,8 +16,6 @@ public:
 	void setN(double n);
 
 private:
-	xt::xarray<double> lastOutput;
-
 	double n = 1.0; // Activation limit
 
 	xt::xarray<double> activationDerivative();

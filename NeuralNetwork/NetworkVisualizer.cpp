@@ -325,13 +325,13 @@ void NetworkVisualizer::renderFrame()
 
             if (displayFunctions)
             {
-                //function->draw(draw_list, inputs, targets);
+                function->draw(draw_list, inputs, targets);
             }
             else { }
 
             if (displayClasses)
             {
-                //classifier->draw(draw_list, predicted, targets);
+                classifier->draw(draw_list, predicted, targets);
             }
             else { }
         }

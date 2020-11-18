@@ -350,9 +350,6 @@
     <ClInclude Include="ReLU6Function.h">
       <Filter>Header Files\ActivationFunction\DenseFunction</Filter>
     </ClInclude>
-    <ClInclude Include="LinearFunction.h">
-      <Filter>Header Files\ActivationFunction\DenseFunction</Filter>
-    </ClInclude>
     <ClInclude Include="ELUFunction.h">
       <Filter>Header Files\ActivationFunction\DenseFunction</Filter>
     </ClInclude>
@@ -421,6 +418,9 @@
     </ClInclude>
     <ClInclude Include="FlattenNeuralLayer.h">
       <Filter>NeuralLayer</Filter>
+    </ClInclude>
+    <ClInclude Include="LinearFunction.h">
+      <Filter>Header Files\ActivationFunction\DenseFunction</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

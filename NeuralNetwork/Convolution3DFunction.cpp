@@ -34,12 +34,11 @@ Convolution3DFunction::Convolution3DFunction(std::vector<size_t> convolutionShap
 
 xt::xarray<double> Convolution3DFunction::feedForward(xt::xarray<double> inputs)
 {
-	lastInput = inputs;
 	auto inputShape = inputs.shape();
 	size_t stopi = inputShape[0] - convolutionShape[0];
 	size_t stopj = inputShape[1] - convolutionShape[1];
 	xt::xarray<double>::shape_type shape = { stopi + 1, stopj + 1 };
-	xt::xarray<double> lastOutput(shape);
+	xt::xarray<double> output(shape);
 
 	for (size_t i = 0; i < stopi; i++)
 	{
@@ -47,11 +46,11 @@ xt::xarray<double> Convolution3DFunction::feedForward(xt::xarray<double> inputs)
 		{
 			auto block = xt::view(inputs, (i, j, convolutionShape[0], convolutionShape[1]));
 			auto prod = block * weights.getParameters();
-			lastOutput(i, j) = xt::sum(prod)();
+			output(i, j) = xt::sum(prod)();
 		}
 	}
 
-	return lastOutput;
+	return output;
 }
 
 xt::xarray<double> Convolution3DFunction::backPropagate(xt::xarray<double> sigmas)

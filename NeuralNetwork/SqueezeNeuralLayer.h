@@ -13,6 +13,7 @@ public:
 	~SqueezeNeuralLayer();
 
 	xt::xarray<double> feedForward(xt::xarray<double> input);
+	xt::xarray<double> feedForwardTrain(xt::xarray<double> input);
 	xt::xarray<double> backPropagate(xt::xarray<double> sigmas);
 	double applyBackPropagate();
 

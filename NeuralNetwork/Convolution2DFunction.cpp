@@ -90,8 +90,6 @@ xt::xarray<double> Convolution2DFunction::convolude(xt::xarray<double> f, xt::xa
 
 xt::xarray<double> Convolution2DFunction::feedForward(xt::xarray<double> inputs)
 {
-	lastInput = inputs;
-
 	// Assume the last dimension is the channel dimension
 	const int DIMS = inputs.dimension();
 	const int DIM1 = DIMS - 3;
@@ -112,19 +110,19 @@ xt::xarray<double> Convolution2DFunction::feedForward(xt::xarray<double> inputs)
 	shape[DIM1] = ceil((shape[DIM1] - (convolutionShape[0] - 1)) / stride);
 	shape[DIM2] = ceil((shape[DIM2] - (convolutionShape[1] - 1)) / stride);
 	shape[DIMC] = numKernels; // Output is potentially higher dimension
-	lastOutput = xt::xarray<double>(shape);
+	xt::xarray<double> output = xt::xarray<double>(shape);
 
 	for (int k = 0; k < numKernels; k++)
 	{
 		kernelWindowView[kDIMK] = k; 
 		outputWindowView[DIMC] = k; // Output is potentially higher dimension
 		auto filter = xt::xarray<double>(xt::strided_view(weights.getParameters(), kernelWindowView));
-		xt::strided_view(lastOutput, outputWindowView) = convolude(lastInput, filter);
+		xt::strided_view(output, outputWindowView) = convolude(lastInput, filter);
 	}
 
-	//lastOutput = xt::where(lastOutput > 0.0, lastOutput, 0); // TODO
+	//output = xt::where(lastOutput > 0.0, lastOutput, 0); // TODO
 
-	return lastOutput;
+	return output;
 }
 
 xt::xarray<double> Convolution2DFunction::backPropagate(xt::xarray<double> sigmas)

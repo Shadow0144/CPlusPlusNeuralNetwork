@@ -38,8 +38,7 @@ xt::xarray<double> ELUFunction::ELU(xt::xarray<double> z)
 xt::xarray<double> ELUFunction::feedForward(xt::xarray<double> inputs)
 {
 	auto dotProductResult = dotProduct(inputs);
-	lastOutput = ELU(dotProductResult);
-	return lastOutput;
+	return ELU(dotProductResult);
 }
 
 xt::xarray<double> ELUFunction::backPropagate(xt::xarray<double> sigmas)

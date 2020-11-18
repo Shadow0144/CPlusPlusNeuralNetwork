@@ -31,8 +31,7 @@ xt::xarray<double> PReLUFunction::PReLU(xt::xarray<double> z)
 xt::xarray<double> PReLUFunction::feedForward(xt::xarray<double> inputs)
 {
 	auto dotProductResult = dotProduct(inputs);
-	lastOutput = PReLU(dotProductResult);
-	return lastOutput;
+	return PReLU(dotProductResult);
 }
 
 xt::xarray<double> PReLUFunction::backPropagate(xt::xarray<double> sigmas)

@@ -53,6 +53,7 @@ public:
 	size_t getNumUnits() { return numUnits; }
 
 	virtual xt::xarray<double> feedForward(xt::xarray<double> input) = 0;
+	virtual xt::xarray<double> feedForwardTrain(xt::xarray<double> input) = 0;
 	virtual xt::xarray<double> backPropagate(xt::xarray<double> sigmas) = 0;
 	virtual double applyBackPropagate() = 0;
 
