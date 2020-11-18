@@ -203,14 +203,14 @@ void test_signal(int layers)
             layers = 1;
             layerShapes = new size_t[layers] { 1 };
             functions = new DenseActivationFunction[layers]
-            { DenseActivationFunction::CReLU };
+            { DenseActivationFunction::Linear };
             break;
     }
 
     ErrorFunction* errorFunction = new MSEFunction();
     NeuralNetwork network = NeuralNetwork(true);
     network.setTrainingParameters(errorFunction, MAX_ITERATIONS, -MIN_ERROR, -CONVERGENCE_E, -CONVERGENCE_W); // TODO: Remove negatives
-    network.setBatchSize(10);
+    network.setBatchSize(20);
     network.displayRegressionEstimation();
 
     vector<size_t> inputShape;
