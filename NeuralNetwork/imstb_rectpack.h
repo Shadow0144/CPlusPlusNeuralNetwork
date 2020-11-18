@@ -105,7 +105,7 @@ STBRP_DEF int stbrp_pack_rects (stbrp_context *context, stbrp_rect *rects, int n
 // To pack into another rectangle, you need to call stbrp_init_target
 // again. To continue packing into the same rectangle, you can call
 // this function again. Calling this multiple times with multiple rect
-// arrays will probably produce worse packing results than calling it
+// arrays will probably produce worse packing predicted than calling it
 // a single time with the full rectangle array, but the option is
 // available.
 //
@@ -138,7 +138,7 @@ STBRP_DEF void stbrp_init_target (stbrp_context *context, int width, int height,
 // the following stbrp_pack_rects() call (or calls), but can be freed after
 // the call (or calls) finish.
 //
-// Note: to guarantee best results, either:
+// Note: to guarantee best predicted, either:
 //       1. make sure 'num_nodes' >= 'width'
 //   or  2. call stbrp_allow_out_of_mem() defined below with 'allow_out_of_mem = 1'
 //
@@ -156,7 +156,7 @@ STBRP_DEF void stbrp_setup_allow_out_of_mem (stbrp_context *context, int allow_o
 
 STBRP_DEF void stbrp_setup_heuristic (stbrp_context *context, int heuristic);
 // Optionally select which packing heuristic the library should use. Different
-// heuristics will produce better/worse results for different data sets.
+// heuristics will produce better/worse predicted for different data sets.
 // If you call init again, this will be reset to the default.
 
 enum

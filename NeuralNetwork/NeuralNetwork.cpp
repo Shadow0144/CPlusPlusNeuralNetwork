@@ -10,6 +10,7 @@
 #include "Test.h"
 
 #pragma warning(push, 0)
+#include <thread>
 #include <iostream>
 #include <math.h>
 #include <cmath>
@@ -45,9 +46,8 @@ NeuralNetwork::NeuralNetwork(bool drawingEnabled)
 
 NeuralNetwork::~NeuralNetwork()
 {
-	delete layers;
 	delete visualizer;
-	if (colors != NULL) delete colors; // TODO
+	delete layers;
 }
 
 void NeuralNetwork::addInputLayer(std::vector<size_t> inputShape)
@@ -95,14 +95,14 @@ void NeuralNetwork::addFlattenLayer(int numOutputs)
 
 xt::xarray<double> NeuralNetwork::feedForward(xt::xarray<double> inputs)
 {
-	xt::xarray<double> results = inputs;
+	xt::xarray<double> predicted = inputs;
 
 	for (int i = 0; i < layerCount; i++) // Loop through the layers
 	{
-		results = layers->at(i)->feedForward(results);
+		predicted = layers->at(i)->feedForward(predicted);
 	}
 
-	return results;
+	return predicted;
 }
 
 bool NeuralNetwork::backPropagate(xt::xarray<double> inputs, xt::xarray<double> targets)
@@ -110,8 +110,8 @@ bool NeuralNetwork::backPropagate(xt::xarray<double> inputs, xt::xarray<double> 
 	bool converged = true;
 
 	// Feed forward and calculate the gradient
-	xt::xarray<double> y = feedForward(inputs);
-	xt::xarray<double> errors = errorFunction->getDerivativeOfError(y, targets);
+	xt::xarray<double> predicted = feedForward(inputs);
+	xt::xarray<double> errors = errorFunction->getDerivativeOfError(predicted, targets);
 
 	// Backpropagate through the layers
 	for (int l = layerCount - 1; l > 0; l--)
@@ -131,9 +131,12 @@ bool NeuralNetwork::backPropagate(xt::xarray<double> inputs, xt::xarray<double> 
 
 void NeuralNetwork::train(xt::xarray<double> inputs, xt::xarray<double> targets)
 {
-	auto predicted = feedForward(inputs);
+	xt::xarray<double> predicted = feedForward(inputs);
 	double error = abs(getError(predicted, targets));
 	output(LearningState::untrained, 0, inputs, targets, predicted);
+
+	setupDrawing(inputs, targets);
+	updateDrawing(predicted);
 
 	cout << "Beginning training" << endl << endl;
 
@@ -142,12 +145,22 @@ void NeuralNetwork::train(xt::xarray<double> inputs, xt::xarray<double> targets)
 	double lastError = error;
 	double deltaError = error;
 	const int BATCHES = inputs.shape()[0] / batchSize;
+	int N = targets.shape()[0];
 	while ((error < 0 || error > minError) && t < maxIterations && !converged && deltaError > errorConvergenceThreshold)
 	{
 		converged = true;
 		for (int i = 0; i < BATCHES; i++)
 		{
-			xt::xstrided_slice_vector batchSV({ xt::range(i * batchSize, (i + 1) * batchSize), xt::ellipsis() });
+			// Set up the batch
+			int batchStart = ((i + 0) * batchSize) % N;
+			int batchEnd = ((i + 1) * batchSize) % N;
+			if ((batchEnd - batchStart) != batchSize)
+			{
+				batchEnd = N - 1;
+			}
+			else { }
+
+			xt::xstrided_slice_vector batchSV({ xt::range(batchStart, batchEnd), xt::ellipsis() });
 			xt::xarray<double> examples = xt::strided_view(inputs, batchSV);
 			xt::xarray<double> exampleTargets = xt::strided_view(targets, batchSV);
 			converged = backPropagate(examples, exampleTargets) && converged;
@@ -158,21 +171,16 @@ void NeuralNetwork::train(xt::xarray<double> inputs, xt::xarray<double> targets)
 		deltaError = abs(lastError - error);
 		lastError = error;
 
+		updateDrawing(predicted);
+
 		if (t % outputRate == 0 && t != 0)
 		{
 			output(LearningState::training, t, inputs, targets, predicted);
 		}
 		else { }
 
-		if (drawingEnabled)
-		{
-			visualizer->draw(inputs, targets);
-		}
-		else { }
-
 		t++;
 	}
-	predicted = feedForward(inputs);
 
 	if (verbosity >= 1)
 	{
@@ -200,18 +208,9 @@ void NeuralNetwork::train(xt::xarray<double> inputs, xt::xarray<double> targets)
 
 	cout << "Training complete" << endl << endl;
 
-	// Infinite loop
-	if (drawingEnabled)
-	{
-		while (!visualizer->getWindowClosed())
-		{
-			visualizer->draw(inputs, targets);
-		}
-	}
-	else 
-	{ 
-		system("pause");
-	}
+	updateDrawing(predicted);
+
+	system("pause");
 }
 
 void NeuralNetwork::output(LearningState state, int iteration, xt::xarray<double> inputs, xt::xarray<double> targets, xt::xarray<double> predicted)
@@ -315,26 +314,48 @@ void NeuralNetwork::setDrawingEnabled(bool drawingEnabled)
 
 void NeuralNetwork::setClassificationVisualizationParameters(int rows, int cols, ImColor* classColors)
 {
-	visualizer->addClassificationVisualization(rows, cols, classColors);
+	if (drawingEnabled)
+	{
+		visualizer->addClassificationVisualization(rows, cols, classColors);
+	}
+	else { }
 }
 
 void NeuralNetwork::displayRegressionEstimation()
 {
-	visualizer->addFunctionVisualization();
+	if (drawingEnabled)
+	{
+		visualizer->addFunctionVisualization();
+	}
+	else { }
 }
 
 void NeuralNetwork::displayClassificationEstimation()
 {
-	colors = new ImColor[3]{ ImColor(1.0f, 0.0f, 0.0f, 1.0f), ImColor(0.0f, 1.0f, 0.0f, 1.0f), ImColor(0.0f, 0.0f, 1.0f, 1.0f) };
-	visualizer->addClassificationVisualization(50, 3, colors);
+	if (drawingEnabled)
+	{
+		colors = new ImColor[3]{ ImColor(1.0f, 0.0f, 0.0f, 1.0f), ImColor(0.0f, 1.0f, 0.0f, 1.0f), ImColor(0.0f, 0.0f, 1.0f, 1.0f) };
+		visualizer->addClassificationVisualization(50, 3, colors);
+	}
+	else { }
 }
 
-void NeuralNetwork::draw(xt::xarray<double> inputs, xt::xarray<double> targets)
+void NeuralNetwork::setupDrawing(xt::xarray<double> inputs, xt::xarray<double> targets)
 {
 	if (drawingEnabled)
 	{
-		visualizer->draw(inputs, targets);
+		visualizer->setTargets(inputs, targets);
 	}
+	else { }
+}
+
+void NeuralNetwork::updateDrawing(xt::xarray<double> predicted)
+{
+	if (drawingEnabled)
+	{
+		visualizer->setPredicted(predicted);
+	}
+	else { }
 }
 
 void NeuralNetwork::draw(ImDrawList* canvas, ImVec2 origin, double scale, xt::xarray<double> target_xs, xt::xarray<double> target_ys)

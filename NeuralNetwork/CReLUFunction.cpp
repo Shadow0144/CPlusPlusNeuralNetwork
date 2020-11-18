@@ -19,7 +19,7 @@ CReLUFunction::CReLUFunction(size_t incomingUnits, size_t numUnits)
 	this->weights.setParametersRandom(paramShape);
 }
 
-// Returns a concatenated result of a ReLU that selects only positive results with a ReLU that selects only negative results
+// Returns a concatenated result of a ReLU that selects only positive predicted with a ReLU that selects only negative predicted
 xt::xarray<double> CReLUFunction::CReLU(xt::xarray<double> z)
 {
 	return xt::stack(xt::xtuple(xt::maximum(0.0, z), xt::maximum(0.0, -z)), z.dimension());
@@ -58,13 +58,15 @@ void CReLUFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
 	const ImColor BLACK(0.0f, 0.0f, 0.0f, 1.0f);
 	const ImColor LIGHT_GRAY(0.6f, 0.6f, 0.6f, 1.0f);
 
+	xt::xarray<double> drawWeights = weights.getParameters();
+
 	ImVec2 position(0, origin.y);
 	const double LAYER_WIDTH = NeuralLayer::getLayerWidth(numUnits, scale);
 	for (int i = 0; i < numUnits; i++)
 	{
 		position.x = NeuralLayer::getNeuronX(origin.x, LAYER_WIDTH, i, scale);
 
-		double slope = weights.getParameters()(0, i);
+		double slope = drawWeights(0, i);
 		double inv_slope = 1.0 / abs(slope);
 		double x1, x2, y1, y2;
 

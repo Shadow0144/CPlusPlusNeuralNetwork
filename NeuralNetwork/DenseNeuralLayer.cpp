@@ -163,39 +163,14 @@ void DenseNeuralLayer::draw(ImDrawList* canvas, ImVec2 origin, double scale, boo
 	// Draw the activation function
 	activationFunction->draw(canvas, origin, scale);
 
-	// Draw the weights
-	/*double i_angle = 0;
-	double angle = 0;
-	if (parentCount <= 1)
-	{
-		i_angle = (M_PI / 2.0);
-		angle = 0;
-	}
-	else if (parentCount % 2 == 0)
-	{
-		i_angle = (3.0 * M_PI / 4.0);
-		angle = M_PI / ((double)(parentCount)) / 2.0;
-	}
-	else
-	{
-		i_angle = (3.0 * M_PI / 4.0);
-		angle = M_PI / (((double)(parentCount)) - 1.0) / 2.0;
-	}
-	for (int i = 0; i < parentCount; i++)
-	{
-		double w_x = (cos(i_angle - (angle * i)) * scale * RADIUS + origin.x);
-		double w_y = (-sin(i_angle - (angle * i)) * scale * RADIUS + origin.y);
-		ImVec2 weight_pt(w_x, w_y);
-		//circle(canvas.canvas, weight_pt, weight_radius, black, 1, LINE_8);
-		//putText(canvas.canvas, to_string(i), weight_pt, FONT_HERSHEY_COMPLEX_SMALL, 1.0, BLACK);
-	}*/
-
 	// Draw the links to the previous neurons
 	double previousX, previousY;
 	int parentCount = parent->getNumUnits();
 	const double PARENT_LAYER_WIDTH = NeuralLayer::getLayerWidth(parentCount, scale);
 	ImVec2 currentNeuronPt(0, origin.y - (RADIUS * scale));
 	previousY = origin.y - (DIAMETER * scale);
+
+	xt::xarray<double> weights = activationFunction->getWeights().getParameters();
 
 	// Set up bias parameters
 	double biasX = NeuralLayer::getNeuronX(origin.x, PARENT_LAYER_WIDTH, parentCount, scale);
@@ -214,7 +189,7 @@ void DenseNeuralLayer::draw(ImDrawList* canvas, ImVec2 origin, double scale, boo
 			// Decide line color and width
 			ImColor lineColor = ImColor(1.0f, 1.0f, 1.0f, 1.0f);
 			float lineWidth = (1.0f / 36.0f) * scale;
-			float weight = activationFunction->getWeights().getParameters()(i);
+			float weight = weights(i);
 			if (weight >= 0.0f)
 			{
 				if (weight <= 1.0f)
@@ -259,7 +234,7 @@ void DenseNeuralLayer::draw(ImDrawList* canvas, ImVec2 origin, double scale, boo
 			// Draw the bias line
 			ImColor lineColor = ImColor(1.0f, 1.0f, 1.0f, 1.0f);
 			float lineWidth = (1.0f / 36.0f) * scale;
-			float weight = ((float)(activationFunction->getWeights().getParameters()(numUnits - 1)));
+			float weight = ((float)(weights(numUnits - 1)));
 			if (weight >= 0.0f)
 			{
 				if (weight <= 1.0f)

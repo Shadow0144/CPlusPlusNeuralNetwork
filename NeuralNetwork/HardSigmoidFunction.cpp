@@ -47,6 +47,8 @@ void HardSigmoidFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
 
 	const ImColor BLACK(0.0f, 0.0f, 0.0f, 1.0f);
 
+	xt::xarray<double> drawWeights = weights.getParameters();
+
 	const double RANGE = 6.0; // Controls the range of the plot to display (-RANGE, RANGE)
 	float rescale = (1.0 / RANGE) * DRAW_LEN * scale;
 
@@ -56,7 +58,7 @@ void HardSigmoidFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
 	{
 		position.x = NeuralLayer::getNeuronX(origin.x, LAYER_WIDTH, i, scale);
 
-		double slope = weights.getParameters()(0, i);
+		double slope = drawWeights(0, i);
 		double inv_slope = 1.0 / abs(slope);
 		double x1, x2, y1, y2;
 		x1 = max(-2.5 * inv_slope, -RANGE);

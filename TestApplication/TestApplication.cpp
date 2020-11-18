@@ -208,9 +208,9 @@ void test_signal(int layers)
     }
 
     ErrorFunction* errorFunction = new MSEFunction();
-    NeuralNetwork network = NeuralNetwork();
+    NeuralNetwork network = NeuralNetwork(true);
     network.setTrainingParameters(errorFunction, MAX_ITERATIONS, -MIN_ERROR, -CONVERGENCE_E, -CONVERGENCE_W); // TODO: Remove negatives
-    network.setBatchSize(1);
+    network.setBatchSize(10);
     network.displayRegressionEstimation();
 
     vector<size_t> inputShape;
@@ -228,27 +228,29 @@ void test_signal(int layers)
     Mat training_x = cv::Mat(SAMPLES, 1, CV_32F, x) / 10.0f;
     Mat training_y = cv::Mat(SAMPLES, 1, CV_32F, y) / 10.0f;*/
     const int SAMPLES = 100;
-    const double rescale = 1.0 / 10.0;
+    const double RESCALE = 1.0 / 10.0;
 
     double twoPi = (2.0 * M_PI);
     double inc = 2.0 * twoPi / SAMPLES;
     int i = 0;
     xt::xarray<int>::shape_type shape_x = { SAMPLES, 1 };
     xt::xarray<double> training_x = xt::xarray<double>(shape_x);
-    xt::xarray<int>::shape_type shape_y = { SAMPLES, 1, 2 };
+    xt::xarray<int>::shape_type shape_y = { SAMPLES, 1 };
+    //xt::xarray<int>::shape_type shape_y = { SAMPLES, 1, 2 };
     xt::xarray<double> training_y = xt::xarray<double>(shape_y);
     for (double t = -twoPi; t < twoPi; t += inc)
     {
-        training_x(i, 0) = t * rescale;
-        //training_y(i, 0) = t * rescale;
-        //training_y(i, 0) = (0.3 * t + 0.5) * rescale;
-        training_y(i, 0, 0) = tanh(3.0 * sin(0.5 * t + 0.5)) * rescale;
-        training_y(i, 0, 1) = cosh(3.0 * sin(0.5 * t + 0.5)) * rescale;
+        training_x(i, 0) = t * RESCALE;
+        //training_y(i, 0) = t * RESCALE;
+        //training_y(i, 0) = (0.3 * t + 0.5) * RESCALE;
+        training_y(i, 0) = tanh(3.0 * sin(3.0 * t + 0.5)) * RESCALE;
+        //training_y(i, 0, 0) = cosh(3.0 * sin(3.0 * t + 0.5)) * RESCALE;
+        //training_y(i, 0, 1) = cosh(3.0 * sin(3.0 * t + 0.5)) * RESCALE;
         i++;
     }
 
     // Shuffle
-    xt::xstrided_slice_vector svI({ 0, xt::ellipsis() });
+    /*xt::xstrided_slice_vector svI({ 0, xt::ellipsis() });
     xt::xstrided_slice_vector svJ({ 0, xt::ellipsis() });
     const size_t N = training_x.shape()[0];
     for (size_t i = N - 1; i > 0; i--)
@@ -262,19 +264,19 @@ void test_signal(int layers)
         auto y = xt::strided_view(training_y, svI);
         xt::strided_view(training_y, svI) = xt::strided_view(training_y, svJ);
         xt::strided_view(training_y, svJ) = y;
-    }
+    }*/
 
     //network.feedForward(training_x);
-    network.backPropagate(training_x, training_y);
+    //network.backPropagate(training_x, training_y);
 
     network.train(training_x, training_y);
 
-    xt::xarray<double> results = network.feedForward(training_x);
+    xt::xarray<double> predicted = network.feedForward(training_x);
     std::cout << endl;
     for (int i = 0; i < SAMPLES; i += 10)
     {
-        //std::cout << "Predicted: " << results(i, 0, 0) << " , " << results(i, 1, 0) << " actual: " << training_y(i, 0, 0) << " , " << training_y(i, 1, 0) << endl;
-        std::cout << "Predicted: " << results(i, 0) << " actual: " << training_y(i, 0) << endl;
+        //std::cout << "Predicted: " << predicted(i, 0, 0) << " , " << predicted(i, 1, 0) << " actual: " << training_y(i, 0, 0) << " , " << training_y(i, 1, 0) << endl;
+        std::cout << "Predicted: " << predicted(i, 0) << " actual: " << training_y(i, 0) << endl;
     }
     std::cout << endl;
 
@@ -557,7 +559,7 @@ void test_binary()
     const int ITERATIONS = 20000;
     for (int i = 0; i < ITERATIONS; i++)
     {
-        // Setup the batch
+        // Set up the batch
         int batchStart = ((i + 0) * BATCH_SIZE) % N;
         int batchEnd = ((i + 1) * BATCH_SIZE) % N;
         if ((batchEnd - batchStart) != BATCH_SIZE)
@@ -577,7 +579,6 @@ void test_binary()
         }
 
         network.backPropagate(batch, batchLabels);
-        network.draw(batch, batchLabels);
 
         const int ITERATION_PRINT = 10;
         if (i % ITERATION_PRINT == (ITERATION_PRINT - 1))
@@ -701,26 +702,26 @@ void test_layers()
         examples.reshape({ (int)batchSize, (int)(width), (int)(width), 1 });
 
         //cv::imshow("Example", convertToMat(examples));
-        auto results = convfunc1.feedForward(examples);
-        //cv::imshow("C1", convertToMat3(results, 0, 0, 3));
-        results = poolfunc1.feedForward(results);
-        results = convfunc2.feedForward(results);
-        //cv::imshow("C2", convertToMat3(results, 0, 0, 3));
-        results = poolfunc2.feedForward(results);
-        results = flatfunc1.feedForward(results);
-        //for (int i = 0; (i < results.shape()[1] && i < 20); i++)
+        auto predicted = convfunc1.feedForward(examples);
+        //cv::imshow("C1", convertToMat3(predicted, 0, 0, 3));
+        predicted = poolfunc1.feedForward(predicted);
+        predicted = convfunc2.feedForward(predicted);
+        //cv::imshow("C2", convertToMat3(predicted, 0, 0, 3));
+        predicted = poolfunc2.feedForward(predicted);
+        predicted = flatfunc1.feedForward(predicted);
+        //for (int i = 0; (i < predicted.shape()[1] && i < 20); i++)
         //{
-        //    cout << results(0, i) << " ";
+        //    cout << predicted(0, i) << " ";
         //}
         //cout << endl;
-        results = densefunc1.feedForward(results);
-        results = densefunc2.feedForward(results);
-        results = softfunc1.feedForward(results);
+        predicted = densefunc1.feedForward(predicted);
+        predicted = densefunc2.feedForward(predicted);
+        predicted = softfunc1.feedForward(predicted);
         //std::cout << "Waiting..." << endl;
         //cv::waitKey(1);
         //std::cout << "Continuing..." << endl;
 
-        xt::xarray<double> back = (results - answers);
+        xt::xarray<double> back = (predicted - answers);
 
         /*for (int j = 0; j < batchSize; j++)
         {
@@ -876,11 +877,11 @@ void test_layers()
 
 int main(int argc, char** argv)
 {
-    //test_network(network::iris, 1);
+    test_network(network::signal, 5);
 
     //test_layers();
 
-    test_binary();
+    //test_binary();
 
     return 0;
 }

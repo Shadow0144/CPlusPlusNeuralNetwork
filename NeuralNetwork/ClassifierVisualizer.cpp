@@ -11,32 +11,32 @@ ClassifierVisualizer::ClassifierVisualizer(NetworkVisualizer* visualizer, int ro
 
 ClassifierVisualizer::~ClassifierVisualizer()
 {
-
+	delete classColors;
 }
 
-xt::xarray<size_t> ClassifierVisualizer::convertToIndices(xt::xarray<double> results)
+xt::xarray<size_t> ClassifierVisualizer::convertToIndices(xt::xarray<double> predicted)
 {
 	xt::xstrided_slice_vector sv({ 0 });
-	for (int i = 1; i < (results.dimension() - 1); i++)
+	for (int i = 1; i < (predicted.dimension() - 1); i++)
 	{
 		sv.push_back(0);
 	}
 	sv.push_back(xt::all());
-	size_t c = results.shape()[results.dimension() - 1];
-	const size_t N = results.shape()[0];
+	size_t c = predicted.shape()[predicted.dimension() - 1];
+	const size_t N = predicted.shape()[0];
 	std::vector<size_t> shape = { N };
 	xt::xarray<size_t> r(shape);
 	for (int i = 0; i < N; i++)
 	{
 		int index = 0;
 		sv[0] = i;
-		double indexValue = xt::strided_view(results, sv)(0);
+		double indexValue = xt::strided_view(predicted, sv)(0);
 		for (int j = 1; j < c; j++)
 		{
-			double t = xt::strided_view(results, sv)(j);
-			if (xt::strided_view(results, sv)(j) > indexValue)
+			double t = xt::strided_view(predicted, sv)(j);
+			if (xt::strided_view(predicted, sv)(j) > indexValue)
 			{
-				indexValue = xt::strided_view(results, sv)(j);
+				indexValue = xt::strided_view(predicted, sv)(j);
 				index = j;
 			}
 			else { }
@@ -96,8 +96,10 @@ void ClassifierVisualizer::draw(ImDrawList* canvas, xt::xarray<double> predicted
 			ImVec2 cellTopRight = ImVec2(xr, yt);
 			ImVec2 cellBottomLeft = ImVec2(xl, yb);
 			ImVec2 cellBottomRight = ImVec2(xr, yb);
-			canvas->AddTriangleFilled(cellTopLeft, cellTopRight, cellBottomLeft, classColors[predictedIndices(index)]);
-			canvas->AddTriangleFilled(cellBottomRight, cellBottomLeft, cellTopRight, classColors[actualIndices(index)]);
+			int predictedIndex = predictedIndices(index);
+			int actualIndex = actualIndices(index);
+			canvas->AddTriangleFilled(cellTopLeft, cellTopRight, cellBottomLeft, classColors[predictedIndex]);
+			canvas->AddTriangleFilled(cellBottomRight, cellBottomLeft, cellTopRight, classColors[actualIndex]);
 			canvas->AddLine(cellBottomLeft, cellTopRight, GRAY);
 			if (predictedIndices(index) == actualIndices(index))
 			{

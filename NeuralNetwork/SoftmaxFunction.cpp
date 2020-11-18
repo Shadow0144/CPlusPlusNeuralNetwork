@@ -6,6 +6,7 @@
 #pragma warning(push, 0)
 #include <iostream>
 #include <cmath>
+#include <mutex>  // For std::unique_lock
 #pragma warning(pop)
 
 using namespace std;
@@ -40,8 +41,10 @@ xt::xarray<double> SoftmaxFunction::feedForward(xt::xarray<double> inputs)
 	xt::xarray<double> total(shape);
 	xt::strided_view(total, dimensionView) = xt::sum<double>(z, { sumAxis });
 	
+	unique_lock<shared_mutex> lock(outputMutex);
 	lastOutput = z / total;
 	lastOutput = xt::nan_to_num(lastOutput);
+	lock.unlock();
 
 	return lastOutput;
 }
@@ -68,9 +71,13 @@ void SoftmaxFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
 	double yHeight = 2.0 * RESCALE;
 	double xWidth = 2.0 * RESCALE / numOutputs;
 
-	auto shape = lastOutput.shape(); // Show the first example
+	shared_lock<shared_mutex> lock(outputMutex);
+	xt::xarray<double> output = xt::xarray<double>(lastOutput);
+	lock.unlock();
+
+	auto shape = output.shape(); // Show the first example
 	xt::xstrided_slice_vector sv;
-	int dims = lastOutput.dimension();
+	int dims = output.dimension();
 	int stop = dims - 1;
 	for (int i = 0; i < stop; i++)
 	{
@@ -90,7 +97,7 @@ void SoftmaxFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
 		for (int j = 0; j < numOutputs; j++)
 		{
 			ImColor color = (j % 2 == 0) ? GRAY : LIGHT_GRAY;
-			double y = xt::strided_view(lastOutput, sv)(j) * RESCALE * 2; // Select correct output and calculate scale
+			double y = xt::strided_view(output, sv)(j) * RESCALE * 2; // Select correct output and calculate scale
 			canvas->AddRectFilled(ImVec2(position.x + x, position.y), ImVec2(position.x + x + xWidth, position.y - y), color);
 			x += xWidth;
 		}

@@ -8666,7 +8666,7 @@ static void ImGui::NavUpdate()
         }
     }
 
-    // Reset search results
+    // Reset search predicted
     g.NavMoveResultLocal.Clear();
     g.NavMoveResultLocalVisibleSet.Clear();
     g.NavMoveResultOther.Clear();
@@ -8711,7 +8711,7 @@ static void ImGui::NavUpdateMoveResult()
     ImGuiContext& g = *GImGui;
     if (g.NavMoveResultLocal.ID == 0 && g.NavMoveResultOther.ID == 0)
     {
-        // In a situation when there is no results but NavId != 0, re-enable the Navigation highlight (because g.NavId is not considered as a possible result)
+        // In a situation when there is no predicted but NavId != 0, re-enable the Navigation highlight (because g.NavId is not considered as a possible result)
         if (g.NavId != 0)
         {
             g.NavDisableHighlight = false;

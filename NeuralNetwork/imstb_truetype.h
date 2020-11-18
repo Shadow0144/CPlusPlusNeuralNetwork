@@ -642,7 +642,7 @@ STBTT_DEF void stbtt_PackSetOversampling(stbtt_pack_context *spc, unsigned int h
 // pack context. The default (no oversampling) is achieved by h_oversample=1
 // and v_oversample=1. The total number of pixels required is
 // h_oversample*v_oversample larger than the default; for example, 2x2
-// oversampling requires 4x the storage of 1x1. For best results, render
+// oversampling requires 4x the storage of 1x1. For best predicted, render
 // oversampled textures with bilinear filtering. Look at the readme in
 // stb/tests/oversample for information about oversampled fonts
 //
@@ -4609,7 +4609,7 @@ static stbtt_int32 stbtt__CompareUTF8toUTF16_bigendian_prefix(stbtt_uint8 *s1, s
 {
    stbtt_int32 i=0;
 
-   // convert utf16 to utf8 and compare the results while converting
+   // convert utf16 to utf8 and compare the predicted while converting
    while (len2) {
       stbtt_uint16 ch = s2[0]*256 + s2[1];
       if (ch < 0x80) {
@@ -4649,7 +4649,7 @@ static int stbtt_CompareUTF8toUTF16_bigendian_internal(char *s1, int len1, char 
    return len1 == stbtt__CompareUTF8toUTF16_bigendian_prefix((stbtt_uint8*) s1, len1, (stbtt_uint8*) s2, len2);
 }
 
-// returns results in whatever encoding you request... but note that 2-byte encodings
+// returns predicted in whatever encoding you request... but note that 2-byte encodings
 // will be BIG-ENDIAN... use stbtt_CompareUTF8toUTF16_bigendian() to compare
 STBTT_DEF const char *stbtt_GetFontNameString(const stbtt_fontinfo *font, int *length, int platformID, int encodingID, int languageID, int nameID)
 {

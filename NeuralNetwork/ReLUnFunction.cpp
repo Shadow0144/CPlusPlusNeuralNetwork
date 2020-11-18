@@ -57,13 +57,15 @@ void ReLUnFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
 
 	const ImColor BLACK(0.0f, 0.0f, 0.0f, 1.0f);
 
+	xt::xarray<double> drawWeights = weights.getParameters();
+
 	ImVec2 position(0, origin.y);
 	const double LAYER_WIDTH = NeuralLayer::getLayerWidth(numUnits, scale);
 	for (int i = 0; i < numUnits; i++)
 	{
 		position.x = NeuralLayer::getNeuronX(origin.x, LAYER_WIDTH, i, scale);
 
-		double slope = weights.getParameters()(0, i);
+		double slope = drawWeights(0, i);
 		double inv_slope = 1.0 / abs(slope);
 		double x1, x2, y1, y2;
 		if (slope > 0.0)

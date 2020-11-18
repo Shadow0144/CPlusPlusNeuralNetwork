@@ -60,9 +60,6 @@ xt::xarray<double> MaxoutFunction::backPropagate(xt::xarray<double> sigmas)
 		}
 	}
 
-	//cout << lastInput.shape()[0] << " " << lastInput.shape()[1] << endl;
-	//cout << sigmasPrime.shape()[0] << " " << sigmasPrime.shape()[1] << endl;
-
 	auto delta = xt::linalg::tensordot(xt::transpose(lastInput), sigmasPrime, 1);
 
 	weights.incrementDeltaParameters(-ALPHA * delta);
@@ -100,6 +97,8 @@ void MaxoutFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
 
 	const ImColor BLACK(0.0f, 0.0f, 0.0f, 1.0f);
 
+	xt::xarray<double> drawWeights = weights.getParameters();
+
 	const double RANGE = 3.0; // Controls the range of the plot to display (-RANGE, RANGE)
 	const int RESOLUTION = 10; // Controls the number of points to estimate
 	const float RESCALE = (1.0 / RANGE) * DRAW_LEN * scale;
@@ -117,7 +116,7 @@ void MaxoutFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
 		{
 			points(r, 0) = RANGE * (2.0 * r) / (RESOLUTION - 1.0) - RANGE;
 		}
-		auto ys = feedForward(points);
+		auto ys = feedForward(points); // TODO: Thread safety
 
 		for (int r = 0; r < (RESOLUTION - 1); r++)
 		{

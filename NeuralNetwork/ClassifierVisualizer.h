@@ -13,7 +13,7 @@ public:
 	ClassifierVisualizer(NetworkVisualizer* visualizer, int rows, int cols, ImColor* classColors);
 	~ClassifierVisualizer();
 	
-	xt::xarray<size_t> convertToIndices(xt::xarray<double> results);
+	xt::xarray<size_t> convertToIndices(xt::xarray<double> predicted);
 
 	void draw(ImDrawList* canvas, xt::xarray<double> predicted, xt::xarray<double> actual);
 

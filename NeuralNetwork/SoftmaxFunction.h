@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Function.h"
+#include <shared_mutex>
 
 // Softmax
 class SoftmaxFunction : public Function
@@ -18,4 +19,6 @@ private:
 	int axis;
 	size_t numOutputs;
 	xt::xarray<double> lastOutput;
+
+	mutable std::shared_mutex outputMutex;
 };

@@ -2,7 +2,9 @@
 
 #pragma warning(push, 0)
 #include <SDL.h>
+#include <thread>
 #include "imgui.h"
+#include <shared_mutex>
 #pragma warning(pop)
 
 #include "FunctionVisualizer.h"
@@ -23,13 +25,21 @@ public:
 
 	ImVec2 getWindowSize();
 
-	void draw(xt::xarray<double> inputs = NULL, xt::xarray<double> targets = NULL);
+	bool getThreadRunning();
+
+	void setTargets(xt::xarray<double> inputs, xt::xarray<double> targets);
+	void setPredicted(xt::xarray<double> predicted);
 
 private:
 	void setup();
+	void draw();
+	void renderFrame();
 
 	NeuralNetwork* network;
 	bool windowClosed;
+	bool rendering;
+	bool threadRunning;
+	mutable std::shared_mutex resultsMutex;
 
 	SDL_Window* window;
 	SDL_GLContext gl_context;
@@ -49,4 +59,13 @@ private:
 	const double SCALE_FACTOR = 0.1;
 	const double MIN_SCALE_FACTOR = 0.1;
 	const double MAX_SCALE_FACTOR = 10.0;
+
+	thread drawThread;
+
+	xt::xarray<double> inputs;
+	xt::xarray<double> predicted;
+	xt::xarray<double> targets;
+	bool inputsSet;
+	bool predictedSet;
+	bool targetsSet;
 };

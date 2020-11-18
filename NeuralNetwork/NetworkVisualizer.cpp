@@ -23,18 +23,28 @@ NetworkVisualizer::NetworkVisualizer(NeuralNetwork* network)
     origin = ImVec2(0.0, 0.0);
     scale = 1.0;
 
+    inputsSet = false;
+    predictedSet = false;
+    targetsSet = false;
+
     function = NULL;
     displayFunctions = false;
 
     classifier = NULL;
     displayClasses = false;
 
-    setup();
     windowClosed = false;
+
+    rendering = true;
+    drawThread = thread(&NetworkVisualizer::draw, this);
 }
 
 NetworkVisualizer::~NetworkVisualizer()
 {
+    rendering = false;
+    while (threadRunning);
+    drawThread.join();
+
     if (function != NULL)
     {
         delete function;
@@ -46,15 +56,6 @@ NetworkVisualizer::~NetworkVisualizer()
         delete classifier;
     }
     else { }
-
-    // Cleanup
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplSDL2_Shutdown();
-    ImGui::DestroyContext();
-
-    SDL_GL_DeleteContext(gl_context);
-    SDL_DestroyWindow(window);
-    SDL_Quit();
 }
 
 bool NetworkVisualizer::getWindowClosed()
@@ -167,6 +168,7 @@ void test_draw(ImDrawList* draw_list)
 
 void NetworkVisualizer::addClassificationVisualization(int rows, int cols, ImColor* classColors)
 {
+    displayClasses = false;
     if (displayClasses)
     {
         delete classifier;
@@ -179,6 +181,7 @@ void NetworkVisualizer::addClassificationVisualization(int rows, int cols, ImCol
 
 void NetworkVisualizer::addFunctionVisualization()
 {
+    displayFunctions = false;
     if (displayFunctions)
     {
         delete function;
@@ -194,7 +197,54 @@ ImVec2 NetworkVisualizer::getWindowSize()
     return winSize;
 }
 
-void NetworkVisualizer::draw(xt::xarray<double> inputs, xt::xarray<double> targets)
+void NetworkVisualizer::setTargets(xt::xarray<double> inputs, xt::xarray<double> targets)
+{
+    resultsMutex.lock();
+    this->inputs = xt::xarray<double>(inputs);
+    this->targets = xt::xarray<double>(targets);
+    inputsSet = true;
+    targetsSet = true;
+    resultsMutex.unlock();
+}
+
+void NetworkVisualizer::setPredicted(xt::xarray<double> predicted)
+{
+    resultsMutex.lock();
+    this->predicted = xt::xarray<double>(predicted);
+    predictedSet = true;
+    resultsMutex.unlock();
+}
+
+void NetworkVisualizer::draw()
+{
+    threadRunning = true;
+
+    setup();
+
+    while (rendering)
+    {
+        renderFrame();
+        Sleep(1);
+    }
+
+    // Cleanup
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplSDL2_Shutdown();
+    ImGui::DestroyContext();
+
+    SDL_GL_DeleteContext(gl_context);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
+
+    threadRunning = false;
+}
+
+bool NetworkVisualizer::getThreadRunning()
+{
+    return threadRunning;
+}
+
+void NetworkVisualizer::renderFrame()
 {
     const ImVec4 CLEAR_COLOR(0.45, 0.55, 0.60, 1.0);
     const ImVec4 VERY_LIGHT_GRAY(0.8, 0.8, 0.8, 1.0);
@@ -267,17 +317,26 @@ void NetworkVisualizer::draw(xt::xarray<double> inputs, xt::xarray<double> targe
 
     ImDrawList* draw_list = ImGui::GetWindowDrawList();
 
-    network->draw(draw_list, origin, scale, inputs, targets);
-
-    if (displayFunctions)
+    if (inputsSet && targetsSet)
     {
-        function->draw(draw_list, inputs, targets);
-    }
-    else { }
+        if (resultsMutex.try_lock_shared())
+        {
+            network->draw(draw_list, origin, scale, inputs, targets);
 
-    if (displayClasses)
-    {
-        classifier->draw(draw_list, network->feedForward(inputs), targets);
+            if (displayFunctions)
+            {
+                //function->draw(draw_list, inputs, targets);
+            }
+            else { }
+
+            if (displayClasses)
+            {
+                //classifier->draw(draw_list, predicted, targets);
+            }
+            else { }
+        }
+        else { }
+        resultsMutex.unlock_shared();
     }
     else { }
 

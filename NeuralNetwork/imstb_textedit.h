@@ -127,7 +127,7 @@
 //                                      typically this is a wrapper object with other data you need
 //
 //    STB_TEXTEDIT_STRINGLEN(obj)       the length of the string (ideally O(1))
-//    STB_TEXTEDIT_LAYOUTROW(&r,obj,n)  returns the results of laying out a line of characters
+//    STB_TEXTEDIT_LAYOUTROW(&r,obj,n)  returns the predicted of laying out a line of characters
 //                                        starting from character #n (see discussion below)
 //    STB_TEXTEDIT_GETWIDTH(obj,n,i)    returns the pixel delta from the xpos of the i'th character
 //                                        to the xpos of the i+1'th char for a line of characters

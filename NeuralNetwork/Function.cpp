@@ -49,27 +49,12 @@ xt::xarray<double> Function::activationDerivative()
 
 xt::xarray<double> Function::denseBackpropagate(xt::xarray<double> sigmas)
 {
-	/*print_dims(lastInput);
-	for (int i = 0; i < lastInput.shape()[0]; i++)
-	{
-		for (int j = 0; j < lastInput.shape()[1]; j++)
-		{
-			cout << lastInput(i, j) << " ";
-		}
-	}
-	cout << endl;*/
-	//cout << "Input dimension: " << lastInput.dimension() << " shape: " << lastInput.shape()[0] << ", " << lastInput.shape()[1] << endl;
-	//cout << "Sigma dimension: " << sigmas.dimension() << " shape: " << sigmas.shape()[0] << ", " << sigmas.shape()[1] << endl;
 	auto delta = xt::linalg::tensordot(xt::transpose(lastInput), sigmas, 1);
 
 	weights.incrementDeltaParameters(-ALPHA * delta);
 	auto biaslessWeights = xt::view(weights.getParameters(), xt::range(0, (numInputs - 1)), xt::all());
 
-	//cout << "Weights dimension: " << biaslessWeights.dimension() << " shape: " << biaslessWeights.shape()[0] << ", " << biaslessWeights.shape()[1] << endl;
 	auto newSigmas = xt::linalg::tensordot(sigmas, xt::transpose(biaslessWeights), 1); // The last {1} axes of errors and the first {1} axes of the weights transposed
-	//cout << "New sigma dimension: " << newSigmas.dimension() << " shape: " << newSigmas.shape()[0] << ", " << newSigmas.shape()[1] << endl;
-
-	//cout << endl;
 
 	return newSigmas;
 }
@@ -127,6 +112,8 @@ void Function::approximateFunction(ImDrawList* canvas, ImVec2 origin, double sca
 {
 	const ImColor BLACK(0.0f, 0.0f, 0.0f, 1.0f);
 
+	xt::xarray<double> drawWeights = weights.getParameters();
+
 	const double RANGE = 3.0; // Controls the range of the plot to display (-RANGE, RANGE)
 
 	const int R = 6; // Controls the number of points to estimate
@@ -148,7 +135,7 @@ void Function::approximateFunction(ImDrawList* canvas, ImVec2 origin, double sca
 		for (int r = 0; r < RESOLUTION; r++)
 		{
 			double x = RANGE * (2.0 * r) / (RESOLUTION - 1.0) - RANGE;
-			double y = activate(x * weights.getParameters()(0, i));
+			double y = activate(x * drawWeights(0, i));
 			if (y < -RANGE)
 			{
 				if (inflection == -1 || r == 0)
@@ -201,7 +188,7 @@ void Function::approximateFunction(ImDrawList* canvas, ImVec2 origin, double sca
 		if ((((pointCount - 1) % 3) != 0) && (inflection == 0))
 		{
 			double x = RANGE;
-			double y = activate(x * weights.getParameters()(0, i));
+			double y = activate(x * drawWeights(0, i));
 			graphPoints(pointCount, 0) = x;
 			graphPoints(pointCount, 1) = y;
 			pointCount++;
