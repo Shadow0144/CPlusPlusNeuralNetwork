@@ -58,8 +58,8 @@ xt::xarray<double> SoftmaxFunction::feedForwardTrain(xt::xarray<double> inputs)
 
 xt::xarray<double> SoftmaxFunction::backPropagate(xt::xarray<double> sigmas)
 {
-	auto newSigmas = xt::pow(sigmas, 2.0); // TODO? Potentially wrong equation
-	return newSigmas;
+	//auto newSigmas = xt::pow(sigmas, 2.0); // TODO? Potentially wrong equation
+	return sigmas; // TODO Temp
 }
 
 xt::xarray<double> SoftmaxFunction::backPropagateCrossEntropy(xt::xarray<double> sigmas)
@@ -80,26 +80,50 @@ void SoftmaxFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
 
 	outputMutex.lock_shared();
 	xt::xarray<double> output = xt::xarray<double>(lastOutput);
-	outputMutex.unlock();
-
-	auto shape = output.shape(); // Show the first example
-	xt::xstrided_slice_vector sv;
-	int dims = output.dimension();
-	int stop = dims - 1;
-	for (int i = 0; i < stop; i++)
+	outputMutex.unlock_shared();
+	
+	const int DIMS = output.dimension();
+	if (DIMS > 2) // Multiple neurons
 	{
-		//sv.push_back(shape[i] - 1);
-		sv.push_back(0);
+		xt::xstrided_slice_vector sv;
+		const int STOP = DIMS - 1; // Subtract the output dimension
+		for (int i = 0; i < STOP; i++)
+		{
+			sv.push_back(0);
+		}
+		sv.push_back(xt::all());
+
+		ImVec2 position(0, origin.y + RESCALE);
+		const double LAYER_WIDTH = NeuralLayer::getLayerWidth(numUnits, scale);
+		for (int i = 0; i < numUnits; i++)
+		{
+			position.x = NeuralLayer::getNeuronX(origin.x, LAYER_WIDTH, i, scale);
+
+			sv[DIMS - 2] = i; // Select correct neuron
+			double x = -RESCALE;
+			for (int j = 0; j < numOutputs; j++)
+			{
+				ImColor color = (j % 2 == 0) ? GRAY : LIGHT_GRAY;
+				cout << output.dimension() << endl;
+				double y = xt::strided_view(output, sv)(j) * RESCALE * 2; // Select correct output and calculate scale
+				canvas->AddRectFilled(ImVec2(position.x + x, position.y), ImVec2(position.x + x + xWidth, position.y - y), color);
+				x += xWidth;
+			}
+		}
 	}
-	sv.push_back(xt::all());
-
-	ImVec2 position(0, origin.y + RESCALE);
-	const double LAYER_WIDTH = NeuralLayer::getLayerWidth(numUnits, scale);
-	for (int i = 0; i < numUnits; i++)
+	else if (DIMS > 1) // Only one neuron
 	{
-		position.x = NeuralLayer::getNeuronX(origin.x, LAYER_WIDTH, i, scale);
+		xt::xstrided_slice_vector sv;
+		const int STOP = DIMS - 1; // Subtract the output dimension
+		for (int i = 0; i < STOP; i++)
+		{
+			sv.push_back(0);
+		}
+		sv.push_back(xt::all());
 
-		sv[dims - 2] = i; // Select correct neuron
+		ImVec2 position(0, origin.y + RESCALE);
+		const double LAYER_WIDTH = NeuralLayer::getLayerWidth(numUnits, scale);
+		position.x = NeuralLayer::getNeuronX(origin.x, LAYER_WIDTH, 0, scale);
 		double x = -RESCALE;
 		for (int j = 0; j < numOutputs; j++)
 		{
@@ -108,5 +132,6 @@ void SoftmaxFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
 			canvas->AddRectFilled(ImVec2(position.x + x, position.y), ImVec2(position.x + x + xWidth, position.y - y), color);
 			x += xWidth;
 		}
-	}
+	} 
+	else { } // TODO - Draw something empty
 }

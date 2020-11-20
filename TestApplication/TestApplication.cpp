@@ -50,7 +50,7 @@ using namespace std;
 
 const int PRINT = 100;
 const double MIN_ERROR = 0.001f;
-const int MAX_ITERATIONS = 10000;
+const int MAX_ITERATIONS = 100000;
 const double CONVERGENCE_W = 0.001;
 const double CONVERGENCE_E = 0.00000001;
 
@@ -161,12 +161,12 @@ void test_signal(int layers)
             layerShapes = new size_t[layers] { 1, 3, 3, 3, 3, 3, 1 };
             functions = new DenseActivationFunction[layers]
             { DenseActivationFunction::Linear,
-                DenseActivationFunction::LeakyReLU,
-                DenseActivationFunction::Softplus,
-                DenseActivationFunction::ReLU,
-                DenseActivationFunction::Sigmoid,
-                DenseActivationFunction::Tanh,
-                DenseActivationFunction::Linear };
+              DenseActivationFunction::LeakyReLU,
+              DenseActivationFunction::Softplus,
+              DenseActivationFunction::ReLU,
+              DenseActivationFunction::Sigmoid,
+              DenseActivationFunction::Tanh,
+              DenseActivationFunction::Linear };
             break;
         case 5:
             layerShapes = new size_t[layers] { 5, 3, 3, 3, 1 };
@@ -250,7 +250,7 @@ void test_signal(int layers)
     }
 
     // Shuffle
-    /*xt::xstrided_slice_vector svI({ 0, xt::ellipsis() });
+    xt::xstrided_slice_vector svI({ 0, xt::ellipsis() });
     xt::xstrided_slice_vector svJ({ 0, xt::ellipsis() });
     const size_t N = training_x.shape()[0];
     for (size_t i = N - 1; i > 0; i--)
@@ -264,7 +264,7 @@ void test_signal(int layers)
         auto y = xt::strided_view(training_y, svI);
         xt::strided_view(training_y, svI) = xt::strided_view(training_y, svJ);
         xt::strided_view(training_y, svJ) = y;
-    }*/
+    }
 
     //network.feedForward(training_x);
     //network.backPropagate(training_x, training_y);
@@ -328,7 +328,7 @@ void test_iris(int layers)
 
     ErrorFunction* errorFunction = new CrossEntropyFunction();
     NeuralNetwork network = NeuralNetwork();
-    network.setTrainingParameters(errorFunction, 100, MIN_ERROR, CONVERGENCE_E, CONVERGENCE_W);
+    network.setTrainingParameters(errorFunction, 1000, -MIN_ERROR, -CONVERGENCE_E, -CONVERGENCE_W); // TODO: Remove negatives
     ImColor* classColors = new ImColor[3]
         { ImColor(1.0f, 0.0f, 0.0f, 1.0f),
             ImColor(0.0f, 1.0f, 0.0f, 1.0f),
@@ -349,18 +349,18 @@ void test_iris(int layers)
     }
     network.addSoftmaxLayer();
 
-    xt::xarray<double> irisPredictions = network.feedForward(irisFeatures);
+    //xt::xarray<double> irisPredictions = network.feedForward(irisFeatures);
 
     std::cout << "Training on Iris Dataset" << endl << endl;
 
     //network.setBatchSize(30);
 
-    print_iris_results(irisPredictions, irisLabels);
+    //print_iris_results(irisPredictions, irisLabels);
 
     network.train(irisFeatures, irisLabels);
 
-    irisPredictions = network.feedForward(irisFeatures);
-    print_iris_results(irisPredictions, irisLabels);
+    //irisPredictions = network.feedForward(irisFeatures);
+    //print_iris_results(irisPredictions, irisLabels);
 
     system("pause");
 }
@@ -519,124 +519,140 @@ void test_binary()
     const int CLASSES = 2;
     
     xt::xarray<double> labels = xt::col(data, 0);
-    xt::xarray<double> features = xt::reshape_view(xt::view(data, xt::all(), xt::range(1, _)), { N, IMG_DIM, IMG_DIM });
+    xt::xarray<double> features = xt::reshape_view(xt::view(data, xt::all(), xt::range(1, _)), { N, IMG_DIM, IMG_DIM, 1 }); 
     features /= 255.0;
+
+    const int EXAMPLE_COUNT = 10;
+    labels = xt::view(labels, xt::range(0, EXAMPLE_COUNT), xt::all());
+    features = xt::view(features, xt::range(0, EXAMPLE_COUNT), xt::all(), xt::all(), xt::all());
+
+    xt::xarray<double> oneHotLabels = xt::zeros<double>({ EXAMPLE_COUNT, CLASSES });
+    for (int j = 0; j < EXAMPLE_COUNT; j++)
+    {
+        oneHotLabels(j, labels(j)) = 1.0;
+    }
+    labels = oneHotLabels;
+
+    const int NUM_KERNELS_1 = 16;
+    const int NUM_KERNELS_2 = 4;
 
     // Create the network
     NeuralNetwork network(true);
     network.addInputLayer({ (size_t)IMG_DIM, (size_t)IMG_DIM, C }); // 28x28x1
-    network.addConvolutionLayer(ConvolutionActivationFunction::Convolution2D, 64, { 5, 5 }, 1); // 28x28x1 -> 24x24x64
-    network.addPoolingLayer(PoolingActivationFunction::Max2D, { 2, 2 }); // 24x24x16 -> 12x12x16
-    network.addConvolutionLayer(ConvolutionActivationFunction::Convolution2D, 16, { 5, 5 }, 1); // 12x12x16 -> 8x8x16
+    network.addConvolutionLayer(ConvolutionActivationFunction::Convolution2D, NUM_KERNELS_1, { 5, 5 }, 1); // 28x28x1 -> 24x24x64
+    network.addPoolingLayer(PoolingActivationFunction::Max2D, { 2, 2 }); // 24x24x64 -> 12x12x64
+    network.addConvolutionLayer(ConvolutionActivationFunction::Convolution2D, NUM_KERNELS_2, { 5, 5 }, 1); // 12x12x16 -> 8x8x16
     network.addPoolingLayer(PoolingActivationFunction::Max2D, { 2, 2 }); // 8x8x16 -> 4x4x16
-    network.addFlattenLayer(256); // 4x4x16 -> 256
+    network.addFlattenLayer(4 * 4 * NUM_KERNELS_2); // 4x4x16 -> 256
     network.addDenseLayer(DenseActivationFunction::ReLU, 32); // 256 -> 32
     network.addDenseLayer(DenseActivationFunction::ReLU, CLASSES); // 32 -> 2
     network.addSoftmaxLayer(-1);
 
     ErrorFunction* errorFunction = new CrossEntropyFunction();
-    network.setTrainingParameters(errorFunction, 100, MIN_ERROR, CONVERGENCE_E, CONVERGENCE_W);
+    network.setTrainingParameters(errorFunction, 100000, -MIN_ERROR,- CONVERGENCE_E, -CONVERGENCE_W);
 
-    cv::Mat resultMat;
-    xt::xarray<double> batch;
-    xt::xarray<double> result;
+    network.train(features, labels);
 
-    // Get an initial accuracy
-    double correct = 0;
-    const double ACCURACY_COUNT = 100;
-    for (int i = 0; i < ACCURACY_COUNT; i++)
-    {
-        batch = xt::strided_view(features, { i, xt::all(), xt::all() });
-        batch.reshape({ 1, batch.shape()[0], batch.shape()[1], 1 });
+    //cv::Mat resultMat;
+    //xt::xarray<double> batch;
+    //xt::xarray<double> result;
 
-        result = network.feedForward(batch);
+    //// Get an initial accuracy
+    //double correct = 0;
+    //const double ACCURACY_COUNT = 100;
+    //for (int i = 0; i < ACCURACY_COUNT; i++)
+    //{
+    //    batch = xt::strided_view(features, { i, xt::all(), xt::all() });
+    //    batch.reshape({ 1, batch.shape()[0], batch.shape()[1], 1 });
 
-        correct += (labels(i) == xt::argmax(result)(0)) ? 1 : 0;
-    }
-    cout << "Initial Accuracy: " << (correct / ACCURACY_COUNT) << endl << endl;
+    //    result = network.feedForward(batch);
 
-    const int BATCH_SIZE = 20;
-    const int ITERATIONS = 20000;
-    for (int i = 0; i < ITERATIONS; i++)
-    {
-        // Set up the batch
-        int batchStart = ((i + 0) * BATCH_SIZE) % N;
-        int batchEnd = ((i + 1) * BATCH_SIZE) % N;
-        if ((batchEnd - batchStart) != BATCH_SIZE)
-        {
-            batchEnd = N - 1;
-        }
-        else { }
-        int batchLength = batchEnd - batchStart;
+    //    correct += (labels(i) == xt::argmax(result)(0)) ? 1 : 0;
+    //}
+    //cout << "Initial Accuracy: " << (correct / ACCURACY_COUNT) << endl << endl;
 
-        batch = xt::strided_view(features, { xt::range(batchStart, batchEnd), xt::ellipsis() });
-        batch.reshape({ batchLength, IMG_DIM, IMG_DIM, C });
+    //const int BATCH_SIZE = 1;
+    //const int ITERATIONS = 20000;
+    //for (int i = 0; i < ITERATIONS; i++)
+    //{
+    //    // Set up the batch
+    //    int batchStart = ((i + 0) * BATCH_SIZE) % N;
+    //    int batchEnd = ((i + 1) * BATCH_SIZE) % N;
+    //    if ((batchEnd - batchStart) != BATCH_SIZE)
+    //    {
+    //        batchEnd = N - 1;
+    //    }
+    //    else { }
+    //    int batchLength = batchEnd - batchStart;
 
-        xt::xarray<double> batchLabels = xt::zeros<double>({ batchLength, CLASSES });
-        for (int j = 0; j < batchLength; j++)
-        {
-            batchLabels(j, labels(batchStart + j)) = 1.0;
-        }
+    //    batch = xt::strided_view(features, { xt::range(batchStart, batchEnd), xt::ellipsis() });
+    //    batch.reshape({ batchLength, IMG_DIM, IMG_DIM, C });
 
-        network.backPropagate(batch, batchLabels);
+    //    xt::xarray<double> batchLabels = xt::zeros<double>({ batchLength, CLASSES });
+    //    for (int j = 0; j < batchLength; j++)
+    //    {
+    //        batchLabels(j, labels(batchStart + j)) = 1.0;
+    //    }
 
-        const int ITERATION_PRINT = 10;
-        if (i % ITERATION_PRINT == (ITERATION_PRINT - 1))
-        {
-            std::cout << "Iteration " << (i + 1) << " complete" << endl;
-            //cv::imshow("Weights", convertWeightsToMat3(convfunc1.getWeights().getParameters(), 0, 1, 0));
-            //cv::waitKey(1);
-        }
-        else { }
+    //    network.backPropagate(batch, batchLabels);
 
-        // Show the current accuracy
-        const int ACCURACY_PRINT = 100;
-        if (i % ACCURACY_PRINT == (ACCURACY_PRINT - 1))
-        {
-            correct = 0.0;
-            std::cout << endl;
-            for (int i = 0; i < ACCURACY_COUNT; i++)
-            {
-                batch = xt::strided_view(features, { i, xt::all(), xt::all() });
-                batch.reshape({ 1, batch.shape()[0], batch.shape()[1], 1 });
-                result = network.feedForward(batch);
-                correct += (labels(i) == xt::argmax(result)(0)) ? 1 : 0;
-            }
-            std::cout << "Accuracy: " << (correct / ACCURACY_COUNT) << endl << endl;
-        }
-        else { }
+    //    const int ITERATION_PRINT = 10;
+    //    if (i % ITERATION_PRINT == (ITERATION_PRINT - 1))
+    //    {
+    //        std::cout << "Iteration " << (i + 1) << " complete" << endl;
+    //        //cv::imshow("Weights", convertWeightsToMat3(convfunc1.getWeights().getParameters(), 0, 1, 0));
+    //        //cv::waitKey(1);
+    //    }
+    //    else { }
 
-        // Show the accuracy per class
-        const int SUMS_PRINT = 2000;
-        if (i % SUMS_PRINT == (SUMS_PRINT - 1))
-        {
-            for (int k = 0; k < CLASSES; k++)
-            {
-                xt::xarray<double> sums = xt::zeros<double>({ 1, CLASSES });
-                correct = 0.0;
-                double count = 0.0;
-                for (int j = 0; j < ACCURACY_COUNT; j++)
-                {
-                    if (labels(j) == k)
-                    {
-                        batch = xt::strided_view(features, { j, xt::all(), xt::all() });
-                        batch.reshape({ 1, batch.shape()[0], batch.shape()[1], 1 });
-                        result = network.feedForward(batch);
-                        sums += result;
-                        correct += (k == xt::argmax(result)(0)) ? 1 : 0;
-                        count++;
-                    }
-                }
-                sums /= count;
-                cout << "Accuracy: " << k << ": " << (correct / count) << endl;
-                cout << "Sums: " << k << ": ";
-                for (int n = 0; n < CLASSES; n++) cout << sums(0, n) << " ";
-                cout << endl;
-            }
-            std::cout << endl;
-        }
-        else { }
-    }
+    //    // Show the current accuracy
+    //    const int ACCURACY_PRINT = 100;
+    //    if (i % ACCURACY_PRINT == (ACCURACY_PRINT - 1))
+    //    {
+    //        correct = 0.0;
+    //        std::cout << endl;
+    //        for (int i = 0; i < ACCURACY_COUNT; i++)
+    //        {
+    //            batch = xt::strided_view(features, { i, xt::all(), xt::all() });
+    //            batch.reshape({ 1, batch.shape()[0], batch.shape()[1], 1 });
+    //            result = network.feedForward(batch);
+    //            correct += (labels(i) == xt::argmax(result)(0)) ? 1 : 0;
+    //        }
+    //        std::cout << "Accuracy: " << (correct / ACCURACY_COUNT) << endl << endl;
+    //    }
+    //    else { }
+
+    //    // Show the accuracy per class
+    //    const int SUMS_PRINT = 2000;
+    //    if (i % SUMS_PRINT == (SUMS_PRINT - 1))
+    //    {
+    //        for (int k = 0; k < CLASSES; k++)
+    //        {
+    //            xt::xarray<double> sums = xt::zeros<double>({ 1, CLASSES });
+    //            correct = 0.0;
+    //            double count = 0.0;
+    //            for (int j = 0; j < ACCURACY_COUNT; j++)
+    //            {
+    //                if (labels(j) == k)
+    //                {
+    //                    batch = xt::strided_view(features, { j, xt::all(), xt::all() });
+    //                    batch.reshape({ 1, batch.shape()[0], batch.shape()[1], 1 });
+    //                    result = network.feedForward(batch);
+    //                    sums += result;
+    //                    correct += (k == xt::argmax(result)(0)) ? 1 : 0;
+    //                    count++;
+    //                }
+    //            }
+    //            sums /= count;
+    //            cout << "Accuracy: " << k << ": " << (correct / count) << endl;
+    //            cout << "Sums: " << k << ": ";
+    //            for (int n = 0; n < CLASSES; n++) cout << sums(0, n) << " ";
+    //            cout << endl;
+    //        }
+    //        std::cout << endl;
+    //    }
+    //    else { }
+    //}
 }
 
 void test_layers()
@@ -877,11 +893,11 @@ void test_layers()
 
 int main(int argc, char** argv)
 {
-    test_network(network::signal, 5);
+    //test_network(network::iris, 3);
 
     //test_layers();
 
-    //test_binary();
+    test_binary();
 
     return 0;
 }

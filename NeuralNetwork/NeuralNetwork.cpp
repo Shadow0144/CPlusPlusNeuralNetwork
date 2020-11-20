@@ -168,7 +168,7 @@ void NeuralNetwork::train(xt::xarray<double> inputs, xt::xarray<double> targets)
 			int batchEnd = ((i + 1) * batchSize) % N;
 			if ((batchEnd - batchStart) != batchSize)
 			{
-				batchEnd = N - 1;
+				batchEnd = N;
 			}
 			else { }
 

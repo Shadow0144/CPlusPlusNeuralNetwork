@@ -49,5 +49,5 @@ protected:
 	MatrixXd approximateBezier(MatrixXd points); // For drawing
 	void approximateFunction(ImDrawList* canvas, ImVec2 origin, double scale); // For drawing
 
-	const double ALPHA = 0.01; // Learning rate
+	const double ALPHA = 0.001; // Learning rate
 };

@@ -16,11 +16,12 @@ double CrossEntropyFunction::getError(xt::xarray<double> predicted, xt::xarray<d
 
 xt::xarray<double> CrossEntropyFunction::getDerivativeOfError(xt::xarray<double> predicted, xt::xarray<double> actual)
 {
-	auto errors = - (actual / (predicted + 0.00001)); // Need to account for divide-by-zero
+	//auto errors = -(actual / (predicted + 0.00001)); // Need to account for divide-by-zero
+	auto errors = (predicted - actual);
 	return errors;
 }
 
-// This is only true when combined with softmax and for one-hot vectors
+// This is only true when combined with softmax and for one-hot vectors // TODO!!!
 xt::xarray<double> CrossEntropyFunction::getDerivativeOfErrorSoftmax(xt::xarray<double> predicted, xt::xarray<double> actual)
 {
 	auto errors = (predicted - actual);

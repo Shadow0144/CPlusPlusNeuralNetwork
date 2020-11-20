@@ -117,7 +117,7 @@ xt::xarray<double> Convolution2DFunction::feedForward(xt::xarray<double> inputs)
 		kernelWindowView[kDIMK] = k; 
 		outputWindowView[DIMC] = k; // Output is potentially higher dimension
 		auto filter = xt::xarray<double>(xt::strided_view(weights.getParameters(), kernelWindowView));
-		xt::strided_view(output, outputWindowView) = convolude(lastInput, filter);
+		xt::strided_view(output, outputWindowView) = convolude(inputs, filter);
 	}
 
 	//output = xt::where(lastOutput > 0.0, lastOutput, 0); // TODO
