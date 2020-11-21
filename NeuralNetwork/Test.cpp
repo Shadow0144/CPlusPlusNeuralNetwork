@@ -84,3 +84,96 @@ void print_dims(xt::xarray<double> xarray)
     }
     cout << endl;
 }
+
+cv::Mat convertToMat(xt::xarray<double> xtensor)
+{
+    if (xtensor.dimension() == 2)
+    {
+        xtensor.reshape({ 1, xtensor.shape()[0], xtensor.shape()[1], 1 });
+    }
+    else if (xtensor.dimension() == 3)
+    {
+        xtensor.reshape({ 1, xtensor.shape()[0], xtensor.shape()[1], xtensor.shape()[2] });
+    }
+    else { }
+    const int SIZE = xtensor.shape()[1];
+    cv::Mat mat(SIZE, SIZE, CV_64F);
+    for (int i = 0; i < SIZE; i++)
+    {
+        for (int j = 0; j < SIZE; j++)
+        {
+            mat.at<double>(i, j) = xtensor(0, i, j, 0);
+        }
+    }
+    const int R = 10;
+    cv::resize(mat, mat, cv::Size(SIZE * R, SIZE * R));
+    return mat;
+}
+
+cv::Mat convertChannelToMat(xt::xarray<double> xtensor, int num, int channel, bool printDims)
+{
+    if (printDims)
+    {
+        print_dims(xtensor);
+    }
+    else { }
+    auto tensor = xt::strided_view(xtensor, { num, xt::all(), xt::all(), channel });
+    const int SIZE = tensor.shape()[0];
+    cv::Mat mat = cv::Mat::zeros(SIZE, SIZE, CV_64F);
+    for (int i = 0; i < SIZE; i++)
+    {
+        for (int j = 0; j < SIZE; j++)
+        {
+            mat.at<double>(i, j) = tensor(i, j);
+        }
+    }
+    const int R = 10;
+    cv::resize(mat, mat, cv::Size(SIZE * R, SIZE * R));
+    return mat;
+}
+
+// For weights
+cv::Mat convertWeightsToMat3(xt::xarray<double> xtensor, int filter, int numChannels, int kernel)
+{
+    auto tensor = xt::strided_view(xtensor, { xt::all(), xt::all(), xt::range(filter, filter + numChannels), kernel });
+    const int SIZE = tensor.shape()[0];
+    cv::Mat mat = cv::Mat::zeros(SIZE, SIZE, CV_64FC3);
+    for (int i = 0; i < SIZE; i++)
+    {
+        for (int j = 0; j < SIZE; j++)
+        {
+            for (int c = 0; c < numChannels; c++)
+            {
+                mat.at<cv::Vec3d>(i, j)[c] = tensor(i, j, c);
+            }
+        }
+    }
+    const int R = 10;
+    cv::resize(mat, mat, cv::Size(SIZE * R, SIZE * R));
+    return mat;
+}
+
+cv::Mat convertChannelsToMat3(xt::xarray<double> xtensor, int num, int startChannel, int numChannels, bool printDims)
+{
+    if (printDims)
+    {
+        print_dims(xtensor);
+    }
+    else { }
+    auto tensor = xt::strided_view(xtensor, { num, xt::all(), xt::all(), xt::range(startChannel, startChannel + numChannels) });
+    const int SIZE = tensor.shape()[0];
+    cv::Mat mat = cv::Mat::zeros(SIZE, SIZE, CV_64FC3);
+    for (int i = 0; i < SIZE; i++)
+    {
+        for (int j = 0; j < SIZE; j++)
+        {
+            for (int c = 0; c < numChannels; c++)
+            {
+                mat.at<cv::Vec3d>(i, j)[c] = tensor(i, j, c);
+            }
+        }
+    }
+    const int R = 10;
+    cv::resize(mat, mat, cv::Size(SIZE * R, SIZE * R));
+    return mat;
+}

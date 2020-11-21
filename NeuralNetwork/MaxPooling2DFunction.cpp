@@ -22,6 +22,9 @@ MaxPooling2DFunction::MaxPooling2DFunction(std::vector<size_t> filterShape)
 
 xt::xarray<double> MaxPooling2DFunction::feedForward(xt::xarray<double> inputs)
 {
+	/*cv::Mat inputMat = convertChannelToMat(inputs);
+	cv::imshow("Input", inputMat);*/
+
 	const int DIMS = inputs.dimension();
 	const int DIM1 = DIMS - 3; // First dimension
 	const int DIM2 = DIMS - 2; // Second dimension
@@ -64,6 +67,10 @@ xt::xarray<double> MaxPooling2DFunction::feedForward(xt::xarray<double> inputs)
 		l = 0;
 	}
 
+	/*cv::Mat outputMat = convertChannelToMat(output);
+	cv::imshow("Output", outputMat);
+	cv::waitKey(0);*/
+
 	return output;
 }
 
@@ -75,8 +82,11 @@ xt::xarray<double> MaxPooling2DFunction::backPropagate(xt::xarray<double> sigmas
 	const int DIM2 = DIMS - 2; // Second dimension
 	const int DIMC = DIMS - 1; // Channels
 	auto shape = lastInput.shape();
+	auto maxesShape = lastInput.shape();
 	shape[DIM1] = ceil(shape[DIM1] / filterShape[0]);
 	shape[DIM2] = ceil(shape[DIM2] / filterShape[1]);
+	maxesShape[DIM1] = 1;
+	maxesShape[DIM2] = 1;
 	auto sigmaShape = sigmas.shape();
 	sigmaShape[DIM1] = 1;
 	sigmaShape[DIM2] = 1;
@@ -106,15 +116,11 @@ xt::xarray<double> MaxPooling2DFunction::backPropagate(xt::xarray<double> sigmas
 			primeWindowView[DIM2] = xt::range(j, j + filterShape[1]);
 			sigmaWindowView[DIM2] = l++; // Increment after assignment
 			auto window = xt::xarray<double>(xt::strided_view(lastInput, primeWindowView));
-			//print_dims(window);
 			auto maxes = xt::xarray<double>(xt::strided_view(lastOutput, sigmaWindowView));
-			//print_dims(maxes);
+			maxes.reshape(maxesShape);
 			auto mask = xt::equal(window, maxes);
-			//print_dims(mask);
 			auto sigma = xt::xarray<double>(xt::strided_view(sigmas, sigmaWindowView));
-			//print_dims(sigma);
 			sigma.reshape(sigmaShape);
-			//print_dims(sigma);
 			xt::strided_view(sigmasPrime, primeWindowView) = mask * sigma;
 		}
 		l = 0;
@@ -134,8 +140,8 @@ void MaxPooling2DFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
 	double yHeight = 2.0 * RESCALE / Y;
 	double xWidth = 2.0 * RESCALE / X;
 
-	const float CENTER_X = (X - 1.0f) / 2.0f;
-	const float CENTER_Y = (Y - 1.0f) / 2.0f;
+	const float CENTER_X = max(ceil((X - 1.0f) / 2.0f), 1.0f); // Avoid divide-by-zero
+	const float CENTER_Y = max(ceil((Y - 1.0f) / 2.0f), 1.0f); // Avoid divide-by-zero
 
 	const double LAYER_WIDTH = NeuralLayer::getLayerWidth(numUnits, scale);
 	ImVec2 position(0, origin.y);

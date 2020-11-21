@@ -132,7 +132,11 @@ void ParameterSet::incrementDeltaParameters(xt::xarray<double> deltaParameters)
 void ParameterSet::applyDeltaParameters()
 {
 	weightsMutex.lock();
-	parameters += (deltaParameters / batchSize);
+	if (batchSize != 0)
+	{
+		parameters += (deltaParameters / batchSize);
+	}
+	else { }
 	weightsMutex.unlock();
 	deltaParameters = xt::zeros<double>(parameters.shape());
 	batchSize = 0;

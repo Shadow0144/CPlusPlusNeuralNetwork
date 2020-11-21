@@ -411,73 +411,6 @@ void test_mnist(int layers)
     system("pause");
 }
 
-cv::Mat convertToMat(xt::xarray<double> xtensor)
-{
-    if (xtensor.dimension() == 2)
-    {
-        xtensor.reshape({ 1, xtensor.shape()[0], xtensor.shape()[1], 1 });
-    }
-    else if (xtensor.dimension() == 3)
-    {
-        xtensor.reshape({ 1, xtensor.shape()[0], xtensor.shape()[1], xtensor.shape()[2] });
-    }
-    else { }
-    const int SIZE = xtensor.shape()[1];
-    cv::Mat mat(SIZE, SIZE, CV_64F);
-    for (int i = 0; i < SIZE; i++)
-    {
-        for (int j = 0; j < SIZE; j++)
-        {
-            mat.at<double>(i, j) = xtensor(0, i, j, 0);
-        }
-    }
-    const int R = 10;
-    cv::resize(mat, mat, cv::Size(SIZE * R, SIZE * R));
-    return mat;
-}
-
-// For weights
-cv::Mat convertWeightsToMat3(xt::xarray<double> xtensor, int filter = 0, int numChannels = 1, int kernel = 0)
-{
-    auto tensor = xt::strided_view(xtensor, { xt::all(), xt::all(), xt::range(filter, filter + numChannels), kernel });
-    const int SIZE = tensor.shape()[0];
-    cv::Mat mat = cv::Mat::zeros(SIZE, SIZE, CV_64FC3);
-    for (int i = 0; i < SIZE; i++)
-    {
-        for (int j = 0; j < SIZE; j++)
-        {
-            for (int c = 0; c < numChannels; c++)
-            {
-                mat.at<cv::Vec3d>(i, j)[c] = tensor(i, j, c);
-            }
-        }
-    }
-    const int R = 10;
-    cv::resize(mat, mat, cv::Size(SIZE * R, SIZE * R));
-    return mat;
-}
-
-cv::Mat convertToMat3(xt::xarray<double> xtensor, int num = 0, int startChannel = 0, int numChannels = 1)
-{
-    print_dims(xtensor);
-    auto tensor = xt::strided_view(xtensor, { num, xt::all(), xt::all(), xt::range(startChannel, startChannel + numChannels) });
-    const int SIZE = tensor.shape()[0];
-    cv::Mat mat(SIZE, SIZE, CV_64FC3);
-    for (int i = 0; i < SIZE; i++)
-    {
-        for (int j = 0; j < SIZE; j++)
-        {
-            for (int c = 0; c < numChannels; c++)
-            {
-                mat.at<cv::Vec3d>(i, j)[c] = tensor(i, j, c);
-            }
-        }
-    }
-    const int R = 10;
-    cv::resize(mat, mat, cv::Size(SIZE * R, SIZE * R));
-    return mat;
-}
-
 enum class network
 {
     signal = 0,
@@ -522,7 +455,7 @@ void test_binary()
     xt::xarray<double> features = xt::reshape_view(xt::view(data, xt::all(), xt::range(1, _)), { N, IMG_DIM, IMG_DIM, 1 }); 
     features /= 255.0;
 
-    const int EXAMPLE_COUNT = 10;
+    const int EXAMPLE_COUNT = 100;
     labels = xt::view(labels, xt::range(0, EXAMPLE_COUNT), xt::all());
     features = xt::view(features, xt::range(0, EXAMPLE_COUNT), xt::all(), xt::all(), xt::all());
 
@@ -550,6 +483,7 @@ void test_binary()
 
     ErrorFunction* errorFunction = new CrossEntropyFunction();
     network.setTrainingParameters(errorFunction, 100000, -MIN_ERROR,- CONVERGENCE_E, -CONVERGENCE_W);
+    network.setBatchSize(10);
 
     network.train(features, labels);
 
@@ -688,10 +622,10 @@ void test_layers()
         example.reshape({ 1, example.shape()[0], example.shape()[1], 1 });
 
         result = convfunc1.feedForward(example);
-        //cv::imshow("C1", convertToMat3(result, 0, 0, 3));
+        //cv::imshow("C1", convertChannelsToMat3(result, 0, 0, 3));
         result = poolfunc1.feedForward(result);
         result = convfunc2.feedForward(result);
-        //cv::imshow("C2", convertToMat3(result, 0, 0, 3));
+        //cv::imshow("C2", convertChannelsToMat3(result, 0, 0, 3));
         result = poolfunc2.feedForward(result);
         result = flatfunc1.feedForward(result);
         result = densefunc1.feedForward(result);
@@ -719,10 +653,10 @@ void test_layers()
 
         //cv::imshow("Example", convertToMat(examples));
         auto predicted = convfunc1.feedForward(examples);
-        //cv::imshow("C1", convertToMat3(predicted, 0, 0, 3));
+        //cv::imshow("C1", convertChannelsToMat3(predicted, 0, 0, 3));
         predicted = poolfunc1.feedForward(predicted);
         predicted = convfunc2.feedForward(predicted);
-        //cv::imshow("C2", convertToMat3(predicted, 0, 0, 3));
+        //cv::imshow("C2", convertChannelsToMat3(predicted, 0, 0, 3));
         predicted = poolfunc2.feedForward(predicted);
         predicted = flatfunc1.feedForward(predicted);
         //for (int i = 0; (i < predicted.shape()[1] && i < 20); i++)
@@ -864,10 +798,10 @@ void test_layers()
         example.reshape({ 1, example.shape()[0], example.shape()[1], 1 });
 
         result = convfunc1.feedForward(example);
-        //cv::imshow("C1", convertToMat3(result, 0, 0, 3));
+        //cv::imshow("C1", convertChannelsToMat3(result, 0, 0, 3));
         result = poolfunc1.feedForward(result);
         result = convfunc2.feedForward(result);
-        //cv::imshow("C2", convertToMat3(result, 0, 0, 3));
+        //cv::imshow("C2", convertChannelsToMat3(result, 0, 0, 3));
         result = poolfunc2.feedForward(result);
         result = flatfunc1.feedForward(result);
         result = densefunc1.feedForward(result);

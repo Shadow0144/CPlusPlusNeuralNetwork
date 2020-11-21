@@ -81,7 +81,7 @@ xt::xarray<double> Convolution2DFunction::convolude(xt::xarray<double> f, xt::xa
 			inputWindowView[DIM2] = xt::range(j, j + kernelShape[kDIM2]);
 			outputWindowView[DIM2] = y++; // Increment after assignment
 			auto window = xt::xarray<double>(xt::strided_view(f, inputWindowView));
-			xt::strided_view(h, outputWindowView) = xt::sum(window * g);
+			xt::strided_view(h, outputWindowView) = xt::sum(window * g, { DIM1, DIM2, DIMC });
 		}
 	}
 
@@ -90,6 +90,9 @@ xt::xarray<double> Convolution2DFunction::convolude(xt::xarray<double> f, xt::xa
 
 xt::xarray<double> Convolution2DFunction::feedForward(xt::xarray<double> inputs)
 {
+	/*cv::Mat inputMat = convertChannelToMat(inputs);
+	cv::imshow("Input", inputMat);*/
+
 	// Assume the last dimension is the channel dimension
 	const int DIMS = inputs.dimension();
 	const int DIM1 = DIMS - 3;
@@ -122,6 +125,10 @@ xt::xarray<double> Convolution2DFunction::feedForward(xt::xarray<double> inputs)
 
 	//output = xt::where(lastOutput > 0.0, lastOutput, 0); // TODO
 
+	/*cv::Mat outputMat = convertChannelToMat(output);
+	cv::imshow("Output", outputMat);
+	cv::waitKey(0);*/
+
 	return output;
 }
 
@@ -130,7 +137,6 @@ xt::xarray<double> Convolution2DFunction::backPropagate(xt::xarray<double> sigma
 	//sigmas *= (lastOutput > 0.0); // TODO: Replace with correct derivative code
 
 	// The change in weights corresponds to a convolution between the input and the sigmas
-
 	// Assume the last dimension is the channel dimension
 	const int DIMS = lastInput.dimension();
 	const int DIM1 = DIMS - 3;
@@ -138,24 +144,6 @@ xt::xarray<double> Convolution2DFunction::backPropagate(xt::xarray<double> sigma
 	const int DIMC = DIMS - 1;
 	const int kDIMF = 2; // For a 2-D convolution, the filters are the 3rd index
 	const int kDIMK = 3; // For a 2-D convolution, the kernels are the 4th index
-
-	//print_dims(sigmas);
-	//for (int i = 0; i < sigmas.shape()[0]; i++) // N
-	//{
-	//	for (int j = 0; j < sigmas.shape()[1]; j++) // x
-	//	{
-	//		for (int k = 0; k < sigmas.shape()[2]; k++) // y
-	//		{
-	//			for (int l = 0; l < sigmas.shape()[3]; l++) // c
-	//			{
-	//				cout << sigmas(i, j, k, l) << ", ";
-	//			}
-	//			cout << "] ";
-	//		}
-	//		cout << "} ";
-	//	}
-	//	cout << endl;
-	//}
 
 	// The output will have the same number of dimensions as the input
 	xt::xstrided_slice_vector sigmasWindowView;
@@ -177,34 +165,15 @@ xt::xarray<double> Convolution2DFunction::backPropagate(xt::xarray<double> sigma
 		// Repeat the sigma for each of the filters / channels
 		filterSigma = xt::expand_dims(filterSigma, filterSigma.dimension());
 		filterSigma = xt::repeat(filterSigma, inputChannels, filterSigma.dimension()-1);
-		//print_dims(filterSigma);
 		auto result = xt::repeat(xt::expand_dims(sum(convolude(lastInput, filterSigma), 0), 2), inputChannels, 2);
-		/*print_dims(result);
-		for (int i = 0; i < result.shape()[0]; i++)
-		{
-			for (int j = 0; j < result.shape()[1]; j++)
-			{
-				cout << result(i, j, 0, 0) << " ";
-			}
-			cout << endl;
-		}*/
 		xt::strided_view(delta, kernelWindowView) = result;
 	}
 
-	/*for (int i = 0; i < convolutionShape[0]; i++)
-	{
-		for (int j = 0; j < convolutionShape[1]; j++)
-		{
-			cout << delta(i, j, 0, 0) << " ";
-		}
-		cout << endl;
-	}*/
 	weights.incrementDeltaParameters(-ALPHA * delta);
 
 	//cout << "Delta: " << xt::sum(delta)(0) << endl;
 
 	// The updated sigmas are a padded convolution between the original sigmas and the rotated filters
-	
 	// Pad the sigmas and repeat for each of the input channels
 	auto inputShape = lastInput.shape();
 	auto outputShape = lastOutput.shape();
@@ -259,62 +228,14 @@ xt::xarray<double> Convolution2DFunction::backPropagate(xt::xarray<double> sigma
 	// There is one filter per input channel, but any number of kernels
 	// The number of kernels will equal the number of output channels
 	xt::xarray<double> sigmasPrime = xt::xarray<double>(inputShape);
-	/*cout << "sigmasPrime: " << sigmasPrime.dimension() << ", "
-		<< sigmasPrime.shape()[0] << " x "
-		<< sigmasPrime.shape()[1] << " x "
-		<< sigmasPrime.shape()[2] << " x "
-		<< sigmasPrime.shape()[3] << " x "
-		<< sigmasPrime.shape()[4] << endl;*/
 	for (int c = 0; c < inputChannels; c++)
 	{
-		/*cout << "paddedSigmas: " << paddedSigmas.dimension() << ", "
-			<< paddedSigmas.shape()[0] << " x "
-			<< paddedSigmas.shape()[1] << " x "
-			<< paddedSigmas.shape()[2] << " x "
-			<< paddedSigmas.shape()[3] << " x "
-			<< paddedSigmas.shape()[4] << endl;*/
-
 		paddedWindowView[DIMC+1] = c;
 		kernelWindowView[kDIMF] = c;
 		sigmasPrimeWindowView[DIMC] = c;
 		auto filteredSigmas = xt::xarray<double>(xt::strided_view(paddedSigmas, paddedWindowView));
 		auto kernels = xt::xarray<double>(xt::strided_view(rotFilters, kernelWindowView));
-
-		/*cout << "rotFilters: " << rotFilters.dimension() << ", "
-			<< rotFilters.shape()[0] << " x "
-			<< rotFilters.shape()[1] << " x "
-			<< rotFilters.shape()[2] << " x "
-			<< rotFilters.shape()[3] << " x "
-			<< rotFilters.shape()[4] << endl;
-		cout << "filteredSigmas: " << filteredSigmas.dimension() << ", "
-			<< filteredSigmas.shape()[0] << " x "
-			<< filteredSigmas.shape()[1] << " x "
-			<< filteredSigmas.shape()[2] << " x "
-			<< filteredSigmas.shape()[3] << " x "
-			<< filteredSigmas.shape()[4] << endl;
-		cout << "kernels: " << kernels.dimension() << ", "
-			<< kernels.shape()[0] << " x "
-			<< kernels.shape()[1] << " x "
-			<< kernels.shape()[2] << " x "
-			<< kernels.shape()[3] << " x "
-			<< kernels.shape()[4] << endl;*/
-
 		auto result = convolude(filteredSigmas, kernels);
-
-		/*cout << "result: " << result.dimension() << ", "
-			<< result.shape()[0] << " x "
-			<< result.shape()[1] << " x "
-			<< result.shape()[2] << " x "
-			<< result.shape()[3] << " x "
-			<< result.shape()[4] << endl;
-		auto t = xt::strided_view(sigmasPrime, sigmasPrimeWindowView);
-		cout << "t: " << t.dimension() << ", "
-			<< t.shape()[0] << " x "
-			<< t.shape()[1] << " x "
-			<< t.shape()[2] << " x "
-			<< t.shape()[3] << " x "
-			<< t.shape()[4] << endl;*/
-
 		xt::strided_view(sigmasPrime, sigmasPrimeWindowView) = result;
 	}
 
