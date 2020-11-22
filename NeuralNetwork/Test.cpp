@@ -127,6 +127,27 @@ cv::Mat convertChannelToMat(xt::xarray<double> xtensor, int num, int channel, bo
             mat.at<double>(i, j) = tensor(i, j);
         }
     }
+    const int R = 50;
+    cv::resize(mat, mat, cv::Size(SIZE * R, SIZE * R));
+    return mat;
+}
+
+// For weights
+cv::Mat convertKernelToMat3(xt::xarray<double> xtensor, int filter, int numFilters)
+{
+    auto tensor = xt::strided_view(xtensor, { xt::all(), xt::all(), xt::range(filter, filter + numFilters) });
+    const int SIZE = tensor.shape()[0];
+    cv::Mat mat = cv::Mat::zeros(SIZE, SIZE, CV_64FC3);
+    for (int i = 0; i < SIZE; i++)
+    {
+        for (int j = 0; j < SIZE; j++)
+        {
+            for (int c = 0; c < numFilters; c++)
+            {
+                mat.at<cv::Vec3d>(i, j)[c] = tensor(i, j, c);
+            }
+        }
+    }
     const int R = 10;
     cv::resize(mat, mat, cv::Size(SIZE * R, SIZE * R));
     return mat;

@@ -331,10 +331,9 @@ void test_iris(int layers)
     network.setTrainingParameters(errorFunction, 1000, -MIN_ERROR, -CONVERGENCE_E, -CONVERGENCE_W); // TODO: Remove negatives
     ImColor* classColors = new ImColor[3]
         { ImColor(1.0f, 0.0f, 0.0f, 1.0f),
-            ImColor(0.0f, 1.0f, 0.0f, 1.0f),
-            ImColor(0.0f, 0.0f, 1.0f, 1.0f) };
-    network.setClassificationVisualizationParameters(30, 5, classColors);
-    network.displayClassificationEstimation();
+          ImColor(0.0f, 1.0f, 0.0f, 1.0f),
+          ImColor(0.0f, 0.0f, 1.0f, 1.0f) };
+    network.displayClassificationEstimation(30, 5, classColors);
 
     IrisDataset iris;
     xt::xarray<double> irisFeatures = iris.getFeatures();
@@ -365,78 +364,6 @@ void test_iris(int layers)
     system("pause");
 }
 
-void test_mnist(int layers)
-{
-    int* layerShapes;
-    DenseActivationFunction* functions;
-
-    switch (layers)
-    {
-        case 1:
-            layers = 1;
-            layerShapes = new int[layers] { 1 };
-            functions = new DenseActivationFunction[layers]
-            { DenseActivationFunction::Linear };
-            break;
-        default:
-            layers = 0;
-            layerShapes = new int[layers] {  };
-            functions = new DenseActivationFunction[layers]
-            {  };
-            break;
-    }
-
-    ErrorFunction* errorFunction = new CrossEntropyFunction();
-    NeuralNetwork network = NeuralNetwork(false);
-    vector<size_t> inputShape = { 28, 28 };
-    vector<size_t> convolutionShape = { 2, 2 };
-    size_t stride = 1;
-    network.setTrainingParameters(errorFunction, MAX_ITERATIONS, MIN_ERROR, CONVERGENCE_E, CONVERGENCE_W);
-
-    network.addInputLayer(inputShape);
-    network.addConvolutionLayer(ConvolutionActivationFunction::Convolution2D, 10, convolutionShape, stride);
-
-    ifstream in_file;
-    in_file.open("mnist_mini.csv");
-    auto data = xt::load_csv<double>(in_file);
-    int examples = ((int)(data.shape()[0])); // 28 x 28
-    int width = ((int)(data.shape()[1])); // 28 x 28
-    auto mini_classes = xt::col(data, 1);
-    xt::xarray<double> mini_features = xt::reshape_view(xt::view(data, xt::all(), xt::range(1, _)), { examples, 28, 28 });
-
-    xt::xarray<double> converted = network.feedForward(mini_features);
-
-    //cout << xt::view(converted, 0, xt::all(), xt::all()) << endl;
-
-    system("pause");
-}
-
-enum class network
-{
-    signal = 0,
-    iris = 1,
-    mnist = 2
-};
-
-void test_network(network type, int layers)
-{
-    switch (type)
-    {
-        case network::signal:
-            test_signal(layers);
-            break;
-        case network::iris:
-            test_iris(layers);
-            break;
-        case network::mnist:
-            test_mnist(layers);
-            break;
-        default:
-            // Do nothing
-            break;
-    }
-}
-
 void test_binary()
 {
     // Set up the data
@@ -450,9 +377,9 @@ void test_binary()
     const int C = 1;
 
     const int CLASSES = 2;
-    
+
     xt::xarray<double> labels = xt::col(data, 0);
-    xt::xarray<double> features = xt::reshape_view(xt::view(data, xt::all(), xt::range(1, _)), { N, IMG_DIM, IMG_DIM, 1 }); 
+    xt::xarray<double> features = xt::reshape_view(xt::view(data, xt::all(), xt::range(1, _)), { N, IMG_DIM, IMG_DIM, 1 });
     features /= 255.0;
 
     const int EXAMPLE_COUNT = 100;
@@ -472,9 +399,9 @@ void test_binary()
     // Create the network
     NeuralNetwork network(true);
     network.addInputLayer({ (size_t)IMG_DIM, (size_t)IMG_DIM, C }); // 28x28x1
-    network.addConvolutionLayer(ConvolutionActivationFunction::Convolution2D, NUM_KERNELS_1, { 5, 5 }, 1); // 28x28x1 -> 24x24x64
+    network.addConvolutionLayer(ConvolutionActivationFunction::Convolution2D, NUM_KERNELS_1, { 5, 5 }, C); // 28x28x1 -> 24x24x64
     network.addPoolingLayer(PoolingActivationFunction::Max2D, { 2, 2 }); // 24x24x64 -> 12x12x64
-    network.addConvolutionLayer(ConvolutionActivationFunction::Convolution2D, NUM_KERNELS_2, { 5, 5 }, 1); // 12x12x16 -> 8x8x16
+    network.addConvolutionLayer(ConvolutionActivationFunction::Convolution2D, NUM_KERNELS_2, { 5, 5 }, NUM_KERNELS_1); // 12x12x16 -> 8x8x16
     network.addPoolingLayer(PoolingActivationFunction::Max2D, { 2, 2 }); // 8x8x16 -> 4x4x16
     network.addFlattenLayer(4 * 4 * NUM_KERNELS_2); // 4x4x16 -> 256
     network.addDenseLayer(DenseActivationFunction::ReLU, 32); // 256 -> 32
@@ -482,111 +409,114 @@ void test_binary()
     network.addSoftmaxLayer(-1);
 
     ErrorFunction* errorFunction = new CrossEntropyFunction();
-    network.setTrainingParameters(errorFunction, 100000, -MIN_ERROR,- CONVERGENCE_E, -CONVERGENCE_W);
+    network.setTrainingParameters(errorFunction, MAX_ITERATIONS, -MIN_ERROR, -CONVERGENCE_E, -CONVERGENCE_W);
     network.setBatchSize(10);
 
+    const int COLS = 5;
+    const int ROWS = min(EXAMPLE_COUNT / COLS, 30);
+    ImColor* classColors = new ImColor[CLASSES]
+    { ImColor(0.0f, 0.0f, 0.0f, 1.0f),
+      ImColor(1.0f, 1.0f, 1.0f, 1.0f) };
+    network.displayClassificationEstimation(ROWS, COLS, classColors);
+
     network.train(features, labels);
+}
 
-    //cv::Mat resultMat;
-    //xt::xarray<double> batch;
-    //xt::xarray<double> result;
+void test_mnist()
+{
+    // Set up the data
+    ifstream in_file;
+    //in_file.open("mnist_mini.csv");
+    in_file.open("mnist_test.csv");
+    auto data = xt::load_csv<double>(in_file);
+    in_file.close();
 
-    //// Get an initial accuracy
-    //double correct = 0;
-    //const double ACCURACY_COUNT = 100;
-    //for (int i = 0; i < ACCURACY_COUNT; i++)
-    //{
-    //    batch = xt::strided_view(features, { i, xt::all(), xt::all() });
-    //    batch.reshape({ 1, batch.shape()[0], batch.shape()[1], 1 });
+    const int N = ((int)(data.shape()[0])); // Number of examples
+    const int IMG_DIM = sqrt((int)(data.shape()[1])); // 28 x 28
+    const int C = 1;
 
-    //    result = network.feedForward(batch);
+    const int CLASSES = 10;
 
-    //    correct += (labels(i) == xt::argmax(result)(0)) ? 1 : 0;
-    //}
-    //cout << "Initial Accuracy: " << (correct / ACCURACY_COUNT) << endl << endl;
+    xt::xarray<double> labels = xt::col(data, 0);
+    xt::xarray<double> features = xt::reshape_view(xt::view(data, xt::all(), xt::range(1, _)), { N, IMG_DIM, IMG_DIM, 1 });
+    features /= 255.0;
 
-    //const int BATCH_SIZE = 1;
-    //const int ITERATIONS = 20000;
-    //for (int i = 0; i < ITERATIONS; i++)
-    //{
-    //    // Set up the batch
-    //    int batchStart = ((i + 0) * BATCH_SIZE) % N;
-    //    int batchEnd = ((i + 1) * BATCH_SIZE) % N;
-    //    if ((batchEnd - batchStart) != BATCH_SIZE)
-    //    {
-    //        batchEnd = N - 1;
-    //    }
-    //    else { }
-    //    int batchLength = batchEnd - batchStart;
+    const int EXAMPLE_COUNT = 200;//1000;
+    labels = xt::view(labels, xt::range(0, EXAMPLE_COUNT), xt::all());
+    features = xt::view(features, xt::range(0, EXAMPLE_COUNT), xt::all(), xt::all(), xt::all());
 
-    //    batch = xt::strided_view(features, { xt::range(batchStart, batchEnd), xt::ellipsis() });
-    //    batch.reshape({ batchLength, IMG_DIM, IMG_DIM, C });
+    xt::xarray<double> oneHotLabels = xt::zeros<double>({ EXAMPLE_COUNT, CLASSES });
+    for (int j = 0; j < EXAMPLE_COUNT; j++)
+    {
+        oneHotLabels(j, labels(j)) = 1.0;
+    }
+    labels = oneHotLabels;
 
-    //    xt::xarray<double> batchLabels = xt::zeros<double>({ batchLength, CLASSES });
-    //    for (int j = 0; j < batchLength; j++)
-    //    {
-    //        batchLabels(j, labels(batchStart + j)) = 1.0;
-    //    }
+    const int NUM_KERNELS_1 = 16;
+    const int NUM_KERNELS_2 = 4;
 
-    //    network.backPropagate(batch, batchLabels);
+    // Create the network
+    NeuralNetwork network(true);
+    network.addInputLayer({ (size_t)IMG_DIM, (size_t)IMG_DIM, C }); // 28x28x1
+    network.addConvolutionLayer(ConvolutionActivationFunction::Convolution2D, NUM_KERNELS_1, { 5, 5 }, C); // 28x28x1 -> 24x24x64                                                   
+    network.addPoolingLayer(PoolingActivationFunction::Max2D, { 2, 2 }); // 24x24x64 -> 12x12x64
+    network.addConvolutionLayer(ConvolutionActivationFunction::Convolution2D, NUM_KERNELS_2, { 5, 5 }, NUM_KERNELS_1); // 12x12x16 -> 8x8x16                                                         
+    network.addPoolingLayer(PoolingActivationFunction::Max2D, { 2, 2 }); // 8x8x16 -> 4x4x16
+    network.addFlattenLayer(4 * 4 * NUM_KERNELS_2); // 4x4x16 -> 256
+    network.addDenseLayer(DenseActivationFunction::Sigmoid, 32); // 256 -> 32
+    network.addDenseLayer(DenseActivationFunction::Sigmoid, CLASSES); // 32 -> 10
+    network.addSoftmaxLayer(-1);
 
-    //    const int ITERATION_PRINT = 10;
-    //    if (i % ITERATION_PRINT == (ITERATION_PRINT - 1))
-    //    {
-    //        std::cout << "Iteration " << (i + 1) << " complete" << endl;
-    //        //cv::imshow("Weights", convertWeightsToMat3(convfunc1.getWeights().getParameters(), 0, 1, 0));
-    //        //cv::waitKey(1);
-    //    }
-    //    else { }
+    ErrorFunction* errorFunction = new CrossEntropyFunction();
+    network.setTrainingParameters(errorFunction, MAX_ITERATIONS, -MIN_ERROR, -CONVERGENCE_E, -CONVERGENCE_W);
+    network.setBatchSize(20);
 
-    //    // Show the current accuracy
-    //    const int ACCURACY_PRINT = 100;
-    //    if (i % ACCURACY_PRINT == (ACCURACY_PRINT - 1))
-    //    {
-    //        correct = 0.0;
-    //        std::cout << endl;
-    //        for (int i = 0; i < ACCURACY_COUNT; i++)
-    //        {
-    //            batch = xt::strided_view(features, { i, xt::all(), xt::all() });
-    //            batch.reshape({ 1, batch.shape()[0], batch.shape()[1], 1 });
-    //            result = network.feedForward(batch);
-    //            correct += (labels(i) == xt::argmax(result)(0)) ? 1 : 0;
-    //        }
-    //        std::cout << "Accuracy: " << (correct / ACCURACY_COUNT) << endl << endl;
-    //    }
-    //    else { }
+    const int COLS = 5;
+    const int ROWS = min(EXAMPLE_COUNT / COLS, 30);
+    ImColor* classColors = new ImColor[CLASSES]
+    { ImColor(0.0f, 0.0f, 0.0f, 1.0f),
+      ImColor(0.333f, 0.0f, 0.0f, 1.0f),
+      ImColor(0.667f, 0.0f, 0.0f, 1.0f),
+      ImColor(1.0f, 0.0f, 0.0f, 1.0f),
+      ImColor(0.0f, 0.333f, 0.0f, 1.0f),
+      ImColor(0.0f,0.667f, 0.0f, 1.0f),
+      ImColor(0.0f, 1.0f, 0.0f, 1.0f),
+      ImColor(0.0f, 0.0f, 0.333f, 1.0f),
+      ImColor(0.0f, 0.0f, 0.667f, 1.0f),
+      ImColor(0.0f,0.0f, 1.0f, 1.0f) };
+    network.displayClassificationEstimation(ROWS, COLS, classColors);
 
-    //    // Show the accuracy per class
-    //    const int SUMS_PRINT = 2000;
-    //    if (i % SUMS_PRINT == (SUMS_PRINT - 1))
-    //    {
-    //        for (int k = 0; k < CLASSES; k++)
-    //        {
-    //            xt::xarray<double> sums = xt::zeros<double>({ 1, CLASSES });
-    //            correct = 0.0;
-    //            double count = 0.0;
-    //            for (int j = 0; j < ACCURACY_COUNT; j++)
-    //            {
-    //                if (labels(j) == k)
-    //                {
-    //                    batch = xt::strided_view(features, { j, xt::all(), xt::all() });
-    //                    batch.reshape({ 1, batch.shape()[0], batch.shape()[1], 1 });
-    //                    result = network.feedForward(batch);
-    //                    sums += result;
-    //                    correct += (k == xt::argmax(result)(0)) ? 1 : 0;
-    //                    count++;
-    //                }
-    //            }
-    //            sums /= count;
-    //            cout << "Accuracy: " << k << ": " << (correct / count) << endl;
-    //            cout << "Sums: " << k << ": ";
-    //            for (int n = 0; n < CLASSES; n++) cout << sums(0, n) << " ";
-    //            cout << endl;
-    //        }
-    //        std::cout << endl;
-    //    }
-    //    else { }
-    //}
+    network.train(features, labels);
+}
+
+enum class network
+{
+    signal = 0,
+    iris = 1,
+    binary = 2,
+    mnist = 3
+};
+
+void test_network(network type, int layers = 0)
+{
+    switch (type)
+    {
+        case network::signal:
+            test_signal(layers);
+            break;
+        case network::iris:
+            test_iris(layers);
+            break;
+        case network::binary:
+            test_binary();
+            break;
+        case network::mnist:
+            test_mnist();
+            break;
+        default:
+            // Do nothing
+            break;
+    }
 }
 
 void test_layers()
@@ -827,11 +757,11 @@ void test_layers()
 
 int main(int argc, char** argv)
 {
-    //test_network(network::iris, 3);
+    test_network(network::mnist, 0);
 
     //test_layers();
 
-    test_binary();
+    //test_binary();
 
     return 0;
 }

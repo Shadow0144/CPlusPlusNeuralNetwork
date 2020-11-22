@@ -88,10 +88,14 @@ xt::xarray<double> Convolution2DFunction::convolude(xt::xarray<double> f, xt::xa
 	return h;
 }
 
+static bool feed = false;
 xt::xarray<double> Convolution2DFunction::feedForward(xt::xarray<double> inputs)
 {
-	/*cv::Mat inputMat = convertChannelToMat(inputs);
-	cv::imshow("Input", inputMat);*/
+	if (feed)
+	{
+		cv::Mat inputMat = convertChannelToMat(inputs);
+		cv::imshow("Input", inputMat);
+	}
 
 	// Assume the last dimension is the channel dimension
 	const int DIMS = inputs.dimension();
@@ -125,13 +129,17 @@ xt::xarray<double> Convolution2DFunction::feedForward(xt::xarray<double> inputs)
 
 	//output = xt::where(lastOutput > 0.0, lastOutput, 0); // TODO
 
-	/*cv::Mat outputMat = convertChannelToMat(output);
-	cv::imshow("Output", outputMat);
-	cv::waitKey(0);*/
+	if (feed)
+	{
+		cv::Mat outputMat = convertChannelToMat(output);
+		cv::imshow("Output", outputMat);
+		cv::waitKey(0);
+	}
 
 	return output;
 }
 
+static bool back = false;
 xt::xarray<double> Convolution2DFunction::backPropagate(xt::xarray<double> sigmas)
 {
 	//sigmas *= (lastOutput > 0.0); // TODO: Replace with correct derivative code
@@ -139,6 +147,7 @@ xt::xarray<double> Convolution2DFunction::backPropagate(xt::xarray<double> sigma
 	// The change in weights corresponds to a convolution between the input and the sigmas
 	// Assume the last dimension is the channel dimension
 	const int DIMS = lastInput.dimension();
+	const int DIMN = 0;
 	const int DIM1 = DIMS - 3;
 	const int DIM2 = DIMS - 2;
 	const int DIMC = DIMS - 1;
@@ -161,12 +170,27 @@ xt::xarray<double> Convolution2DFunction::backPropagate(xt::xarray<double> sigma
 		// Select the kth sigma and the kth kernel to update
 		sigmasWindowView[DIMC] = k;
 		kernelWindowView[kDIMK] = k;
-		auto filterSigma = xt::xarray<double>(xt::strided_view(sigmas, sigmasWindowView));
+		auto kernelSigma = xt::xarray<double>(xt::strided_view(sigmas, sigmasWindowView));
 		// Repeat the sigma for each of the filters / channels
-		filterSigma = xt::expand_dims(filterSigma, filterSigma.dimension());
-		filterSigma = xt::repeat(filterSigma, inputChannels, filterSigma.dimension()-1);
-		auto result = xt::repeat(xt::expand_dims(sum(convolude(lastInput, filterSigma), 0), 2), inputChannels, 2);
+		kernelSigma = xt::expand_dims(kernelSigma, DIMC); // The output dimensionality should match the input
+		kernelSigma = xt::repeat(kernelSigma, inputChannels, DIMC);
+		// Convolude the last input with the sigmas for this kernel
+		xt::xarray<double> result = convolude(lastInput, kernelSigma);
+		// Repeat for each of the filters
+		result = xt::expand_dims(result, DIMC);
+		result = xt::repeat(result, inputChannels, DIMC);
+		// Sum up initial dimensions until the correct size (e.g. the example dimension)
+		while (result.dimension() > 3)
+		{
+			result = xt::sum(result, 0);
+		}
 		xt::strided_view(delta, kernelWindowView) = result;
+		if (back)
+		{
+			cv::Mat resultMat = convertKernelToMat3(result);
+			cv::imshow("Result", resultMat);
+			cv::waitKey(0);
+		}
 	}
 
 	weights.incrementDeltaParameters(-ALPHA * delta);

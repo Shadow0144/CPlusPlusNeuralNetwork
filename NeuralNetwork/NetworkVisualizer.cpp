@@ -284,7 +284,8 @@ void NetworkVisualizer::renderFrame()
             deltaDrag = ImVec2(newDrag.x - drag.x, newDrag.y - drag.y);
         }
         drag = newDrag;
-        origin = ImVec2(origin.x + deltaDrag.x, origin.y + deltaDrag.y);
+        origin.x += deltaDrag.x;
+        origin.y += deltaDrag.y;
     }
     else 
     { 
@@ -304,6 +305,9 @@ void NetworkVisualizer::renderFrame()
         else { }
     }
     else { }
+
+    //origin.x = max((-2 * MAX_PAN * scale), min(origin.x, (MAX_PAN * scale)));
+    //origin.y = max((-2 * MAX_PAN * scale), min(origin.y, (MAX_PAN * scale)));
 
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL2_NewFrame(window); 
@@ -329,7 +333,7 @@ void NetworkVisualizer::renderFrame()
             }
             else { }
 
-            if (displayClasses)
+            if (displayClasses && predictedSet)
             {
                 classifier->draw(draw_list, predicted, targets);
             }

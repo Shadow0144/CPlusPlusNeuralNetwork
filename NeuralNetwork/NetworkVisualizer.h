@@ -59,6 +59,7 @@ private:
 	const double SCALE_FACTOR = 0.1;
 	const double MIN_SCALE_FACTOR = 0.1;
 	const double MAX_SCALE_FACTOR = 10.0;
+	const double MAX_PAN = 200;
 
 	thread drawThread;
 

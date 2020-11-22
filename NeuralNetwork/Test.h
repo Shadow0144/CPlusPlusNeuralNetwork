@@ -13,5 +13,6 @@ void print_dims(xt::xarray<double> xarray);
 
 cv::Mat convertToMat(xt::xarray<double> xtensor);
 cv::Mat convertChannelToMat(xt::xarray<double> xtensor, int num = 0, int channel = 0, bool printDims = false);
+cv::Mat convertKernelToMat3(xt::xarray<double> xtensor, int filter = 0, int numChannels = 1);
 cv::Mat convertWeightsToMat3(xt::xarray<double> xtensor, int filter = 0, int numChannels = 1, int kernel = 0);
 cv::Mat convertChannelsToMat3(xt::xarray<double> xtensor, int num = 0, int startChannel = 0, int numChannels = 1, bool printDims = false);

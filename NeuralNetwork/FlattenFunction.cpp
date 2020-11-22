@@ -17,8 +17,7 @@ FlattenFunction::FlattenFunction(int numOutputs)
 
 xt::xarray<double> FlattenFunction::feedForward(xt::xarray<double> input)
 {
-	lastInput = input;
-	auto shape = lastInput.shape();
+	auto shape = input.shape();
 	const int DIMS = shape.size();
 	size_t newShape = 1;
 	for (int i = 1; i < DIMS; i++)
@@ -26,15 +25,6 @@ xt::xarray<double> FlattenFunction::feedForward(xt::xarray<double> input)
 		newShape *= shape[i];
 	}
 	auto result = input.reshape({ shape[0], newShape });
-	/*print_dims(result);
-	for (int i = 0; i < shape[0]; i++)
-	{
-		for (int j = 0; j < newShape; j++)
-		{
-			cout << result(i, j) << " ";
-		}
-	}
-	cout << endl;*/
 	return result;
 }
 

@@ -105,23 +105,29 @@ xt::xarray<double> MaxPooling2DFunction::backPropagate(xt::xarray<double> sigmas
 
 	int k = 0;
 	int l = 0;
-	const int I = shape[DIM1];
-	const int J = shape[DIM2];
-	for (int i = 0; i < I; i++)
+	const int I = lastInput.shape()[DIM1];
+	const int J = lastInput.shape()[DIM2];
+	for (int i = 0; i < I; i += filterShape[0])
 	{
 		primeWindowView[DIM1] = xt::range(i, i + filterShape[0]);
 		sigmaWindowView[DIM1] = k++; // Increment after assignment
-		for (int j = 0; j < J; j++)
+		for (int j = 0; j < J; j += filterShape[1])
 		{
 			primeWindowView[DIM2] = xt::range(j, j + filterShape[1]);
 			sigmaWindowView[DIM2] = l++; // Increment after assignment
-			auto window = xt::xarray<double>(xt::strided_view(lastInput, primeWindowView));
-			auto maxes = xt::xarray<double>(xt::strided_view(lastOutput, sigmaWindowView));
-			maxes.reshape(maxesShape);
-			auto mask = xt::equal(window, maxes);
+			auto window = xt::strided_view(lastInput, primeWindowView);
+			xt::xarray<double> maxes = xt::xarray<double>(xt::strided_view(lastOutput, sigmaWindowView));
+			maxes = xt::expand_dims(maxes, DIM1);
+			maxes = xt::repeat(maxes, filterShape[0], DIM1);
+			maxes = xt::expand_dims(maxes, DIM2);
+			maxes = xt::repeat(maxes, filterShape[1], DIM2);
 			auto sigma = xt::xarray<double>(xt::strided_view(sigmas, sigmaWindowView));
-			sigma.reshape(sigmaShape);
-			xt::strided_view(sigmasPrime, primeWindowView) = mask * sigma;
+			sigma = xt::expand_dims(sigma, DIM1);
+			sigma = xt::repeat(sigma, filterShape[0], DIM1);
+			sigma = xt::expand_dims(sigma, DIM2);
+			sigma = xt::repeat(sigma, filterShape[1], DIM2);
+			auto sigmaExp = xt::where(xt::equal(window, maxes), sigma, 0);
+			xt::strided_view(sigmasPrime, primeWindowView) = sigmaExp;
 		}
 		l = 0;
 	}

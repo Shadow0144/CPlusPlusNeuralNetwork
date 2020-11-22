@@ -80,7 +80,7 @@ void ClassifierVisualizer::draw(ImDrawList* canvas, xt::xarray<double> predicted
 	canvas->AddRect(topLeft, bottomRight, BLACK);
 
 	float midX = bottomRight.x - ((bottomRight.x - topLeft.x) / 2.0f);
-	canvas->AddText(ImGui::GetFont(), TEXT_SIZE, ImVec2(midX, topLeft.y + (TEXT_BUFFER / 2.0f)), BLACK, "Predicted");
+	canvas->AddText(ImGui::GetFont(), TEXT_SIZE, ImVec2(midX - (TEXT_SIZE * 5), topLeft.y + (TEXT_BUFFER / 2.0f)), BLACK, "Predicted");
 	canvas->AddText(ImGui::GetFont(), TEXT_SIZE, ImVec2(midX, bottomRight.y - TEXT_BUFFER), BLACK, "Actual");
 
 	size_t index = 0;

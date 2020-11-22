@@ -17,7 +17,7 @@ public:
 	void addInputLayer(std::vector<size_t> inputShape);
 	void addDenseLayer(DenseActivationFunction layerFunction, size_t numUnits);
 	void addSoftmaxLayer(int axis = -1);
-	void addConvolutionLayer(ConvolutionActivationFunction layerFunction, size_t numKernels, std::vector<size_t> convolutionShape, size_t stride = 1);
+	void addConvolutionLayer(ConvolutionActivationFunction layerFunction, size_t numKernels, std::vector<size_t> convolutionShape, size_t inputChannels, size_t stride = 1);
 	void addPoolingLayer(PoolingActivationFunction layerFunction, std::vector<size_t> poolingShape);
 	void addFlattenLayer(int numOutputs);
 
@@ -44,7 +44,7 @@ public:
 	bool getDrawingEnabled();
 	void setDrawingEnabled(bool drawingEnabled);
 	void displayRegressionEstimation();
-	void displayClassificationEstimation();
+	void displayClassificationEstimation(int rows, int cols, ImColor* colors);
 
 	void draw(ImDrawList* canvas, ImVec2 origin, double scale, xt::xarray<double> target_xs, xt::xarray<double> target_ys);
 
@@ -62,7 +62,6 @@ private:
 	int outputRate;
 	int batchSize;
 	NetworkVisualizer* visualizer;
-	ImColor* colors; // TODO
 
 	enum class LearningState // For printing output
 	{

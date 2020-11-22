@@ -17,6 +17,8 @@
 #include <xtensor/xview.hpp>
 #pragma warning(pop)
 
+const double internalBatchLimit = 20;
+
 NeuralNetwork::NeuralNetwork(bool drawingEnabled)
 {
 	this->verbosity = 1;
@@ -30,7 +32,6 @@ NeuralNetwork::NeuralNetwork(bool drawingEnabled)
 	this->errorConvergenceThreshold = 0.00000001;
 	this->weightConvergenceThreshold = 0.001;
 
-	colors = NULL;
 	if (drawingEnabled)
 	{
 		visualizer = new NetworkVisualizer(this);
@@ -72,9 +73,9 @@ void NeuralNetwork::addSoftmaxLayer(int axis)
 	layerCount++;
 }
 
-void NeuralNetwork::addConvolutionLayer(ConvolutionActivationFunction layerFunction, size_t numKernels, std::vector<size_t> convolutionShape, size_t stride)
+void NeuralNetwork::addConvolutionLayer(ConvolutionActivationFunction layerFunction, size_t numKernels, std::vector<size_t> convolutionShape, size_t inputChannels, size_t stride)
 {
-	ConvolutionNeuralLayer* layer = new ConvolutionNeuralLayer(layerFunction, layers->at(layerCount - 1), numKernels, convolutionShape, stride);
+	ConvolutionNeuralLayer* layer = new ConvolutionNeuralLayer(layerFunction, layers->at(layerCount - 1), numKernels, convolutionShape, inputChannels, stride);
 	layers->push_back(layer);
 	layerCount++;
 }
@@ -95,16 +96,41 @@ void NeuralNetwork::addFlattenLayer(int numOutputs)
 
 xt::xarray<double> NeuralNetwork::feedForward(xt::xarray<double> inputs)
 {
-	xt::xarray<double> predicted = inputs;
+	const int N = inputs.shape()[0];
+	const int INTERNAL_BATCHES = ceil(N / internalBatchLimit);
+	int iBatchSize = N / INTERNAL_BATCHES;
 
-	for (int i = 0; i < layerCount; i++) // Loop through the layers
+	auto shape = layers->at(layerCount - 1)->getOutputShape();
+	shape[0] = N;
+	//shape.insert(shape.begin(), N);
+	xt::xarray<double> predicted = xt::xarray<double>(shape);
+
+	for (int i = 0; i < INTERNAL_BATCHES; i++)
 	{
-		predicted = layers->at(i)->feedForward(predicted);
+		// Set up the batch
+		int iBatchStart = ((i + 0) * iBatchSize) % N;
+		int iBatchEnd = ((i + 1) * iBatchSize) % N;
+		if ((iBatchEnd - iBatchStart) != iBatchSize)
+		{
+			iBatchEnd = N;
+		}
+		else { }
+
+		xt::xstrided_slice_vector iBatchSV({ xt::range(iBatchStart, iBatchEnd), xt::ellipsis() });
+		xt::xarray<double> predictedBatch = xt::strided_view(inputs, iBatchSV);
+
+		for (int i = 0; i < layerCount; i++) // Loop through the layers
+		{
+			predictedBatch = layers->at(i)->feedForward(predictedBatch);
+		}
+
+		xt::strided_view(predicted, iBatchSV) = predictedBatch;
 	}
 
 	return predicted;
 }
 
+// Called internally only, internal batching is handled in backPropagate
 xt::xarray<double> NeuralNetwork::feedForwardTrain(xt::xarray<double> inputs)
 {
 	xt::xarray<double> predicted = inputs;
@@ -121,14 +147,37 @@ bool NeuralNetwork::backPropagate(xt::xarray<double> inputs, xt::xarray<double> 
 {
 	bool converged = true;
 
-	// Feed forward and calculate the gradient
-	xt::xarray<double> predicted = feedForwardTrain(inputs);
-	xt::xarray<double> errors = errorFunction->getDerivativeOfError(predicted, targets);
+	const int N = inputs.shape()[0];
+	const int INTERNAL_BATCHES = ceil(N / internalBatchLimit);
+	int iBatchSize = N / INTERNAL_BATCHES;
 
-	// Backpropagate through the layers
-	for (int l = layerCount - 1; l > 0; l--)
+	auto shape = layers->at(layerCount - 1)->getOutputShape();
+	shape[0] = N;
+	//shape.insert(shape.begin(), N);
+	xt::xarray<double> predicted = xt::xarray<double>(shape);
+
+	for (int i = 0; i < INTERNAL_BATCHES; i++)
 	{
-		errors = layers->at(l)->backPropagate(errors);
+		// Set up the batch
+		int iBatchStart = ((i + 0) * iBatchSize) % N;
+		int iBatchEnd = ((i + 1) * iBatchSize) % N;
+		if ((iBatchEnd - iBatchStart) != iBatchSize)
+		{
+			iBatchEnd = N;
+		}
+		else { }
+
+		xt::xstrided_slice_vector iBatchSV({ xt::range(iBatchStart, iBatchEnd), xt::ellipsis() });
+
+		// Feed forward and calculate the gradient
+		xt::xarray<double> predicted = feedForwardTrain(xt::strided_view(inputs, iBatchSV));
+		xt::xarray<double> errors = errorFunction->getDerivativeOfError(predicted, xt::strided_view(targets, iBatchSV));
+
+		// Backpropagate through the layers
+		for (int l = layerCount - 1; l > 0; l--)
+		{
+			errors = layers->at(l)->backPropagate(errors);
+		}
 	}
 
 	// Apply the backpropagation
@@ -143,11 +192,12 @@ bool NeuralNetwork::backPropagate(xt::xarray<double> inputs, xt::xarray<double> 
 
 void NeuralNetwork::train(xt::xarray<double> inputs, xt::xarray<double> targets)
 {
+	setupDrawing(inputs, targets);
+
 	xt::xarray<double> predicted = feedForward(inputs);
 	double error = abs(getError(predicted, targets));
 	output(LearningState::untrained, 0, inputs, targets, predicted);
 
-	setupDrawing(inputs, targets);
 	updateDrawing(predicted);
 
 	cout << "Beginning training" << endl << endl;
@@ -324,15 +374,6 @@ void NeuralNetwork::setDrawingEnabled(bool drawingEnabled)
 	else { }
 }
 
-void NeuralNetwork::setClassificationVisualizationParameters(int rows, int cols, ImColor* classColors)
-{
-	if (drawingEnabled)
-	{
-		visualizer->addClassificationVisualization(rows, cols, classColors);
-	}
-	else { }
-}
-
 void NeuralNetwork::displayRegressionEstimation()
 {
 	if (drawingEnabled)
@@ -342,12 +383,11 @@ void NeuralNetwork::displayRegressionEstimation()
 	else { }
 }
 
-void NeuralNetwork::displayClassificationEstimation()
+void NeuralNetwork::displayClassificationEstimation(int rows, int cols, ImColor* colors)
 {
 	if (drawingEnabled)
 	{
-		colors = new ImColor[3]{ ImColor(1.0f, 0.0f, 0.0f, 1.0f), ImColor(0.0f, 1.0f, 0.0f, 1.0f), ImColor(0.0f, 0.0f, 1.0f, 1.0f) };
-		visualizer->addClassificationVisualization(50, 3, colors);
+		visualizer->addClassificationVisualization(rows, cols, colors);
 	}
 	else { }
 }
