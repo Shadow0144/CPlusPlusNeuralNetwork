@@ -1,12 +1,12 @@
 #include "SqueezeFunction.h"
 
-SqueezeFunction::SqueezeFunction(std::vector<size_t> squeezeDims)
+SqueezeFunction::SqueezeFunction(const std::vector<size_t>& squeezeDims)
 {
 	this->hasBias = false;
 	this->squeezeDims = squeezeDims;
 }
 
-xt::xarray<double> SqueezeFunction::feedForward(xt::xarray<double> input)
+xt::xarray<double> SqueezeFunction::feedForward(const xt::xarray<double>& input)
 {
 	auto shape = input.shape();
 	const int DIMS = squeezeDims.size();
@@ -14,11 +14,12 @@ xt::xarray<double> SqueezeFunction::feedForward(xt::xarray<double> input)
 	{
 		shape[squeezeDims[i]] = 0;
 	}
-	auto result = input.reshape(shape);
+	auto result = xt::xarray<double>(input);
+	result.reshape(shape);
 	return result;
 }
 
-xt::xarray<double> SqueezeFunction::backPropagate(xt::xarray<double> sigmas)
+xt::xarray<double> SqueezeFunction::backPropagate(const xt::xarray<double>& sigmas)
 {
 	return sigmas;
 }

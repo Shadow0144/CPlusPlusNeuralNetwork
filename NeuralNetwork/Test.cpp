@@ -19,7 +19,7 @@
 
 using namespace std;
 
-xt::xarray<double> test(xt::xarray<double> input)
+xt::xarray<double> test(const xt::xarray<double>& input)
 {
     const int n1 = 4;
     const int n2 = 4;
@@ -74,7 +74,7 @@ xt::xarray<double> test(xt::xarray<double> input)
     return result;
 }
 
-void print_dims(xt::xarray<double> xarray)
+void print_dims(const xt::xarray<double>& xarray)
 {
     const int DIMS = xarray.dimension();
     std::cout << DIMS << ", ";
@@ -85,24 +85,25 @@ void print_dims(xt::xarray<double> xarray)
     cout << endl;
 }
 
-cv::Mat convertToMat(xt::xarray<double> xtensor)
+cv::Mat convertToMat(const xt::xarray<double>& xtensor)
 {
-    if (xtensor.dimension() == 2)
+    xt::xarray<double> tensor = xtensor;
+    if (tensor.dimension() == 2)
     {
-        xtensor.reshape({ 1, xtensor.shape()[0], xtensor.shape()[1], 1 });
+        tensor.reshape({ 1, tensor.shape()[0], tensor.shape()[1], 1 });
     }
-    else if (xtensor.dimension() == 3)
+    else if (tensor.dimension() == 3)
     {
-        xtensor.reshape({ 1, xtensor.shape()[0], xtensor.shape()[1], xtensor.shape()[2] });
+        tensor.reshape({ 1, tensor.shape()[0], tensor.shape()[1], tensor.shape()[2] });
     }
     else { }
-    const int SIZE = xtensor.shape()[1];
+    const int SIZE = tensor.shape()[1];
     cv::Mat mat(SIZE, SIZE, CV_64F);
     for (int i = 0; i < SIZE; i++)
     {
         for (int j = 0; j < SIZE; j++)
         {
-            mat.at<double>(i, j) = xtensor(0, i, j, 0);
+            mat.at<double>(i, j) = tensor(0, i, j, 0);
         }
     }
     const int R = 10;
@@ -110,7 +111,7 @@ cv::Mat convertToMat(xt::xarray<double> xtensor)
     return mat;
 }
 
-cv::Mat convertChannelToMat(xt::xarray<double> xtensor, int num, int channel, bool printDims)
+cv::Mat convertChannelToMat(const xt::xarray<double>& xtensor, int num, int channel, bool printDims)
 {
     if (printDims)
     {
@@ -133,7 +134,7 @@ cv::Mat convertChannelToMat(xt::xarray<double> xtensor, int num, int channel, bo
 }
 
 // For weights
-cv::Mat convertKernelToMat3(xt::xarray<double> xtensor, int filter, int numFilters)
+cv::Mat convertKernelToMat3(const xt::xarray<double>& xtensor, int filter, int numFilters)
 {
     auto tensor = xt::strided_view(xtensor, { xt::all(), xt::all(), xt::range(filter, filter + numFilters) });
     const int SIZE = tensor.shape()[0];
@@ -154,7 +155,7 @@ cv::Mat convertKernelToMat3(xt::xarray<double> xtensor, int filter, int numFilte
 }
 
 // For weights
-cv::Mat convertWeightsToMat3(xt::xarray<double> xtensor, int filter, int numChannels, int kernel)
+cv::Mat convertWeightsToMat3(const xt::xarray<double>& xtensor, int filter, int numChannels, int kernel)
 {
     auto tensor = xt::strided_view(xtensor, { xt::all(), xt::all(), xt::range(filter, filter + numChannels), kernel });
     const int SIZE = tensor.shape()[0];
@@ -174,7 +175,7 @@ cv::Mat convertWeightsToMat3(xt::xarray<double> xtensor, int filter, int numChan
     return mat;
 }
 
-cv::Mat convertChannelsToMat3(xt::xarray<double> xtensor, int num, int startChannel, int numChannels, bool printDims)
+cv::Mat convertChannelsToMat3(const xt::xarray<double>& xtensor, int num, int startChannel, int numChannels, bool printDims)
 {
     if (printDims)
     {

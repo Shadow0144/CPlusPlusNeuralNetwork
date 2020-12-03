@@ -27,18 +27,18 @@ double SoftsignFunction::softsign(double z)
 	return (z / (abs(z) + 1.0));
 }
 
-xt::xarray<double> SoftsignFunction::softsign(xt::xarray<double> z)
+xt::xarray<double> SoftsignFunction::softsign(const xt::xarray<double>& z)
 {
 	return (z / (abs(z) + 1.0));
 }
 
-xt::xarray<double> SoftsignFunction::feedForward(xt::xarray<double> inputs)
+xt::xarray<double> SoftsignFunction::feedForward(const xt::xarray<double>& inputs)
 {
 	auto dotProductResult = dotProduct(inputs);
 	return softsign(dotProductResult);
 }
 
-xt::xarray<double> SoftsignFunction::backPropagate(xt::xarray<double> sigmas)
+xt::xarray<double> SoftsignFunction::backPropagate(const xt::xarray<double>& sigmas)
 {
 	return denseBackpropagate(sigmas * activationDerivative());
 }

@@ -10,13 +10,13 @@
 using namespace std;
 
 // TODO: Padding and dimensions
-AveragePooling3DFunction::AveragePooling3DFunction(std::vector<size_t> filterShape)
+AveragePooling3DFunction::AveragePooling3DFunction(const std::vector<size_t>& filterShape)
 {
 	this->hasBias = false;
 	this->filterShape = filterShape;
 }
 
-xt::xarray<double> AveragePooling3DFunction::feedForward(xt::xarray<double> inputs)
+xt::xarray<double> AveragePooling3DFunction::feedForward(const xt::xarray<double>& inputs)
 {
 	const int DIM1 = inputs.dimension() - 4; // First dimension
 	const int DIM2 = inputs.dimension() - 3; // Second dimension
@@ -65,7 +65,7 @@ xt::xarray<double> AveragePooling3DFunction::feedForward(xt::xarray<double> inpu
 	return output;
 }
 
-xt::xarray<double> AveragePooling3DFunction::backPropagate(xt::xarray<double> sigmas)
+xt::xarray<double> AveragePooling3DFunction::backPropagate(const xt::xarray<double>& sigmas)
 {
 	xt::xarray<double> sigmasPrime = xt::where(xt::equal(lastInput, lastOutput), 1, 0) * sigmas;
 	return sigmasPrime;

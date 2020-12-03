@@ -29,19 +29,19 @@ double ELUFunction::ELU(double z)
 	return ((z < 0.0) ? (alpha * (exp(z) - 1.0)) : z);
 }
 
-xt::xarray<double> ELUFunction::ELU(xt::xarray<double> z)
+xt::xarray<double> ELUFunction::ELU(const xt::xarray<double>& z)
 {
 	auto mask = (z > 0.0);
 	return ((1.0 - mask) * (alpha * (exp(z) - 1.0)) + (mask * z));
 }
 
-xt::xarray<double> ELUFunction::feedForward(xt::xarray<double> inputs)
+xt::xarray<double> ELUFunction::feedForward(const xt::xarray<double>& inputs)
 {
 	auto dotProductResult = dotProduct(inputs);
 	return ELU(dotProductResult);
 }
 
-xt::xarray<double> ELUFunction::backPropagate(xt::xarray<double> sigmas)
+xt::xarray<double> ELUFunction::backPropagate(const xt::xarray<double>& sigmas)
 {
 	return denseBackpropagate(sigmas * activationDerivative());
 }

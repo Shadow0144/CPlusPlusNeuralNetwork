@@ -15,7 +15,7 @@ FlattenFunction::FlattenFunction(int numOutputs)
 	this->numUnits = numOutputs; // Setting the number of units will set the correct value for number of outputs
 }
 
-xt::xarray<double> FlattenFunction::feedForward(xt::xarray<double> input)
+xt::xarray<double> FlattenFunction::feedForward(const xt::xarray<double>& input)
 {
 	auto shape = input.shape();
 	const int DIMS = shape.size();
@@ -24,14 +24,16 @@ xt::xarray<double> FlattenFunction::feedForward(xt::xarray<double> input)
 	{
 		newShape *= shape[i];
 	}
-	auto result = input.reshape({ shape[0], newShape });
+	auto result = xt::xarray<double>(input);
+	result.reshape({ shape[0], newShape });
 	return result;
 }
 
-xt::xarray<double> FlattenFunction::backPropagate(xt::xarray<double> sigmas)
+xt::xarray<double> FlattenFunction::backPropagate(const xt::xarray<double>& sigmas)
 {
-	sigmas.reshape(lastInput.shape());
-	return sigmas;
+	auto sigmasPrime = xt::xarray<double>(sigmas);
+	sigmasPrime.reshape(lastInput.shape());
+	return sigmasPrime;
 }
 
 void FlattenFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)

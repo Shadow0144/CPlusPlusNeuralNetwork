@@ -12,7 +12,7 @@
 
 using namespace std;
 
-Convolution2DFunction::Convolution2DFunction(std::vector<size_t> convolutionShape, size_t inputChannels, size_t stride, size_t numKernels)
+Convolution2DFunction::Convolution2DFunction(const std::vector<size_t>& convolutionShape, size_t inputChannels, size_t stride, size_t numKernels)
 {
 	this->hasBias = false;
 	this->numUnits = numKernels;
@@ -39,7 +39,7 @@ Convolution2DFunction::Convolution2DFunction(std::vector<size_t> convolutionShap
 	kernelWindowView.push_back(0); // Current kernel
 }
 
-xt::xarray<double> Convolution2DFunction::convolude(xt::xarray<double> f, xt::xarray<double> g)
+xt::xarray<double> Convolution2DFunction::convolude(const xt::xarray<double>& f, const xt::xarray<double>& g)
 {
 	// Assume the last dimension is the channel dimension
 	const int DIMS = f.dimension();
@@ -89,7 +89,7 @@ xt::xarray<double> Convolution2DFunction::convolude(xt::xarray<double> f, xt::xa
 }
 
 static bool feed = false;
-xt::xarray<double> Convolution2DFunction::feedForward(xt::xarray<double> inputs)
+xt::xarray<double> Convolution2DFunction::feedForward(const xt::xarray<double>& inputs)
 {
 	if (feed)
 	{
@@ -140,7 +140,7 @@ xt::xarray<double> Convolution2DFunction::feedForward(xt::xarray<double> inputs)
 }
 
 static bool back = false;
-xt::xarray<double> Convolution2DFunction::backPropagate(xt::xarray<double> sigmas)
+xt::xarray<double> Convolution2DFunction::backPropagate(const xt::xarray<double>& sigmas)
 {
 	//sigmas *= (lastOutput > 0.0); // TODO: Replace with correct derivative code
 

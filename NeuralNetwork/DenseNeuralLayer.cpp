@@ -114,27 +114,35 @@ void DenseNeuralLayer::addChildren(NeuralLayer* children)
 	this->children = children;
 }
 
-xt::xarray<double> DenseNeuralLayer::feedForward(xt::xarray<double> input)
+xt::xarray<double> DenseNeuralLayer::feedForward(const xt::xarray<double>& input)
 {
+	xt::xarray<double> output;
 	if (activationFunction->getHasBias())
 	{
-		input = activationFunction->addBias(input);
+		output = activationFunction->feedForward(activationFunction->addBias(input));
 	}
-	else { }
-	return activationFunction->feedForward(input);
+	else 
+	{
+		output = activationFunction->feedForward(input);
+	}
+	return output;
 }
 
-xt::xarray<double> DenseNeuralLayer::feedForwardTrain(xt::xarray<double> input)
+xt::xarray<double> DenseNeuralLayer::feedForwardTrain(const xt::xarray<double>& input)
 {
+	xt::xarray<double> output;
 	if (activationFunction->getHasBias())
 	{
-		input = activationFunction->addBias(input);
+		output = activationFunction->feedForwardTrain(activationFunction->addBias(input));
 	}
-	else { }
-	return activationFunction->feedForwardTrain(input);
+	else
+	{
+		output = activationFunction->feedForwardTrain(input);
+	}
+	return output;
 }
 
-xt::xarray<double> DenseNeuralLayer::backPropagate(xt::xarray<double> sigmas)
+xt::xarray<double> DenseNeuralLayer::backPropagate(const xt::xarray<double>& sigmas)
 {
 	return activationFunction->backPropagate(sigmas);
 }

@@ -14,24 +14,24 @@ public:
 	NeuralNetwork(bool drawingEnabled = true);
 	~NeuralNetwork();
 
-	void addInputLayer(std::vector<size_t> inputShape);
+	void addInputLayer(const std::vector<size_t>& inputShape);
 	void addDenseLayer(DenseActivationFunction layerFunction, size_t numUnits);
 	void addSoftmaxLayer(int axis = -1);
-	void addConvolutionLayer(ConvolutionActivationFunction layerFunction, size_t numKernels, std::vector<size_t> convolutionShape, size_t inputChannels, size_t stride = 1);
-	void addPoolingLayer(PoolingActivationFunction layerFunction, std::vector<size_t> poolingShape);
+	void addConvolutionLayer(ConvolutionActivationFunction layerFunction, size_t numKernels, const std::vector<size_t>& convolutionShape, size_t inputChannels, size_t stride = 1);
+	void addPoolingLayer(PoolingActivationFunction layerFunction, const std::vector<size_t>& poolingShape);
 	void addFlattenLayer(int numOutputs);
 
-	xt::xarray<double> feedForward(xt::xarray<double> inputs); // Does not update internal values
-	xt::xarray<double> feedForwardTrain(xt::xarray<double> inputs); // Updates internal values such as last input and last output
-	bool backPropagate(xt::xarray<double> inputs, xt::xarray<double> targets); // Single step
-	void train(xt::xarray<double> inputs, xt::xarray<double> targets); // Train until a condition is met
+	xt::xarray<double> feedForward(const xt::xarray<double>& inputs); // Does not update internal values
+	xt::xarray<double> feedForwardTrain(const xt::xarray<double>& inputs); // Updates internal values such as last input and last output
+	bool backPropagate(const xt::xarray<double>& inputs, const xt::xarray<double>& targets); // Single step
+	void train(const xt::xarray<double>& inputs, const xt::xarray<double>& targets); // Train until a condition is met
 
 	void setTrainingParameters(ErrorFunction* errorFunction, int maxIterations,
 		double minError, double errorConvergenceThreshold, double weightConvergenceThreshold);
 
 	void setClassificationVisualizationParameters(int rows, int cols, ImColor* classColors);
 
-	double getError(xt::xarray<double> predicted, xt::xarray<double> actual);
+	double getError(const xt::xarray<double>& predicted, const xt::xarray<double>& actual);
 
 	int getVerbosity();
 	void setVerbosity(int verbosity);
@@ -46,7 +46,7 @@ public:
 	void displayRegressionEstimation();
 	void displayClassificationEstimation(int rows, int cols, ImColor* colors);
 
-	void draw(ImDrawList* canvas, ImVec2 origin, double scale, xt::xarray<double> target_xs, xt::xarray<double> target_ys);
+	void draw(ImDrawList* canvas, ImVec2 origin, double scale, const xt::xarray<double>& target_xs, const xt::xarray<double>& target_ys);
 
 private:
 	int verbosity;
@@ -70,7 +70,7 @@ private:
 		trained
 	};
 
-	void setupDrawing(xt::xarray<double> inputs, xt::xarray<double> targets);
-	void updateDrawing(xt::xarray<double> predicted);
-	void output(LearningState state, int iteration, xt::xarray<double> inputs, xt::xarray<double> targets, xt::xarray<double> predicted);
+	void setupDrawing(const xt::xarray<double>& inputs, const xt::xarray<double>& targets);
+	void updateDrawing(const xt::xarray<double>& predicted);
+	void output(LearningState state, int iteration, const xt::xarray<double>& inputs, const xt::xarray<double>& targets, const xt::xarray<double>& predicted);
 };

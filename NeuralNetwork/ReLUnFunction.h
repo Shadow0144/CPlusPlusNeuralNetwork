@@ -8,8 +8,8 @@ class ReLUnFunction : public Function
 public:
 	ReLUnFunction(size_t incomingUnits, size_t numUnits);
 
-	xt::xarray<double> feedForward(xt::xarray<double> input);
-	xt::xarray<double> backPropagate(xt::xarray<double> sigmas);
+	xt::xarray<double> feedForward(const xt::xarray<double>& input);
+	xt::xarray<double> backPropagate(const xt::xarray<double>& sigmas);
 	void draw(ImDrawList* canvas, ImVec2 origin, double scale);
 
 	double getN();
@@ -20,5 +20,5 @@ private:
 
 	xt::xarray<double> activationDerivative();
 
-	xt::xarray<double> reLUn(xt::xarray<double> z);
+	xt::xarray<double> reLUn(const xt::xarray<double>& z);
 };

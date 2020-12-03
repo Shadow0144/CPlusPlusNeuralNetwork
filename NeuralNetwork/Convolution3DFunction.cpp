@@ -4,7 +4,7 @@
 #include <xtensor/xview.hpp>
 #pragma warning(pop)
 
-Convolution3DFunction::Convolution3DFunction(std::vector<size_t> convolutionShape, size_t inputChannels, size_t stride, size_t numKernels)
+Convolution3DFunction::Convolution3DFunction(const std::vector<size_t>& convolutionShape, size_t inputChannels, size_t stride, size_t numKernels)
 {
 	this->hasBias = false;
 	this->numUnits = 1;
@@ -32,7 +32,7 @@ Convolution3DFunction::Convolution3DFunction(std::vector<size_t> convolutionShap
 	kernelWindowView.push_back(0); // Current kernel
 }
 
-xt::xarray<double> Convolution3DFunction::feedForward(xt::xarray<double> inputs)
+xt::xarray<double> Convolution3DFunction::feedForward(const xt::xarray<double>& inputs)
 {
 	auto inputShape = inputs.shape();
 	size_t stopi = inputShape[0] - convolutionShape[0];
@@ -53,7 +53,7 @@ xt::xarray<double> Convolution3DFunction::feedForward(xt::xarray<double> inputs)
 	return output;
 }
 
-xt::xarray<double> Convolution3DFunction::backPropagate(xt::xarray<double> sigmas)
+xt::xarray<double> Convolution3DFunction::backPropagate(const xt::xarray<double>& sigmas)
 {
 	//weights.incrementDeltaParameters(-ALPHA * lastInput.transpose() * 0.0);
 	return sigmas;

@@ -16,9 +16,9 @@ using namespace Eigen;
 class Function
 {
 public:
-	virtual xt::xarray<double> feedForward(xt::xarray<double> inputs) = 0;
-	virtual xt::xarray<double> feedForwardTrain(xt::xarray<double> inputs);
-	virtual xt::xarray<double> backPropagate(xt::xarray<double> sigmas) = 0;
+	virtual xt::xarray<double> feedForward(const xt::xarray<double>& inputs) = 0;
+	virtual xt::xarray<double> feedForwardTrain(const xt::xarray<double>& inputs);
+	virtual xt::xarray<double> backPropagate(const xt::xarray<double>& sigmas) = 0;
 	virtual double applyBackPropagate(); // Returns the sum of the change in the weights
 	bool getHasBias() { return hasBias; }
 	virtual void draw(ImDrawList* canvas, ImVec2 origin, double scale);
@@ -26,7 +26,7 @@ public:
 	ParameterSet getWeights() { return weights; }
 	virtual std::vector<size_t> getOutputShape();
 
-	xt::xarray<double> addBias(xt::xarray<double> input);
+	xt::xarray<double> addBias(const xt::xarray<double>& input);
 
 protected:
 	size_t numUnits;
@@ -41,12 +41,12 @@ protected:
 	bool hasBias = false;
 	bool drawAxes = true;
 
-	xt::xarray<double> dotProduct(xt::xarray<double> inputs);
-	xt::xarray<double> denseBackpropagate(xt::xarray<double> sigmas);
+	xt::xarray<double> dotProduct(const xt::xarray<double>& inputs);
+	xt::xarray<double> denseBackpropagate(const xt::xarray<double>& sigmas);
 	virtual xt::xarray<double> activationDerivative();
 
 	virtual double activate(double z); // For drawing
-	MatrixXd approximateBezier(MatrixXd points); // For drawing
+	MatrixXd approximateBezier(const MatrixXd& points); // For drawing
 	void approximateFunction(ImDrawList* canvas, ImVec2 origin, double scale); // For drawing
 
 	const double ALPHA = 0.001; // Learning rate

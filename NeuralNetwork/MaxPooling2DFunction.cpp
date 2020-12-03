@@ -12,7 +12,7 @@
 using namespace std;
 
 // TODO: Padding and dimensions
-MaxPooling2DFunction::MaxPooling2DFunction(std::vector<size_t> filterShape)
+MaxPooling2DFunction::MaxPooling2DFunction(const std::vector<size_t>& filterShape)
 {
 	this->hasBias = false;
 	this->drawAxes = false;
@@ -20,7 +20,7 @@ MaxPooling2DFunction::MaxPooling2DFunction(std::vector<size_t> filterShape)
 	this->filterShape = filterShape;
 }
 
-xt::xarray<double> MaxPooling2DFunction::feedForward(xt::xarray<double> inputs)
+xt::xarray<double> MaxPooling2DFunction::feedForward(const xt::xarray<double>& inputs)
 {
 	/*cv::Mat inputMat = convertChannelToMat(inputs);
 	cv::imshow("Input", inputMat);*/
@@ -74,7 +74,7 @@ xt::xarray<double> MaxPooling2DFunction::feedForward(xt::xarray<double> inputs)
 	return output;
 }
 
-xt::xarray<double> MaxPooling2DFunction::backPropagate(xt::xarray<double> sigmas)
+xt::xarray<double> MaxPooling2DFunction::backPropagate(const xt::xarray<double>& sigmas)
 {
 	// Reverse what was done in feedforward, the input is now the output
 	const int DIMS = lastInput.dimension();

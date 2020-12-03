@@ -9,12 +9,12 @@ using namespace std;
 class SqueezeNeuralLayer : public NeuralLayer
 {
 public:
-	SqueezeNeuralLayer(std::vector<size_t> squeezeDims = std::vector<size_t>());
+	SqueezeNeuralLayer(const std::vector<size_t>& squeezeDims = std::vector<size_t>());
 	~SqueezeNeuralLayer();
 
-	xt::xarray<double> feedForward(xt::xarray<double> input);
-	xt::xarray<double> feedForwardTrain(xt::xarray<double> input);
-	xt::xarray<double> backPropagate(xt::xarray<double> sigmas);
+	xt::xarray<double> feedForward(const xt::xarray<double>& input);
+	xt::xarray<double> feedForwardTrain(const xt::xarray<double>& input);
+	xt::xarray<double> backPropagate(const xt::xarray<double>& sigmas);
 	double applyBackPropagate();
 
 	std::vector<size_t> getOutputShape();

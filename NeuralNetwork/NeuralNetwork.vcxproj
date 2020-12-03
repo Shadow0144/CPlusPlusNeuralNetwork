@@ -155,6 +155,7 @@
     <ClCompile Include="AveragePooling1DFunction.cpp" />
     <ClCompile Include="AveragePooling2DFunction.cpp" />
     <ClCompile Include="AveragePooling3DFunction.cpp" />
+    <ClCompile Include="ClassCell.cpp" />
     <ClCompile Include="ClassifierVisualizer.cpp" />
     <ClCompile Include="Convolution1DFunction.cpp" />
     <ClCompile Include="Convolution3DFunction.cpp" />
@@ -168,6 +169,7 @@
     <ClCompile Include="FlattenNeuralLayer.cpp" />
     <ClCompile Include="GELUFunction.cpp" />
     <ClCompile Include="HardSigmoidFunction.cpp" />
+    <ClCompile Include="ImageClassVisualizer.cpp" />
     <ClCompile Include="LinearFunction.cpp" />
     <ClCompile Include="Function.cpp" />
     <ClCompile Include="FunctionVisualizer.cpp" />
@@ -214,6 +216,7 @@
     <ClInclude Include="AveragePooling1DFunction.h" />
     <ClInclude Include="AveragePooling2DFunction.h" />
     <ClInclude Include="AveragePooling3DFunction.h" />
+    <ClInclude Include="ClassCell.h" />
     <ClInclude Include="ClassifierVisualizer.h" />
     <ClInclude Include="Convolution1DFunction.h" />
     <ClInclude Include="Convolution3DFunction.h" />
@@ -231,6 +234,7 @@
     <ClInclude Include="gl3w\GL\gl3w.h" />
     <ClInclude Include="gl3w\GL\glcorearb.h" />
     <ClInclude Include="HardSigmoidFunction.h" />
+    <ClInclude Include="ImageClassVisualizer.h" />
     <ClInclude Include="imconfig.h" />
     <ClInclude Include="imgui.h" />
     <ClInclude Include="imgui_impl_opengl3.h" />

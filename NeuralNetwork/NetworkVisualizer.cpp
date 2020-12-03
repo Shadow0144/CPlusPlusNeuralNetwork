@@ -197,7 +197,7 @@ ImVec2 NetworkVisualizer::getWindowSize()
     return winSize;
 }
 
-void NetworkVisualizer::setTargets(xt::xarray<double> inputs, xt::xarray<double> targets)
+void NetworkVisualizer::setTargets(const xt::xarray<double>& inputs, const xt::xarray<double>& targets)
 {
     resultsMutex.lock();
     this->inputs = xt::xarray<double>(inputs);
@@ -207,7 +207,7 @@ void NetworkVisualizer::setTargets(xt::xarray<double> inputs, xt::xarray<double>
     resultsMutex.unlock();
 }
 
-void NetworkVisualizer::setPredicted(xt::xarray<double> predicted)
+void NetworkVisualizer::setPredicted(const xt::xarray<double>& predicted)
 {
     resultsMutex.lock();
     this->predicted = xt::xarray<double>(predicted);
@@ -306,8 +306,8 @@ void NetworkVisualizer::renderFrame()
     }
     else { }
 
-    //origin.x = max((-2 * MAX_PAN * scale), min(origin.x, (MAX_PAN * scale)));
-    //origin.y = max((-2 * MAX_PAN * scale), min(origin.y, (MAX_PAN * scale)));
+    origin.x = max((-MAX_PAN * scale), min(origin.x, (10 * MAX_PAN * scale)));
+    origin.y = max((-MAX_PAN * scale), min(origin.y, (10 * MAX_PAN * scale)));
 
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL2_NewFrame(window); 

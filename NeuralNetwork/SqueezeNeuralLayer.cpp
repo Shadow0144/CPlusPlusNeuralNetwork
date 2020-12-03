@@ -6,7 +6,7 @@
 #include <tuple>
 
 // Input shape is the shape of a single example
-SqueezeNeuralLayer::SqueezeNeuralLayer(std::vector<size_t> squeezeDims)
+SqueezeNeuralLayer::SqueezeNeuralLayer(const std::vector<size_t>& squeezeDims)
 {
 	this->children = NULL;
 	this->squeezeDims = squeezeDims;
@@ -23,17 +23,17 @@ void SqueezeNeuralLayer::addChildren(NeuralLayer* children)
 	this->children = children;
 }
 
-xt::xarray<double> SqueezeNeuralLayer::feedForward(xt::xarray<double> input)
+xt::xarray<double> SqueezeNeuralLayer::feedForward(const xt::xarray<double>& input)
 {
 	return input;
 }
 
-xt::xarray<double> SqueezeNeuralLayer::feedForwardTrain(xt::xarray<double> input)
+xt::xarray<double> SqueezeNeuralLayer::feedForwardTrain(const xt::xarray<double>& input)
 {
 	return input;
 }
 
-xt::xarray<double> SqueezeNeuralLayer::backPropagate(xt::xarray<double> sigmas)
+xt::xarray<double> SqueezeNeuralLayer::backPropagate(const xt::xarray<double>& sigmas)
 {
 	return sigmas;
 }

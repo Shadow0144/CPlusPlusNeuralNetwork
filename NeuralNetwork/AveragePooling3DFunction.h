@@ -6,10 +6,10 @@
 class AveragePooling3DFunction : public Function
 {
 public:
-	AveragePooling3DFunction(std::vector<size_t> filterShape);
+	AveragePooling3DFunction(const std::vector<size_t>& filterShape);
 
-	xt::xarray<double> feedForward(xt::xarray<double> input);
-	xt::xarray<double> backPropagate(xt::xarray<double> sigmas);
+	xt::xarray<double> feedForward(const xt::xarray<double>& input);
+	xt::xarray<double> backPropagate(const xt::xarray<double>& sigmas);
 	void draw(ImDrawList* canvas, ImVec2 origin, double scale);
 
 private:

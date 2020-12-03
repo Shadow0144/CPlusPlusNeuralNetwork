@@ -29,18 +29,18 @@ double SigmoidFunction::sigmoid(double z)
 	return (1.0 / (1.0 + exp(-z)));
 }
 	
-xt::xarray<double> SigmoidFunction::sigmoid(xt::xarray<double> z)
+xt::xarray<double> SigmoidFunction::sigmoid(const xt::xarray<double>& z)
 {
 	return (1.0 / (1.0 + exp(-z)));
 }
 
-xt::xarray<double> SigmoidFunction::feedForward(xt::xarray<double> inputs)
+xt::xarray<double> SigmoidFunction::feedForward(const xt::xarray<double>& inputs)
 {
 	auto dotProductResult = dotProduct(inputs);
 	return sigmoid(dotProductResult);
 }
 
-xt::xarray<double> SigmoidFunction::backPropagate(xt::xarray<double> sigmas)
+xt::xarray<double> SigmoidFunction::backPropagate(const xt::xarray<double>& sigmas)
 {
 	return denseBackpropagate(sigmas * activationDerivative());
 }

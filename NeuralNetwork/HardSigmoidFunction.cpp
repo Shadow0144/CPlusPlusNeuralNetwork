@@ -15,7 +15,7 @@ HardSigmoidFunction::HardSigmoidFunction(size_t incomingUnits, size_t numUnits)
 	this->weights.setParametersRandom(paramShape);
 }
 
-xt::xarray<double> HardSigmoidFunction::hard_sigmoid(xt::xarray<double> z)
+xt::xarray<double> HardSigmoidFunction::hard_sigmoid(const xt::xarray<double>& z)
 {
 	auto zero = (z < -2.5); // 0
 	auto one = (z > 2.5); // 1
@@ -24,13 +24,13 @@ xt::xarray<double> HardSigmoidFunction::hard_sigmoid(xt::xarray<double> z)
 	return r;
 }
 
-xt::xarray<double> HardSigmoidFunction::feedForward(xt::xarray<double> inputs)
+xt::xarray<double> HardSigmoidFunction::feedForward(const xt::xarray<double>& inputs)
 {
 	auto dotProductResult = dotProduct(inputs);
 	return hard_sigmoid(dotProductResult);
 }
 
-xt::xarray<double> HardSigmoidFunction::backPropagate(xt::xarray<double> sigmas)
+xt::xarray<double> HardSigmoidFunction::backPropagate(const xt::xarray<double>& sigmas)
 {
 	return denseBackpropagate(sigmas * activationDerivative());
 }

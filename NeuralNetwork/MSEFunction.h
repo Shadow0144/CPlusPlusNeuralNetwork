@@ -5,6 +5,6 @@
 class MSEFunction : public ErrorFunction
 {
 public:
-	double getError(xt::xarray<double> predicted, xt::xarray<double> actual);
-	xt::xarray<double> getDerivativeOfError(xt::xarray<double> predicted, xt::xarray<double> actual);
+	double getError(const xt::xarray<double>& predicted, const xt::xarray<double>& actual);
+	xt::xarray<double> getDerivativeOfError(const xt::xarray<double>& predicted, const xt::xarray<double>& actual);
 };

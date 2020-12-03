@@ -5,10 +5,10 @@
 class Convolution3DFunction : public Function
 {
 public:
-	Convolution3DFunction(std::vector<size_t> convolutionShape, size_t inputChannels, size_t stride, size_t numKernels);
+	Convolution3DFunction(const std::vector<size_t>& convolutionShape, size_t inputChannels, size_t stride, size_t numKernels);
 
-	xt::xarray<double> feedForward(xt::xarray<double> inputs);
-	xt::xarray<double> backPropagate(xt::xarray<double> sigmas);
+	xt::xarray<double> feedForward(const xt::xarray<double>& inputs);
+	xt::xarray<double> backPropagate(const xt::xarray<double>& sigmas);
 	void draw(ImDrawList* canvas, ImVec2 origin, double scale);
 
 private:
@@ -19,5 +19,5 @@ private:
 
 	xt::xstrided_slice_vector kernelWindowView;
 
-	xt::xarray<double> convolude(xt::xarray<double> f, xt::xarray<double> g);
+	xt::xarray<double> convolude(const xt::xarray<double>& f, const xt::xarray<double>& g);
 };

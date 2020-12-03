@@ -14,7 +14,7 @@ public:
 	FunctionVisualizer(NetworkVisualizer* visualizer, NeuralNetwork* network);
 	~FunctionVisualizer();
 
-	void draw(ImDrawList* canvas, xt::xarray<double> inputs, xt::xarray<double> targets);
+	void draw(ImDrawList* canvas, const xt::xarray<double>& inputs, const xt::xarray<double>& targets);
 
 private:
 	NetworkVisualizer* visualizer;

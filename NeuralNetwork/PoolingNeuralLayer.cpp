@@ -10,7 +10,7 @@
 #include <math.h>
 #include <tuple>
 
-PoolingNeuralLayer::PoolingNeuralLayer(PoolingActivationFunction function, NeuralLayer* parent, std::vector<size_t> filterShape)
+PoolingNeuralLayer::PoolingNeuralLayer(PoolingActivationFunction function, NeuralLayer* parent, const std::vector<size_t>& filterShape)
 {
 	this->parent = parent;
 	this->children = NULL;
@@ -57,17 +57,17 @@ void PoolingNeuralLayer::addChildren(NeuralLayer* children)
 	this->children = children;
 }
 
-xt::xarray<double> PoolingNeuralLayer::feedForward(xt::xarray<double> input)
+xt::xarray<double> PoolingNeuralLayer::feedForward(const xt::xarray<double>& input)
 {
 	return activationFunction->feedForward(input);
 }
 
-xt::xarray<double> PoolingNeuralLayer::feedForwardTrain(xt::xarray<double> input)
+xt::xarray<double> PoolingNeuralLayer::feedForwardTrain(const xt::xarray<double>& input)
 {
 	return activationFunction->feedForwardTrain(input);
 }
 
-xt::xarray<double> PoolingNeuralLayer::backPropagate(xt::xarray<double> sigmas)
+xt::xarray<double> PoolingNeuralLayer::backPropagate(const xt::xarray<double>& sigmas)
 {
 	return activationFunction->backPropagate(sigmas);
 }

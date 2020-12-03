@@ -5,10 +5,10 @@
 class SqueezeFunction : public Function
 {
 public:
-	SqueezeFunction(std::vector<size_t> squeezeDims);
+	SqueezeFunction(const std::vector<size_t>& squeezeDims);
 
-	xt::xarray<double> feedForward(xt::xarray<double> input);
-	xt::xarray<double> backPropagate(xt::xarray<double> sigmas);
+	xt::xarray<double> feedForward(const xt::xarray<double>& input);
+	xt::xarray<double> backPropagate(const xt::xarray<double>& sigmas);
 	void draw(ImDrawList* canvas, ImVec2 origin, double scale);
 
 private:

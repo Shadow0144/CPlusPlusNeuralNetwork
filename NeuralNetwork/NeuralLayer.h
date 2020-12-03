@@ -52,9 +52,9 @@ public:
 	virtual void addChildren(NeuralLayer* children) = 0;
 	size_t getNumUnits() { return numUnits; }
 
-	virtual xt::xarray<double> feedForward(xt::xarray<double> input) = 0;
-	virtual xt::xarray<double> feedForwardTrain(xt::xarray<double> input) = 0;
-	virtual xt::xarray<double> backPropagate(xt::xarray<double> sigmas) = 0;
+	virtual xt::xarray<double> feedForward(const xt::xarray<double>& input) = 0;
+	virtual xt::xarray<double> feedForwardTrain(const xt::xarray<double>& input) = 0;
+	virtual xt::xarray<double> backPropagate(const xt::xarray<double>& sigmas) = 0;
 	virtual double applyBackPropagate() = 0;
 
 	virtual std::vector<size_t> getOutputShape() = 0;

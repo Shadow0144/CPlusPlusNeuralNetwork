@@ -19,18 +19,18 @@ ReLUFunction::ReLUFunction(size_t incomingUnits, size_t numUnits)
 	this->weights.setParametersRandom(paramShape);
 }
 
-xt::xarray<double> ReLUFunction::reLU(xt::xarray<double> z)
+xt::xarray<double> ReLUFunction::reLU(const xt::xarray<double>& z)
 {
 	return xt::maximum(0.0, z);
 }
 
-xt::xarray<double> ReLUFunction::feedForward(xt::xarray<double> inputs)
+xt::xarray<double> ReLUFunction::feedForward(const xt::xarray<double>& inputs)
 {
 	auto dotProductResult = dotProduct(inputs);
 	return reLU(dotProductResult);
 }
 
-xt::xarray<double> ReLUFunction::backPropagate(xt::xarray<double> sigmas)
+xt::xarray<double> ReLUFunction::backPropagate(const xt::xarray<double>& sigmas)
 {
 	return denseBackpropagate(sigmas * activationDerivative());
 }

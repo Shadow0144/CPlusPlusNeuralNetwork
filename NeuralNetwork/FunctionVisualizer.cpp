@@ -12,7 +12,7 @@ FunctionVisualizer::~FunctionVisualizer()
 
 }
 
-void FunctionVisualizer::draw(ImDrawList* canvas, xt::xarray<double> inputs, xt::xarray<double> targets)
+void FunctionVisualizer::draw(ImDrawList* canvas, const xt::xarray<double>& inputs, const xt::xarray<double>& targets)
 {
 	// Calculate the drawing space parameters
 	ImVec2 winSize = visualizer->getWindowSize();

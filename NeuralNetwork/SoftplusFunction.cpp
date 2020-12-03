@@ -28,18 +28,18 @@ double SoftplusFunction::softplus(double z)
 	return (log(1.0 + exp(k * z)) / k);
 }
 
-xt::xarray<double> SoftplusFunction::softplus(xt::xarray<double> z)
+xt::xarray<double> SoftplusFunction::softplus(const xt::xarray<double>& z)
 {
 	return (log(1.0 + exp(k * z)) / k);
 }
 
-xt::xarray<double> SoftplusFunction::feedForward(xt::xarray<double> inputs)
+xt::xarray<double> SoftplusFunction::feedForward(const xt::xarray<double>& inputs)
 {
 	auto dotProductResult = dotProduct(inputs);
 	return softplus(dotProductResult);
 }
 
-xt::xarray<double> SoftplusFunction::backPropagate(xt::xarray<double> sigmas)
+xt::xarray<double> SoftplusFunction::backPropagate(const xt::xarray<double>& sigmas)
 {
 	return denseBackpropagate(sigmas * activationDerivative());
 }

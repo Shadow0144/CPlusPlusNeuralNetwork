@@ -5,12 +5,12 @@ IdentityFunction::IdentityFunction(size_t numUnits, size_t incomingUnits)
 	this->hasBias = false;
 }
 
-xt::xarray<double> IdentityFunction::feedForward(xt::xarray<double> input)
+xt::xarray<double> IdentityFunction::feedForward(const xt::xarray<double>& input)
 {
 	return input;
 }
 
-xt::xarray<double> IdentityFunction::backPropagate(xt::xarray<double> sigmas)
+xt::xarray<double> IdentityFunction::backPropagate(const xt::xarray<double>& sigmas)
 {
 	return sigmas;
 }

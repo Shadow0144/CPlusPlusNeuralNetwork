@@ -6,7 +6,7 @@
 #include <tuple>
 
 // Input shape is the shape of a single example
-InputNeuralLayer::InputNeuralLayer(std::vector<size_t> inputShape)
+InputNeuralLayer::InputNeuralLayer(const std::vector<size_t>& inputShape)
 {
 	this->children = NULL;
 	this->inputShape = inputShape;
@@ -23,17 +23,17 @@ void InputNeuralLayer::addChildren(NeuralLayer* children)
 	this->children = children;
 }
 
-xt::xarray<double> InputNeuralLayer::feedForward(xt::xarray<double> input)
+xt::xarray<double> InputNeuralLayer::feedForward(const xt::xarray<double>& input)
 {
 	return input;
 }
 
-xt::xarray<double> InputNeuralLayer::feedForwardTrain(xt::xarray<double> input)
+xt::xarray<double> InputNeuralLayer::feedForwardTrain(const xt::xarray<double>& input)
 {
 	return input;
 }
 
-xt::xarray<double> InputNeuralLayer::backPropagate(xt::xarray<double> sigmas)
+xt::xarray<double> InputNeuralLayer::backPropagate(const xt::xarray<double>& sigmas)
 {
 	return sigmas;
 }

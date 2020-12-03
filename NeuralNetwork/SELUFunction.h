@@ -8,8 +8,8 @@ class SELUFunction : public Function
 public:
 	SELUFunction(size_t incomingUnits, size_t numUnits);
 
-	xt::xarray<double> feedForward(xt::xarray<double> input);
-	xt::xarray<double> backPropagate(xt::xarray<double> sigmas);
+	xt::xarray<double> feedForward(const xt::xarray<double>& input);
+	xt::xarray<double> backPropagate(const xt::xarray<double>& sigmas);
 	void draw(ImDrawList* canvas, ImVec2 origin, double scale);
 
 private:
@@ -18,7 +18,7 @@ private:
 	xt::xarray<double> activationDerivative();
 
 	double SELU(double z);
-	xt::xarray<double> SELU(xt::xarray<double> z);
+	xt::xarray<double> SELU(const xt::xarray<double>& z);
 
 	const double ALPHA = 1.67326324;
 	const double SCALE = 1.05070098;

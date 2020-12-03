@@ -29,19 +29,19 @@ double SELUFunction::SELU(double z)
 	return (SCALE * ((z < 0.0) ? (ALPHA * (exp(z) - 1.0)) : z));
 }
 
-xt::xarray<double> SELUFunction::SELU(xt::xarray<double> z)
+xt::xarray<double> SELUFunction::SELU(const xt::xarray<double>& z)
 {
 	auto mask = (z > 0.0);
 	return (SCALE * ((1.0 - mask) * (ALPHA * (exp(z) - 1.0)) + (mask * z)));
 }
 
-xt::xarray<double> SELUFunction::feedForward(xt::xarray<double> inputs)
+xt::xarray<double> SELUFunction::feedForward(const xt::xarray<double>& inputs)
 {
 	auto dotProductResult = dotProduct(inputs);
 	return SELU(dotProductResult);
 }
 
-xt::xarray<double> SELUFunction::backPropagate(xt::xarray<double> sigmas)
+xt::xarray<double> SELUFunction::backPropagate(const xt::xarray<double>& sigmas)
 {
 	return denseBackpropagate(sigmas * activationDerivative());
 }

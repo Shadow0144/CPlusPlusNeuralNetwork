@@ -11,12 +11,12 @@ class ConvolutionNeuralLayer : public NeuralLayer
 {
 public:
 	ConvolutionNeuralLayer(ConvolutionActivationFunction function, NeuralLayer* parent, 
-						size_t numKernels, std::vector<size_t> convolutionShape, size_t inputChannels, size_t stride = 1);
+						size_t numKernels, const std::vector<size_t>& convolutionShape, size_t inputChannels, size_t stride = 1);
 	~ConvolutionNeuralLayer();
 
-	xt::xarray<double> feedForward(xt::xarray<double> input);
-	xt::xarray<double> feedForwardTrain(xt::xarray<double> input);
-	xt::xarray<double> backPropagate(xt::xarray<double> errors);
+	xt::xarray<double> feedForward(const xt::xarray<double>& input);
+	xt::xarray<double> feedForwardTrain(const xt::xarray<double>& input);
+	xt::xarray<double> backPropagate(const xt::xarray<double>& errors);
 	double applyBackPropagate();
 
 	std::vector<size_t> getOutputShape();

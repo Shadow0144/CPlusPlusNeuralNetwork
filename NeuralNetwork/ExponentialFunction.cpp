@@ -24,13 +24,13 @@ double ExponentialFunction::activate(double z)
 	return exp(z);
 }
 
-xt::xarray<double> ExponentialFunction::feedForward(xt::xarray<double> inputs)
+xt::xarray<double> ExponentialFunction::feedForward(const xt::xarray<double>& inputs)
 {
 	auto dotProductResult = dotProduct(inputs);
 	return exp(dotProductResult);
 }
 
-xt::xarray<double> ExponentialFunction::backPropagate(xt::xarray<double> sigmas)
+xt::xarray<double> ExponentialFunction::backPropagate(const xt::xarray<double>& sigmas)
 {
 	return denseBackpropagate(sigmas * activationDerivative());
 }

@@ -10,7 +10,7 @@
 #include <tuple>
 
 ConvolutionNeuralLayer::ConvolutionNeuralLayer(ConvolutionActivationFunction function, NeuralLayer* parent, 
-									size_t numKernels, std::vector<size_t> convolutionShape, size_t inputChannels, size_t stride)
+									size_t numKernels, const std::vector<size_t>& convolutionShape, size_t inputChannels, size_t stride)
 {
 	this->parent = parent;
 	this->children = NULL;
@@ -49,17 +49,17 @@ void ConvolutionNeuralLayer::addChildren(NeuralLayer* children)
 	this->children = children;
 }
 
-xt::xarray<double> ConvolutionNeuralLayer::feedForward(xt::xarray<double> input)
+xt::xarray<double> ConvolutionNeuralLayer::feedForward(const xt::xarray<double>& input)
 {
 	return activationFunction->feedForward(input);
 }
 
-xt::xarray<double> ConvolutionNeuralLayer::feedForwardTrain(xt::xarray<double> input)
+xt::xarray<double> ConvolutionNeuralLayer::feedForwardTrain(const xt::xarray<double>& input)
 {
 	return activationFunction->feedForwardTrain(input);
 }
 
-xt::xarray<double> ConvolutionNeuralLayer::backPropagate(xt::xarray<double> sigma)
+xt::xarray<double> ConvolutionNeuralLayer::backPropagate(const xt::xarray<double>& sigma)
 {
 	return activationFunction->backPropagate(sigma);
 }

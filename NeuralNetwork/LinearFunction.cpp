@@ -20,12 +20,12 @@ LinearFunction::LinearFunction(size_t incomingUnits, size_t numUnits)
 	this->weights.setParametersRandom(paramShape);
 }
 
-xt::xarray<double> LinearFunction::feedForward(xt::xarray<double> inputs)
+xt::xarray<double> LinearFunction::feedForward(const xt::xarray<double>& inputs)
 {
 	return dotProduct(inputs);
 }
 
-xt::xarray<double> LinearFunction::backPropagate(xt::xarray<double> sigmas)
+xt::xarray<double> LinearFunction::backPropagate(const xt::xarray<double>&  sigmas)
 {
 	return denseBackpropagate(sigmas);
 }

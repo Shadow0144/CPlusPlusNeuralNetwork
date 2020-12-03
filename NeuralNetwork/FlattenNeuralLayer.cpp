@@ -28,17 +28,17 @@ void FlattenNeuralLayer::addChildren(NeuralLayer* children)
 	this->children = children;
 }
 
-xt::xarray<double> FlattenNeuralLayer::feedForward(xt::xarray<double> input)
+xt::xarray<double> FlattenNeuralLayer::feedForward(const xt::xarray<double>& input)
 {
 	return flattenFunction->feedForward(input);
 }
 
-xt::xarray<double> FlattenNeuralLayer::feedForwardTrain(xt::xarray<double> input)
+xt::xarray<double> FlattenNeuralLayer::feedForwardTrain(const xt::xarray<double>& input)
 {
 	return flattenFunction->feedForwardTrain(input);
 }
 
-xt::xarray<double> FlattenNeuralLayer::backPropagate(xt::xarray<double> sigmas)
+xt::xarray<double> FlattenNeuralLayer::backPropagate(const xt::xarray<double>& sigmas)
 {
 	return flattenFunction->backPropagate(sigmas);
 }

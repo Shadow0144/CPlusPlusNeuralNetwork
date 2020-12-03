@@ -50,4 +50,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="data\mnist_fashion_test.csv">
+      <Filter>Data</Filter>
+    </None>
+    <None Include="data\mnist_fashion_train.csv">
+      <Filter>Data</Filter>
+    </None>
+    <None Include="data\mnist_fashion_train_2.csv">
+      <Filter>Data</Filter>
+    </None>
+  </ItemGroup>
 </Project>

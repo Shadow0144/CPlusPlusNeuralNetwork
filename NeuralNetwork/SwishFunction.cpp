@@ -22,7 +22,7 @@ double SwishFunction::sigmoid(double z)
 	return (1.0 / (1.0 + exp(-z)));
 }
 
-xt::xarray<double> SwishFunction::sigmoid(xt::xarray<double> z)
+xt::xarray<double> SwishFunction::sigmoid(const xt::xarray<double>& z)
 {
 	return (1.0 / (1.0 + exp(-z)));
 }
@@ -37,18 +37,18 @@ double SwishFunction::swish(double z)
 	return (z * sigmoid(z));
 }
 
-xt::xarray<double> SwishFunction::swish(xt::xarray<double> z)
+xt::xarray<double> SwishFunction::swish(const xt::xarray<double>& z)
 {
 	return (z * sigmoid(z));
 }
 
-xt::xarray<double> SwishFunction::feedForward(xt::xarray<double> inputs)
+xt::xarray<double> SwishFunction::feedForward(const xt::xarray<double>& inputs)
 {
 	auto dotProductResult = dotProduct(inputs);
 	return swish(dotProductResult);
 }
 
-xt::xarray<double> SwishFunction::backPropagate(xt::xarray<double> sigmas)
+xt::xarray<double> SwishFunction::backPropagate(const xt::xarray<double>& sigmas)
 {
 	return denseBackpropagate(sigmas * activationDerivative());
 }

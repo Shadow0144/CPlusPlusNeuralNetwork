@@ -9,11 +9,11 @@ class SoftmaxFunction : public Function
 public:
 	SoftmaxFunction(size_t incomingUnits, int axis = -1);
 
-	xt::xarray<double> feedForward(xt::xarray<double> input);
-	xt::xarray<double> feedForwardTrain(xt::xarray<double> inputs); // Overriding to get a mutex lock
-	xt::xarray<double> backPropagate(xt::xarray<double> sigmas);
+	xt::xarray<double> feedForward(const xt::xarray<double>& input);
+	xt::xarray<double> feedForwardTrain(const xt::xarray<double>& inputs); // Overriding to get a mutex lock
+	xt::xarray<double> backPropagate(const xt::xarray<double>& sigmas);
 	// Special case where the error function is cross entropy
-	xt::xarray<double> backPropagateCrossEntropy(xt::xarray<double> sigmas);
+	xt::xarray<double> backPropagateCrossEntropy(const xt::xarray<double>& sigmas);
 	void draw(ImDrawList* canvas, ImVec2 origin, double scale);
 
 private:

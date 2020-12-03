@@ -19,18 +19,18 @@ LeakyReLUFunction::LeakyReLUFunction(size_t incomingUnits, size_t numUnits)
 	this->weights.setParametersRandom(paramShape);
 }
 
-xt::xarray<double> LeakyReLUFunction::leakyReLU(xt::xarray<double> z)
+xt::xarray<double> LeakyReLUFunction::leakyReLU(const xt::xarray<double>& z)
 {
 	return xt::maximum(a * z, z);
 }
 
-xt::xarray<double> LeakyReLUFunction::feedForward(xt::xarray<double> inputs)
+xt::xarray<double> LeakyReLUFunction::feedForward(const xt::xarray<double>& inputs)
 {
 	auto dotProductResult = dotProduct(inputs);
 	return leakyReLU(dotProductResult);
 }
 
-xt::xarray<double> LeakyReLUFunction::backPropagate(xt::xarray<double> sigmas)
+xt::xarray<double> LeakyReLUFunction::backPropagate(const xt::xarray<double>& sigmas)
 {
 	return denseBackpropagate(sigmas * activationDerivative());
 }

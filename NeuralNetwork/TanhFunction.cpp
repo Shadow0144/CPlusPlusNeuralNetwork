@@ -24,13 +24,13 @@ double TanhFunction::activate(double z)
 	return tanh(z);
 }
 
-xt::xarray<double> TanhFunction::feedForward(xt::xarray<double> inputs)
+xt::xarray<double> TanhFunction::feedForward(const xt::xarray<double>& inputs)
 {
 	auto dotProductResult = dotProduct(inputs);
 	return xt::tanh(dotProductResult);
 }
 
-xt::xarray<double> TanhFunction::backPropagate(xt::xarray<double> sigmas)
+xt::xarray<double> TanhFunction::backPropagate(const xt::xarray<double>& sigmas)
 {
 	return denseBackpropagate(sigmas * activationDerivative());
 }

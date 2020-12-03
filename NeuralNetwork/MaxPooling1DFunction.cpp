@@ -10,13 +10,13 @@
 using namespace std;
 
 // TODO: Padding and dimensions
-MaxPooling1DFunction::MaxPooling1DFunction(std::vector<size_t> filterShape)
+MaxPooling1DFunction::MaxPooling1DFunction(const std::vector<size_t>& filterShape)
 {
 	this->hasBias = false;
 	this->filterShape = filterShape;
 }
 
-xt::xarray<double> MaxPooling1DFunction::feedForward(xt::xarray<double> inputs)
+xt::xarray<double> MaxPooling1DFunction::feedForward(const xt::xarray<double>& inputs)
 {
 	const int DIM1 = inputs.dimension() - 2; // First dimension
 	const int DIMC = inputs.dimension() - 1; // Channels
@@ -45,7 +45,7 @@ xt::xarray<double> MaxPooling1DFunction::feedForward(xt::xarray<double> inputs)
 	return output;
 }
 
-xt::xarray<double> MaxPooling1DFunction::backPropagate(xt::xarray<double> sigmas)
+xt::xarray<double> MaxPooling1DFunction::backPropagate(const xt::xarray<double>& sigmas)
 {
 	xt::xarray<double> sigmasPrime = xt::where(xt::equal(lastInput, lastOutput), 1, 0) * sigmas;
 	return sigmasPrime;

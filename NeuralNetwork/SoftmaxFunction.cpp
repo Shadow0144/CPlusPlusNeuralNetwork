@@ -21,7 +21,7 @@ SoftmaxFunction::SoftmaxFunction(size_t incomingUnits, int axis)
 	this->drawAxes = false;
 }
 
-xt::xarray<double> SoftmaxFunction::feedForward(xt::xarray<double> inputs)
+xt::xarray<double> SoftmaxFunction::feedForward(const xt::xarray<double>& inputs)
 {
 	int sumAxis = (axis > 0) ? (axis) : (inputs.dimension() + axis);
 
@@ -47,7 +47,7 @@ xt::xarray<double> SoftmaxFunction::feedForward(xt::xarray<double> inputs)
 	return output;
 }
 
-xt::xarray<double> SoftmaxFunction::feedForwardTrain(xt::xarray<double> inputs)
+xt::xarray<double> SoftmaxFunction::feedForwardTrain(const xt::xarray<double>& inputs)
 {
 	lastInput = inputs; // No bias
 	outputMutex.lock();
@@ -56,13 +56,13 @@ xt::xarray<double> SoftmaxFunction::feedForwardTrain(xt::xarray<double> inputs)
 	return lastOutput;
 }
 
-xt::xarray<double> SoftmaxFunction::backPropagate(xt::xarray<double> sigmas)
+xt::xarray<double> SoftmaxFunction::backPropagate(const xt::xarray<double>& sigmas)
 {
 	//auto newSigmas = xt::pow(sigmas, 2.0); // TODO? Potentially wrong equation
 	return sigmas; // TODO Temp
 }
 
-xt::xarray<double> SoftmaxFunction::backPropagateCrossEntropy(xt::xarray<double> sigmas)
+xt::xarray<double> SoftmaxFunction::backPropagateCrossEntropy(const xt::xarray<double>& sigmas)
 {
 	return sigmas;
 }

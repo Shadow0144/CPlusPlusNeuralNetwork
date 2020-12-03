@@ -5,7 +5,7 @@
 #include <xtensor-blas/xlinalg.hpp>
 #pragma warning(pop)
 
-Convolution1DFunction::Convolution1DFunction(std::vector<size_t> convolutionShape, size_t inputChannels, size_t stride, size_t numKernels)
+Convolution1DFunction::Convolution1DFunction(const std::vector<size_t>& convolutionShape, size_t inputChannels, size_t stride, size_t numKernels)
 {
 	this->hasBias = false;
 	this->numUnits = 1;
@@ -25,7 +25,7 @@ Convolution1DFunction::Convolution1DFunction(std::vector<size_t> convolutionShap
 	this->weights.setParametersRandom(paramShape);
 }
 
-xt::xarray<double> Convolution1DFunction::feedForward(xt::xarray<double> inputs)
+xt::xarray<double> Convolution1DFunction::feedForward(const xt::xarray<double>& inputs)
 {
 	// Assume the last dimension is the channel dimension
 	const int DIMS = inputs.dimension();
@@ -68,7 +68,7 @@ xt::xarray<double> Convolution1DFunction::feedForward(xt::xarray<double> inputs)
 	return output;
 }
 
-xt::xarray<double> Convolution1DFunction::backPropagate(xt::xarray<double> sigmas)
+xt::xarray<double> Convolution1DFunction::backPropagate(const xt::xarray<double>& sigmas)
 {
 	//weights.incrementDeltaParameters(-ALPHA * lastInput.transpose() * 0.0);
 	return sigmas;

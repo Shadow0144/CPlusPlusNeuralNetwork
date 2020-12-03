@@ -32,17 +32,17 @@ void SoftmaxNeuralLayer::addChildren(NeuralLayer* children)
 	this->children = children;
 }
 
-xt::xarray<double> SoftmaxNeuralLayer::feedForward(xt::xarray<double> input)
+xt::xarray<double> SoftmaxNeuralLayer::feedForward(const xt::xarray<double>& input)
 {
 	return softmaxFunction->feedForward(input);
 }
 
-xt::xarray<double> SoftmaxNeuralLayer::feedForwardTrain(xt::xarray<double> input)
+xt::xarray<double> SoftmaxNeuralLayer::feedForwardTrain(const xt::xarray<double>& input)
 {
 	return softmaxFunction->feedForwardTrain(input);
 }
 
-xt::xarray<double> SoftmaxNeuralLayer::backPropagate(xt::xarray<double> sigmas)
+xt::xarray<double> SoftmaxNeuralLayer::backPropagate(const xt::xarray<double>& sigmas)
 {
 	return softmaxFunction->backPropagate(sigmas);
 }

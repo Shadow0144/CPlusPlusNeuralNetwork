@@ -4,8 +4,8 @@
 ClassifierVisualizer::ClassifierVisualizer(NetworkVisualizer* visualizer, int rows, int cols, ImColor* classColors)
 {
 	this->visualizer = visualizer;
-	this->rows = rows;
-	this->cols = cols;
+	this->rows = min(rows, MAX_ROWS);
+	this->cols = min(cols, MAX_COLS);
 	this->classColors = classColors;
 }
 
@@ -14,7 +14,7 @@ ClassifierVisualizer::~ClassifierVisualizer()
 	delete classColors;
 }
 
-xt::xarray<size_t> ClassifierVisualizer::convertToIndices(xt::xarray<double> predicted)
+xt::xarray<size_t> ClassifierVisualizer::convertToIndices(const xt::xarray<double>& predicted)
 {
 	xt::xstrided_slice_vector sv({ 0 });
 	for (int i = 1; i < (predicted.dimension() - 1); i++)
@@ -46,7 +46,7 @@ xt::xarray<size_t> ClassifierVisualizer::convertToIndices(xt::xarray<double> pre
 	return r;
 }
 
-void ClassifierVisualizer::draw(ImDrawList* canvas, xt::xarray<double> predicted, xt::xarray<double> actual)
+void ClassifierVisualizer::draw(ImDrawList* canvas, const xt::xarray<double>& predicted, const xt::xarray<double>& actual)
 {
 	// Calculate the drawing space parameters
 	ImVec2 winSize = visualizer->getWindowSize();
@@ -73,6 +73,7 @@ void ClassifierVisualizer::draw(ImDrawList* canvas, xt::xarray<double> predicted
 		bottomRight.x - (COL_SIZE * cols) - (2 * CELL_BUFFER), 
 		bottomRight.y - (ROW_SIZE * rows) - (2 * CELL_BUFFER) - (2 * TEXT_BUFFER));
 
+	double accuracy = 0;
 	xt::xarray<size_t> predictedIndices = convertToIndices(predicted);
 	xt::xarray<size_t> actualIndices = convertToIndices(actual);
 
@@ -104,6 +105,7 @@ void ClassifierVisualizer::draw(ImDrawList* canvas, xt::xarray<double> predicted
 			if (predictedIndices(index) == actualIndices(index))
 			{
 				canvas->AddRect(cellTopLeft, cellBottomRight, RIGHT_COLOR);
+				accuracy++;
 			}
 			else
 			{
@@ -112,4 +114,17 @@ void ClassifierVisualizer::draw(ImDrawList* canvas, xt::xarray<double> predicted
 			index++;
 		}
 	}
+
+	const int N = actualIndices.shape()[0];
+	for (; index < N; index++)
+	{
+		if (predictedIndices(index) == actualIndices(index))
+		{
+			accuracy++;
+		}
+		else { }
+	}
+	accuracy /= N;
+	string accuracyString = " Accuracy: " + to_string(accuracy);
+	canvas->AddText(ImGui::GetFont(), TEXT_SIZE, topLeft, BLACK, accuracyString.c_str());
 }

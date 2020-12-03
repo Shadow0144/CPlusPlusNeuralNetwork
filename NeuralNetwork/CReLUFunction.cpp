@@ -20,21 +20,21 @@ CReLUFunction::CReLUFunction(size_t incomingUnits, size_t numUnits)
 }
 
 // Returns a concatenated result of a ReLU that selects only positive predicted with a ReLU that selects only negative predicted
-xt::xarray<double> CReLUFunction::CReLU(xt::xarray<double> z)
+xt::xarray<double> CReLUFunction::CReLU(const xt::xarray<double>& z)
 {
 	return xt::stack(xt::xtuple(xt::maximum(0.0, z), xt::maximum(0.0, -z)), z.dimension());
 }
 
-xt::xarray<double> CReLUFunction::feedForward(xt::xarray<double> inputs)
+xt::xarray<double> CReLUFunction::feedForward(const xt::xarray<double>& inputs)
 {
 	auto dotProductResult = dotProduct(inputs);
 	return CReLU(dotProductResult);
 }
 
-xt::xarray<double> CReLUFunction::backPropagate(xt::xarray<double> sigmas)
+xt::xarray<double> CReLUFunction::backPropagate(const xt::xarray<double>& sigmas)
 {
-	sigmas = xt::sum(sigmas, -1);
-	return denseBackpropagate(sigmas);
+	auto output = xt::sum(sigmas, -1);
+	return denseBackpropagate(output);
 }
 
 xt::xarray<double> CReLUFunction::activationDerivative()

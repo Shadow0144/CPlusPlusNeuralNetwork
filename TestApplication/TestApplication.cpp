@@ -427,7 +427,7 @@ void test_mnist()
     // Set up the data
     ifstream in_file;
     //in_file.open("mnist_mini.csv");
-    in_file.open("mnist_test.csv");
+    in_file.open("mnist_fashion_test.csv");
     auto data = xt::load_csv<double>(in_file);
     in_file.close();
 
@@ -441,7 +441,7 @@ void test_mnist()
     xt::xarray<double> features = xt::reshape_view(xt::view(data, xt::all(), xt::range(1, _)), { N, IMG_DIM, IMG_DIM, 1 });
     features /= 255.0;
 
-    const int EXAMPLE_COUNT = 200;//1000;
+    const int EXAMPLE_COUNT = labels.shape()[0];
     labels = xt::view(labels, xt::range(0, EXAMPLE_COUNT), xt::all());
     features = xt::view(features, xt::range(0, EXAMPLE_COUNT), xt::all(), xt::all(), xt::all());
 
@@ -452,8 +452,8 @@ void test_mnist()
     }
     labels = oneHotLabels;
 
-    const int NUM_KERNELS_1 = 16;
-    const int NUM_KERNELS_2 = 4;
+    const int NUM_KERNELS_1 = 64;
+    const int NUM_KERNELS_2 = 16;
 
     // Create the network
     NeuralNetwork network(true);
@@ -470,6 +470,7 @@ void test_mnist()
     ErrorFunction* errorFunction = new CrossEntropyFunction();
     network.setTrainingParameters(errorFunction, MAX_ITERATIONS, -MIN_ERROR, -CONVERGENCE_E, -CONVERGENCE_W);
     network.setBatchSize(20);
+    network.setOutputRate(1);
 
     const int COLS = 5;
     const int ROWS = min(EXAMPLE_COUNT / COLS, 30);

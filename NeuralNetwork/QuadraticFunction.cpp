@@ -15,13 +15,13 @@ QuadraticFunction::QuadraticFunction(size_t incomingUnits, size_t numUnits)
 	this->weights.setParametersRandom(paramShape);
 }
 
-xt::xarray<double> QuadraticFunction::feedForward(xt::xarray<double> inputs)
+xt::xarray<double> QuadraticFunction::feedForward(const xt::xarray<double>& inputs)
 {
 	auto dotProductResult = dotProduct(inputs);
 	return pow(dotProductResult, 2.0);
 }
 
-xt::xarray<double> QuadraticFunction::backPropagate(xt::xarray<double> sigmas)
+xt::xarray<double> QuadraticFunction::backPropagate(const xt::xarray<double>& sigmas)
 {
 	return denseBackpropagate(sigmas * activationDerivative());
 }

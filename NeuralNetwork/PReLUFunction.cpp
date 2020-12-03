@@ -23,18 +23,18 @@ PReLUFunction::PReLUFunction(size_t incomingUnits, size_t numUnits)
 	this->deltaA = 0.0;
 }
 
-xt::xarray<double> PReLUFunction::PReLU(xt::xarray<double> z)
+xt::xarray<double> PReLUFunction::PReLU(const xt::xarray<double>& z)
 {
 	return xt::maximum(a * z, z);
 }
 
-xt::xarray<double> PReLUFunction::feedForward(xt::xarray<double> inputs)
+xt::xarray<double> PReLUFunction::feedForward(const xt::xarray<double>& inputs)
 {
 	auto dotProductResult = dotProduct(inputs);
 	return PReLU(dotProductResult);
 }
 
-xt::xarray<double> PReLUFunction::backPropagate(xt::xarray<double> sigmas)
+xt::xarray<double> PReLUFunction::backPropagate(const xt::xarray<double>& sigmas)
 {
 	auto mask = (lastOutput <= 0.0);
 	deltaA += xt::sum<double>(lastOutput * mask)();

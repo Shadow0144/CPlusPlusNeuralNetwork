@@ -27,8 +27,8 @@ public:
 
 	bool getThreadRunning();
 
-	void setTargets(xt::xarray<double> inputs, xt::xarray<double> targets);
-	void setPredicted(xt::xarray<double> predicted);
+	void setTargets(const xt::xarray<double>& inputs, const xt::xarray<double>& targets);
+	void setPredicted(const xt::xarray<double>& predicted);
 
 private:
 	void setup();

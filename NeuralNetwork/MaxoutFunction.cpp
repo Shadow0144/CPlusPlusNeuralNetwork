@@ -24,7 +24,7 @@ MaxoutFunction::MaxoutFunction(size_t incomingUnits, size_t numUnits, size_t num
 	this->weights.setParametersRandom(paramShape);
 }
 
-xt::xarray<double> MaxoutFunction::feedForward(xt::xarray<double> inputs)
+xt::xarray<double> MaxoutFunction::feedForward(const xt::xarray<double>& inputs)
 {
 	// h_i(x) = max(W_i * x)
 	auto output = dotProduct(inputs);
@@ -42,7 +42,7 @@ xt::xarray<double> MaxoutFunction::feedForward(xt::xarray<double> inputs)
 	return output;
 }
 
-xt::xarray<double> MaxoutFunction::backPropagate(xt::xarray<double> sigmas)
+xt::xarray<double> MaxoutFunction::backPropagate(const xt::xarray<double>& sigmas)
 {
 	int features = lastOutput.size();
 	auto indices = xt::argmax(lastOutput, { features });

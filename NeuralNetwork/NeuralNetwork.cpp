@@ -51,7 +51,7 @@ NeuralNetwork::~NeuralNetwork()
 	delete layers;
 }
 
-void NeuralNetwork::addInputLayer(std::vector<size_t> inputShape)
+void NeuralNetwork::addInputLayer(const std::vector<size_t>& inputShape)
 {
 	this->inputShape = inputShape; 
 	InputNeuralLayer* layer = new InputNeuralLayer(inputShape);
@@ -73,14 +73,14 @@ void NeuralNetwork::addSoftmaxLayer(int axis)
 	layerCount++;
 }
 
-void NeuralNetwork::addConvolutionLayer(ConvolutionActivationFunction layerFunction, size_t numKernels, std::vector<size_t> convolutionShape, size_t inputChannels, size_t stride)
+void NeuralNetwork::addConvolutionLayer(ConvolutionActivationFunction layerFunction, size_t numKernels, const std::vector<size_t>& convolutionShape, size_t inputChannels, size_t stride)
 {
 	ConvolutionNeuralLayer* layer = new ConvolutionNeuralLayer(layerFunction, layers->at(layerCount - 1), numKernels, convolutionShape, inputChannels, stride);
 	layers->push_back(layer);
 	layerCount++;
 }
 
-void NeuralNetwork::addPoolingLayer(PoolingActivationFunction layerFunction, std::vector<size_t> poolingShape)
+void NeuralNetwork::addPoolingLayer(PoolingActivationFunction layerFunction, const std::vector<size_t>& poolingShape)
 {
 	PoolingNeuralLayer* layer = new PoolingNeuralLayer(layerFunction, layers->at(layerCount - 1), poolingShape);
 	layers->push_back(layer);
@@ -94,7 +94,7 @@ void NeuralNetwork::addFlattenLayer(int numOutputs)
 	layerCount++;
 }
 
-xt::xarray<double> NeuralNetwork::feedForward(xt::xarray<double> inputs)
+xt::xarray<double> NeuralNetwork::feedForward(const xt::xarray<double>& inputs)
 {
 	const int N = inputs.shape()[0];
 	const int INTERNAL_BATCHES = ceil(N / internalBatchLimit);
@@ -131,7 +131,7 @@ xt::xarray<double> NeuralNetwork::feedForward(xt::xarray<double> inputs)
 }
 
 // Called internally only, internal batching is handled in backPropagate
-xt::xarray<double> NeuralNetwork::feedForwardTrain(xt::xarray<double> inputs)
+xt::xarray<double> NeuralNetwork::feedForwardTrain(const xt::xarray<double>& inputs)
 {
 	xt::xarray<double> predicted = inputs;
 
@@ -143,7 +143,7 @@ xt::xarray<double> NeuralNetwork::feedForwardTrain(xt::xarray<double> inputs)
 	return predicted;
 }
 
-bool NeuralNetwork::backPropagate(xt::xarray<double> inputs, xt::xarray<double> targets)
+bool NeuralNetwork::backPropagate(const xt::xarray<double>& inputs, const xt::xarray<double>& targets)
 {
 	bool converged = true;
 
@@ -190,7 +190,7 @@ bool NeuralNetwork::backPropagate(xt::xarray<double> inputs, xt::xarray<double> 
 	return converged;
 }
 
-void NeuralNetwork::train(xt::xarray<double> inputs, xt::xarray<double> targets)
+void NeuralNetwork::train(const xt::xarray<double>& inputs, const xt::xarray<double>& targets)
 {
 	setupDrawing(inputs, targets);
 
@@ -275,7 +275,7 @@ void NeuralNetwork::train(xt::xarray<double> inputs, xt::xarray<double> targets)
 	system("pause");
 }
 
-void NeuralNetwork::output(LearningState state, int iteration, xt::xarray<double> inputs, xt::xarray<double> targets, xt::xarray<double> predicted)
+void NeuralNetwork::output(LearningState state, int iteration, const xt::xarray<double>& inputs, const xt::xarray<double>& targets, const xt::xarray<double>& predicted)
 {
 	if (verbosity >= 1)
 	{
@@ -319,7 +319,7 @@ void NeuralNetwork::setTrainingParameters(ErrorFunction* errorFunction, int maxI
 	this->weightConvergenceThreshold = weightConvergenceThreshold;
 }
 
-double NeuralNetwork::getError(xt::xarray<double> predicted, xt::xarray<double> actual)
+double NeuralNetwork::getError(const xt::xarray<double>& predicted, const xt::xarray<double>& actual)
 {
 	return errorFunction->getError(predicted, actual);
 }
@@ -392,7 +392,7 @@ void NeuralNetwork::displayClassificationEstimation(int rows, int cols, ImColor*
 	else { }
 }
 
-void NeuralNetwork::setupDrawing(xt::xarray<double> inputs, xt::xarray<double> targets)
+void NeuralNetwork::setupDrawing(const xt::xarray<double>& inputs, const xt::xarray<double>& targets)
 {
 	if (drawingEnabled)
 	{
@@ -401,7 +401,7 @@ void NeuralNetwork::setupDrawing(xt::xarray<double> inputs, xt::xarray<double> t
 	else { }
 }
 
-void NeuralNetwork::updateDrawing(xt::xarray<double> predicted)
+void NeuralNetwork::updateDrawing(const xt::xarray<double>& predicted)
 {
 	if (drawingEnabled)
 	{
@@ -410,7 +410,7 @@ void NeuralNetwork::updateDrawing(xt::xarray<double> predicted)
 	else { }
 }
 
-void NeuralNetwork::draw(ImDrawList* canvas, ImVec2 origin, double scale, xt::xarray<double> target_xs, xt::xarray<double> target_ys)
+void NeuralNetwork::draw(ImDrawList* canvas, ImVec2 origin, double scale, const xt::xarray<double>& target_xs, const xt::xarray<double>& target_ys)
 {
 	// Calculate the drawing space parameters
 	const double Y_SHIFT = scale * 120.0;

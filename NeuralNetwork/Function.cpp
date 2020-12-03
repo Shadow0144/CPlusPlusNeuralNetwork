@@ -10,14 +10,14 @@
 
 using namespace std;
 
-xt::xarray<double> Function::feedForwardTrain(xt::xarray<double> inputs)
+xt::xarray<double> Function::feedForwardTrain(const xt::xarray<double>& inputs)
 {
 	lastInput = inputs;
 	lastOutput = feedForward(inputs);
 	return lastOutput;
 }
 
-xt::xarray<double> Function::addBias(xt::xarray<double> input)
+xt::xarray<double> Function::addBias(const xt::xarray<double>& input)
 {
 	size_t inputDims = input.dimension();
 	auto inputShape = input.shape();
@@ -42,7 +42,7 @@ double Function::applyBackPropagate()
 	return deltaWeight; // Return the sum of how much the parameters have changed
 }
 
-xt::xarray<double> Function::dotProduct(xt::xarray<double> inputs)
+xt::xarray<double> Function::dotProduct(const xt::xarray<double>& inputs)
 {
 	return xt::linalg::tensordot(inputs, weights.getParameters(), 1); // The last dimension of the input with the first dimension of the weights
 }
@@ -52,7 +52,7 @@ xt::xarray<double> Function::activationDerivative()
 	return xt::xarray<double>();
 }
 
-xt::xarray<double> Function::denseBackpropagate(xt::xarray<double> sigmas)
+xt::xarray<double> Function::denseBackpropagate(const xt::xarray<double>& sigmas)
 {
 	auto delta = xt::linalg::tensordot(xt::transpose(lastInput), sigmas, 1);
 
@@ -69,7 +69,7 @@ double Function::activate(double z)
 	return z;
 }
 
-MatrixXd Function::approximateBezier(MatrixXd points)
+MatrixXd Function::approximateBezier(const MatrixXd& points)
 {
 	//int pCount = points.rows();
 	//int k = pCount - 1;

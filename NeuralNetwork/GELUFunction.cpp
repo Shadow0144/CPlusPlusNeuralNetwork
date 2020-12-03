@@ -29,7 +29,7 @@ double GELUFunction::GELU(double z)
 	return (-0.5 * z * (1 + tanh(SQRT_2_PI * (z + 0.044715 * pow(z, 3)))));
 }
 
-xt::xarray<double> GELUFunction::GELU(xt::xarray<double> z)
+xt::xarray<double> GELUFunction::GELU(const xt::xarray<double>& z)
 {
 	return (-0.5 * z * (1 + tanh(SQRT_2_PI * (z + 0.044715 * pow(z, 3)))));
 }
@@ -39,13 +39,13 @@ double GELUFunction::activate(double z)
 	return GELU(z);
 }
 
-xt::xarray<double> GELUFunction::feedForward(xt::xarray<double> inputs)
+xt::xarray<double> GELUFunction::feedForward(const xt::xarray<double>& inputs)
 {
 	auto dotProductResult = dotProduct(inputs);
 	return GELU(dotProductResult);
 }
 
-xt::xarray<double> GELUFunction::backPropagate(xt::xarray<double> sigmas)
+xt::xarray<double> GELUFunction::backPropagate(const xt::xarray<double>& sigmas)
 {
 	return denseBackpropagate(sigmas * activationDerivative());
 }

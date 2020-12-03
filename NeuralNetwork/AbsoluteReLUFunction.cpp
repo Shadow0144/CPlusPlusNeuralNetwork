@@ -19,18 +19,18 @@ AbsoluteReLUFunction::AbsoluteReLUFunction(size_t incomingUnits, size_t numUnits
 	this->weights.setParametersRandom(paramShape);
 }
 
-xt::xarray<double> AbsoluteReLUFunction::absoluteReLU(xt::xarray<double> z)
+xt::xarray<double> AbsoluteReLUFunction::absoluteReLU(const xt::xarray<double>& z)
 {
 	return xt::abs(z);
 }
 
-xt::xarray<double> AbsoluteReLUFunction::feedForward(xt::xarray<double> inputs)
+xt::xarray<double> AbsoluteReLUFunction::feedForward(const xt::xarray<double>& inputs)
 {
 	auto dotProductResult = dotProduct(inputs);
 	return absoluteReLU(dotProductResult);
 }
 
-xt::xarray<double> AbsoluteReLUFunction::backPropagate(xt::xarray<double> sigmas)
+xt::xarray<double> AbsoluteReLUFunction::backPropagate(const xt::xarray<double>& sigmas)
 {
 	return denseBackpropagate(sigmas * activationDerivative());
 }
