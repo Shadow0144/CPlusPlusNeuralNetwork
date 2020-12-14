@@ -25,11 +25,6 @@ MaxPooling3DNeuralLayer::~MaxPooling3DNeuralLayer()
 
 }
 
-void MaxPooling3DNeuralLayer::addChildren(NeuralLayer* children)
-{
-	this->children = children;
-}
-
 xt::xarray<double> MaxPooling3DNeuralLayer::feedForward(const xt::xarray<double>& input)
 {
 	const int DIM1 = input.dimension() - 4; // First dimension
@@ -79,13 +74,6 @@ xt::xarray<double> MaxPooling3DNeuralLayer::feedForward(const xt::xarray<double>
 	return output;
 }
 
-xt::xarray<double> MaxPooling3DNeuralLayer::feedForwardTrain(const xt::xarray<double>& input)
-{
-	lastInput = input;
-	lastOutput = feedForward(input);
-	return lastOutput;
-}
-
 xt::xarray<double> MaxPooling3DNeuralLayer::backPropagate(const xt::xarray<double>& sigmas)
 {
 	xt::xarray<double> sigmasPrime = xt::where(xt::equal(lastInput, lastOutput), 1, 0) * sigmas;
@@ -97,13 +85,6 @@ double MaxPooling3DNeuralLayer::applyBackPropagate()
 	double deltaWeight = xt::sum(xt::abs(weights.getDeltaParameters()))();
 	weights.applyDeltaParameters();
 	return deltaWeight; // Return the sum of how much the parameters have changed
-}
-
-std::vector<size_t> MaxPooling3DNeuralLayer::getOutputShape()
-{
-	std::vector<size_t> outputShape;
-	outputShape.push_back(numUnits);
-	return outputShape;
 }
 
 void MaxPooling3DNeuralLayer::draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output)

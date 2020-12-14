@@ -2,7 +2,10 @@
 
 #include "NeuralLayer.h"
 #include "Function.h"
+
+#pragma warning(push, 0)
 #include <vector>
+#pragma warning(pop)
 
 using namespace std;
 
@@ -22,10 +25,5 @@ public:
 	void draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output);
 
 private:
-	NeuralLayer* children;
 	std::vector<size_t> squeezeDims;
-
-	void addChildren(NeuralLayer* children);
-
-	friend class NetworkVisualizer;
 };

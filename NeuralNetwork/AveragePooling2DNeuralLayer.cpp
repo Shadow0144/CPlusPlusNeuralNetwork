@@ -25,11 +25,6 @@ AveragePooling2DNeuralLayer::~AveragePooling2DNeuralLayer()
 
 }
 
-void AveragePooling2DNeuralLayer::addChildren(NeuralLayer* children)
-{
-	this->children = children;
-}
-
 xt::xarray<double> AveragePooling2DNeuralLayer::feedForward(const xt::xarray<double>& input)
 {
 	const int DIM1 = input.dimension() - 3; // First dimension
@@ -69,13 +64,6 @@ xt::xarray<double> AveragePooling2DNeuralLayer::feedForward(const xt::xarray<dou
 	return output;
 }
 
-xt::xarray<double> AveragePooling2DNeuralLayer::feedForwardTrain(const xt::xarray<double>& input)
-{
-	lastInput = input;
-	lastOutput = feedForward(input);
-	return lastOutput;
-}
-
 xt::xarray<double> AveragePooling2DNeuralLayer::backPropagate(const xt::xarray<double>& sigmas)
 {
 	xt::xarray<double> sigmasPrime = xt::where(xt::equal(lastInput, lastOutput), 1, 0) * sigmas;
@@ -87,13 +75,6 @@ double AveragePooling2DNeuralLayer::applyBackPropagate()
 	double deltaWeight = xt::sum(xt::abs(weights.getDeltaParameters()))();
 	weights.applyDeltaParameters();
 	return deltaWeight; // Return the sum of how much the parameters have changed
-}
-
-std::vector<size_t> AveragePooling2DNeuralLayer::getOutputShape()
-{
-	std::vector<size_t> outputShape;
-	outputShape.push_back(numUnits);
-	return outputShape;
 }
 
 void AveragePooling2DNeuralLayer::draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output)

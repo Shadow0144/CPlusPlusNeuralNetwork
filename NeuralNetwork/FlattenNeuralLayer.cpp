@@ -22,11 +22,6 @@ FlattenNeuralLayer::~FlattenNeuralLayer()
 
 }
 
-void FlattenNeuralLayer::addChildren(NeuralLayer* children)
-{
-	this->children = children;
-}
-
 xt::xarray<double> FlattenNeuralLayer::feedForward(const xt::xarray<double>& input)
 {
 	auto shape = input.shape();
@@ -59,22 +54,8 @@ double FlattenNeuralLayer::applyBackPropagate()
 	return 0; // No parameters
 }
 
-std::vector<size_t> FlattenNeuralLayer::getOutputShape()
-{
-	std::vector<size_t> outputShape;
-	outputShape.push_back(numUnits);
-	return outputShape;
-}
-
 void FlattenNeuralLayer::draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output)
 {
-	const ImColor BLACK(0.0f, 0.0f, 0.0f, 1.0f);
-	const ImColor GRAY(0.3f, 0.3f, 0.3f, 1.0f);
-	const ImColor LIGHT_GRAY(0.6f, 0.6f, 0.6f, 1.0f);
-	const ImColor VERY_LIGHT_GRAY(0.8f, 0.8f, 0.8f, 1.0f);
-	const ImColor WHITE(1.0f, 1.0f, 1.0f, 1.0f);
-	const double LINE_LENGTH = 15;
-
 	// Draw the neuron
 	ImVec2 position = ImVec2(origin);
 	const double LAYER_WIDTH = getLayerWidth(1, scale);

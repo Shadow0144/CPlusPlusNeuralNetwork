@@ -32,30 +32,55 @@ enum class DenseActivationFunction
 class NeuralLayer
 {
 public:
-	virtual void addChildren(NeuralLayer* children) = 0;
-	size_t getNumUnits() { return numUnits; }
+	virtual void addChildren(NeuralLayer* children);
+	size_t getNumUnits();
 
 	virtual xt::xarray<double> feedForward(const xt::xarray<double>& input) = 0;
-	virtual xt::xarray<double> feedForwardTrain(const xt::xarray<double>& input) = 0;
+	virtual xt::xarray<double> feedForwardTrain(const xt::xarray<double>& input);
 	virtual xt::xarray<double> backPropagate(const xt::xarray<double>& sigmas) = 0;
 	virtual double applyBackPropagate() = 0;
 
-	virtual std::vector<size_t> getOutputShape() = 0;
-
-	virtual void draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output) = 0;
+	virtual std::vector<size_t> getOutputShape();
 
 	// Drawing constants
+	const static double DRAW_LEN;// = 16.0;
+	const static double RERESCALE;// = 0.75;
+	const static double SHIFT;// = 16.0;
 	const static double RADIUS;// = 40;
 	const static double DIAMETER;// = RADIUS * 2;
 	const static double NEURON_SPACING;// = 20;
+	const static double LINE_LENGTH;// = 15;
+	const static double WEIGHT_RADIUS;// = 10;
+	const static double BIAS_OFFSET_X;// = 40;
+	const static double BIAS_OFFSET_Y;// = -52;
+	const static double BIAS_FONT_SIZE;// = 24;
+	const static double BIAS_WIDTH;// = 20;
+	const static double BIAS_HEIGHT;// = BIAS_FONT_SIZE;
+	const static double BIAS_TEXT_X;// = 4;
+	const static double BIAS_TEXT_Y;// = 20;
+	const static ImColor BLACK;
+	const static ImColor GRAY;
+	const static ImColor LIGHT_GRAY;
+	const static ImColor VERY_LIGHT_GRAY;
+	const static ImColor WHITE;
+
 	static double getLayerWidth(size_t numUnits, double scale); // Drawing helper function
 	static double getNeuronX(double originX, double layerWidth, int i, double scale); // Drawing helper function
 
+	virtual void draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output) = 0;
+
 protected:
-	size_t numUnits;
-	const double DRAW_LEN = 16.0;
-	const double RERESCALE = 0.75;
-	const double SHIFT = 16.0;
+	NeuralLayer* parent;
+	NeuralLayer* children;
+
+	std::vector<size_t> inputShape;
+	xt::xarray<double> lastInput;
+	xt::xarray<double> lastOutput;
+
+	const double ALPHA = 0.01; // Learning rate
+
+	size_t numUnits; // For drawing
+	ImVec2 position; // For drawing
 
 	void drawFunctionBackground(ImDrawList* canvas, ImVec2 origin, double scale, bool drawAxes);
 	void drawConversionFunctionBackground(ImDrawList* canvas, ImVec2 origin, double scale, bool drawAxes);

@@ -13,11 +13,6 @@ SqueezeNeuralLayer::~SqueezeNeuralLayer()
 
 }
 
-void SqueezeNeuralLayer::addChildren(NeuralLayer* children)
-{
-	this->children = children;
-}
-
 xt::xarray<double> SqueezeNeuralLayer::feedForward(const xt::xarray<double>& input)
 {
 	auto shape = input.shape();
@@ -54,13 +49,6 @@ std::vector<size_t> SqueezeNeuralLayer::getOutputShape()
 
 void SqueezeNeuralLayer::draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output)
 {
-	const ImColor BLACK(0.0f, 0.0f, 0.0f, 1.0f);
-	const ImColor GRAY(0.3f, 0.3f, 0.3f, 1.0f);
-	const ImColor LIGHT_GRAY(0.6f, 0.6f, 0.6f, 1.0f);
-	const ImColor VERY_LIGHT_GRAY(0.8f, 0.8f, 0.8f, 1.0f);
-	const ImColor WHITE(1.0f, 1.0f, 1.0f, 1.0f);
-	const double LINE_LENGTH = 15;
-
 	// Draw the neurons
 	ImVec2 position = ImVec2(origin);
 	const double LAYER_WIDTH = getLayerWidth(numUnits, scale);

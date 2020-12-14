@@ -25,11 +25,6 @@ MaxPooling2DNeuralLayer::~MaxPooling2DNeuralLayer()
 
 }
 
-void MaxPooling2DNeuralLayer::addChildren(NeuralLayer* children)
-{
-	this->children = children;
-}
-
 xt::xarray<double> MaxPooling2DNeuralLayer::feedForward(const xt::xarray<double>& input)
 {
 	/*cv::Mat inputMat = convertChannelToMat(inputs);
@@ -82,13 +77,6 @@ xt::xarray<double> MaxPooling2DNeuralLayer::feedForward(const xt::xarray<double>
 	cv::waitKey(0);*/
 
 	return output;
-}
-
-xt::xarray<double> MaxPooling2DNeuralLayer::feedForwardTrain(const xt::xarray<double>& input)
-{
-	lastInput = input;
-	lastOutput = feedForward(input);
-	return lastOutput;
 }
 
 xt::xarray<double> MaxPooling2DNeuralLayer::backPropagate(const xt::xarray<double>& sigmas)
@@ -157,13 +145,6 @@ double MaxPooling2DNeuralLayer::applyBackPropagate()
 	double deltaWeight = xt::sum(xt::abs(weights.getDeltaParameters()))();
 	weights.applyDeltaParameters();
 	return deltaWeight; // Return the sum of how much the parameters have changed
-}
-
-std::vector<size_t> MaxPooling2DNeuralLayer::getOutputShape()
-{
-	std::vector<size_t> outputShape;
-	outputShape.push_back(numUnits);
-	return outputShape;
 }
 
 void MaxPooling2DNeuralLayer::draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output)

@@ -1,8 +1,9 @@
 #pragma once
 
+#pragma warning(push, 0)
 #include "NeuralLayer.h"
-#include "Function.h"
 #include <vector>
+#pragma warning(pop)
 
 using namespace std;
 
@@ -13,7 +14,6 @@ public:
 	~InputNeuralLayer();
 
 	xt::xarray<double> feedForward(const xt::xarray<double>& input);
-	xt::xarray<double> feedForwardTrain(const xt::xarray<double>& input);
 	xt::xarray<double> backPropagate(const xt::xarray<double>& sigmas);
 	double applyBackPropagate();
 
@@ -22,14 +22,4 @@ public:
 	void draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output);
 
 private:
-	NeuralLayer* children;
-	std::vector<size_t> inputShape;
-
-	xt::xarray<double> result; // Results of feedforward
-
-	ImVec2 position; // For drawing
-
-	void addChildren(NeuralLayer* children);
-
-	friend class NetworkVisualizer;
 };

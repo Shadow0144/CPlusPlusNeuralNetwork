@@ -18,18 +18,8 @@ public:
 	xt::xarray<double> backPropagate(const xt::xarray<double>& sigmas);
 	double applyBackPropagate();
 
-	std::vector<size_t> getOutputShape();
-
 	void draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output);
 
 private:
-	NeuralLayer* parent;
-	NeuralLayer* children;
-
-	xt::xarray<double> lastInput;
-
-	void addChildren(NeuralLayer* children);
 	void drawFlattenFunction(ImDrawList* canvas, ImVec2 origin, double scale);
-
-	friend class NetworkVisualizer;
 };

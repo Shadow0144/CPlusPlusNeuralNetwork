@@ -1,9 +1,12 @@
 #pragma once
 
 #include "NeuralLayer.h"
+
+#pragma warning(push, 0)
 #include "imgui.h"
 #include <vector>
 #include <shared_mutex>
+#pragma warning(pop)
 
 class SoftmaxNeuralLayer : public NeuralLayer
 {
@@ -23,9 +26,6 @@ public:
 	void draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output);
 
 private:
-	NeuralLayer* parent;
-	NeuralLayer* children;
-	std::vector<size_t> inputShape;
 	size_t numInputs;
 	size_t numOutputs;
 	int axis;
@@ -33,9 +33,6 @@ private:
 	mutable std::shared_mutex outputMutex;
 
 	std::vector<int> sumIndices;
-	xt::xarray<double> lastInput;
-	xt::xarray<double> lastOutput;
 
-	void addChildren(NeuralLayer* children);
 	void drawSoftmax(ImDrawList* canvas, ImVec2 origin, double scale);
 };

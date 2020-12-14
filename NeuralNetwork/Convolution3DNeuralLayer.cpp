@@ -8,6 +8,8 @@
 #include <tuple>
 #pragma warning(pop)
 
+using namespace std;
+
 Convolution3DNeuralLayer::Convolution3DNeuralLayer(NeuralLayer* parent, size_t numKernels,
 	const std::vector<size_t>& convolutionShape, size_t inputChannels, size_t stride)
 {
@@ -49,11 +51,6 @@ Convolution3DNeuralLayer::Convolution3DNeuralLayer(NeuralLayer* parent, size_t n
 Convolution3DNeuralLayer::~Convolution3DNeuralLayer()
 {
 
-}
-
-void Convolution3DNeuralLayer::addChildren(NeuralLayer* children)
-{
-	this->children = children;
 }
 
 xt::xarray<double> Convolution3DNeuralLayer::convolude3D(const xt::xarray<double>& f, const xt::xarray<double>& g)
@@ -152,13 +149,6 @@ xt::xarray<double> Convolution3DNeuralLayer::feedForward(const xt::xarray<double
 	//output = xt::where(lastOutput > 0.0, lastOutput, 0); // TODO
 
 	return output;
-}
-
-xt::xarray<double> Convolution3DNeuralLayer::feedForwardTrain(const xt::xarray<double>& input)
-{
-	lastInput = input;
-	lastOutput = feedForward(input);
-	return lastOutput;
 }
 
 xt::xarray<double> Convolution3DNeuralLayer::backPropagate(const xt::xarray<double>& sigma)
@@ -300,31 +290,9 @@ double Convolution3DNeuralLayer::applyBackPropagate()
 	return deltaWeight; // Return the sum of how much the parameters have changed
 }
 
-std::vector<size_t> Convolution3DNeuralLayer::getOutputShape()
-{
-	std::vector<size_t> outputShape;
-	outputShape.push_back(numUnits);
-	return outputShape;
-}
-
 // TODO
 void Convolution3DNeuralLayer::draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output)
 {
-	const ImColor BLACK(0.0f, 0.0f, 0.0f, 1.0f);
-	const ImColor GRAY(0.3f, 0.3f, 0.3f, 1.0f);
-	const ImColor LIGHT_GRAY(0.6f, 0.6f, 0.6f, 1.0f);
-	const ImColor VERY_LIGHT_GRAY(0.8f, 0.8f, 0.8f, 1.0f);
-	const ImColor WHITE(1.0f, 1.0f, 1.0f, 1.0f);
-	const double LINE_LENGTH = 15;
-	const double WEIGHT_RADIUS = 10;
-	const double BIAS_OFFSET_X = 40;
-	const double BIAS_OFFSET_Y = -52;
-	const double BIAS_FONT_SIZE = 24;
-	const double BIAS_WIDTH = 20;
-	const double BIAS_HEIGHT = BIAS_FONT_SIZE;
-	const double BIAS_TEXT_X = 4;
-	const double BIAS_TEXT_Y = 20;
-
 	// Draw the neurons
 	ImVec2 position = ImVec2(origin);
 	const double LAYER_WIDTH = getLayerWidth(numUnits, scale);

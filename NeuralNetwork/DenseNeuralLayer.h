@@ -1,9 +1,11 @@
 #pragma once
 
+#pragma warning(push, 0)
 #include "NeuralLayer.h"
 #include "Function.h"
 #include "imgui.h"
 #include <vector>
+#pragma warning(pop)
 
 using namespace std;
 
@@ -25,9 +27,4 @@ public:
 private:
 	DenseActivationFunction functionType;
 	Function* activationFunction;
-	NeuralLayer* parent;
-	NeuralLayer* children;
-	std::vector<size_t> inputShape;
-	
-	void addChildren(NeuralLayer* children);
 };

@@ -8,6 +8,8 @@
 #include <tuple>
 #pragma warning(pop)
 
+using namespace std;
+
 Convolution1DNeuralLayer::Convolution1DNeuralLayer(NeuralLayer* parent, size_t numKernels,
 	const std::vector<size_t>& convolutionShape, size_t inputChannels, size_t stride)
 {
@@ -45,11 +47,6 @@ Convolution1DNeuralLayer::Convolution1DNeuralLayer(NeuralLayer* parent, size_t n
 Convolution1DNeuralLayer::~Convolution1DNeuralLayer()
 {
 
-}
-
-void Convolution1DNeuralLayer::addChildren(NeuralLayer* children)
-{
-	this->children = children;
 }
 
 xt::xarray<double> Convolution1DNeuralLayer::convolude1D(const xt::xarray<double>& f, const xt::xarray<double>& g)
@@ -124,13 +121,6 @@ xt::xarray<double> Convolution1DNeuralLayer::feedForward(const xt::xarray<double
 	//output = xt::where(lastOutput > 0.0, lastOutput, 0); // TODO
 
 	return output;
-}
-
-xt::xarray<double> Convolution1DNeuralLayer::feedForwardTrain(const xt::xarray<double>& input)
-{
-	lastInput = input;
-	lastOutput = feedForward(input);
-	return lastOutput;
 }
 
 xt::xarray<double> Convolution1DNeuralLayer::backPropagate(const xt::xarray<double>& sigma)
@@ -254,13 +244,6 @@ double Convolution1DNeuralLayer::applyBackPropagate()
 	double deltaWeight = xt::sum(xt::abs(weights.getDeltaParameters()))();
 	weights.applyDeltaParameters();
 	return deltaWeight; // Return the sum of how much the parameters have changed
-}
-
-std::vector<size_t> Convolution1DNeuralLayer::getOutputShape()
-{
-	std::vector<size_t> outputShape;
-	outputShape.push_back(numUnits);
-	return outputShape;
 }
 
 void Convolution1DNeuralLayer::draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output)

@@ -1,9 +1,50 @@
 #include "NeuralLayer.h"
 #include "Function.h"
 
+const double NeuralLayer::DRAW_LEN = 16.0;
+const double NeuralLayer::RERESCALE = 0.75;
+const double NeuralLayer::SHIFT = 16.0;
 const double NeuralLayer::RADIUS = 40;
 const double NeuralLayer::DIAMETER = RADIUS * 2;
 const double NeuralLayer::NEURON_SPACING = 20;
+const double NeuralLayer::LINE_LENGTH = 15;
+const double NeuralLayer::WEIGHT_RADIUS = 10;
+const double NeuralLayer::BIAS_OFFSET_X = 40;
+const double NeuralLayer::BIAS_OFFSET_Y = -52;
+const double NeuralLayer::BIAS_FONT_SIZE = 24;
+const double NeuralLayer::BIAS_WIDTH = 20;
+const double NeuralLayer::BIAS_HEIGHT = BIAS_FONT_SIZE;
+const double NeuralLayer::BIAS_TEXT_X = 4;
+const double NeuralLayer::BIAS_TEXT_Y = 20;
+const ImColor NeuralLayer::BLACK = ImColor(0.0f, 0.0f, 0.0f, 1.0f);
+const ImColor NeuralLayer::GRAY = ImColor(0.3f, 0.3f, 0.3f, 1.0f);
+const ImColor NeuralLayer::LIGHT_GRAY = ImColor(0.6f, 0.6f, 0.6f, 1.0f);
+const ImColor NeuralLayer::VERY_LIGHT_GRAY = ImColor(0.8f, 0.8f, 0.8f, 1.0f);
+const ImColor NeuralLayer::WHITE = ImColor(1.0f, 1.0f, 1.0f, 1.0f);
+
+void NeuralLayer::addChildren(NeuralLayer* children)
+{
+	this->children = children;
+}
+
+size_t NeuralLayer::getNumUnits() 
+{ 
+	return numUnits;
+}
+
+xt::xarray<double> NeuralLayer::feedForwardTrain(const xt::xarray<double>& input)
+{
+	lastInput = input;
+	lastOutput = feedForward(input);
+	return lastOutput;
+}
+
+std::vector<size_t> NeuralLayer::getOutputShape()
+{
+	std::vector<size_t> outputShape;
+	outputShape.push_back(numUnits);
+	return outputShape;
+}
 
 double NeuralLayer::getLayerWidth(size_t numUnits, double scale)
 {
