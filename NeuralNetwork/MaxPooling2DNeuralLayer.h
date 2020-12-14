@@ -1,22 +1,21 @@
 #pragma once
 
+#pragma warning(pop)
 #include "NeuralLayer.h"
 #include "Function.h"
 #include "imgui.h"
 #include <vector>
+#pragma warning(pop)
 
-using namespace std;
-
-class ConvolutionNeuralLayer : public NeuralLayer
+class MaxPooling2DNeuralLayer : public NeuralLayer
 {
 public:
-	ConvolutionNeuralLayer(ConvolutionActivationFunction function, NeuralLayer* parent, 
-						size_t numKernels, const std::vector<size_t>& convolutionShape, size_t inputChannels, size_t stride = 1);
-	~ConvolutionNeuralLayer();
+	MaxPooling2DNeuralLayer(NeuralLayer* parent, const std::vector<size_t>& filterShape);
+	~MaxPooling2DNeuralLayer();
 
 	xt::xarray<double> feedForward(const xt::xarray<double>& input);
 	xt::xarray<double> feedForwardTrain(const xt::xarray<double>& input);
-	xt::xarray<double> backPropagate(const xt::xarray<double>& errors);
+	xt::xarray<double> backPropagate(const xt::xarray<double>& sigmas);
 	double applyBackPropagate();
 
 	std::vector<size_t> getOutputShape();
@@ -24,11 +23,16 @@ public:
 	void draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output);
 
 private:
-	ConvolutionActivationFunction functionType;
-	Function* activationFunction;
 	NeuralLayer* parent;
 	NeuralLayer* children;
 	std::vector<size_t> inputShape;
+	std::vector<size_t> filterShape;
+	xt::xarray<double> lastInput;
+	xt::xarray<double> lastOutput;
+
+	ParameterSet weights;
+	const double ALPHA = 0.001; // Learning rate
 
 	void addChildren(NeuralLayer* children);
+	void draw2DPooling(ImDrawList* canvas, ImVec2 origin, double scale);
 };

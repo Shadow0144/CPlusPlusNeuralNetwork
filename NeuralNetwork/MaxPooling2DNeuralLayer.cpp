@@ -1,35 +1,45 @@
-#include "MaxPooling2DFunction.h"
-#include "NeuralLayer.h"
-
-#include "Test.h"
+#include "MaxPooling2DNeuralLayer.h"
 
 #pragma warning(push, 0)
-#include <iostream>
-#include <xtensor/xview.hpp>
-#include <xtensor/xsort.hpp>
+#include <math.h>
+#include <tuple>
 #pragma warning(pop)
 
 using namespace std;
 
-// TODO: Padding and dimensions
-MaxPooling2DFunction::MaxPooling2DFunction(const std::vector<size_t>& filterShape)
+MaxPooling2DNeuralLayer::MaxPooling2DNeuralLayer(NeuralLayer* parent, const std::vector<size_t>& filterShape)
 {
-	this->hasBias = false;
-	this->drawAxes = false;
-	this->numUnits = 1;
+	this->parent = parent;
+	this->children = NULL;
+	if (parent != NULL)
+	{
+		parent->addChildren(this);
+	}
+	else { }
 	this->filterShape = filterShape;
+	this->numUnits = 1;
 }
 
-xt::xarray<double> MaxPooling2DFunction::feedForward(const xt::xarray<double>& inputs)
+MaxPooling2DNeuralLayer::~MaxPooling2DNeuralLayer()
+{
+
+}
+
+void MaxPooling2DNeuralLayer::addChildren(NeuralLayer* children)
+{
+	this->children = children;
+}
+
+xt::xarray<double> MaxPooling2DNeuralLayer::feedForward(const xt::xarray<double>& input)
 {
 	/*cv::Mat inputMat = convertChannelToMat(inputs);
 	cv::imshow("Input", inputMat);*/
 
-	const int DIMS = inputs.dimension();
+	const int DIMS = input.dimension();
 	const int DIM1 = DIMS - 3; // First dimension
 	const int DIM2 = DIMS - 2; // Second dimension
 	const int DIMC = DIMS - 1; // Channels
-	auto shape = inputs.shape();
+	auto shape = input.shape();
 	auto maxShape = xt::svector<size_t>(shape);
 	//inputMask = xt::xarray<double>(shape); // Same shape as the input
 	shape[DIM1] = ceil(shape[DIM1] / filterShape[0]);
@@ -48,8 +58,8 @@ xt::xarray<double> MaxPooling2DFunction::feedForward(const xt::xarray<double>& i
 
 	int k = 0;
 	int l = 0;
-	const int I = inputs.shape()[DIM1];
-	const int J = inputs.shape()[DIM2];
+	const int I = input.shape()[DIM1];
+	const int J = input.shape()[DIM2];
 	for (int i = 0; i < I; i += filterShape[0])
 	{
 		inputWindowView[DIM1] = xt::range(i, i + filterShape[0]);
@@ -59,7 +69,7 @@ xt::xarray<double> MaxPooling2DFunction::feedForward(const xt::xarray<double>& i
 			inputWindowView[DIM2] = xt::range(j, j + filterShape[1]);
 			outputWindowView[DIM2] = l++; // Increment after assignment
 			// Window contains subset of width and height and all channels of the input
-			auto window = xt::xarray<double>(xt::strided_view(inputs, inputWindowView));
+			auto window = xt::xarray<double>(xt::strided_view(input, inputWindowView));
 			// Reduce the w x h x c window to 1 x 1 x c
 			auto maxes = xt::xarray<double>(xt::amax(window, { DIM1, DIM2 }));
 			xt::strided_view(output, outputWindowView) = maxes;
@@ -74,7 +84,14 @@ xt::xarray<double> MaxPooling2DFunction::feedForward(const xt::xarray<double>& i
 	return output;
 }
 
-xt::xarray<double> MaxPooling2DFunction::backPropagate(const xt::xarray<double>& sigmas)
+xt::xarray<double> MaxPooling2DNeuralLayer::feedForwardTrain(const xt::xarray<double>& input)
+{
+	lastInput = input;
+	lastOutput = feedForward(input);
+	return lastOutput;
+}
+
+xt::xarray<double> MaxPooling2DNeuralLayer::backPropagate(const xt::xarray<double>& sigmas)
 {
 	// Reverse what was done in feedforward, the input is now the output
 	const int DIMS = lastInput.dimension();
@@ -135,9 +152,86 @@ xt::xarray<double> MaxPooling2DFunction::backPropagate(const xt::xarray<double>&
 	return sigmasPrime;
 }
 
-void MaxPooling2DFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
+double MaxPooling2DNeuralLayer::applyBackPropagate()
 {
-	Function::drawConversion(canvas, origin, scale);
+	double deltaWeight = xt::sum(xt::abs(weights.getDeltaParameters()))();
+	weights.applyDeltaParameters();
+	return deltaWeight; // Return the sum of how much the parameters have changed
+}
+
+std::vector<size_t> MaxPooling2DNeuralLayer::getOutputShape()
+{
+	std::vector<size_t> outputShape;
+	outputShape.push_back(numUnits);
+	return outputShape;
+}
+
+void MaxPooling2DNeuralLayer::draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output)
+{
+	const ImColor BLACK(0.0f, 0.0f, 0.0f, 1.0f);
+	const ImColor GRAY(0.3f, 0.3f, 0.3f, 1.0f);
+	const ImColor LIGHT_GRAY(0.6f, 0.6f, 0.6f, 1.0f);
+	const ImColor VERY_LIGHT_GRAY(0.8f, 0.8f, 0.8f, 1.0f);
+	const ImColor WHITE(1.0f, 1.0f, 1.0f, 1.0f);
+	const double LINE_LENGTH = 15;
+
+	// Draw the neurons
+	ImVec2 position = ImVec2(origin);
+	const double LAYER_WIDTH = getLayerWidth(numUnits, scale);
+	for (int i = 0; i < numUnits; i++)
+	{
+		position.x = getNeuronX(origin.x, LAYER_WIDTH, i, scale);
+		canvas->AddCircleFilled(position, RADIUS * scale, LIGHT_GRAY, 32);
+	}
+
+	// Draw the activation function
+	draw2DPooling(canvas, origin, scale);
+
+	// Draw the links to the previous neurons
+	double previousX, previousY;
+	int parentCount = parent->getNumUnits();
+	const double PARENT_LAYER_WIDTH = NeuralLayer::getLayerWidth(parentCount, scale);
+	ImVec2 currentNeuronPt(0, origin.y - (RADIUS * scale));
+	previousY = origin.y - (DIAMETER * scale);
+
+	// Draw each neuron
+	for (int i = 0; i < numUnits; i++)
+	{
+		currentNeuronPt.x = NeuralLayer::getNeuronX(origin.x, LAYER_WIDTH, i, scale);
+		for (int j = 0; j < parentCount; j++) // There should be at least one parent
+		{
+			previousX = NeuralLayer::getNeuronX(origin.x, PARENT_LAYER_WIDTH, j, scale);
+			ImVec2 previousNeuronPt(previousX, previousY);
+
+			// Draw line to previous neuron
+			canvas->AddLine(previousNeuronPt, currentNeuronPt, BLACK, 1.0f);
+		}
+	}
+
+	if (output)
+	{
+		for (int i = 0; i < numUnits; i++)
+		{
+			// Draw the output lines
+			double x = NeuralLayer::getNeuronX(origin.x, LAYER_WIDTH, i, scale);
+			ImVec2 outputPt(x, position.y + (RADIUS * scale));
+			ImVec2 nextPt(x, outputPt.y + (LINE_LENGTH * scale));
+			canvas->AddLine(outputPt, nextPt, GRAY);
+		}
+	}
+	else { }
+
+	// Overlaying black ring
+	for (int i = 0; i < numUnits; i++)
+	{
+		position.x = origin.x - (LAYER_WIDTH * 0.5) + (((DIAMETER + NEURON_SPACING) * i) * scale);
+		canvas->AddCircle(position, RADIUS * scale, BLACK, 32);
+	}
+}
+
+void MaxPooling2DNeuralLayer::draw2DPooling(ImDrawList* canvas, ImVec2 origin, double scale)
+{
+	drawConversionFunctionBackground(canvas, origin, scale, false);
 
 	const int X = filterShape.at(0);
 	const int Y = filterShape.at(1);
@@ -162,7 +256,7 @@ void MaxPooling2DFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
 			for (int j = 0; j < X; j++)
 			{
 				float colorValue = 1.0f - (((abs(CENTER_X - j) / CENTER_X)
-										+ (abs(CENTER_Y - i) / CENTER_Y)) / 2.0f);
+					+ (abs(CENTER_Y - i) / CENTER_Y)) / 2.0f);
 				ImColor color(colorValue, colorValue, colorValue);
 				canvas->AddRectFilled(ImVec2(floor(position.x + x), floor(position.y - y)),
 					ImVec2(ceil(position.x + x + xWidth), ceil(position.y - y - yHeight)),

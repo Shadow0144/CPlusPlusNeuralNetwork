@@ -14,7 +14,7 @@
 #pragma warning(pop)
 
 #include "NeuralNetwork.h"
-#include "MSEFunction.h"
+#include "MeanSquareErrorFunction.h"
 #include "CrossEntropyFunction.h"
 #include "NetworkVisualizer.h"
 #include "IrisDataset.h"
@@ -26,12 +26,12 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 
-#include "Convolution2DFunction.h"
-#include "MaxPooling2DFunction.h"
-#include "FlattenFunction.h"
+//#include "Convolution2DFunction.h"
+//#include "MaxPooling2DFunction.h"
+//#include "FlattenFunction.h"
 #include "ReLUFunction.h"
 #include "SigmoidFunction.h"
-#include "SoftmaxFunction.h"
+//#include "SoftmaxFunction.h"
 
 //#define ALL
 //#define FIVE
@@ -207,7 +207,7 @@ void test_signal(int layers)
             break;
     }
 
-    ErrorFunction* errorFunction = new MSEFunction();
+    ErrorFunction* errorFunction = new MeanSquareErrorFunction();
     NeuralNetwork network = NeuralNetwork(true);
     network.setTrainingParameters(errorFunction, MAX_ITERATIONS, -MIN_ERROR, -CONVERGENCE_E, -CONVERGENCE_W); // TODO: Remove negatives
     network.setBatchSize(20);
@@ -399,10 +399,10 @@ void test_binary()
     // Create the network
     NeuralNetwork network(true);
     network.addInputLayer({ (size_t)IMG_DIM, (size_t)IMG_DIM, C }); // 28x28x1
-    network.addConvolutionLayer(ConvolutionActivationFunction::Convolution2D, NUM_KERNELS_1, { 5, 5 }, C); // 28x28x1 -> 24x24x64
-    network.addPoolingLayer(PoolingActivationFunction::Max2D, { 2, 2 }); // 24x24x64 -> 12x12x64
-    network.addConvolutionLayer(ConvolutionActivationFunction::Convolution2D, NUM_KERNELS_2, { 5, 5 }, NUM_KERNELS_1); // 12x12x16 -> 8x8x16
-    network.addPoolingLayer(PoolingActivationFunction::Max2D, { 2, 2 }); // 8x8x16 -> 4x4x16
+    network.addConvolution2DLayer(NUM_KERNELS_1, { 5, 5 }, C); // 28x28x1 -> 24x24x64
+    network.addMaxPooling2DLayer({ 2, 2 }); // 24x24x64 -> 12x12x64
+    network.addConvolution2DLayer(NUM_KERNELS_2, { 5, 5 }, NUM_KERNELS_1); // 12x12x16 -> 8x8x16
+    network.addMaxPooling2DLayer({ 2, 2 }); // 8x8x16 -> 4x4x16
     network.addFlattenLayer(4 * 4 * NUM_KERNELS_2); // 4x4x16 -> 256
     network.addDenseLayer(DenseActivationFunction::ReLU, 32); // 256 -> 32
     network.addDenseLayer(DenseActivationFunction::ReLU, CLASSES); // 32 -> 2
@@ -458,10 +458,10 @@ void test_mnist()
     // Create the network
     NeuralNetwork network(true);
     network.addInputLayer({ (size_t)IMG_DIM, (size_t)IMG_DIM, C }); // 28x28x1
-    network.addConvolutionLayer(ConvolutionActivationFunction::Convolution2D, NUM_KERNELS_1, { 5, 5 }, C); // 28x28x1 -> 24x24x64                                                   
-    network.addPoolingLayer(PoolingActivationFunction::Max2D, { 2, 2 }); // 24x24x64 -> 12x12x64
-    network.addConvolutionLayer(ConvolutionActivationFunction::Convolution2D, NUM_KERNELS_2, { 5, 5 }, NUM_KERNELS_1); // 12x12x16 -> 8x8x16                                                         
-    network.addPoolingLayer(PoolingActivationFunction::Max2D, { 2, 2 }); // 8x8x16 -> 4x4x16
+    network.addConvolution2DLayer(NUM_KERNELS_1, { 5, 5 }, C); // 28x28x1 -> 24x24x64                                                   
+    network.addMaxPooling2DLayer({ 2, 2 }); // 24x24x64 -> 12x12x64
+    network.addConvolution2DLayer(NUM_KERNELS_2, { 5, 5 }, NUM_KERNELS_1); // 12x12x16 -> 8x8x16                                                         
+    network.addMaxPooling2DLayer({ 2, 2 }); // 8x8x16 -> 4x4x16
     network.addFlattenLayer(4 * 4 * NUM_KERNELS_2); // 4x4x16 -> 256
     network.addDenseLayer(DenseActivationFunction::Sigmoid, 32); // 256 -> 32
     network.addDenseLayer(DenseActivationFunction::Sigmoid, CLASSES); // 32 -> 10
@@ -532,14 +532,14 @@ void test_layers()
     xt::xarray<double> features = xt::reshape_view(xt::view(data, xt::all(), xt::range(1, _)), { exampleCount, width, width });
     features /= 255.0;
 
-    Convolution2DFunction convfunc1({ 5, 5 }, 1, 1, 16); // 28x28x1 -> 24x24x16
-    MaxPooling2DFunction poolfunc1({ 2, 2 }); // 24x24x16 -> 12x12x16
-    Convolution2DFunction convfunc2({ 5, 5 }, 16, 1, 16); // 12x12x16 -> 8x8x16
-    MaxPooling2DFunction poolfunc2({ 2, 2 }); // 8x8x16 -> 4x4x16
-    FlattenFunction flatfunc1(256); // 4x4x16 -> 256
+    //Convolution2DFunction convfunc1({ 5, 5 }, 1, 1, 16); // 28x28x1 -> 24x24x16
+    //MaxPooling2DFunction poolfunc1({ 2, 2 }); // 24x24x16 -> 12x12x16
+    //Convolution2DFunction convfunc2({ 5, 5 }, 16, 1, 16); // 12x12x16 -> 8x8x16
+    //MaxPooling2DFunction poolfunc2({ 2, 2 }); // 8x8x16 -> 4x4x16
+    //FlattenFunction flatfunc1(256); // 4x4x16 -> 256
     ReLUFunction densefunc1(256, 32); // 256 -> 32
     ReLUFunction densefunc2(32, 10); // 32 -> 10
-    SoftmaxFunction softfunc1(10, -1); // 10 -> 10
+    //SoftmaxFunction softfunc1(10, -1); // 10 -> 10
 
     xt::xarray<double> example;
     cv::Mat resultMat;
@@ -552,16 +552,16 @@ void test_layers()
         example = xt::strided_view(features, { i, xt::all(), xt::all() });
         example.reshape({ 1, example.shape()[0], example.shape()[1], 1 });
 
-        result = convfunc1.feedForward(example);
+        //result = convfunc1.feedForward(example);
         //cv::imshow("C1", convertChannelsToMat3(result, 0, 0, 3));
-        result = poolfunc1.feedForward(result);
-        result = convfunc2.feedForward(result);
+        //result = poolfunc1.feedForward(result);
+        //result = convfunc2.feedForward(result);
         //cv::imshow("C2", convertChannelsToMat3(result, 0, 0, 3));
-        result = poolfunc2.feedForward(result);
-        result = flatfunc1.feedForward(result);
+        //result = poolfunc2.feedForward(result);
+        //result = flatfunc1.feedForward(result);
         result = densefunc1.feedForward(result);
         result = densefunc2.feedForward(result);
-        result = softfunc1.feedForward(result);
+        //result = softfunc1.feedForward(result);
 
         //std::cout << classes(i) << ": " << xt::argmax(result) << endl;
         correct += (classes(i) == xt::argmax(result)(0)) ? 1 : 0;
@@ -583,21 +583,21 @@ void test_layers()
         examples.reshape({ (int)batchSize, (int)(width), (int)(width), 1 });
 
         //cv::imshow("Example", convertToMat(examples));
-        auto predicted = convfunc1.feedForward(examples);
+        //auto predicted = convfunc1.feedForward(examples);
         //cv::imshow("C1", convertChannelsToMat3(predicted, 0, 0, 3));
-        predicted = poolfunc1.feedForward(predicted);
-        predicted = convfunc2.feedForward(predicted);
+        //auto predicted = poolfunc1.feedForward(examples); //poolfunc1.feedForward(predicted);
+        //predicted = convfunc2.feedForward(predicted);
         //cv::imshow("C2", convertChannelsToMat3(predicted, 0, 0, 3));
-        predicted = poolfunc2.feedForward(predicted);
-        predicted = flatfunc1.feedForward(predicted);
+        //predicted = poolfunc2.feedForward(predicted);
+        //predicted = flatfunc1.feedForward(predicted);
         //for (int i = 0; (i < predicted.shape()[1] && i < 20); i++)
         //{
         //    cout << predicted(0, i) << " ";
         //}
         //cout << endl;
-        predicted = densefunc1.feedForward(predicted);
+        auto predicted = densefunc1.feedForward(examples); //densefunc1.feedForward(predicted);
         predicted = densefunc2.feedForward(predicted);
-        predicted = softfunc1.feedForward(predicted);
+        //predicted = softfunc1.feedForward(predicted);
         //std::cout << "Waiting..." << endl;
         //cv::waitKey(1);
         //std::cout << "Continuing..." << endl;
@@ -613,7 +613,7 @@ void test_layers()
             cout << endl;
         }*/
 
-        back = softfunc1.backPropagateCrossEntropy(back);
+        //back = softfunc1.backPropagateCrossEntropy(back);
         back = densefunc2.backPropagate(back);
         back = densefunc1.backPropagate(back);
         /*back = flatfunc1.backPropagate(back);
@@ -644,14 +644,14 @@ void test_layers()
             cout << endl;
         }*/
 
-        softfunc1.applyBackPropagate();
+        //softfunc1.applyBackPropagate();
         densefunc2.applyBackPropagate();
         densefunc1.applyBackPropagate();
-        flatfunc1.applyBackPropagate();
-        poolfunc2.applyBackPropagate();
-        convfunc2.applyBackPropagate();
-        poolfunc1.applyBackPropagate();
-        convfunc1.applyBackPropagate();
+        //flatfunc1.applyBackPropagate();
+        //poolfunc2.applyBackPropagate();
+        //convfunc2.applyBackPropagate();
+        //poolfunc1.applyBackPropagate();
+        //convfunc1.applyBackPropagate();
 
         const int ITERATION_PRINT = 100;
         if (i % ITERATION_PRINT == (ITERATION_PRINT - 1))
@@ -669,14 +669,14 @@ void test_layers()
             {
                 example = xt::strided_view(features, { i, xt::all(), xt::all() });
                 example.reshape({ 1, example.shape()[0], example.shape()[1], 1 });
-                result = convfunc1.feedForward(example);
-                result = poolfunc1.feedForward(result);
-                result = convfunc2.feedForward(result);
-                result = poolfunc2.feedForward(result);
-                result = flatfunc1.feedForward(result);
+                //result = convfunc1.feedForward(example);
+                //result = poolfunc1.feedForward(result);
+                //result = convfunc2.feedForward(result);
+                //result = poolfunc2.feedForward(result);
+                //result = flatfunc1.feedForward(result);
                 result = densefunc1.feedForward(result);
                 result = densefunc2.feedForward(result);
-                result = softfunc1.feedForward(result);
+                //result = softfunc1.feedForward(result);
                 correct += (classes(i) == xt::argmax(result)(0)) ? 1 : 0;
             }
             std::cout << "Accuracy: " << (correct / CASES) << endl << endl;
@@ -697,14 +697,14 @@ void test_layers()
                     {
                         example = xt::strided_view(features, { j, xt::all(), xt::all() });
                         example.reshape({ 1, example.shape()[0], example.shape()[1], 1 });
-                        result = convfunc1.feedForward(example);
-                        result = poolfunc1.feedForward(result);
-                        result = convfunc2.feedForward(result);
-                        result = poolfunc2.feedForward(result);
-                        result = flatfunc1.feedForward(result);
+                        //result = convfunc1.feedForward(example);
+                        //result = poolfunc1.feedForward(result);
+                        //result = convfunc2.feedForward(result);
+                        //result = poolfunc2.feedForward(result);
+                        //result = flatfunc1.feedForward(result);
                         result = densefunc1.feedForward(result);
                         result = densefunc2.feedForward(result);
-                        result = softfunc1.feedForward(result);
+                        //result = softfunc1.feedForward(result);
                         sums += result;
                         correct += (k == xt::argmax(result)(0)) ? 1 : 0;
                         count++;
@@ -728,23 +728,23 @@ void test_layers()
         example = xt::strided_view(features, { i, xt::all(), xt::all() });
         example.reshape({ 1, example.shape()[0], example.shape()[1], 1 });
 
-        result = convfunc1.feedForward(example);
+        //result = convfunc1.feedForward(example);
         //cv::imshow("C1", convertChannelsToMat3(result, 0, 0, 3));
-        result = poolfunc1.feedForward(result);
-        result = convfunc2.feedForward(result);
+        //result = poolfunc1.feedForward(result);
+        //result = convfunc2.feedForward(result);
         //cv::imshow("C2", convertChannelsToMat3(result, 0, 0, 3));
-        result = poolfunc2.feedForward(result);
-        result = flatfunc1.feedForward(result);
+        //result = poolfunc2.feedForward(result);
+        //result = flatfunc1.feedForward(result);
         result = densefunc1.feedForward(result);
         result = densefunc2.feedForward(result);
-        result = softfunc1.feedForward(result);
+        //result = softfunc1.feedForward(result);
 
         //std::cout << classes(i) << ": " << xt::argmax(result) << endl;
         correct += (classes(i) == xt::argmax(result)(0)) ? 1 : 0;
     }
     cout << "Accuracy: " << (correct / CASES) << endl;
 
-    result = convfunc2.getWeights().getParameters();
+    //result = convfunc2.getWeights().getParameters();
     for (int i = 0; i < 10; i++)
     {
         resultMat = convertWeightsToMat3(result, 0, 1, i);

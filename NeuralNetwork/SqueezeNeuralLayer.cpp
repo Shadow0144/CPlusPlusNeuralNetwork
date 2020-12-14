@@ -1,9 +1,4 @@
-#define _USE_MATH_DEFINES
-
 #include "SqueezeNeuralLayer.h"
-
-#include <math.h>
-#include <tuple>
 
 // Input shape is the shape of a single example
 SqueezeNeuralLayer::SqueezeNeuralLayer(const std::vector<size_t>& squeezeDims)
@@ -25,22 +20,31 @@ void SqueezeNeuralLayer::addChildren(NeuralLayer* children)
 
 xt::xarray<double> SqueezeNeuralLayer::feedForward(const xt::xarray<double>& input)
 {
-	return input;
+	auto shape = input.shape();
+	const int DIMS = squeezeDims.size();
+	for (int i = 0; i < DIMS; i++)
+	{
+		shape[squeezeDims[i]] = 0;
+	}
+	auto result = xt::xarray<double>(input);
+	result.reshape(shape);
+	return result;
 }
 
 xt::xarray<double> SqueezeNeuralLayer::feedForwardTrain(const xt::xarray<double>& input)
 {
-	return input;
+	// TODO?
+	return feedForward(input);
 }
 
 xt::xarray<double> SqueezeNeuralLayer::backPropagate(const xt::xarray<double>& sigmas)
 {
-	return sigmas;
+	return sigmas; // TODO
 }
 
 double SqueezeNeuralLayer::applyBackPropagate()
 {
-	return 0;
+	return 0; // No parameters
 }
 
 std::vector<size_t> SqueezeNeuralLayer::getOutputShape()
@@ -58,7 +62,7 @@ void SqueezeNeuralLayer::draw(ImDrawList* canvas, ImVec2 origin, double scale, b
 	const double LINE_LENGTH = 15;
 
 	// Draw the neurons
-	position = ImVec2(origin);
+	ImVec2 position = ImVec2(origin);
 	const double LAYER_WIDTH = getLayerWidth(numUnits, scale);
 	for (int i = 0; i < numUnits; i++)
 	{
@@ -75,4 +79,6 @@ void SqueezeNeuralLayer::draw(ImDrawList* canvas, ImVec2 origin, double scale, b
 		position.x = origin.x - (LAYER_WIDTH * 0.5) + (((DIAMETER + NEURON_SPACING) * i) * scale);
 		canvas->AddCircle(position, RADIUS * scale, BLACK, 32);
 	}
+
+	// TODO
 }

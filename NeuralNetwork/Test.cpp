@@ -1,13 +1,13 @@
 #include "Test.h"
-#include "MaxPooling1DFunction.h"
-#include "MaxPooling2DFunction.h"
-#include "MaxPooling3DFunction.h"
-#include "AveragePooling1DFunction.h"
-#include "AveragePooling2DFunction.h"
-#include "AveragePooling3DFunction.h"
-#include "Convolution1DFunction.h"
-#include "Convolution2DFunction.h"
-#include "Convolution3DFunction.h"
+//#include "MaxPooling1DFunction.h"
+//#include "MaxPooling2DFunction.h"
+//#include "MaxPooling3DFunction.h"
+//#include "AveragePooling1DFunction.h"
+//#include "AveragePooling2DFunction.h"
+//#include "AveragePooling3DFunction.h"
+//#include "Convolution1DFunction.h"
+//#include "Convolution2DFunction.h"
+//#include "Convolution3DFunction.h"
 
 #pragma warning(push, 0)
 #include <iostream>
@@ -19,12 +19,12 @@
 
 using namespace std;
 
-xt::xarray<double> test(const xt::xarray<double>& input)
-{
-    const int n1 = 4;
+//xt::xarray<double> test(const xt::xarray<double>& input)
+//{
+    /*const int n1 = 4;
     const int n2 = 4;
     const int n3 = 3;
-    const int n4 = 6;
+    const int n4 = 6;*/
 
     //xt::xarray<double> input = xt::arange<double>(n1 * n2 * n3);
     //input.reshape({ n1, n2, n3 });
@@ -50,9 +50,9 @@ xt::xarray<double> test(const xt::xarray<double>& input)
     }
     cout << endl;*/
 
-    Convolution2DFunction func({ 2, 2 }, 1, 1, 1);
+    //Convolution2DFunction func({ 2, 2 }, 1, 1, 1);
 
-    auto result = func.feedForward(input);
+    //auto result = func.feedForward(input);
 
     /*cout << "Result: " << result.dimension() << ", "
         << result.shape()[0] << " x " << result.shape()[1] << " x " << result.shape()[2] << endl;
@@ -71,8 +71,8 @@ xt::xarray<double> test(const xt::xarray<double>& input)
     }
     cout << endl;*/
 
-    return result;
-}
+    //return result;
+//}
 
 void print_dims(const xt::xarray<double>& xarray)
 {

@@ -1,17 +1,17 @@
 #pragma once
 
+#pragma warning(pop)
 #include "NeuralLayer.h"
 #include "Function.h"
 #include "imgui.h"
 #include <vector>
+#pragma warning(pop)
 
-using namespace std;
-
-class PoolingNeuralLayer : public NeuralLayer
+class AveragePooling1DNeuralLayer : public NeuralLayer
 {
 public:
-	PoolingNeuralLayer(PoolingActivationFunction function, NeuralLayer* parent, const std::vector<size_t>& filterShape);
-	~PoolingNeuralLayer();
+	AveragePooling1DNeuralLayer(NeuralLayer* parent, const std::vector<size_t>& filterShape);
+	~AveragePooling1DNeuralLayer();
 
 	xt::xarray<double> feedForward(const xt::xarray<double>& input);
 	xt::xarray<double> feedForwardTrain(const xt::xarray<double>& input);
@@ -23,11 +23,16 @@ public:
 	void draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output);
 
 private:
-	PoolingActivationFunction functionType;
-	Function* activationFunction;
 	NeuralLayer* parent;
 	NeuralLayer* children;
 	std::vector<size_t> inputShape;
+	std::vector<size_t> filterShape;
+	xt::xarray<double> lastInput;
+	xt::xarray<double> lastOutput;
+
+	ParameterSet weights;
+	const double ALPHA = 0.001; // Learning rate
 
 	void addChildren(NeuralLayer* children);
+	void draw1DPooling(ImDrawList* canvas, ImVec2 origin, double scale);
 };

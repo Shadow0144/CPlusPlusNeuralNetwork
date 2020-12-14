@@ -17,8 +17,15 @@ public:
 	void addInputLayer(const std::vector<size_t>& inputShape);
 	void addDenseLayer(DenseActivationFunction layerFunction, size_t numUnits);
 	void addSoftmaxLayer(int axis = -1);
-	void addConvolutionLayer(ConvolutionActivationFunction layerFunction, size_t numKernels, const std::vector<size_t>& convolutionShape, size_t inputChannels, size_t stride = 1);
-	void addPoolingLayer(PoolingActivationFunction layerFunction, const std::vector<size_t>& poolingShape);
+	void addConvolution1DLayer(size_t numKernels, const std::vector<size_t>& convolutionShape, size_t inputChannels, size_t stride = 1);
+	void addConvolution2DLayer(size_t numKernels, const std::vector<size_t>& convolutionShape, size_t inputChannels, size_t stride = 1);
+	void addConvolution3DLayer(size_t numKernels, const std::vector<size_t>& convolutionShape, size_t inputChannels, size_t stride = 1);
+	void addAveragePooling1DLayer(const std::vector<size_t>& poolingShape);
+	void addAveragePooling2DLayer(const std::vector<size_t>& poolingShape);
+	void addAveragePooling3DLayer(const std::vector<size_t>& poolingShape);
+	void addMaxPooling1DLayer(const std::vector<size_t>& poolingShape);
+	void addMaxPooling2DLayer(const std::vector<size_t>& poolingShape);
+	void addMaxPooling3DLayer(const std::vector<size_t>& poolingShape);
 	void addFlattenLayer(int numOutputs);
 
 	xt::xarray<double> feedForward(const xt::xarray<double>& inputs); // Does not update internal values

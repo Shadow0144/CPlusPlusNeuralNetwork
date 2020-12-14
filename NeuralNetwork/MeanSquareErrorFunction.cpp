@@ -1,10 +1,10 @@
-#include "MSEFunction.h"
+#include "MeanSquareErrorFunction.h"
 
 #include <iostream>
 
 using namespace std;
 
-double MSEFunction::getError(const xt::xarray<double>& predicted, const xt::xarray<double>& actual)
+double MeanSquareErrorFunction::getError(const xt::xarray<double>& predicted, const xt::xarray<double>& actual)
 {
 	size_t n = actual.shape()[0];
 	auto errors = predicted - actual;
@@ -18,7 +18,7 @@ double MSEFunction::getError(const xt::xarray<double>& predicted, const xt::xarr
 	return error();
 }
 
-xt::xarray<double> MSEFunction::getDerivativeOfError(const xt::xarray<double>& predicted, const xt::xarray<double>& actual)
+xt::xarray<double> MeanSquareErrorFunction::getDerivativeOfError(const xt::xarray<double>& predicted, const xt::xarray<double>& actual)
 {
 	return (2.0 * (predicted - actual));
 }

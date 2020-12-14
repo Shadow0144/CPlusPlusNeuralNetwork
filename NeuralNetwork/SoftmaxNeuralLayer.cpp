@@ -1,14 +1,17 @@
 #define _USE_MATH_DEFINES
 
 #include "SoftmaxNeuralLayer.h"
-#include "SoftmaxFunction.h"
 
-#include <math.h>
-#include <tuple>
+#pragma warning(push, 0)
+#include <iostream>
+#include <cmath>
+#include <mutex>  // For std::unique_lock
+#pragma warning(pop)
+
+using namespace std;
 
 SoftmaxNeuralLayer::SoftmaxNeuralLayer(NeuralLayer* parent, int axis)
 {
-	this->hasBias = false;
 	this->parent = parent;
 	this->children = NULL;
 	if (parent != NULL)
@@ -18,13 +21,14 @@ SoftmaxNeuralLayer::SoftmaxNeuralLayer(NeuralLayer* parent, int axis)
 	else { }
 	this->numUnits = 1;
 	this->numOutputs = parent->getNumUnits();
+	this->numInputs = numOutputs;
 
-	this->softmaxFunction = new SoftmaxFunction(parent->getNumUnits(), axis);
+	this->axis = axis;
 }
 
 SoftmaxNeuralLayer::~SoftmaxNeuralLayer()
 {
-	delete softmaxFunction;
+	
 }
 
 void SoftmaxNeuralLayer::addChildren(NeuralLayer* children)
@@ -34,22 +38,53 @@ void SoftmaxNeuralLayer::addChildren(NeuralLayer* children)
 
 xt::xarray<double> SoftmaxNeuralLayer::feedForward(const xt::xarray<double>& input)
 {
-	return softmaxFunction->feedForward(input);
+	int sumAxis = (axis > 0) ? (axis) : (input.dimension() + axis);
+
+	double c = 0;// -0.1; // negative max per axis // TODO
+	auto z = xt::exp(input + c);
+
+	// We lose a dimension when summing, so broadcasting won't work without this trick
+	auto shape = z.shape();
+	shape[sumAxis] = 1;
+	xt::xstrided_slice_vector dimensionView;
+	for (int i = 0; i < sumAxis; i++)
+	{
+		dimensionView.push_back(xt::all());
+	}
+	dimensionView.push_back(0);
+	dimensionView.push_back(xt::ellipsis());
+	xt::xarray<double> total(shape);
+	xt::strided_view(total, dimensionView) = xt::sum<double>(z, { sumAxis });
+
+	xt::xarray<double> output = z / total;
+	output = xt::nan_to_num(output);
+
+	return output;
 }
 
 xt::xarray<double> SoftmaxNeuralLayer::feedForwardTrain(const xt::xarray<double>& input)
 {
-	return softmaxFunction->feedForwardTrain(input);
+	lastInput = input; // No bias
+	outputMutex.lock();
+	lastOutput = feedForward(lastInput);
+	outputMutex.unlock();
+	return lastOutput;
 }
 
 xt::xarray<double> SoftmaxNeuralLayer::backPropagate(const xt::xarray<double>& sigmas)
 {
-	return softmaxFunction->backPropagate(sigmas);
+	//auto newSigmas = xt::pow(sigmas, 2.0); // TODO? Potentially wrong equation
+	return sigmas; // TODO Temp
+}
+
+xt::xarray<double> SoftmaxNeuralLayer::backPropagateCrossEntropy(const xt::xarray<double>& sigmas)
+{
+	return sigmas;
 }
 
 double SoftmaxNeuralLayer::applyBackPropagate()
 {
-	return softmaxFunction->applyBackPropagate();
+	return 0; // No parameters
 }
 
 std::vector<size_t> SoftmaxNeuralLayer::getOutputShape()
@@ -98,7 +133,7 @@ void SoftmaxNeuralLayer::draw(ImDrawList* canvas, ImVec2 origin, double scale, b
 	} // for (int i = 0; i < numUnits; i++)
 
 	// Draw the softmax function
-	softmaxFunction->draw(canvas, origin, scale);
+	drawSoftmax(canvas, origin, scale);
 
 	if (output)
 	{
@@ -119,4 +154,72 @@ void SoftmaxNeuralLayer::draw(ImDrawList* canvas, ImVec2 origin, double scale, b
 		position.x = origin.x - (LAYER_WIDTH * 0.5) + (((DIAMETER + NEURON_SPACING) * i) * scale);
 		canvas->AddCircle(position, RADIUS * scale, BLACK, 32);
 	}
+}
+
+void SoftmaxNeuralLayer::drawSoftmax(ImDrawList* canvas, ImVec2 origin, double scale)
+{
+	drawFunctionBackground(canvas, origin, scale, false);
+
+	const ImColor GRAY(0.3f, 0.3f, 0.3f, 1.0f);
+	const ImColor LIGHT_GRAY(0.6f, 0.6f, 0.6f, 1.0f);
+
+	const double RESCALE = DRAW_LEN * scale;
+	double yHeight = 2.0 * RESCALE;
+	double xWidth = 2.0 * RESCALE / numOutputs;
+
+	outputMutex.lock_shared();
+	xt::xarray<double> output = xt::xarray<double>(lastOutput);
+	outputMutex.unlock_shared();
+
+	const int DIMS = output.dimension();
+	if (DIMS > 2) // Multiple neurons
+	{
+		xt::xstrided_slice_vector sv;
+		const int STOP = DIMS - 1; // Subtract the output dimension
+		for (int i = 0; i < STOP; i++)
+		{
+			sv.push_back(0);
+		}
+		sv.push_back(xt::all());
+
+		ImVec2 position(0, origin.y + RESCALE);
+		const double LAYER_WIDTH = NeuralLayer::getLayerWidth(numUnits, scale);
+		for (int i = 0; i < numUnits; i++)
+		{
+			position.x = NeuralLayer::getNeuronX(origin.x, LAYER_WIDTH, i, scale);
+
+			sv[DIMS - 2] = i; // Select correct neuron
+			double x = -RESCALE;
+			for (int j = 0; j < numOutputs; j++)
+			{
+				ImColor color = (j % 2 == 0) ? GRAY : LIGHT_GRAY;
+				double y = xt::strided_view(output, sv)(j) * RESCALE * 2; // Select correct output and calculate scale
+				canvas->AddRectFilled(ImVec2(position.x + x, position.y), ImVec2(position.x + x + xWidth, position.y - y), color);
+				x += xWidth;
+			}
+		}
+	}
+	else if (DIMS > 1) // Only one neuron
+	{
+		xt::xstrided_slice_vector sv;
+		const int STOP = DIMS - 1; // Subtract the output dimension
+		for (int i = 0; i < STOP; i++)
+		{
+			sv.push_back(0);
+		}
+		sv.push_back(xt::all());
+
+		ImVec2 position(0, origin.y + RESCALE);
+		const double LAYER_WIDTH = NeuralLayer::getLayerWidth(numUnits, scale);
+		position.x = NeuralLayer::getNeuronX(origin.x, LAYER_WIDTH, 0, scale);
+		double x = -RESCALE;
+		for (int j = 0; j < numOutputs; j++)
+		{
+			ImColor color = (j % 2 == 0) ? GRAY : LIGHT_GRAY;
+			double y = xt::strided_view(output, sv)(j) * RESCALE * 2; // Select correct output and calculate scale
+			canvas->AddRectFilled(ImVec2(position.x + x, position.y), ImVec2(position.x + x + xWidth, position.y - y), color);
+			x += xWidth;
+		}
+	}
+	else { } // TODO - Draw something empty
 }

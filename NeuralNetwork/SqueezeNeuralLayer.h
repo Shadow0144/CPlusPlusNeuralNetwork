@@ -25,10 +25,6 @@ private:
 	NeuralLayer* children;
 	std::vector<size_t> squeezeDims;
 
-	xt::xarray<double> result; // Results of feedforward
-
-	ImVec2 position; // For drawing
-
 	void addChildren(NeuralLayer* children);
 
 	friend class NetworkVisualizer;

@@ -29,23 +29,6 @@ enum class DenseActivationFunction
 	Maxout
 };
 
-enum class PoolingActivationFunction
-{
-	Max1D,
-	Max2D,
-	Max3D,
-	Average1D,
-	Average2D,
-	Average3D
-};
-
-enum class ConvolutionActivationFunction
-{
-	Convolution1D,
-	Convolution2D,
-	Convolution3D
-};
-
 class NeuralLayer
 {
 public:
@@ -70,4 +53,10 @@ public:
 
 protected:
 	size_t numUnits;
+	const double DRAW_LEN = 16.0;
+	const double RERESCALE = 0.75;
+	const double SHIFT = 16.0;
+
+	void drawFunctionBackground(ImDrawList* canvas, ImVec2 origin, double scale, bool drawAxes);
+	void drawConversionFunctionBackground(ImDrawList* canvas, ImVec2 origin, double scale, bool drawAxes);
 };

@@ -2,7 +2,7 @@
 
 #include "ErrorFunction.h"
 
-class MSEFunction : public ErrorFunction
+class MeanSquareErrorFunction : public ErrorFunction
 {
 public:
 	double getError(const xt::xarray<double>& predicted, const xt::xarray<double>& actual);

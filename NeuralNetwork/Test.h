@@ -8,7 +8,7 @@
 #include <opencv2/imgproc.hpp>
 #pragma warning(pop)
 
-xt::xarray<double> test(const xt::xarray<double>& input);
+//xt::xarray<double> test(const xt::xarray<double>& input);
 void print_dims(const xt::xarray<double>& xarray);
 
 cv::Mat convertToMat(const xt::xarray<double>& xtensor);

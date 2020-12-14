@@ -1,17 +1,17 @@
 #pragma once
 
+#pragma warning(pop)
 #include "NeuralLayer.h"
 #include "Function.h"
-
+#include "imgui.h"
 #include <vector>
+#pragma warning(pop)
 
-using namespace std;
-
-class FlattenNeuralLayer : public NeuralLayer
+class AveragePooling2DNeuralLayer : public NeuralLayer
 {
 public:
-	FlattenNeuralLayer(NeuralLayer* parent, int numOutputs);
-	~FlattenNeuralLayer();
+	AveragePooling2DNeuralLayer(NeuralLayer* parent, const std::vector<size_t>& filterShape);
+	~AveragePooling2DNeuralLayer();
 
 	xt::xarray<double> feedForward(const xt::xarray<double>& input);
 	xt::xarray<double> feedForwardTrain(const xt::xarray<double>& input);
@@ -25,11 +25,14 @@ public:
 private:
 	NeuralLayer* parent;
 	NeuralLayer* children;
-
+	std::vector<size_t> inputShape;
+	std::vector<size_t> filterShape;
 	xt::xarray<double> lastInput;
+	xt::xarray<double> lastOutput;
+
+	ParameterSet weights;
+	const double ALPHA = 0.001; // Learning rate
 
 	void addChildren(NeuralLayer* children);
-	void drawFlattenFunction(ImDrawList* canvas, ImVec2 origin, double scale);
-
-	friend class NetworkVisualizer;
+	void draw2DPooling(ImDrawList* canvas, ImVec2 origin, double scale);
 };
