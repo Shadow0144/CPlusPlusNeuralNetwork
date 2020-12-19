@@ -1,20 +1,19 @@
 #pragma once
 
-#include "Function.h"
+#include "ActivationFunction.h"
 
 // Swish
-class SwishFunction : public Function
+class SwishFunction : public ActivationFunction
 {
 public:
-	SwishFunction(size_t incomingUnits, size_t numUnits);
+	SwishFunction();
 
 	xt::xarray<double> feedForward(const xt::xarray<double>& input);
-	xt::xarray<double> backPropagate(const xt::xarray<double>& sigmas);
-	void draw(ImDrawList* canvas, ImVec2 origin, double scale);
+	xt::xarray<double> activationDerivative();
+	void draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights);
 
 private:
 	double activate(double z);
-	xt::xarray<double> activationDerivative();
 
 	double swish(double z);
 	xt::xarray<double> swish(const xt::xarray<double>& z);

@@ -338,9 +338,9 @@ void NetworkVisualizer::renderFrame()
                 classifier->draw(draw_list, predicted, targets);
             }
             else { }
+            resultsMutex.unlock_shared();
         }
         else { }
-        resultsMutex.unlock_shared();
     }
     else { }
 

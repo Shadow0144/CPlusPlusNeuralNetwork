@@ -1,8 +1,11 @@
 #pragma once
 
-#pragma warning(push, 0)
 #include "NeuralLayer.h"
-#include "Function.h"
+#include "ActivationFunction.h"
+#include "ActivationFunctionFactory.h"
+#include "ParameterSet.h"
+
+#pragma warning(push, 0)
 #include "imgui.h"
 #include <vector>
 #pragma warning(pop)
@@ -12,7 +15,7 @@ using namespace std;
 class DenseNeuralLayer : public NeuralLayer
 {
 public:
-	DenseNeuralLayer(DenseActivationFunction function, NeuralLayer* parent, size_t numUnits);
+	DenseNeuralLayer(ActivationFunctionType functionType, NeuralLayer* parent, size_t numUnits, bool addBias = true);
 	~DenseNeuralLayer();
 
 	xt::xarray<double> feedForward(const xt::xarray<double>& input);
@@ -25,6 +28,15 @@ public:
 	void draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output);
 
 private:
-	DenseActivationFunction functionType;
-	Function* activationFunction;
+	ActivationFunctionType functionType;
+	ActivationFunction* activationFunction;
+	xt::xarray<double> lastInput;
+	xt::xarray<double> lastOutput;
+	bool addBias;
+	int numInputs;
+
+	ParameterSet weights;
+
+	xt::xarray<double> dotProduct(const xt::xarray<double>& input);
+	xt::xarray<double> denseBackpropagate(const xt::xarray<double>& sigmas);
 };

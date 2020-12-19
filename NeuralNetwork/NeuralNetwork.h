@@ -1,8 +1,35 @@
 #pragma once
 
-#include <vector>
 #include "NeuralLayer.h"
 #include "ErrorFunction.h"
+
+#pragma warning(push, 0)
+#include <vector>
+#pragma warning(pop)
+
+enum class ActivationFunctionType
+{
+	None,
+	ReLU,
+	AbsoluteReLU,
+	//CReLU,
+	ELU,
+	SELU,
+	GELU,
+	LeakyReLU,
+	//PReLU,
+	ReLU6,
+	ReLUn,
+	Softplus,
+	Exponential,
+	Quadratic,
+	Sigmoid,
+	Tanh,
+	HardSigmoid,
+	Softsign,
+	//Swish,
+	//Maxout
+};
 
 class NetworkVisualizer;
 
@@ -15,7 +42,7 @@ public:
 	~NeuralNetwork();
 
 	void addInputLayer(const std::vector<size_t>& inputShape);
-	void addDenseLayer(DenseActivationFunction layerFunction, size_t numUnits);
+	void addDenseLayer(ActivationFunctionType layerFunction, size_t numUnits);
 	void addSoftmaxLayer(int axis = -1);
 	void addConvolution1DLayer(size_t numKernels, const std::vector<size_t>& convolutionShape, size_t inputChannels, size_t stride = 1);
 	void addConvolution2DLayer(size_t numKernels, const std::vector<size_t>& convolutionShape, size_t inputChannels, size_t stride = 1);

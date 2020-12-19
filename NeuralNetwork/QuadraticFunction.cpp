@@ -3,37 +3,24 @@
 
 using namespace std;
 
-QuadraticFunction::QuadraticFunction(size_t incomingUnits, size_t numUnits)
+QuadraticFunction::QuadraticFunction()
 {
-	this->hasBias = true;
-	this->numUnits = numUnits;
-	this->numInputs = incomingUnits + 1; // Plus bias
-	std::vector<size_t> paramShape;
-	// input x output -shaped
-	paramShape.push_back(this->numInputs);
-	paramShape.push_back(this->numUnits);
-	this->weights.setParametersRandom(paramShape);
+
 }
 
 xt::xarray<double> QuadraticFunction::feedForward(const xt::xarray<double>& inputs)
 {
-	auto dotProductResult = dotProduct(inputs);
-	return pow(dotProductResult, 2.0);
-}
-
-xt::xarray<double> QuadraticFunction::backPropagate(const xt::xarray<double>& sigmas)
-{
-	return denseBackpropagate(sigmas * activationDerivative());
+	return pow(inputs, 2.0);
 }
 
 xt::xarray<double> QuadraticFunction::activationDerivative()
 {
-	return (2.0 * dotProduct(lastInput));
+	return (2.0 * lastInput);
 }
 
-void QuadraticFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
+void QuadraticFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights)
 {
-	Function::draw(canvas, origin, scale);
+	ActivationFunction::draw(canvas, origin, scale, numUnits, weights);
 
 	const ImColor BLACK(0.0f, 0.0f, 0.0f, 1.0f);
 
@@ -41,7 +28,7 @@ void QuadraticFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
 
 	const double RANGE = 3.0; // Controls the range of the plot to display (-RANGE, RANGE)
 	const double RANGE_SQRT = sqrt(RANGE);
-	float rescale = (1.0 / RANGE) * DRAW_LEN * scale;
+	float rescale = (1.0 / RANGE) * NeuralLayer::DRAW_LEN * scale;
 
 	ImVec2 position(0, origin.y);
 	const double LAYER_WIDTH = NeuralLayer::getLayerWidth(numUnits, scale);

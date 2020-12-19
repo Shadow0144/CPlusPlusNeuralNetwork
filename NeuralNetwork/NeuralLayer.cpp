@@ -1,5 +1,7 @@
 #include "NeuralLayer.h"
-#include "Function.h"
+#include "ActivationFunction.h"
+
+#include "Test.h"
 
 const double NeuralLayer::DRAW_LEN = 16.0;
 const double NeuralLayer::RERESCALE = 0.75;
@@ -21,6 +23,8 @@ const ImColor NeuralLayer::GRAY = ImColor(0.3f, 0.3f, 0.3f, 1.0f);
 const ImColor NeuralLayer::LIGHT_GRAY = ImColor(0.6f, 0.6f, 0.6f, 1.0f);
 const ImColor NeuralLayer::VERY_LIGHT_GRAY = ImColor(0.8f, 0.8f, 0.8f, 1.0f);
 const ImColor NeuralLayer::WHITE = ImColor(1.0f, 1.0f, 1.0f, 1.0f);
+
+using namespace std;
 
 void NeuralLayer::addChildren(NeuralLayer* children)
 {
@@ -44,6 +48,24 @@ std::vector<size_t> NeuralLayer::getOutputShape()
 	std::vector<size_t> outputShape;
 	outputShape.push_back(numUnits);
 	return outputShape;
+}
+
+xt::xarray<double> NeuralLayer::addBiasToInput(const xt::xarray<double>& input)
+{
+	size_t inputDims = input.dimension();
+	auto inputShape = input.shape();
+	inputShape.at(inputDims - 1)++; // Add one to the last 
+	xt::xstrided_slice_vector biaslessView;
+	for (int i = 0; i < (inputDims - 1); i++)
+	{
+		biaslessView.push_back(xt::all());
+	}
+	biaslessView.push_back(xt::range(0, (inputShape.at(inputDims - 1) - 1)));
+
+	xt::xarray<double> biasedInput = xt::ones<double>(inputShape);
+	xt::strided_view(biasedInput, biaslessView) = input;
+
+	return biasedInput;
 }
 
 double NeuralLayer::getLayerWidth(size_t numUnits, double scale)

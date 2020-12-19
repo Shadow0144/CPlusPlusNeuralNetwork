@@ -1,7 +1,7 @@
 #pragma once
 
 #include "NeuralLayer.h"
-#include "Function.h"
+#include "ActivationFunction.h"
 
 #pragma warning(push, 0)
 #include "imgui.h"
@@ -22,7 +22,7 @@ public:
 	void draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output);
 
 private:
-	Function* activationFunction;
+	ActivationFunction* activationFunction;
 
 	size_t numKernels;
 	std::vector<size_t> convolutionShape;

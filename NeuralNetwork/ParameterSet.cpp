@@ -34,10 +34,10 @@ ParameterSet::ParameterSet(const ParameterSet& parameterSet)
 	parameterSet.weightsMutex.unlock_shared();
 }
 
-xt::xarray<double> ParameterSet::getParameters()
+xt::xarray<double> ParameterSet::getParameters() const
 { 
 	weightsMutex.lock_shared();
-	xt::xarray<double> rParameters = xt::xarray<double>(parameters);
+	const xt::xarray<double> rParameters = xt::xarray<double>(parameters);
 	weightsMutex.unlock_shared();
 	return rParameters;
 }
@@ -118,7 +118,7 @@ void ParameterSet::setParametersOne(const std::vector<size_t>& numParameters)
 	batchSize = 0;
 }
 
-xt::xarray<double> ParameterSet::getDeltaParameters()
+xt::xarray<double> ParameterSet::getDeltaParameters() const
 {
 	return deltaParameters;
 }

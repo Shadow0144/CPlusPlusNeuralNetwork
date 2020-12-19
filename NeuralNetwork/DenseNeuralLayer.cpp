@@ -1,109 +1,43 @@
 #define _USE_MATH_DEFINES
 
 #include "DenseNeuralLayer.h"
-#include "LinearFunction.h"
-#include "ReLUFunction.h"
-#include "AbsoluteReLUFunction.h"
-#include "CReLUFunction.h"
-#include "ELUFunction.h"
-#include "SELUFunction.h"
-#include "GELUFunction.h"
-#include "LeakyReLUFunction.h"
-#include "PReLUFunction.h"
-#include "ReLU6Function.h"
-#include "ReLUnFunction.h"
-#include "SoftplusFunction.h"
-#include "ExponentialFunction.h"
-#include "QuadraticFunction.h"
-#include "SigmoidFunction.h"
-#include "TanhFunction.h"
-#include "HardSigmoidFunction.h"
-#include "SoftsignFunction.h"
-#include "SwishFunction.h"
-#include "MaxoutFunction.h"
 
 #pragma warning(push, 0)
 #include <math.h>
 #include <tuple>
+#include <xtensor-blas/xlinalg.hpp>
 #pragma warning(pop)
 
-DenseNeuralLayer::DenseNeuralLayer(DenseActivationFunction function, NeuralLayer* parent, size_t numUnits)
+#include "Test.h"
+
+DenseNeuralLayer::DenseNeuralLayer(ActivationFunctionType functionType, NeuralLayer* parent, size_t numUnits, bool addBias)
 {
+	this->numInputs = 0;
 	this->parent = parent;
 	this->children = NULL;
 	if (parent != NULL)
 	{
 		parent->addChildren(this);
+		this->numInputs = parent->getNumUnits();
 	}
 	else { }
 	this->numUnits = numUnits;
-	functionType = function;
-	switch (functionType)
+	this->addBias = addBias;
+	this->functionType = functionType;
+	this->activationFunction = ActivationFunctionFactory::getNewActivationFunction(functionType);
+
+	if (addBias)
 	{
-		case DenseActivationFunction::Linear:
-			activationFunction = new LinearFunction(parent->getNumUnits(), numUnits);
-			break;
-		case DenseActivationFunction::ReLU:
-			activationFunction = new ReLUFunction(parent->getNumUnits(), numUnits);
-			break;
-		case DenseActivationFunction::AbsoluteReLU:
-			activationFunction = new AbsoluteReLUFunction(parent->getNumUnits(), numUnits);
-			break;
-		case DenseActivationFunction::CReLU:
-			activationFunction = new CReLUFunction(parent->getNumUnits(), numUnits);
-			break;
-		case DenseActivationFunction::ELU:
-			activationFunction = new ELUFunction(parent->getNumUnits(), numUnits);
-			break;		
-		case DenseActivationFunction::SELU:
-			activationFunction = new SELUFunction(parent->getNumUnits(), numUnits);
-			break;
-		case DenseActivationFunction::GELU:
-			activationFunction = new GELUFunction(parent->getNumUnits(), numUnits);
-			break;
-		case DenseActivationFunction::LeakyReLU:
-			activationFunction = new LeakyReLUFunction(parent->getNumUnits(), numUnits);
-			break;
-		case DenseActivationFunction::PReLU:
-			activationFunction = new PReLUFunction(parent->getNumUnits(), numUnits);
-			break;
-		case DenseActivationFunction::ReLU6:
-			activationFunction = new ReLU6Function(parent->getNumUnits(), numUnits);
-			break;
-		case DenseActivationFunction::ReLUn:
-			activationFunction = new ReLUnFunction(parent->getNumUnits(), numUnits);
-			break;
-		case DenseActivationFunction::Softplus:
-			activationFunction = new SoftplusFunction(parent->getNumUnits(), numUnits);
-			break;
-		case DenseActivationFunction::Exponential:
-			activationFunction = new ExponentialFunction(parent->getNumUnits(), numUnits);
-			break;
-		case DenseActivationFunction::Quadratic:
-			activationFunction = new QuadraticFunction(parent->getNumUnits(), numUnits);
-			break;
-		case DenseActivationFunction::Sigmoid:
-			activationFunction = new SigmoidFunction(parent->getNumUnits(), numUnits);
-			break;
-		case DenseActivationFunction::Tanh:
-			activationFunction = new TanhFunction(parent->getNumUnits(), numUnits);
-			break;
-		case DenseActivationFunction::HardSigmoid:
-			activationFunction = new HardSigmoidFunction(parent->getNumUnits(), numUnits);
-			break;
-		case DenseActivationFunction::Softsign:
-			activationFunction = new SoftsignFunction(parent->getNumUnits(), numUnits);
-			break;
-		case DenseActivationFunction::Swish:
-			activationFunction = new SwishFunction(parent->getNumUnits(), numUnits);
-			break;
-		case DenseActivationFunction::Maxout:
-			activationFunction = new MaxoutFunction(parent->getNumUnits(), numUnits, 5); // TODO
-			break;
-		default:
-			activationFunction = new LinearFunction(parent->getNumUnits(), numUnits);
-			break;
+		this->numInputs++;
 	}
+	else { }
+
+	std::vector<size_t> paramShape;
+	// input x output -shaped
+	paramShape.push_back(this->numInputs);
+	paramShape.push_back(this->numUnits);
+	this->weights.setParametersRandom(paramShape);
+	
 }
 
 DenseNeuralLayer::~DenseNeuralLayer()
@@ -111,47 +45,99 @@ DenseNeuralLayer::~DenseNeuralLayer()
 	delete activationFunction;
 }
 
+xt::xarray<double> DenseNeuralLayer::dotProduct(const xt::xarray<double>& input)
+{
+	return xt::linalg::tensordot(input, weights.getParameters(), 1); // The last dimension of the input with the first dimension of the weights
+}
+
 xt::xarray<double> DenseNeuralLayer::feedForward(const xt::xarray<double>& input)
 {
 	xt::xarray<double> output;
-	if (activationFunction->getHasBias())
+	if (addBias)
 	{
-		output = activationFunction->feedForward(activationFunction->addBias(input));
+		output = addBiasToInput(input);
 	}
 	else 
 	{
-		output = activationFunction->feedForward(input);
+		output = input;
+	}
+	if (functionType != ActivationFunctionType::None)
+	{
+		// Apply the dot product and then the activation function
+		output = activationFunction->feedForward(dotProduct(output));
+	}
+	else
+	{
+		// Apply just the dot product
+		output = dotProduct(output);
 	}
 	return output;
 }
 
 xt::xarray<double> DenseNeuralLayer::feedForwardTrain(const xt::xarray<double>& input)
 {
-	xt::xarray<double> output;
-	if (activationFunction->getHasBias())
+	// Append the bias to the input and store it for backpropagating
+	if (addBias)
 	{
-		output = activationFunction->feedForwardTrain(activationFunction->addBias(input));
+		lastInput = addBiasToInput(input);
 	}
 	else
 	{
-		output = activationFunction->feedForwardTrain(input);
+		lastInput = input;
 	}
-	return output;
+	if (functionType != ActivationFunctionType::None)
+	{
+		// Apply the dot product and then the activation function
+		lastOutput = activationFunction->feedForwardTrain(dotProduct(lastInput));
+	}
+	else
+	{
+		// Apply just the dot product
+		lastOutput = dotProduct(lastInput);
+	}
+	return lastOutput;
+}
+
+xt::xarray<double> DenseNeuralLayer::denseBackpropagate(const xt::xarray<double>& sigmas)
+{
+	auto delta = xt::linalg::tensordot(xt::transpose(lastInput), sigmas, 1);
+
+	weights.incrementDeltaParameters(-ALPHA * delta);
+	auto biaslessWeights = xt::view(weights.getParameters(), xt::range(0, lastInput.shape()[lastInput.dimension() - 1] - 1), xt::all());
+
+	auto newSigmas = xt::linalg::tensordot(sigmas, xt::transpose(biaslessWeights), 1); // The last axis of errors and the first axis of the transposed weights
+
+	return newSigmas;
 }
 
 xt::xarray<double> DenseNeuralLayer::backPropagate(const xt::xarray<double>& sigmas)
 {
-	return activationFunction->backPropagate(sigmas);
+	xt::xarray<double> newSigmas;
+	if (functionType != ActivationFunctionType::None)
+	{
+		// Apply the derivative of the activation function and dot product
+		newSigmas = denseBackpropagate(sigmas * activationFunction->activationDerivative());
+	}
+	else
+	{
+		// Apply just the derivative of the dot product
+		newSigmas = denseBackpropagate(sigmas);
+	}
+	return newSigmas;
 }
 
 double DenseNeuralLayer::applyBackPropagate()
 {
-	return activationFunction->applyBackPropagate();
+	double deltaWeight = xt::sum(xt::abs(weights.getDeltaParameters()))();
+	weights.applyDeltaParameters();
+	return deltaWeight; // Return the sum of how much the parameters have changed
 }
 
 std::vector<size_t> DenseNeuralLayer::getOutputShape()
 {
-	return activationFunction->getOutputShape();
+	std::vector<size_t> outputShape;
+	outputShape.push_back(numUnits);
+	return outputShape;
 }
 
 void DenseNeuralLayer::draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output)
@@ -165,8 +151,8 @@ void DenseNeuralLayer::draw(ImDrawList* canvas, ImVec2 origin, double scale, boo
 		canvas->AddCircleFilled(position, RADIUS * scale, LIGHT_GRAY, 32);
 	}
 
-	// Draw the activation function
-	activationFunction->draw(canvas, origin, scale);
+	// Draw the activation function (If the activation function type is None, the Linear function will still draw)
+	activationFunction->draw(canvas, origin, scale, numUnits, weights);
 
 	// Draw the links to the previous neurons
 	double previousX, previousY;
@@ -175,7 +161,7 @@ void DenseNeuralLayer::draw(ImDrawList* canvas, ImVec2 origin, double scale, boo
 	ImVec2 currentNeuronPt(0, origin.y - (RADIUS * scale));
 	previousY = origin.y - (DIAMETER * scale);
 
-	xt::xarray<double> weights = activationFunction->getWeights().getParameters();
+	xt::xarray<double> drawWeights = weights.getParameters();
 
 	// Set up bias parameters
 	double biasX = NeuralLayer::getNeuronX(origin.x, PARENT_LAYER_WIDTH, parentCount, scale);
@@ -194,7 +180,7 @@ void DenseNeuralLayer::draw(ImDrawList* canvas, ImVec2 origin, double scale, boo
 			// Decide line color and width
 			ImColor lineColor = ImColor(1.0f, 1.0f, 1.0f, 1.0f);
 			float lineWidth = (1.0f / 36.0f) * scale;
-			float weight = weights(i);
+			float weight = drawWeights(i);
 			if (weight >= 0.0f)
 			{
 				if (weight <= 1.0f)
@@ -234,12 +220,12 @@ void DenseNeuralLayer::draw(ImDrawList* canvas, ImVec2 origin, double scale, boo
 		}
 
 		// Consider moving to another function for second pass
-		if (activationFunction->getHasBias())
+		if (addBias)
 		{
 			// Draw the bias line
 			ImColor lineColor = ImColor(1.0f, 1.0f, 1.0f, 1.0f);
 			float lineWidth = (1.0f / 36.0f) * scale;
-			float weight = ((float)(weights(numUnits - 1)));
+			float weight = ((float)(drawWeights(numUnits - 1)));
 			if (weight >= 0.0f)
 			{
 				if (weight <= 1.0f)
@@ -278,7 +264,7 @@ void DenseNeuralLayer::draw(ImDrawList* canvas, ImVec2 origin, double scale, boo
 		else { }
 	} // for (int i = 0; i < numUnits; i++)
 
-	if (activationFunction->getHasBias())
+	if (addBias)
 	{
 		// Draw the bias box
 		ImVec2 bTL = ImVec2(biasX, biasY);

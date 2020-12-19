@@ -5,16 +5,9 @@
 #include <iostream>
 #pragma warning(pop)
 
-SoftsignFunction::SoftsignFunction(size_t incomingUnits, size_t numUnits)
+SoftsignFunction::SoftsignFunction()
 {
-	this->hasBias = true;
-	this->numUnits = numUnits;
-	this->numInputs = incomingUnits + 1; // Plus bias
-	std::vector<size_t> paramShape;
-	// input x output -shaped
-	paramShape.push_back(this->numInputs);
-	paramShape.push_back(this->numUnits);
-	this->weights.setParametersRandom(paramShape);
+
 }
 
 double SoftsignFunction::activate(double z)
@@ -34,24 +27,20 @@ xt::xarray<double> SoftsignFunction::softsign(const xt::xarray<double>& z)
 
 xt::xarray<double> SoftsignFunction::feedForward(const xt::xarray<double>& inputs)
 {
-	auto dotProductResult = dotProduct(inputs);
-	return softsign(dotProductResult);
-}
-
-xt::xarray<double> SoftsignFunction::backPropagate(const xt::xarray<double>& sigmas)
-{
-	return denseBackpropagate(sigmas * activationDerivative());
+	return softsign(inputs);
 }
 
 xt::xarray<double> SoftsignFunction::activationDerivative()
 {
-	auto z = dotProduct(lastInput);
-	return (1.0 / pow((1.0 + abs(z)), 2.0));
+	// TODO!!!
+	//auto z = dotProduct(lastInput);
+	//return (1.0 / pow((1.0 + abs(z)), 2.0));
+	return lastInput;
 }
 
-void SoftsignFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
+void SoftsignFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights)
 {
-	Function::draw(canvas, origin, scale);
+	ActivationFunction::draw(canvas, origin, scale, numUnits, weights);
 
-	Function::approximateFunction(canvas, origin, scale);
+	ActivationFunction::approximateFunction(canvas, origin, scale, numUnits, weights);
 }

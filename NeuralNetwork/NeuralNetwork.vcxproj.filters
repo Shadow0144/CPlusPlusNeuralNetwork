@@ -72,9 +72,6 @@
     <ClCompile Include="ParameterSet.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Function.cpp">
-      <Filter>Source Files\ActivationFunction</Filter>
-    </ClCompile>
     <ClCompile Include="imgui_impl_opengl3.cpp">
       <Filter>Source Files\imgui</Filter>
     </ClCompile>
@@ -228,13 +225,16 @@
     <ClCompile Include="SwishFunction.cpp">
       <Filter>Source Files\ActivationFunction</Filter>
     </ClCompile>
+    <ClCompile Include="ActivationFunction.cpp">
+      <Filter>Source Files\ActivationFunction</Filter>
+    </ClCompile>
+    <ClCompile Include="ActivationFunctionFactory.cpp">
+      <Filter>Source Files\ActivationFunction</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NeuralNetwork.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Function.h">
-      <Filter>Header Files\ActivationFunction</Filter>
     </ClInclude>
     <ClInclude Include="ErrorFunction.h">
       <Filter>Header Files\ErrorFunction</Filter>
@@ -402,6 +402,12 @@
       <Filter>Header Files\ActivationFunction</Filter>
     </ClInclude>
     <ClInclude Include="TanhFunction.h">
+      <Filter>Header Files\ActivationFunction</Filter>
+    </ClInclude>
+    <ClInclude Include="ActivationFunctionFactory.h">
+      <Filter>Header Files\ActivationFunction</Filter>
+    </ClInclude>
+    <ClInclude Include="ActivationFunction.h">
       <Filter>Header Files\ActivationFunction</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,19 +1,19 @@
 #pragma once
 
-#include "Function.h"
+#include "ActivationFunction.h"
 
 // Concatenated Rectified Linear Unit
-class CReLUFunction : public Function
+class CReLUFunction : public ActivationFunction
 {
-public:
-	CReLUFunction(size_t incomingUnits, size_t numUnits);
+public: // TODO!!!
+	CReLUFunction();
 
 	xt::xarray<double> feedForward(const xt::xarray<double>& input);
 	xt::xarray<double> backPropagate(const xt::xarray<double>& sigmas);
-	void draw(ImDrawList* canvas, ImVec2 origin, double scale);
+	xt::xarray<double> activationDerivative();
+	void draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights);
 
 private:
-	xt::xarray<double> activationDerivative();
 	std::vector<size_t> getOutputShape();
 
 	xt::xarray<double> CReLU(const xt::xarray<double>& z);

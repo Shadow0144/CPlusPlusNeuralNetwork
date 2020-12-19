@@ -1,18 +1,16 @@
 #pragma once
 
-#include "Function.h"
+#include "ActivationFunction.h"
 
-class HardSigmoidFunction : public Function
+class HardSigmoidFunction : public ActivationFunction
 {
 public:
-	HardSigmoidFunction(size_t incomingUnits, size_t numUnits);
+	HardSigmoidFunction();
 
 	xt::xarray<double> feedForward(const xt::xarray<double>& input);
-	xt::xarray<double> backPropagate(const xt::xarray<double>& sigmas);
-	void draw(ImDrawList* canvas, ImVec2 origin, double scale);
+	xt::xarray<double> activationDerivative();
+	void draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights);
 
 private:
-	xt::xarray<double> activationDerivative();
-
 	xt::xarray<double> hard_sigmoid(const xt::xarray<double>& z);
 };

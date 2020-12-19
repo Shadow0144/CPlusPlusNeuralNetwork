@@ -7,16 +7,9 @@
 
 using namespace std;
 
-ReLU6Function::ReLU6Function(size_t incomingUnits, size_t numUnits)
+ReLU6Function::ReLU6Function()
 {
-	this->hasBias = true;
-	this->numUnits = numUnits;
-	this->numInputs = incomingUnits + 1; // Plus bias
-	std::vector<size_t> paramShape;
-	// input x output -shaped
-	paramShape.push_back(this->numInputs);
-	paramShape.push_back(this->numUnits);
-	this->weights.setParametersRandom(paramShape);
+
 }
 
 xt::xarray<double> ReLU6Function::reLU6(const xt::xarray<double>& z)
@@ -26,13 +19,7 @@ xt::xarray<double> ReLU6Function::reLU6(const xt::xarray<double>& z)
 
 xt::xarray<double> ReLU6Function::feedForward(const xt::xarray<double>& inputs)
 {
-	auto dotProductResult = dotProduct(inputs);
-	return reLU6(dotProductResult);
-}
-
-xt::xarray<double> ReLU6Function::backPropagate(const xt::xarray<double>& sigmas)
-{
-	return denseBackpropagate(sigmas * activationDerivative());
+	return reLU6(inputs);
 }
 
 xt::xarray<double> ReLU6Function::activationDerivative()
@@ -40,9 +27,9 @@ xt::xarray<double> ReLU6Function::activationDerivative()
 	return ((lastOutput > 0.0) < 6.0);
 }
 
-void ReLU6Function::draw(ImDrawList* canvas, ImVec2 origin, double scale)
+void ReLU6Function::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights)
 {
-	Function::draw(canvas, origin, scale);
+	ActivationFunction::draw(canvas, origin, scale, numUnits, weights);
 
 	const ImColor BLACK(0.0f, 0.0f, 0.0f, 1.0f);
 
@@ -72,9 +59,9 @@ void ReLU6Function::draw(ImDrawList* canvas, ImVec2 origin, double scale)
 			y2 = 0.0;
 		}
 
-		ImVec2 l_start(position.x + (DRAW_LEN * x1 * scale), position.y - (DRAW_LEN * y1 * scale));
+		ImVec2 l_start(position.x + (NeuralLayer::DRAW_LEN * x1 * scale), position.y - (NeuralLayer::DRAW_LEN * y1 * scale));
 		ImVec2 l_mid(position.x, position.y);
-		ImVec2 l_end(position.x + (DRAW_LEN * x2 * scale), position.y - (DRAW_LEN * y2 * scale));
+		ImVec2 l_end(position.x + (NeuralLayer::DRAW_LEN * x2 * scale), position.y - (NeuralLayer::DRAW_LEN * y2 * scale));
 
 		canvas->AddLine(l_start, l_mid, BLACK);
 		canvas->AddLine(l_mid, l_end, BLACK);

@@ -5,16 +5,9 @@
 #include <iostream>
 #pragma warning(pop)
 
-SwishFunction::SwishFunction(size_t incomingUnits, size_t numUnits)
+SwishFunction::SwishFunction()
 {
-	this->hasBias = true;
-	this->numUnits = numUnits;
-	this->numInputs = incomingUnits + 1; // Plus bias
-	std::vector<size_t> paramShape;
-	// input x output -shaped
-	paramShape.push_back(this->numInputs);
-	paramShape.push_back(this->numUnits);
-	this->weights.setParametersRandom(paramShape);
+
 }
 
 double SwishFunction::sigmoid(double z)
@@ -44,24 +37,20 @@ xt::xarray<double> SwishFunction::swish(const xt::xarray<double>& z)
 
 xt::xarray<double> SwishFunction::feedForward(const xt::xarray<double>& inputs)
 {
-	auto dotProductResult = dotProduct(inputs);
-	return swish(dotProductResult);
-}
-
-xt::xarray<double> SwishFunction::backPropagate(const xt::xarray<double>& sigmas)
-{
-	return denseBackpropagate(sigmas * activationDerivative());
+	return swish(inputs);
 }
 
 xt::xarray<double> SwishFunction::activationDerivative()
 {
-	auto sig = sigmoid(dotProduct(lastInput));
-	return (lastOutput + (sig * (1.0 - lastOutput)));
+	// TODO!!!
+	//auto sig = sigmoid(dotProduct(lastInput));
+	//return (lastOutput + (sig * (1.0 - lastOutput)));
+	return lastInput;
 }
 
-void SwishFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
+void SwishFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights)
 {
-	Function::draw(canvas, origin, scale);
+	ActivationFunction::draw(canvas, origin, scale, numUnits, weights);
 
-	Function::approximateFunction(canvas, origin, scale);
+	ActivationFunction::approximateFunction(canvas, origin, scale, numUnits, weights);
 }

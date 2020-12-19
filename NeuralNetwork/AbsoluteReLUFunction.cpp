@@ -1,5 +1,5 @@
 #include "AbsoluteReLUFunction.h"
-#include "NeuralLayer.h"
+#include "NeuralNetwork.h"
 
 #pragma warning(push, 0)
 #include <iostream>
@@ -7,16 +7,8 @@
 
 using namespace std;
 
-AbsoluteReLUFunction::AbsoluteReLUFunction(size_t incomingUnits, size_t numUnits)
+AbsoluteReLUFunction::AbsoluteReLUFunction()
 {
-	this->hasBias = true;
-	this->numUnits = numUnits;
-	this->numInputs = incomingUnits + 1; // Plus bias
-	std::vector<size_t> paramShape;
-	// input x output -shaped
-	paramShape.push_back(this->numInputs);
-	paramShape.push_back(this->numUnits);
-	this->weights.setParametersRandom(paramShape);
 }
 
 xt::xarray<double> AbsoluteReLUFunction::absoluteReLU(const xt::xarray<double>& z)
@@ -26,13 +18,7 @@ xt::xarray<double> AbsoluteReLUFunction::absoluteReLU(const xt::xarray<double>& 
 
 xt::xarray<double> AbsoluteReLUFunction::feedForward(const xt::xarray<double>& inputs)
 {
-	auto dotProductResult = dotProduct(inputs);
-	return absoluteReLU(dotProductResult);
-}
-
-xt::xarray<double> AbsoluteReLUFunction::backPropagate(const xt::xarray<double>& sigmas)
-{
-	return denseBackpropagate(sigmas * activationDerivative());
+	return absoluteReLU(inputs);
 }
 
 xt::xarray<double> AbsoluteReLUFunction::activationDerivative()
@@ -41,9 +27,9 @@ xt::xarray<double> AbsoluteReLUFunction::activationDerivative()
 	return (mask + (mask - (xt::ones<double>(mask.shape()))));
 }
 
-void AbsoluteReLUFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
+void AbsoluteReLUFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights)
 {
-	Function::draw(canvas, origin, scale);
+	ActivationFunction::draw(canvas, origin, scale, numUnits, weights);
 
 	const ImColor BLACK(0.0f, 0.0f, 0.0f, 1.0f);
 
@@ -63,9 +49,9 @@ void AbsoluteReLUFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
 		y1 = abs(x1 * slope);
 		y2 = abs(x2 * slope);
 
-		ImVec2 l_start(position.x + (DRAW_LEN * x1 * scale), position.y - (DRAW_LEN * y1 * scale));
+		ImVec2 l_start(position.x + (NeuralLayer::DRAW_LEN * x1 * scale), position.y - (NeuralLayer::DRAW_LEN * y1 * scale));
 		ImVec2 l_mid(position.x, position.y);
-		ImVec2 l_end(position.x + (DRAW_LEN * x2 * scale), position.y - (DRAW_LEN * y2 * scale));
+		ImVec2 l_end(position.x + (NeuralLayer::DRAW_LEN * x2 * scale), position.y - (NeuralLayer::DRAW_LEN * y2 * scale));
 
 		canvas->AddLine(l_start, l_mid, BLACK);
 		canvas->AddLine(l_mid, l_end, BLACK);

@@ -7,16 +7,9 @@
 
 using namespace std;
 
-SigmoidFunction::SigmoidFunction(size_t incomingUnits, size_t numUnits)
+SigmoidFunction::SigmoidFunction()
 {
-	this->hasBias = true;
-	this->numUnits = numUnits;
-	this->numInputs = incomingUnits + 1; // Plus bias
-	std::vector<size_t> paramShape;
-	// input x output -shaped
-	paramShape.push_back(this->numInputs);
-	paramShape.push_back(this->numUnits);
-	this->weights.setParametersRandom(paramShape);
+
 }
 
 double SigmoidFunction::activate(double z)
@@ -36,13 +29,7 @@ xt::xarray<double> SigmoidFunction::sigmoid(const xt::xarray<double>& z)
 
 xt::xarray<double> SigmoidFunction::feedForward(const xt::xarray<double>& inputs)
 {
-	auto dotProductResult = dotProduct(inputs);
-	return sigmoid(dotProductResult);
-}
-
-xt::xarray<double> SigmoidFunction::backPropagate(const xt::xarray<double>& sigmas)
-{
-	return denseBackpropagate(sigmas * activationDerivative());
+	return sigmoid(inputs);
 }
 
 xt::xarray<double> SigmoidFunction::activationDerivative()
@@ -50,9 +37,9 @@ xt::xarray<double> SigmoidFunction::activationDerivative()
 	return lastOutput * (1.0 - lastOutput);
 }
 
-void SigmoidFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
+void SigmoidFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights)
 {
-	Function::draw(canvas, origin, scale);
+	ActivationFunction::draw(canvas, origin, scale, numUnits, weights);
 
-	Function::approximateFunction(canvas, origin, scale);
+	ActivationFunction::approximateFunction(canvas, origin, scale, numUnits, weights);
 }

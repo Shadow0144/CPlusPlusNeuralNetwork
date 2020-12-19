@@ -7,16 +7,9 @@
 
 using namespace std;
 
-LeakyReLUFunction::LeakyReLUFunction(size_t incomingUnits, size_t numUnits)
+LeakyReLUFunction::LeakyReLUFunction()
 {
-	this->hasBias = true;
-	this->numUnits = numUnits;
-	this->numInputs = incomingUnits + 1; // Plus bias
-	std::vector<size_t> paramShape;
-	// input x output -shaped
-	paramShape.push_back(this->numInputs);
-	paramShape.push_back(this->numUnits);
-	this->weights.setParametersRandom(paramShape);
+
 }
 
 xt::xarray<double> LeakyReLUFunction::leakyReLU(const xt::xarray<double>& z)
@@ -26,13 +19,7 @@ xt::xarray<double> LeakyReLUFunction::leakyReLU(const xt::xarray<double>& z)
 
 xt::xarray<double> LeakyReLUFunction::feedForward(const xt::xarray<double>& inputs)
 {
-	auto dotProductResult = dotProduct(inputs);
-	return leakyReLU(dotProductResult);
-}
-
-xt::xarray<double> LeakyReLUFunction::backPropagate(const xt::xarray<double>& sigmas)
-{
-	return denseBackpropagate(sigmas * activationDerivative());
+	return leakyReLU(inputs);
 }
 
 xt::xarray<double> LeakyReLUFunction::activationDerivative()
@@ -51,9 +38,9 @@ void LeakyReLUFunction::setA(double a)
 	this->a = a;
 }
 
-void LeakyReLUFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
+void LeakyReLUFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights)
 {
-	Function::draw(canvas, origin, scale);
+	ActivationFunction::draw(canvas, origin, scale, numUnits, weights);
 
 	const ImColor BLACK(0.0f, 0.0f, 0.0f, 1.0f);
 
@@ -83,9 +70,9 @@ void LeakyReLUFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
 			y2 = a;
 		}
 
-		ImVec2 l_start(position.x + (DRAW_LEN * x1 * scale), position.y - (DRAW_LEN * y1 * scale));
+		ImVec2 l_start(position.x + (NeuralLayer::DRAW_LEN * x1 * scale), position.y - (NeuralLayer::DRAW_LEN * y1 * scale));
 		ImVec2 l_mid(position.x, position.y);
-		ImVec2 l_end(position.x + (DRAW_LEN * x2 * scale), position.y - (DRAW_LEN * y2 * scale));
+		ImVec2 l_end(position.x + (NeuralLayer::DRAW_LEN * x2 * scale), position.y - (NeuralLayer::DRAW_LEN * y2 * scale));
 
 		canvas->AddLine(l_start, l_mid, BLACK);
 		canvas->AddLine(l_mid, l_end, BLACK);

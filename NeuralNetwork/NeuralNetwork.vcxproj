@@ -152,6 +152,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ActivationFunctionFactory.cpp" />
     <ClCompile Include="AveragePooling1DNeuralLayer.cpp" />
     <ClCompile Include="AveragePooling2DNeuralLayer.cpp" />
     <ClCompile Include="AveragePooling3DNeuralLayer.cpp" />
@@ -169,7 +170,7 @@
     <ClCompile Include="HardSigmoidFunction.cpp" />
     <ClCompile Include="ImageClassVisualizer.cpp" />
     <ClCompile Include="LinearFunction.cpp" />
-    <ClCompile Include="Function.cpp" />
+    <ClCompile Include="ActivationFunction.cpp" />
     <ClCompile Include="FunctionVisualizer.cpp" />
     <ClCompile Include="gl3w\GL\gl3w.c" />
     <ClCompile Include="imgui.cpp" />
@@ -209,6 +210,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AbsoluteReLUFunction.h" />
+    <ClInclude Include="ActivationFunctionFactory.h" />
     <ClInclude Include="AveragePooling1DNeuralLayer.h" />
     <ClInclude Include="AveragePooling2DNeuralLayer.h" />
     <ClInclude Include="ClassCell.h" />
@@ -248,7 +250,7 @@
     <ClInclude Include="NeuralLayer.h" />
     <ClInclude Include="ParameterSet.h" />
     <ClInclude Include="LinearFunction.h" />
-    <ClInclude Include="Function.h" />
+    <ClInclude Include="ActivationFunction.h" />
     <ClInclude Include="NeuralNetwork.h" />
     <ClInclude Include="DenseNeuralLayer.h" />
     <ClInclude Include="PReLUFunction.h" />

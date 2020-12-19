@@ -7,16 +7,9 @@
 
 using namespace std;
 
-CReLUFunction::CReLUFunction(size_t incomingUnits, size_t numUnits)
+CReLUFunction::CReLUFunction()
 {
-	this->hasBias = true;
-	this->numUnits = numUnits;
-	this->numInputs = incomingUnits + 1; // Plus bias
-	std::vector<size_t> paramShape;
-	// input x output -shaped
-	paramShape.push_back(this->numInputs);
-	paramShape.push_back(this->numUnits);
-	this->weights.setParametersRandom(paramShape);
+
 }
 
 // Returns a concatenated result of a ReLU that selects only positive predicted with a ReLU that selects only negative predicted
@@ -27,14 +20,13 @@ xt::xarray<double> CReLUFunction::CReLU(const xt::xarray<double>& z)
 
 xt::xarray<double> CReLUFunction::feedForward(const xt::xarray<double>& inputs)
 {
-	auto dotProductResult = dotProduct(inputs);
-	return CReLU(dotProductResult);
+	return CReLU(inputs);
 }
 
 xt::xarray<double> CReLUFunction::backPropagate(const xt::xarray<double>& sigmas)
 {
-	auto output = xt::sum(sigmas, -1);
-	return denseBackpropagate(output);
+	auto output = xt::sum(sigmas, -1); // TODO
+	return output;
 }
 
 xt::xarray<double> CReLUFunction::activationDerivative()
@@ -45,14 +37,14 @@ xt::xarray<double> CReLUFunction::activationDerivative()
 std::vector<size_t> CReLUFunction::getOutputShape()
 {
 	std::vector<size_t> outputShape;
-	outputShape.push_back(numUnits);
+	outputShape.push_back(0); // TODO
 	outputShape.push_back(2);
 	return outputShape;
 }
 
-void CReLUFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
+void CReLUFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights)
 {
-	Function::draw(canvas, origin, scale);
+	ActivationFunction::draw(canvas, origin, scale, numUnits, weights);
 
 	const ImColor BLACK(0.0f, 0.0f, 0.0f, 1.0f);
 	const ImColor LIGHT_GRAY(0.6f, 0.6f, 0.6f, 1.0f);
@@ -74,9 +66,9 @@ void CReLUFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
 		y1 = abs(x1 * slope);
 		y2 = abs(x2 * slope);
 
-		ImVec2 l_start(position.x + (DRAW_LEN * x1 * scale), position.y - (DRAW_LEN * y1 * scale));
+		ImVec2 l_start(position.x + (NeuralLayer::DRAW_LEN * x1 * scale), position.y - (NeuralLayer::DRAW_LEN * y1 * scale));
 		ImVec2 l_mid(position.x, position.y);
-		ImVec2 l_end(position.x + (DRAW_LEN * x2 * scale), position.y - (DRAW_LEN * y2 * scale));
+		ImVec2 l_end(position.x + (NeuralLayer::DRAW_LEN * x2 * scale), position.y - (NeuralLayer::DRAW_LEN * y2 * scale));
 
 		if (slope < 0.0)
 		{

@@ -10,7 +10,7 @@ class ParameterSet
 public:
 	ParameterSet();
 	ParameterSet(const ParameterSet& parameterSet);
-	xt::xarray<double> getParameters();
+	xt::xarray<double> getParameters() const;
 	void setParameters(const xt::xarray<double>& parameters);
 	void setParametersRandom(size_t numParameters);
 	void setParametersRandom(const std::vector<size_t>& numParameters);
@@ -18,7 +18,7 @@ public:
 	void setParametersZero(const std::vector<size_t>& numParameters);
 	void setParametersOne(size_t numParameters);
 	void setParametersOne(const std::vector<size_t>& numParameters);
-	xt::xarray<double> getDeltaParameters();
+	xt::xarray<double> getDeltaParameters() const;
 	void incrementDeltaParameters(const xt::xarray<double>& deltaParameters);
 	void applyDeltaParameters();
 

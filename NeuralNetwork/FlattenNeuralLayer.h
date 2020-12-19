@@ -1,7 +1,7 @@
 #pragma once
 
 #include "NeuralLayer.h"
-#include "Function.h"
+#include "ActivationFunction.h"
 
 #include <vector>
 

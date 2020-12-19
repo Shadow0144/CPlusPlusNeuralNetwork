@@ -7,16 +7,9 @@
 
 using namespace std;
 
-ExponentialFunction::ExponentialFunction(size_t incomingUnits, size_t numUnits)
+ExponentialFunction::ExponentialFunction()
 {
-	this->hasBias = true;
-	this->numUnits = numUnits;
-	this->numInputs = incomingUnits + 1; // Plus bias
-	std::vector<size_t> paramShape;
-	// input x output -shaped
-	paramShape.push_back(this->numInputs);
-	paramShape.push_back(this->numUnits);
-	this->weights.setParametersRandom(paramShape);
+
 }
 
 double ExponentialFunction::activate(double z)
@@ -26,13 +19,7 @@ double ExponentialFunction::activate(double z)
 
 xt::xarray<double> ExponentialFunction::feedForward(const xt::xarray<double>& inputs)
 {
-	auto dotProductResult = dotProduct(inputs);
-	return exp(dotProductResult);
-}
-
-xt::xarray<double> ExponentialFunction::backPropagate(const xt::xarray<double>& sigmas)
-{
-	return denseBackpropagate(sigmas * activationDerivative());
+	return exp(inputs);
 }
 
 xt::xarray<double> ExponentialFunction::activationDerivative()
@@ -40,9 +27,9 @@ xt::xarray<double> ExponentialFunction::activationDerivative()
 	return lastOutput;
 }
 
-void ExponentialFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
+void ExponentialFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights)
 {
-	Function::draw(canvas, origin, scale);
+	ActivationFunction::draw(canvas, origin, scale, numUnits, weights);
 
-	Function::approximateFunction(canvas, origin, scale);
+	ActivationFunction::approximateFunction(canvas, origin, scale, numUnits, weights);
 }

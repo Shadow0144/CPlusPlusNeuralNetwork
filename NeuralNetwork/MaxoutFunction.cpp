@@ -13,7 +13,7 @@ using namespace std;
 // A maxout unit takes the maximum value among the values from n linear functions
 MaxoutFunction::MaxoutFunction(size_t incomingUnits, size_t numUnits, size_t numFunctions)
 {
-	this->hasBias = true;
+	/*this->hasBias = true;
 	this->numUnits = numUnits;
 	this->numFunctions = numFunctions;
 	this->numInputs = incomingUnits + 1; // Plus bias
@@ -21,12 +21,12 @@ MaxoutFunction::MaxoutFunction(size_t incomingUnits, size_t numUnits, size_t num
 	// input x (output x functions) -shaped
 	paramShape.push_back(this->numInputs);
 	paramShape.push_back(this->numUnits * this->numFunctions);
-	this->weights.setParametersRandom(paramShape);
+	this->weights.setParametersRandom(paramShape);*/
 }
 
 xt::xarray<double> MaxoutFunction::feedForward(const xt::xarray<double>& inputs)
 {
-	// h_i(x) = max(W_i * x)
+	/*// h_i(x) = max(W_i * x)
 	auto output = dotProduct(inputs);
 
 	// n x ... x [input -> output] x functions -shaped
@@ -39,12 +39,13 @@ xt::xarray<double> MaxoutFunction::feedForward(const xt::xarray<double>& inputs)
 	output.reshape(outputShape);
 	
 	output = xt::amax(output, { features });
-	return output;
+	return output;*/
+	return inputs;
 }
 
 xt::xarray<double> MaxoutFunction::backPropagate(const xt::xarray<double>& sigmas)
 {
-	int features = lastOutput.size();
+	/*int features = lastOutput.size();
 	auto indices = xt::argmax(lastOutput, { features });
 
 	int N = lastInput.shape()[0];
@@ -69,12 +70,13 @@ xt::xarray<double> MaxoutFunction::backPropagate(const xt::xarray<double>& sigma
 
 	auto newSigmas = xt::linalg::tensordot(sigmasPrime, xt::transpose(biaslessWeights), 1); // The last {1} axes of errors and the first {1} axes of the weights transposed
 
-	return newSigmas;
+	return newSigmas;*/
+	return sigmas;
 }
 
 xt::xarray<double> MaxoutFunction::activationDerivative()
 {
-	int dims = lastOutput.dimension()-1; // TODO ?
+	/*int dims = lastOutput.dimension()-1; // TODO ?
 	int functionDim = dims - 2;
 	xt::xstrided_slice_vector maskedView;
 	for (int i = 0; i < functionDim; i++)
@@ -88,14 +90,14 @@ xt::xarray<double> MaxoutFunction::activationDerivative()
 		{
 			xt::strided_view(mask, maskedView)(numFunctions, numUnits) = 1;
 		}
-	}
+	}*/
 
 	return xt::xarray<double>();
 }
 
-void MaxoutFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
+void MaxoutFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights)
 {
-	Function::draw(canvas, origin, scale);
+	ActivationFunction::draw(canvas, origin, scale, numUnits, weights);
 
 	const ImColor BLACK(0.0f, 0.0f, 0.0f, 1.0f);
 
@@ -103,13 +105,13 @@ void MaxoutFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
 
 	const double RANGE = 3.0; // Controls the range of the plot to display (-RANGE, RANGE)
 	const int RESOLUTION = 10; // Controls the number of points to estimate
-	const float RESCALE = (1.0 / RANGE) * DRAW_LEN * scale;
+	const float RESCALE = (1.0 / RANGE) * NeuralLayer::DRAW_LEN * scale;
 
 	ImVec2 position(0, origin.y);
 	const double LAYER_WIDTH = NeuralLayer::getLayerWidth(numUnits, scale);
 	std::vector<size_t> pointsShape;
 	pointsShape.push_back(RESOLUTION);
-	pointsShape.push_back(numInputs-1); // Remove bias
+	//pointsShape.push_back(numInputs-1); // Remove bias // TODO!!!
 	xt::xarray<double> points = xt::zeros<double>(pointsShape);
 	for (int i = 0; i < numUnits; i++)
 	{

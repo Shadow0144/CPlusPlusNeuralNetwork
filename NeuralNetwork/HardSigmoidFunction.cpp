@@ -3,16 +3,9 @@
 
 using namespace std;
 
-HardSigmoidFunction::HardSigmoidFunction(size_t incomingUnits, size_t numUnits)
+HardSigmoidFunction::HardSigmoidFunction()
 {
-	this->hasBias = true;
-	this->numUnits = numUnits;
-	this->numInputs = incomingUnits + 1; // Plus bias
-	std::vector<size_t> paramShape;
-	// input x output -shaped
-	paramShape.push_back(this->numInputs);
-	paramShape.push_back(this->numUnits);
-	this->weights.setParametersRandom(paramShape);
+
 }
 
 xt::xarray<double> HardSigmoidFunction::hard_sigmoid(const xt::xarray<double>& z)
@@ -26,13 +19,7 @@ xt::xarray<double> HardSigmoidFunction::hard_sigmoid(const xt::xarray<double>& z
 
 xt::xarray<double> HardSigmoidFunction::feedForward(const xt::xarray<double>& inputs)
 {
-	auto dotProductResult = dotProduct(inputs);
-	return hard_sigmoid(dotProductResult);
-}
-
-xt::xarray<double> HardSigmoidFunction::backPropagate(const xt::xarray<double>& sigmas)
-{
-	return denseBackpropagate(sigmas * activationDerivative());
+	return hard_sigmoid(inputs);
 }
 
 xt::xarray<double> HardSigmoidFunction::activationDerivative()
@@ -40,16 +27,16 @@ xt::xarray<double> HardSigmoidFunction::activationDerivative()
 	return ((lastOutput < 1) * (lastOutput > 0)); // The slope is 1 between these two ranges, 0 otherwise
 }
 
-void HardSigmoidFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
+void HardSigmoidFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights)
 {
-	Function::draw(canvas, origin, scale);
+	ActivationFunction::draw(canvas, origin, scale, numUnits, weights);
 
 	const ImColor BLACK(0.0f, 0.0f, 0.0f, 1.0f);
 
 	xt::xarray<double> drawWeights = weights.getParameters();
 
 	const double RANGE = 6.0; // Controls the range of the plot to display (-RANGE, RANGE)
-	float rescale = (1.0 / RANGE) * DRAW_LEN * scale;
+	float rescale = (1.0 / RANGE) * NeuralLayer::DRAW_LEN * scale;
 
 	ImVec2 position(0, origin.y);
 	const double LAYER_WIDTH = NeuralLayer::getLayerWidth(numUnits, scale);

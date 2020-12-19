@@ -1,14 +1,14 @@
 #pragma once
 
-#include "Function.h"
+#include "ActivationFunction.h"
 
 // Linear / Pass-through
-class LinearFunction : public Function
+class LinearFunction : public ActivationFunction
 {
 public:
-	LinearFunction(size_t incomingUnits, size_t numUnits);
+	LinearFunction();
 
 	xt::xarray<double> feedForward(const xt::xarray<double>& input);
-	xt::xarray<double> backPropagate(const xt::xarray<double>& sigmas);
-	void draw(ImDrawList* canvas, ImVec2 origin, double scale);
+	xt::xarray<double> activationDerivative();
+	void draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights);
 };

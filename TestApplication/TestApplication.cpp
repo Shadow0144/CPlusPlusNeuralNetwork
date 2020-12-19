@@ -151,7 +151,7 @@ void print_iris_results(xt::xarray<double> predicted, xt::xarray<double> actual)
 void test_signal(int layers)
 {
     size_t* layerShapes;
-    DenseActivationFunction* functions;
+    ActivationFunctionType* functions;
 
     switch (layers)
     {
@@ -159,51 +159,51 @@ void test_signal(int layers)
         case 6:
             layers = 7;
             layerShapes = new size_t[layers] { 1, 3, 3, 3, 3, 3, 1 };
-            functions = new DenseActivationFunction[layers]
-            { DenseActivationFunction::Linear,
-              DenseActivationFunction::LeakyReLU,
-              DenseActivationFunction::Softplus,
-              DenseActivationFunction::ReLU,
-              DenseActivationFunction::Sigmoid,
-              DenseActivationFunction::Tanh,
-              DenseActivationFunction::Linear };
+            functions = new ActivationFunctionType[layers]
+            { ActivationFunctionType::None,
+              ActivationFunctionType::LeakyReLU,
+              ActivationFunctionType::Softplus,
+              ActivationFunctionType::ReLU,
+              ActivationFunctionType::Sigmoid,
+              ActivationFunctionType::Tanh,
+              ActivationFunctionType::None };
             break;
         case 5:
             layerShapes = new size_t[layers] { 5, 3, 3, 3, 1 };
-            functions = new DenseActivationFunction[layers]
-            { DenseActivationFunction::Linear,
-              DenseActivationFunction::ReLU,
-              DenseActivationFunction::Sigmoid,
-              DenseActivationFunction::Tanh,
-              DenseActivationFunction::Linear };
+            functions = new ActivationFunctionType[layers]
+            { ActivationFunctionType::None,
+              ActivationFunctionType::ReLU,
+              ActivationFunctionType::Sigmoid,
+              ActivationFunctionType::Tanh,
+              ActivationFunctionType::None };
             break;
         case 4:
-            layerShapes = new size_t[layers] { 1, 3, 3, 1 };
-            functions = new DenseActivationFunction[layers]
-            { DenseActivationFunction::Linear,
-              DenseActivationFunction::PReLU,
-              DenseActivationFunction::ReLU,
-              DenseActivationFunction::Linear };
-            break;
+            /*layerShapes = new size_t[layers] { 1, 3, 3, 1 };
+            functions = new ActivationFunctionType[layers]
+            { ActivationFunctionType::Linear,
+              ActivationFunctionType::PReLU,
+              ActivationFunctionType::ReLU,
+              ActivationFunctionType::None };
+            break;*/
         case 3:
-            layerShapes = new size_t[layers] { 1, 3, 1 };
-            functions = new DenseActivationFunction[layers]
+            /*layerShapes = new size_t[layers] { 1, 3, 1 };
+            functions = new ActivationFunctionType[layers]
             { DenseActivationFunction::CReLU,
               DenseActivationFunction::Maxout,
-              DenseActivationFunction::Linear };
-            break;
+              DenseActivationFunction::None };
+            break;*/
         case 2:
             layerShapes = new size_t[layers] { 1, 1 };
-            functions = new DenseActivationFunction[layers]
-            { DenseActivationFunction::Linear,
-              DenseActivationFunction::Linear };
+            functions = new ActivationFunctionType[layers]
+            { ActivationFunctionType::None,
+              ActivationFunctionType::None };
             break;
         case 1:
         default:
             layers = 1;
             layerShapes = new size_t[layers] { 1 };
-            functions = new DenseActivationFunction[layers]
-            { DenseActivationFunction::Linear };
+            functions = new ActivationFunctionType[layers]
+            { ActivationFunctionType::None };
             break;
     }
 
@@ -244,6 +244,8 @@ void test_signal(int layers)
         //training_y(i, 0) = t * RESCALE;
         //training_y(i, 0) = (0.3 * t + 0.5) * RESCALE;
         training_y(i, 0) = tanh(3.0 * sin(3.0 * t + 0.5)) * RESCALE;
+        //training_y(i, 0) = (tanh(3.0 * sin(3.0 * t + 0.5)) + (0.5 * t)) * RESCALE;
+        //training_y(i, 0) = (1.0 / (1.0 + exp(-t))) * RESCALE;
         //training_y(i, 0, 0) = cosh(3.0 * sin(3.0 * t + 0.5)) * RESCALE;
         //training_y(i, 0, 1) = cosh(3.0 * sin(3.0 * t + 0.5)) * RESCALE;
         i++;
@@ -286,43 +288,43 @@ void test_signal(int layers)
 void test_iris(int layers)
 {
     size_t* layerShapes;
-    DenseActivationFunction* functions;
+    ActivationFunctionType* functions;
 
     switch (layers)
     {
         case 4:
             layerShapes = new size_t[layers] { 6, 6, 6, 3 };
-            functions = new DenseActivationFunction[layers]
+            functions = new ActivationFunctionType[layers]
                 {
-                   DenseActivationFunction::Linear,
-                   DenseActivationFunction::LeakyReLU,
-                   DenseActivationFunction::Sigmoid,
-                   DenseActivationFunction::Linear
+                   ActivationFunctionType::None,
+                   ActivationFunctionType::LeakyReLU,
+                   ActivationFunctionType::Sigmoid,
+                   ActivationFunctionType::None
                 };
             break;
         case 3:
             layerShapes = new size_t[layers] { 6, 3, 3 };
-            functions = new DenseActivationFunction[layers]
+            functions = new ActivationFunctionType[layers]
                 {
-                   DenseActivationFunction::Linear,
-                   DenseActivationFunction::Sigmoid,
-                   DenseActivationFunction::Linear
+                   ActivationFunctionType::None,
+                   ActivationFunctionType::Sigmoid,
+                   ActivationFunctionType::None
                 };
             break;
         case 2:
             layerShapes = new size_t[layers] { 3, 3 };
-            functions = new DenseActivationFunction[layers]
+            functions = new ActivationFunctionType[layers]
                 {
-                   DenseActivationFunction::Linear,
-                   DenseActivationFunction::Sigmoid
+                   ActivationFunctionType::None,
+                   ActivationFunctionType::Sigmoid
                 };
             break;
         case 1:
         default:
             layers = 1;
             layerShapes = new size_t[layers]{ 3 };
-            functions = new DenseActivationFunction[layers]
-            { DenseActivationFunction::Linear };
+            functions = new ActivationFunctionType[layers]
+            { ActivationFunctionType::None };
             break;
     }
 
@@ -404,8 +406,8 @@ void test_binary()
     network.addConvolution2DLayer(NUM_KERNELS_2, { 5, 5 }, NUM_KERNELS_1); // 12x12x16 -> 8x8x16
     network.addMaxPooling2DLayer({ 2, 2 }); // 8x8x16 -> 4x4x16
     network.addFlattenLayer(4 * 4 * NUM_KERNELS_2); // 4x4x16 -> 256
-    network.addDenseLayer(DenseActivationFunction::ReLU, 32); // 256 -> 32
-    network.addDenseLayer(DenseActivationFunction::ReLU, CLASSES); // 32 -> 2
+    network.addDenseLayer(ActivationFunctionType::ReLU, 32); // 256 -> 32
+    network.addDenseLayer(ActivationFunctionType::ReLU, CLASSES); // 32 -> 2
     network.addSoftmaxLayer(-1);
 
     ErrorFunction* errorFunction = new CrossEntropyFunction();
@@ -441,7 +443,7 @@ void test_mnist()
     xt::xarray<double> features = xt::reshape_view(xt::view(data, xt::all(), xt::range(1, _)), { N, IMG_DIM, IMG_DIM, 1 });
     features /= 255.0;
 
-    const int EXAMPLE_COUNT = labels.shape()[0];
+    const int EXAMPLE_COUNT = 100;//labels.shape()[0];
     labels = xt::view(labels, xt::range(0, EXAMPLE_COUNT), xt::all());
     features = xt::view(features, xt::range(0, EXAMPLE_COUNT), xt::all(), xt::all(), xt::all());
 
@@ -463,8 +465,8 @@ void test_mnist()
     network.addConvolution2DLayer(NUM_KERNELS_2, { 5, 5 }, NUM_KERNELS_1); // 12x12x16 -> 8x8x16                                                         
     network.addMaxPooling2DLayer({ 2, 2 }); // 8x8x16 -> 4x4x16
     network.addFlattenLayer(4 * 4 * NUM_KERNELS_2); // 4x4x16 -> 256
-    network.addDenseLayer(DenseActivationFunction::Sigmoid, 32); // 256 -> 32
-    network.addDenseLayer(DenseActivationFunction::Sigmoid, CLASSES); // 32 -> 10
+    network.addDenseLayer(ActivationFunctionType::Sigmoid, 32); // 256 -> 32
+    network.addDenseLayer(ActivationFunctionType::Sigmoid, CLASSES); // 32 -> 10
     network.addSoftmaxLayer(-1);
 
     ErrorFunction* errorFunction = new CrossEntropyFunction();
@@ -537,8 +539,8 @@ void test_layers()
     //Convolution2DFunction convfunc2({ 5, 5 }, 16, 1, 16); // 12x12x16 -> 8x8x16
     //MaxPooling2DFunction poolfunc2({ 2, 2 }); // 8x8x16 -> 4x4x16
     //FlattenFunction flatfunc1(256); // 4x4x16 -> 256
-    ReLUFunction densefunc1(256, 32); // 256 -> 32
-    ReLUFunction densefunc2(32, 10); // 32 -> 10
+    //ReLUFunction densefunc1(256, 32); // 256 -> 32
+    //ReLUFunction densefunc2(32, 10); // 32 -> 10
     //SoftmaxFunction softfunc1(10, -1); // 10 -> 10
 
     xt::xarray<double> example;
@@ -559,8 +561,8 @@ void test_layers()
         //cv::imshow("C2", convertChannelsToMat3(result, 0, 0, 3));
         //result = poolfunc2.feedForward(result);
         //result = flatfunc1.feedForward(result);
-        result = densefunc1.feedForward(result);
-        result = densefunc2.feedForward(result);
+        //result = densefunc1.feedForward(result);
+        //result = densefunc2.feedForward(result);
         //result = softfunc1.feedForward(result);
 
         //std::cout << classes(i) << ": " << xt::argmax(result) << endl;
@@ -582,6 +584,8 @@ void test_layers()
         xt::xarray<double> examples = xt::strided_view(features, { xt::range((i * batchSize) % len, ((i + 1) * batchSize) % len), xt::ellipsis() });
         examples.reshape({ (int)batchSize, (int)(width), (int)(width), 1 });
 
+        xt::xarray<double> predicted;
+
         //cv::imshow("Example", convertToMat(examples));
         //auto predicted = convfunc1.feedForward(examples);
         //cv::imshow("C1", convertChannelsToMat3(predicted, 0, 0, 3));
@@ -595,8 +599,8 @@ void test_layers()
         //    cout << predicted(0, i) << " ";
         //}
         //cout << endl;
-        auto predicted = densefunc1.feedForward(examples); //densefunc1.feedForward(predicted);
-        predicted = densefunc2.feedForward(predicted);
+        //auto predicted = densefunc1.feedForward(examples); //densefunc1.feedForward(predicted);
+        //predicted = densefunc2.feedForward(predicted);
         //predicted = softfunc1.feedForward(predicted);
         //std::cout << "Waiting..." << endl;
         //cv::waitKey(1);
@@ -614,8 +618,8 @@ void test_layers()
         }*/
 
         //back = softfunc1.backPropagateCrossEntropy(back);
-        back = densefunc2.backPropagate(back);
-        back = densefunc1.backPropagate(back);
+        //back = densefunc2.backPropagate(back);
+        //back = densefunc1.backPropagate(back);
         /*back = flatfunc1.backPropagate(back);
         back = poolfunc2.backPropagate(back);
         back = convfunc2.backPropagate(back);
@@ -645,8 +649,8 @@ void test_layers()
         }*/
 
         //softfunc1.applyBackPropagate();
-        densefunc2.applyBackPropagate();
-        densefunc1.applyBackPropagate();
+        //densefunc2.applyBackPropagate();
+        //densefunc1.applyBackPropagate();
         //flatfunc1.applyBackPropagate();
         //poolfunc2.applyBackPropagate();
         //convfunc2.applyBackPropagate();
@@ -674,8 +678,8 @@ void test_layers()
                 //result = convfunc2.feedForward(result);
                 //result = poolfunc2.feedForward(result);
                 //result = flatfunc1.feedForward(result);
-                result = densefunc1.feedForward(result);
-                result = densefunc2.feedForward(result);
+                //result = densefunc1.feedForward(result);
+                //result = densefunc2.feedForward(result);
                 //result = softfunc1.feedForward(result);
                 correct += (classes(i) == xt::argmax(result)(0)) ? 1 : 0;
             }
@@ -702,8 +706,8 @@ void test_layers()
                         //result = convfunc2.feedForward(result);
                         //result = poolfunc2.feedForward(result);
                         //result = flatfunc1.feedForward(result);
-                        result = densefunc1.feedForward(result);
-                        result = densefunc2.feedForward(result);
+                        //result = densefunc1.feedForward(result);
+                        //result = densefunc2.feedForward(result);
                         //result = softfunc1.feedForward(result);
                         sums += result;
                         correct += (k == xt::argmax(result)(0)) ? 1 : 0;
@@ -735,8 +739,8 @@ void test_layers()
         //cv::imshow("C2", convertChannelsToMat3(result, 0, 0, 3));
         //result = poolfunc2.feedForward(result);
         //result = flatfunc1.feedForward(result);
-        result = densefunc1.feedForward(result);
-        result = densefunc2.feedForward(result);
+        //result = densefunc1.feedForward(result);
+        //result = densefunc2.feedForward(result);
         //result = softfunc1.feedForward(result);
 
         //std::cout << classes(i) << ": " << xt::argmax(result) << endl;

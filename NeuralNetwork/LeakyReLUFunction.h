@@ -1,23 +1,21 @@
 #pragma once
 
-#include "Function.h"
+#include "ActivationFunction.h"
 
 // Leaky Rectified Linear Unit
-class LeakyReLUFunction : public Function
+class LeakyReLUFunction : public ActivationFunction
 {
 public:
-	LeakyReLUFunction(size_t incomingUnits, size_t numUnits);
+	LeakyReLUFunction();
 
 	xt::xarray<double> feedForward(const xt::xarray<double>& input);
-	xt::xarray<double> backPropagate(const xt::xarray<double>& sigmas);
-	void draw(ImDrawList* canvas, ImVec2 origin, double scale);
+	xt::xarray<double> activationDerivative();
+	void draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights);
 
 	double getA();
 	void setA(double a);
 
 private:
-	xt::xarray<double> activationDerivative();
-
 	xt::xarray<double> leakyReLU(const xt::xarray<double>& z);
 
 	double a = 0.01; // Leak coefficient

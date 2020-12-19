@@ -6,16 +6,9 @@
 #include <xtensor-blas/xlinalg.hpp>
 #pragma warning(pop)
 
-SoftplusFunction::SoftplusFunction(size_t incomingUnits, size_t numUnits)
+SoftplusFunction::SoftplusFunction()
 {
-	this->hasBias = true;
-	this->numUnits = numUnits;
-	this->numInputs = incomingUnits + 1; // Plus bias
-	std::vector<size_t> paramShape;
-	// input x output -shaped
-	paramShape.push_back(this->numInputs);
-	paramShape.push_back(this->numUnits);
-	this->weights.setParametersRandom(paramShape);
+
 }
 
 double SoftplusFunction::activate(double z)
@@ -35,18 +28,14 @@ xt::xarray<double> SoftplusFunction::softplus(const xt::xarray<double>& z)
 
 xt::xarray<double> SoftplusFunction::feedForward(const xt::xarray<double>& inputs)
 {
-	auto dotProductResult = dotProduct(inputs);
-	return softplus(dotProductResult);
-}
-
-xt::xarray<double> SoftplusFunction::backPropagate(const xt::xarray<double>& sigmas)
-{
-	return denseBackpropagate(sigmas * activationDerivative());
+	return softplus(inputs);
 }
 
 xt::xarray<double> SoftplusFunction::activationDerivative()
 {
-	return (1.0 / (1.0 + exp(-k * xt::linalg::tensordot(lastInput, weights.getParameters(), 1))));
+	// TODO!!!
+	//return (1.0 / (1.0 + exp(-k * xt::linalg::tensordot(lastInput, weights.getParameters(), 1))));
+	return lastInput;
 }
 
 double SoftplusFunction::getK() 
@@ -59,9 +48,9 @@ void SoftplusFunction::setK(double k)
 	this->k = k;
 }
 
-void SoftplusFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
+void SoftplusFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights)
 {
-	Function::draw(canvas, origin, scale);
+	ActivationFunction::draw(canvas, origin, scale, numUnits, weights);
 
-	Function::approximateFunction(canvas, origin, scale);
+	ActivationFunction::approximateFunction(canvas, origin, scale, numUnits, weights);
 }

@@ -1,23 +1,22 @@
 #pragma once
 
-#include "Function.h"
+#include "ActivationFunction.h"
 
 // Softplus / Smooth Rectified Linear Unit
-class SoftplusFunction : public Function
+class SoftplusFunction : public ActivationFunction
 {
 public:
-	SoftplusFunction(size_t incomingUnits, size_t numUnits);
+	SoftplusFunction();
 
 	xt::xarray<double> feedForward(const xt::xarray<double>& input);
-	xt::xarray<double> backPropagate(const xt::xarray<double>& sigmas);
-	void draw(ImDrawList* canvas, ImVec2 origin, double scale);
+	xt::xarray<double> activationDerivative();
+	void draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights);
 
 	double getK();
 	void setK(double k);
 
 private:
 	double activate(double z);
-	xt::xarray<double> activationDerivative();
 
 	double softplus(double z);
 	xt::xarray<double> softplus(const xt::xarray<double>& z);

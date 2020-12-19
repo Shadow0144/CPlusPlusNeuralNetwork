@@ -5,30 +5,6 @@
 #include <xtensor/xarray.hpp>
 #pragma warning(pop)
 
-enum class DenseActivationFunction
-{
-	Linear,
-	ReLU,
-	AbsoluteReLU,
-	CReLU,
-	ELU,
-	SELU,
-	GELU,
-	LeakyReLU,
-	PReLU,
-	ReLU6,
-	ReLUn,
-	Softplus,
-	Exponential,
-	Quadratic,
-	Sigmoid,
-	Tanh,
-	HardSigmoid,
-	Softsign,
-	Swish,
-	Maxout
-};
-
 class NeuralLayer
 {
 public:
@@ -81,6 +57,8 @@ protected:
 
 	size_t numUnits; // For drawing
 	ImVec2 position; // For drawing
+
+	xt::xarray<double> addBiasToInput(const xt::xarray<double>& input);
 
 	void drawFunctionBackground(ImDrawList* canvas, ImVec2 origin, double scale, bool drawAxes);
 	void drawConversionFunctionBackground(ImDrawList* canvas, ImVec2 origin, double scale, bool drawAxes);

@@ -9,16 +9,8 @@
 
 using namespace std;
 
-PReLUFunction::PReLUFunction(size_t incomingUnits, size_t numUnits)
+PReLUFunction::PReLUFunction()
 {
-	this->hasBias = true;
-	this->numUnits = numUnits;
-	this->numInputs = incomingUnits + 1; // Plus bias
-	std::vector<size_t> paramShape;
-	// input x output -shaped
-	paramShape.push_back(this->numInputs);
-	paramShape.push_back(this->numUnits);
-	this->weights.setParametersRandom(paramShape);
 	this->a = 2.0 * (xt::random::rand<double>({ 1 }) - 0.5)(0);
 	this->deltaA = 0.0;
 }
@@ -30,21 +22,21 @@ xt::xarray<double> PReLUFunction::PReLU(const xt::xarray<double>& z)
 
 xt::xarray<double> PReLUFunction::feedForward(const xt::xarray<double>& inputs)
 {
-	auto dotProductResult = dotProduct(inputs);
-	return PReLU(dotProductResult);
+	return PReLU(inputs);
 }
 
 xt::xarray<double> PReLUFunction::backPropagate(const xt::xarray<double>& sigmas)
 {
-	auto mask = (lastOutput <= 0.0);
+	/*auto mask = (lastOutput <= 0.0);
 	deltaA += xt::sum<double>(lastOutput * mask)();
-	return denseBackpropagate(sigmas * activationDerivative());
+	return denseBackpropagate(sigmas * activationDerivative());*/
+	return sigmas;
 }
 
 double PReLUFunction::applyBackPropagate() // Returns the sum of the change in the weights
 {
-	a += -ALPHA * deltaA;
-	return Function::applyBackPropagate();
+	//a += -ALPHA * deltaA;
+	return 0;// ActivationFunction::applyBackPropagate();
 }
 
 xt::xarray<double> PReLUFunction::activationDerivative()
@@ -53,9 +45,9 @@ xt::xarray<double> PReLUFunction::activationDerivative()
 	return (mask + (a * (xt::ones<double>(mask.shape()) - mask)));
 }
 
-void PReLUFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
+void PReLUFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights)
 {
-	Function::draw(canvas, origin, scale);
+	ActivationFunction::draw(canvas, origin, scale, numUnits, weights);
 
 	const ImColor BLACK(0.0f, 0.0f, 0.0f, 1.0f);
 
@@ -85,9 +77,9 @@ void PReLUFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
 			y2 = a;
 		}
 
-		ImVec2 l_start(position.x + (DRAW_LEN * x1 * scale), position.y - (DRAW_LEN * y1 * scale));
+		ImVec2 l_start(position.x + (NeuralLayer::DRAW_LEN * x1 * scale), position.y - (NeuralLayer::DRAW_LEN * y1 * scale));
 		ImVec2 l_mid(position.x, position.y);
-		ImVec2 l_end(position.x + (DRAW_LEN * x2 * scale), position.y - (DRAW_LEN * y2 * scale));
+		ImVec2 l_end(position.x + (NeuralLayer::DRAW_LEN * x2 * scale), position.y - (NeuralLayer::DRAW_LEN * y2 * scale));
 
 		canvas->AddLine(l_start, l_mid, BLACK);
 		canvas->AddLine(l_mid, l_end, BLACK);

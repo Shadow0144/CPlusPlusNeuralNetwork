@@ -7,16 +7,9 @@
 
 using namespace std;
 
-TanhFunction::TanhFunction(size_t incomingUnits, size_t numUnits)
+TanhFunction::TanhFunction()
 {
-	this->hasBias = true;
-	this->numUnits = numUnits;
-	this->numInputs = incomingUnits + 1; // Plus bias
-	std::vector<size_t> paramShape;
-	// input x output -shaped
-	paramShape.push_back(this->numInputs);
-	paramShape.push_back(this->numUnits);
-	this->weights.setParametersRandom(paramShape);
+
 }
 
 double TanhFunction::activate(double z)
@@ -26,13 +19,7 @@ double TanhFunction::activate(double z)
 
 xt::xarray<double> TanhFunction::feedForward(const xt::xarray<double>& inputs)
 {
-	auto dotProductResult = dotProduct(inputs);
-	return xt::tanh(dotProductResult);
-}
-
-xt::xarray<double> TanhFunction::backPropagate(const xt::xarray<double>& sigmas)
-{
-	return denseBackpropagate(sigmas * activationDerivative());
+	return xt::tanh(inputs);
 }
 
 xt::xarray<double> TanhFunction::activationDerivative()
@@ -40,9 +27,9 @@ xt::xarray<double> TanhFunction::activationDerivative()
 	return (1.0 - xt::pow(lastOutput, 2.0));
 }
 
-void TanhFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
+void TanhFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights)
 {
-	Function::draw(canvas, origin, scale);
+	ActivationFunction::draw(canvas, origin, scale, numUnits, weights);
 
-	Function::approximateFunction(canvas, origin, scale);
+	ActivationFunction::approximateFunction(canvas, origin, scale, numUnits, weights);
 }

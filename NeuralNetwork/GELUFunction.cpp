@@ -12,16 +12,9 @@ using namespace std;
 
 const double SQRT_2_PI = sqrt(M_2_PI);
 
-GELUFunction::GELUFunction(size_t incomingUnits, size_t numUnits)
+GELUFunction::GELUFunction()
 {
-	this->hasBias = true;
-	this->numUnits = numUnits;
-	this->numInputs = incomingUnits + 1; // Plus bias
-	std::vector<size_t> paramShape;
-	// input x output -shaped
-	paramShape.push_back(this->numInputs);
-	paramShape.push_back(this->numUnits);
-	this->weights.setParametersRandom(paramShape);
+
 }
 
 double GELUFunction::GELU(double z)
@@ -41,13 +34,7 @@ double GELUFunction::activate(double z)
 
 xt::xarray<double> GELUFunction::feedForward(const xt::xarray<double>& inputs)
 {
-	auto dotProductResult = dotProduct(inputs);
-	return GELU(dotProductResult);
-}
-
-xt::xarray<double> GELUFunction::backPropagate(const xt::xarray<double>& sigmas)
-{
-	return denseBackpropagate(sigmas * activationDerivative());
+	return GELU(inputs);
 }
 
 xt::xarray<double> GELUFunction::activationDerivative()
@@ -58,9 +45,9 @@ xt::xarray<double> GELUFunction::activationDerivative()
 	return ((0.5 * tanh((0.0356774 * z3) + (0.797885 * z))) + (((0.0535161 * z3) + (0.398942 * z)) * sech2) + 0.5);
 }
 
-void GELUFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
+void GELUFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights)
 {
-	Function::draw(canvas, origin, scale);
+	ActivationFunction::draw(canvas, origin, scale, numUnits, weights);
 
-	Function::approximateFunction(canvas, origin, scale);
+	ActivationFunction::approximateFunction(canvas, origin, scale, numUnits, weights);
 }

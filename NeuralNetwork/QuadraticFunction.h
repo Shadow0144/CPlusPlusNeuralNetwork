@@ -1,17 +1,16 @@
 #pragma once
 
-#include "Function.h"
+#include "ActivationFunction.h"
 
 // Quadratic
-class QuadraticFunction : public Function
+class QuadraticFunction : public ActivationFunction
 {
 public:
-	QuadraticFunction(size_t incomingUnits, size_t numUnits);
+	QuadraticFunction();
 
 	xt::xarray<double> feedForward(const xt::xarray<double>& input);
-	xt::xarray<double> backPropagate(const xt::xarray<double>& sigmas);
-	void draw(ImDrawList* canvas, ImVec2 origin, double scale);
+	xt::xarray<double> activationDerivative();
+	void draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights);
 
 private:
-	xt::xarray<double> activationDerivative();
 };

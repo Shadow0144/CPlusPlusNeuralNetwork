@@ -8,31 +8,24 @@
 
 using namespace std;
 
-LinearFunction::LinearFunction(size_t incomingUnits, size_t numUnits)
+LinearFunction::LinearFunction()
 {
-	this->hasBias = true;
-	this->numUnits = numUnits;
-	this->numInputs = incomingUnits + 1; // Plus bias
-	std::vector<size_t> paramShape;
-	// input x output -shaped
-	paramShape.push_back(this->numInputs);
-	paramShape.push_back(this->numUnits);
-	this->weights.setParametersRandom(paramShape);
+
 }
 
 xt::xarray<double> LinearFunction::feedForward(const xt::xarray<double>& inputs)
 {
-	return dotProduct(inputs);
+	return inputs;
 }
 
-xt::xarray<double> LinearFunction::backPropagate(const xt::xarray<double>&  sigmas)
+xt::xarray<double> LinearFunction::activationDerivative()
 {
-	return denseBackpropagate(sigmas);
+	return 1;
 }
 
-void LinearFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
+void LinearFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights)
 {
-	Function::draw(canvas, origin, scale);
+	ActivationFunction::draw(canvas, origin, scale, numUnits, weights);
 
 	const ImColor BLACK(0.0f, 0.0f, 0.0f, 1.0f);
 
@@ -50,8 +43,8 @@ void LinearFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale)
 		double y1 = x1 * slope;
 		double y2 = x2 * slope;
 
-		ImVec2 l_start(position.x + (x1 * DRAW_LEN * scale), position.y - (y1 * DRAW_LEN * scale));
-		ImVec2 l_end(position.x + (x2 * DRAW_LEN * scale), position.y - (y2 * DRAW_LEN * scale));
+		ImVec2 l_start(position.x + (x1 * NeuralLayer::DRAW_LEN * scale), position.y - (y1 * NeuralLayer::DRAW_LEN * scale));
+		ImVec2 l_end(position.x + (x2 * NeuralLayer::DRAW_LEN * scale), position.y - (y2 * NeuralLayer::DRAW_LEN * scale));
 
 		canvas->AddLine(l_start, l_end, BLACK);
 	}

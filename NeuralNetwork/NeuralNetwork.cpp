@@ -66,7 +66,7 @@ void NeuralNetwork::addInputLayer(const std::vector<size_t>& inputShape)
 	layerCount++;
 }
 
-void NeuralNetwork::addDenseLayer(DenseActivationFunction layerFunction, size_t numUnits)
+void NeuralNetwork::addDenseLayer(ActivationFunctionType layerFunction, size_t numUnits)
 {
 	DenseNeuralLayer* layer = new DenseNeuralLayer(layerFunction, layers->at(layerCount-1), numUnits);
 	layers->push_back(layer);
@@ -157,8 +157,8 @@ xt::xarray<double> NeuralNetwork::feedForward(const xt::xarray<double>& inputs)
 	int iBatchSize = N / INTERNAL_BATCHES;
 
 	auto shape = layers->at(layerCount - 1)->getOutputShape();
-	shape[0] = N;
-	//shape.insert(shape.begin(), N);
+	//shape[0] = N;
+	shape.insert(shape.begin(), N);
 	xt::xarray<double> predicted = xt::xarray<double>(shape);
 
 	for (int i = 0; i < INTERNAL_BATCHES; i++)
@@ -229,8 +229,8 @@ bool NeuralNetwork::backPropagate(const xt::xarray<double>& inputs, const xt::xa
 		xt::xarray<double> predicted = feedForwardTrain(xt::strided_view(inputs, iBatchSV));
 		xt::xarray<double> errors = errorFunction->getDerivativeOfError(predicted, xt::strided_view(targets, iBatchSV));
 
-		// Backpropagate through the layers
-		for (int l = layerCount - 1; l > 0; l--)
+		// Backpropagate through the layers until the input layer
+		for (int l = (layerCount - 1); l > 0; l--)
 		{
 			errors = layers->at(l)->backPropagate(errors);
 		}

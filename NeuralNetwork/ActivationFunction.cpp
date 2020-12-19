@@ -1,4 +1,4 @@
-#include "Function.h"
+#include "ActivationFunction.h"
 #include "NeuralLayer.h"
 
 #pragma warning(push, 0)
@@ -9,67 +9,21 @@
 #include "Test.h"
 
 using namespace std;
+using namespace Eigen;
 
-xt::xarray<double> Function::feedForwardTrain(const xt::xarray<double>& inputs)
+xt::xarray<double> ActivationFunction::feedForwardTrain(const xt::xarray<double>& inputs)
 {
 	lastInput = inputs;
 	lastOutput = feedForward(inputs);
 	return lastOutput;
 }
 
-xt::xarray<double> Function::addBias(const xt::xarray<double>& input)
-{
-	size_t inputDims = input.dimension();
-	auto inputShape = input.shape();
-	inputShape.at(inputDims - 1)++;
-	xt::xstrided_slice_vector biaslessView;
-	for (int i = 0; i < (inputDims - 1); i++)
-	{
-		biaslessView.push_back(xt::all());
-	}
-	biaslessView.push_back(xt::range(0, (numInputs - 1)));
-
-	xt::xarray<double> biasedInput = xt::ones<double>(inputShape);
-	xt::strided_view(biasedInput, biaslessView) = input;
-
-	return biasedInput;
-}
-
-double Function::applyBackPropagate()
-{
-	double deltaWeight = xt::sum(xt::abs(weights.getDeltaParameters()))();
-	weights.applyDeltaParameters();
-	return deltaWeight; // Return the sum of how much the parameters have changed
-}
-
-xt::xarray<double> Function::dotProduct(const xt::xarray<double>& inputs)
-{
-	return xt::linalg::tensordot(inputs, weights.getParameters(), 1); // The last dimension of the input with the first dimension of the weights
-}
-
-xt::xarray<double> Function::activationDerivative()
-{
-	return xt::xarray<double>();
-}
-
-xt::xarray<double> Function::denseBackpropagate(const xt::xarray<double>& sigmas)
-{
-	auto delta = xt::linalg::tensordot(xt::transpose(lastInput), sigmas, 1);
-
-	weights.incrementDeltaParameters(-ALPHA * delta);
-	auto biaslessWeights = xt::view(weights.getParameters(), xt::range(0, (numInputs - 1)), xt::all());
-
-	auto newSigmas = xt::linalg::tensordot(sigmas, xt::transpose(biaslessWeights), 1); // The last {1} axes of errors and the first {1} axes of the weights transposed
-
-	return newSigmas;
-}
-
-double Function::activate(double z)
+double ActivationFunction::activate(double z)
 {
 	return z;
 }
 
-MatrixXd Function::approximateBezier(const MatrixXd& points)
+MatrixXd ActivationFunction::approximateBezier(const MatrixXd& points)
 {
 	//int pCount = points.rows();
 	//int k = pCount - 1;
@@ -113,17 +67,17 @@ MatrixXd Function::approximateBezier(const MatrixXd& points)
 }
 
 // TODO: Cap vertical draw
-void Function::approximateFunction(ImDrawList* canvas, ImVec2 origin, double scale)
+void ActivationFunction::approximateFunction(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights)
 {
 	const ImColor BLACK(0.0f, 0.0f, 0.0f, 1.0f);
 
-	xt::xarray<double> drawWeights = weights.getParameters();
+	const xt::xarray<double> drawWeights = weights.getParameters();
 
 	const double RANGE = 3.0; // Controls the range of the plot to display (-RANGE, RANGE)
 
 	const int R = 6; // Controls the number of points to estimate
 	const int RESOLUTION = (R * 4) + 1; // Resolution must be 4r+1 points
-	const float RESCALE = (1.0 / RANGE) * DRAW_LEN * scale;
+	const float RESCALE = (1.0 / RANGE) * NeuralLayer::DRAW_LEN * scale;
 
 	ImVec2 position(0, origin.y);
 	const double LAYER_WIDTH = NeuralLayer::getLayerWidth(numUnits, scale);
@@ -214,21 +168,14 @@ void Function::approximateFunction(ImDrawList* canvas, ImVec2 origin, double sca
 	}
 }
 
-std::vector<size_t> Function::getOutputShape()
-{
-	std::vector<size_t> outputShape;
-	outputShape.push_back(numUnits);
-	return outputShape;
-}
-
-void Function::draw(ImDrawList * canvas, ImVec2 origin, double scale)
+void ActivationFunction::draw(ImDrawList * canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights)
 {
 	const ImColor BLACK(0.0f, 0.0f, 0.0f, 1.0f);
 	const ImColor GRAY(0.3f, 0.3f, 0.3f, 1.0f);
 	const ImColor LIGHT_GRAY(0.6f, 0.6f, 0.6f, 1.0f);
 	const ImColor WHITE(1.0f, 1.0f, 1.0f, 1.0f);
 
-	const double RESCALE = DRAW_LEN * scale;
+	const double RESCALE = NeuralLayer::DRAW_LEN * scale;
 
 	ImVec2 position(0, origin.y);
 	const double LAYER_WIDTH = NeuralLayer::getLayerWidth(numUnits, scale);
@@ -254,7 +201,7 @@ void Function::draw(ImDrawList * canvas, ImVec2 origin, double scale)
 	}
 }
 
-void Function::drawConversion(ImDrawList* canvas, ImVec2 origin, double scale)
+void ActivationFunction::drawConversion(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights)
 {
 	const ImColor BLACK(0.0f, 0.0f, 0.0f, 1.0f);
 	const ImColor GRAY(0.3f, 0.3f, 0.3f, 1.0f);
@@ -264,7 +211,7 @@ void Function::drawConversion(ImDrawList* canvas, ImVec2 origin, double scale)
 	const double ARROW_WIDTH = 2.0 * scale;
 	const double ARROW_HEIGHT = 4.0 * scale;
 
-	const double RESCALE = DRAW_LEN * scale * RERESCALE;
+	const double RESCALE = NeuralLayer::DRAW_LEN * scale * NeuralLayer::RERESCALE;
 
 	ImVec2 position(0, origin.y);
 	const double LAYER_WIDTH = NeuralLayer::getLayerWidth(numUnits, scale);
@@ -278,7 +225,7 @@ void Function::drawConversion(ImDrawList* canvas, ImVec2 origin, double scale)
 			ImVec2(position.x - ARROW_WIDTH, position.y + ARROW_HEIGHT), BLACK);
 
 		//Draw left
-		position.x = NeuralLayer::getNeuronX(origin.x, LAYER_WIDTH, i, scale) - (SHIFT * scale);
+		position.x = NeuralLayer::getNeuronX(origin.x, LAYER_WIDTH, i, scale) - (NeuralLayer::SHIFT * scale);
 		ImVec2 start(position.x - RESCALE, position.y + RESCALE);
 		ImVec2 end(position.x + RESCALE, position.y - RESCALE);
 
@@ -297,7 +244,7 @@ void Function::drawConversion(ImDrawList* canvas, ImVec2 origin, double scale)
 		else { }
 
 		// Draw right
-		position.x = NeuralLayer::getNeuronX(origin.x, LAYER_WIDTH, i, scale) + (SHIFT * scale);
+		position.x = NeuralLayer::getNeuronX(origin.x, LAYER_WIDTH, i, scale) + (NeuralLayer::SHIFT * scale);
 		start = ImVec2(position.x - RESCALE, position.y + RESCALE);
 		end = ImVec2(position.x + RESCALE, position.y - RESCALE);
 

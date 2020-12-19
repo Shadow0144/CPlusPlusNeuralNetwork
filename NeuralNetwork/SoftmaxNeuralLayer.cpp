@@ -8,6 +8,8 @@
 #include <mutex>  // For std::unique_lock
 #pragma warning(pop)
 
+#include "Test.h"
+
 using namespace std;
 
 SoftmaxNeuralLayer::SoftmaxNeuralLayer(NeuralLayer* parent, int axis)
@@ -85,7 +87,7 @@ double SoftmaxNeuralLayer::applyBackPropagate()
 std::vector<size_t> SoftmaxNeuralLayer::getOutputShape()
 {
 	std::vector<size_t> outputShape;
-	outputShape.push_back(numUnits);
+	//outputShape.push_back(numUnits); // There is only 1 unit and it does not contribute toward the output shape
 	outputShape.push_back(numOutputs);
 	return outputShape;
 }

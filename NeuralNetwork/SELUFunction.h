@@ -1,21 +1,20 @@
 #pragma once
 
-#include "Function.h"
+#include "ActivationFunction.h"
 
 // Scaled Exponential Linear Unit
-class SELUFunction : public Function
+class SELUFunction : public ActivationFunction
 {
 public:
-	SELUFunction(size_t incomingUnits, size_t numUnits);
+	SELUFunction();
 
 	xt::xarray<double> feedForward(const xt::xarray<double>& input);
-	xt::xarray<double> backPropagate(const xt::xarray<double>& sigmas);
-	void draw(ImDrawList* canvas, ImVec2 origin, double scale);
+	xt::xarray<double> activationDerivative();
+	void draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights);
 
 private:
 	//xt::xarray<double> mask; // Stores which inputs to the activation function were greather than 0
 	double activate(double z);
-	xt::xarray<double> activationDerivative();
 
 	double SELU(double z);
 	xt::xarray<double> SELU(const xt::xarray<double>& z);
