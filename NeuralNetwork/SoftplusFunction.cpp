@@ -31,7 +31,7 @@ xt::xarray<double> SoftplusFunction::feedForward(const xt::xarray<double>& input
 	return softplus(inputs);
 }
 
-xt::xarray<double> SoftplusFunction::activationDerivative()
+xt::xarray<double> SoftplusFunction::getGradient(const xt::xarray<double>& sigmas)
 {
 	// TODO!!!
 	//return (1.0 / (1.0 + exp(-k * xt::linalg::tensordot(lastInput, weights.getParameters(), 1))));

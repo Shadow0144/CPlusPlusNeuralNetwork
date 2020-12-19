@@ -33,7 +33,7 @@ xt::xarray<double> SELUFunction::feedForward(const xt::xarray<double>& inputs)
 	return SELU(inputs);
 }
 
-xt::xarray<double> SELUFunction::activationDerivative()
+xt::xarray<double> SELUFunction::getGradient(const xt::xarray<double>& sigmas)
 {
 	// TODO!!!
 	//auto mask = (dotProduct(lastInput) > 0.0);

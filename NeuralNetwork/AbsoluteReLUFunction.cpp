@@ -21,10 +21,10 @@ xt::xarray<double> AbsoluteReLUFunction::feedForward(const xt::xarray<double>& i
 	return absoluteReLU(inputs);
 }
 
-xt::xarray<double> AbsoluteReLUFunction::activationDerivative()
+xt::xarray<double> AbsoluteReLUFunction::getGradient(const xt::xarray<double>& sigmas)
 {
 	auto mask = (lastOutput > 0.0);
-	return (mask + (mask - (xt::ones<double>(mask.shape()))));
+	return (sigmas * (mask + (mask - (xt::ones<double>(mask.shape())))));
 }
 
 void AbsoluteReLUFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights)

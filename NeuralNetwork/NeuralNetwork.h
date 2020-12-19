@@ -12,12 +12,12 @@ enum class ActivationFunctionType
 	None,
 	ReLU,
 	AbsoluteReLU,
-	//CReLU,
+	CReLU,
 	ELU,
 	SELU,
 	GELU,
 	LeakyReLU,
-	//PReLU,
+	PReLU,
 	ReLU6,
 	ReLUn,
 	Softplus,
@@ -27,8 +27,8 @@ enum class ActivationFunctionType
 	Tanh,
 	HardSigmoid,
 	Softsign,
-	//Swish,
-	//Maxout
+	Swish,
+	Maxout
 };
 
 class NetworkVisualizer;

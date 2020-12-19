@@ -22,9 +22,9 @@ xt::xarray<double> ExponentialFunction::feedForward(const xt::xarray<double>& in
 	return exp(inputs);
 }
 
-xt::xarray<double> ExponentialFunction::activationDerivative()
+xt::xarray<double> ExponentialFunction::getGradient(const xt::xarray<double>& sigmas)
 {
-	return lastOutput;
+	return (sigmas * lastOutput);
 }
 
 void ExponentialFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights)

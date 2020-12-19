@@ -22,9 +22,9 @@ xt::xarray<double> ReLU6Function::feedForward(const xt::xarray<double>& inputs)
 	return reLU6(inputs);
 }
 
-xt::xarray<double> ReLU6Function::activationDerivative()
+xt::xarray<double> ReLU6Function::getGradient(const xt::xarray<double>& sigmas)
 {
-	return ((lastOutput > 0.0) < 6.0);
+	return (sigmas * ((lastOutput > 0.0) < 6.0));
 }
 
 void ReLU6Function::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights)

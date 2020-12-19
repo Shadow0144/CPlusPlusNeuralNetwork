@@ -61,16 +61,8 @@ xt::xarray<double> DenseNeuralLayer::feedForward(const xt::xarray<double>& input
 	{
 		output = input;
 	}
-	if (functionType != ActivationFunctionType::None)
-	{
-		// Apply the dot product and then the activation function
-		output = activationFunction->feedForward(dotProduct(output));
-	}
-	else
-	{
-		// Apply just the dot product
-		output = dotProduct(output);
-	}
+	// Apply the dot product and then the activation function
+	output = activationFunction->feedForward(dotProduct(output));
 	return output;
 }
 
@@ -85,16 +77,8 @@ xt::xarray<double> DenseNeuralLayer::feedForwardTrain(const xt::xarray<double>& 
 	{
 		lastInput = input;
 	}
-	if (functionType != ActivationFunctionType::None)
-	{
-		// Apply the dot product and then the activation function
-		lastOutput = activationFunction->feedForwardTrain(dotProduct(lastInput));
-	}
-	else
-	{
-		// Apply just the dot product
-		lastOutput = dotProduct(lastInput);
-	}
+	// Apply the dot product and then the activation function
+	lastOutput = activationFunction->feedForwardTrain(dotProduct(lastInput));
 	return lastOutput;
 }
 
@@ -112,18 +96,7 @@ xt::xarray<double> DenseNeuralLayer::denseBackpropagate(const xt::xarray<double>
 
 xt::xarray<double> DenseNeuralLayer::backPropagate(const xt::xarray<double>& sigmas)
 {
-	xt::xarray<double> newSigmas;
-	if (functionType != ActivationFunctionType::None)
-	{
-		// Apply the derivative of the activation function and dot product
-		newSigmas = denseBackpropagate(sigmas * activationFunction->activationDerivative());
-	}
-	else
-	{
-		// Apply just the derivative of the dot product
-		newSigmas = denseBackpropagate(sigmas);
-	}
-	return newSigmas;
+	return denseBackpropagate(activationFunction->getGradient(sigmas));
 }
 
 double DenseNeuralLayer::applyBackPropagate()
@@ -137,6 +110,7 @@ std::vector<size_t> DenseNeuralLayer::getOutputShape()
 {
 	std::vector<size_t> outputShape;
 	outputShape.push_back(numUnits);
+	outputShape = activationFunction->getOutputShape(outputShape);
 	return outputShape;
 }
 

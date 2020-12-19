@@ -203,7 +203,7 @@ void test_signal(int layers)
             layers = 1;
             layerShapes = new size_t[layers] { 1 };
             functions = new ActivationFunctionType[layers]
-            { ActivationFunctionType::None };
+            { ActivationFunctionType::CReLU };
             break;
     }
 
@@ -235,19 +235,21 @@ void test_signal(int layers)
     int i = 0;
     xt::xarray<int>::shape_type shape_x = { SAMPLES, 1 };
     xt::xarray<double> training_x = xt::xarray<double>(shape_x);
-    xt::xarray<int>::shape_type shape_y = { SAMPLES, 1 };
-    //xt::xarray<int>::shape_type shape_y = { SAMPLES, 1, 2 };
+    //xt::xarray<int>::shape_type shape_y = { SAMPLES, 1 };
+    xt::xarray<int>::shape_type shape_y = { SAMPLES, 1, 2 };
     xt::xarray<double> training_y = xt::xarray<double>(shape_y);
     for (double t = -twoPi; t < twoPi; t += inc)
     {
         training_x(i, 0) = t * RESCALE;
         //training_y(i, 0) = t * RESCALE;
         //training_y(i, 0) = (0.3 * t + 0.5) * RESCALE;
-        training_y(i, 0) = tanh(3.0 * sin(3.0 * t + 0.5)) * RESCALE;
+        //training_y(i, 0) = tanh(3.0 * sin(3.0 * t + 0.5)) * RESCALE;
         //training_y(i, 0) = (tanh(3.0 * sin(3.0 * t + 0.5)) + (0.5 * t)) * RESCALE;
         //training_y(i, 0) = (1.0 / (1.0 + exp(-t))) * RESCALE;
         //training_y(i, 0, 0) = cosh(3.0 * sin(3.0 * t + 0.5)) * RESCALE;
         //training_y(i, 0, 1) = cosh(3.0 * sin(3.0 * t + 0.5)) * RESCALE;
+        training_y(i, 0, 0) = -(3.0 * t + 0.5) * RESCALE;
+        training_y(i, 0, 1) = +(3.0 * t + 0.5) * RESCALE;
         i++;
     }
 
@@ -465,7 +467,9 @@ void test_mnist()
     network.addConvolution2DLayer(NUM_KERNELS_2, { 5, 5 }, NUM_KERNELS_1); // 12x12x16 -> 8x8x16                                                         
     network.addMaxPooling2DLayer({ 2, 2 }); // 8x8x16 -> 4x4x16
     network.addFlattenLayer(4 * 4 * NUM_KERNELS_2); // 4x4x16 -> 256
-    network.addDenseLayer(ActivationFunctionType::Sigmoid, 32); // 256 -> 32
+    network.addDenseLayer(ActivationFunctionType::CReLU, 32);
+    network.addFlattenLayer(32 * 2); // 32x2 -> 64
+    network.addDenseLayer(ActivationFunctionType::Sigmoid, 32); // (64) [256] -> 32
     network.addDenseLayer(ActivationFunctionType::Sigmoid, CLASSES); // 32 -> 10
     network.addSoftmaxLayer(-1);
 

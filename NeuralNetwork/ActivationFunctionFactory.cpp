@@ -5,9 +5,9 @@
 #include "LinearFunction.h"
 #include "ReLUFunction.h"
 #include "AbsoluteReLUFunction.h"
-//#include "CReLUFunction.h"
+#include "CReLUFunction.h"
 #include "ELUFunction.h"
-#include "SELUFunction.h"
+//#include "SELUFunction.h"
 #include "GELUFunction.h"
 #include "LeakyReLUFunction.h"
 //#include "PReLUFunction.h"
@@ -19,7 +19,7 @@
 #include "SigmoidFunction.h"
 #include "TanhFunction.h"
 #include "HardSigmoidFunction.h"
-#include "SoftsignFunction.h"
+//#include "SoftsignFunction.h"
 //#include "SwishFunction.h"
 //#include "MaxoutFunction.h"
 
@@ -37,15 +37,15 @@ ActivationFunction* ActivationFunctionFactory::getNewActivationFunction(Activati
 		case ActivationFunctionType::AbsoluteReLU:
 			activationFunction = new AbsoluteReLUFunction();
 			break;
-		/*case ActivationFunctionType::CReLU:
-			activationFunction = new CReLUFunction();*/
+		case ActivationFunctionType::CReLU:
+			activationFunction = new CReLUFunction();
 			break;
 		case ActivationFunctionType::ELU:
 			activationFunction = new ELUFunction();
 			break;
-		case ActivationFunctionType::SELU:
+		/*case ActivationFunctionType::SELU:
 			activationFunction = new SELUFunction();
-			break;
+			break;*/
 		case ActivationFunctionType::GELU:
 			activationFunction = new GELUFunction();
 			break;
@@ -53,8 +53,8 @@ ActivationFunction* ActivationFunctionFactory::getNewActivationFunction(Activati
 			activationFunction = new LeakyReLUFunction();
 			break;
 		/*case ActivationFunctionType::PReLU:
-			activationFunction = new PReLUFunction();*/
-			break;
+			activationFunction = new PReLUFunction();
+			break;*/
 		case ActivationFunctionType::ReLU6:
 			activationFunction = new ReLU6Function();
 			break;
@@ -79,9 +79,9 @@ ActivationFunction* ActivationFunctionFactory::getNewActivationFunction(Activati
 		case ActivationFunctionType::HardSigmoid:
 			activationFunction = new HardSigmoidFunction();
 			break;
-		case ActivationFunctionType::Softsign:
+		/*case ActivationFunctionType::Softsign:
 			activationFunction = new SoftsignFunction();
-			break;
+			break;*/
 		/*case ActivationFunctionType::Swish:
 			activationFunction = new SwishFunction();
 			break;*/

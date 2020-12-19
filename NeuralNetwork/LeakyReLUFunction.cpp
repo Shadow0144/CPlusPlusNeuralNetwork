@@ -22,10 +22,10 @@ xt::xarray<double> LeakyReLUFunction::feedForward(const xt::xarray<double>& inpu
 	return leakyReLU(inputs);
 }
 
-xt::xarray<double> LeakyReLUFunction::activationDerivative()
+xt::xarray<double> LeakyReLUFunction::getGradient(const xt::xarray<double>& sigmas)
 {
 	auto mask = (lastOutput > 0.0);
-	return (mask + (a * (xt::ones<double>(mask.shape()) - mask)));
+	return (sigmas * (mask + (a * (xt::ones<double>(mask.shape()) - mask))));
 }
 
 double LeakyReLUFunction::getA() 

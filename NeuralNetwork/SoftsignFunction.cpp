@@ -30,7 +30,7 @@ xt::xarray<double> SoftsignFunction::feedForward(const xt::xarray<double>& input
 	return softsign(inputs);
 }
 
-xt::xarray<double> SoftsignFunction::activationDerivative()
+xt::xarray<double> SoftsignFunction::getGradient(const xt::xarray<double>& sigmas)
 {
 	// TODO!!!
 	//auto z = dotProduct(lastInput);

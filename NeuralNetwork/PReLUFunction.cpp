@@ -39,7 +39,7 @@ double PReLUFunction::applyBackPropagate() // Returns the sum of the change in t
 	return 0;// ActivationFunction::applyBackPropagate();
 }
 
-xt::xarray<double> PReLUFunction::activationDerivative()
+xt::xarray<double> PReLUFunction::getGradient(const xt::xarray<double>& sigmas)
 {
 	auto mask = (lastOutput > 0.0);
 	return (mask + (a * (xt::ones<double>(mask.shape()) - mask)));

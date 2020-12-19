@@ -13,9 +13,9 @@ xt::xarray<double> QuadraticFunction::feedForward(const xt::xarray<double>& inpu
 	return pow(inputs, 2.0);
 }
 
-xt::xarray<double> QuadraticFunction::activationDerivative()
+xt::xarray<double> QuadraticFunction::getGradient(const xt::xarray<double>& sigmas)
 {
-	return (2.0 * lastInput);
+	return (sigmas * (2.0 * lastInput));
 }
 
 void QuadraticFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights)

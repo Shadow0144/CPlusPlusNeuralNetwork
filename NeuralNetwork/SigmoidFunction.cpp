@@ -32,9 +32,9 @@ xt::xarray<double> SigmoidFunction::feedForward(const xt::xarray<double>& inputs
 	return sigmoid(inputs);
 }
 
-xt::xarray<double> SigmoidFunction::activationDerivative()
+xt::xarray<double> SigmoidFunction::getGradient(const xt::xarray<double>& sigmas)
 {
-	return lastOutput * (1.0 - lastOutput);
+	return (sigmas * (lastOutput * (1.0 - lastOutput)));
 }
 
 void SigmoidFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights)

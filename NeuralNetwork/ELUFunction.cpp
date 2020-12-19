@@ -33,9 +33,9 @@ xt::xarray<double> ELUFunction::feedForward(const xt::xarray<double>& inputs)
 	return ELU(inputs);
 }
 
-xt::xarray<double> ELUFunction::activationDerivative()
+xt::xarray<double> ELUFunction::getGradient(const xt::xarray<double>& sigmas)
 {
-	return xt::maximum(lastOutput + alpha, 1.0);
+	return (sigmas * xt::maximum(lastOutput + alpha, 1.0));
 }
 
 double ELUFunction::getAlpha()

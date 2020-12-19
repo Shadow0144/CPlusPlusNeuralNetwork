@@ -23,6 +23,11 @@ double ActivationFunction::activate(double z)
 	return z;
 }
 
+std::vector<size_t> ActivationFunction::getOutputShape(std::vector<size_t> outputShape)
+{
+	return outputShape;
+}
+
 MatrixXd ActivationFunction::approximateBezier(const MatrixXd& points)
 {
 	//int pCount = points.rows();

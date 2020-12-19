@@ -22,9 +22,9 @@ xt::xarray<double> ReLUnFunction::feedForward(const xt::xarray<double>& inputs)
 	return reLUn(inputs);
 }
 
-xt::xarray<double> ReLUnFunction::activationDerivative()
+xt::xarray<double> ReLUnFunction::getGradient(const xt::xarray<double>& sigmas)
 {
-	return ((lastOutput > 0.0) < n);
+	return (sigmas * ((lastOutput > 0.0) < n));
 }
 
 double ReLUnFunction::getN()

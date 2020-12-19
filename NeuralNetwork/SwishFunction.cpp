@@ -40,7 +40,7 @@ xt::xarray<double> SwishFunction::feedForward(const xt::xarray<double>& inputs)
 	return swish(inputs);
 }
 
-xt::xarray<double> SwishFunction::activationDerivative()
+xt::xarray<double> SwishFunction::getGradient(const xt::xarray<double>& sigmas)
 {
 	// TODO!!!
 	//auto sig = sigmoid(dotProduct(lastInput));

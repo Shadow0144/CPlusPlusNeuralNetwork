@@ -18,9 +18,9 @@ xt::xarray<double> LinearFunction::feedForward(const xt::xarray<double>& inputs)
 	return inputs;
 }
 
-xt::xarray<double> LinearFunction::activationDerivative()
+xt::xarray<double> LinearFunction::getGradient(const xt::xarray<double>& sigmas)
 {
-	return 1;
+	return sigmas;
 }
 
 void LinearFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights)

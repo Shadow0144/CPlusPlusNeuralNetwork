@@ -9,10 +9,11 @@ using namespace std;
 
 CReLUFunction::CReLUFunction()
 {
-
+	
 }
 
 // Returns a concatenated result of a ReLU that selects only positive predicted with a ReLU that selects only negative predicted
+// Note: This increases the dimension by one
 xt::xarray<double> CReLUFunction::CReLU(const xt::xarray<double>& z)
 {
 	return xt::stack(xt::xtuple(xt::maximum(0.0, z), xt::maximum(0.0, -z)), z.dimension());
@@ -23,21 +24,15 @@ xt::xarray<double> CReLUFunction::feedForward(const xt::xarray<double>& inputs)
 	return CReLU(inputs);
 }
 
-xt::xarray<double> CReLUFunction::backPropagate(const xt::xarray<double>& sigmas)
+xt::xarray<double> CReLUFunction::getGradient(const xt::xarray<double>& sigmas)
 {
-	auto output = xt::sum(sigmas, -1); // TODO
-	return output;
+	xt::xarray<double> newSigmas = sigmas;
+	xt::strided_view(newSigmas, { xt::ellipsis(), 1 }) *= -1;
+	return xt::sum(newSigmas, -1);
 }
 
-xt::xarray<double> CReLUFunction::activationDerivative()
+std::vector<size_t> CReLUFunction::getOutputShape(std::vector<size_t> outputShape)
 {
-	return xt::ones<double>({ 1 });
-}
-
-std::vector<size_t> CReLUFunction::getOutputShape()
-{
-	std::vector<size_t> outputShape;
-	outputShape.push_back(0); // TODO
 	outputShape.push_back(2);
 	return outputShape;
 }
@@ -47,7 +42,7 @@ void CReLUFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int nu
 	ActivationFunction::draw(canvas, origin, scale, numUnits, weights);
 
 	const ImColor BLACK(0.0f, 0.0f, 0.0f, 1.0f);
-	const ImColor LIGHT_GRAY(0.6f, 0.6f, 0.6f, 1.0f);
+	const ImColor DARK_RED(0.3f, 0.0f, 0.0f, 1.0f);
 
 	xt::xarray<double> drawWeights = weights.getParameters();
 
@@ -73,11 +68,11 @@ void CReLUFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int nu
 		if (slope < 0.0)
 		{
 			canvas->AddLine(l_start, l_mid, BLACK);
-			canvas->AddLine(l_mid, l_end, LIGHT_GRAY);
+			canvas->AddLine(l_mid, l_end, DARK_RED);
 		}
 		else
 		{
-			canvas->AddLine(l_start, l_mid, LIGHT_GRAY);
+			canvas->AddLine(l_start, l_mid, DARK_RED);
 			canvas->AddLine(l_mid, l_end, BLACK);
 		}
 	}

@@ -74,7 +74,7 @@ xt::xarray<double> MaxoutFunction::backPropagate(const xt::xarray<double>& sigma
 	return sigmas;
 }
 
-xt::xarray<double> MaxoutFunction::activationDerivative()
+xt::xarray<double> MaxoutFunction::getGradient(const xt::xarray<double>& sigmas)
 {
 	/*int dims = lastOutput.dimension()-1; // TODO ?
 	int functionDim = dims - 2;

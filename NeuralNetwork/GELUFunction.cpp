@@ -37,12 +37,12 @@ xt::xarray<double> GELUFunction::feedForward(const xt::xarray<double>& inputs)
 	return GELU(inputs);
 }
 
-xt::xarray<double> GELUFunction::activationDerivative()
+xt::xarray<double> GELUFunction::getGradient(const xt::xarray<double>& sigmas)
 {
 	auto z = lastOutput;
 	auto z3 = pow(z, 3);
 	auto sech2 = 1.0 / cosh(0.0356774 * z3 + 0.797885 * z);
-	return ((0.5 * tanh((0.0356774 * z3) + (0.797885 * z))) + (((0.0535161 * z3) + (0.398942 * z)) * sech2) + 0.5);
+	return (sigmas * ((0.5 * tanh((0.0356774 * z3) + (0.797885 * z))) + (((0.0535161 * z3) + (0.398942 * z)) * sech2) + 0.5));
 }
 
 void GELUFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights)

@@ -22,9 +22,9 @@ xt::xarray<double> TanhFunction::feedForward(const xt::xarray<double>& inputs)
 	return xt::tanh(inputs);
 }
 
-xt::xarray<double> TanhFunction::activationDerivative()
+xt::xarray<double> TanhFunction::getGradient(const xt::xarray<double>& sigmas)
 {
-	return (1.0 - xt::pow(lastOutput, 2.0));
+	return (sigmas * (1.0 - xt::pow(lastOutput, 2.0)));
 }
 
 void TanhFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights)
