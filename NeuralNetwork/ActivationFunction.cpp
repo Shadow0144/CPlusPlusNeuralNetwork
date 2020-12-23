@@ -22,6 +22,10 @@ double ActivationFunction::activate(double z)
 {
 	return z;
 }
+ void ActivationFunction::applyBackPropagate()
+{
+	// Do nothing
+}
 
 std::vector<size_t> ActivationFunction::getOutputShape(std::vector<size_t> outputShape)
 {

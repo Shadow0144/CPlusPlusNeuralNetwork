@@ -2,7 +2,7 @@
 
 #include "ErrorFunction.h"
 
-class CrossEntropyFunction : public ErrorFunction
+class CrossEntropyErrorFunction : public ErrorFunction
 {
 public:
 	double getError(const xt::xarray<double>& predicted, const xt::xarray<double>& actual);

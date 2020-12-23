@@ -5,6 +5,7 @@
 #include <iostream>
 #include <math.h>
 #include <cmath>
+#include <map>
 #include <windows.h> 
 #include <xtensor/xarray.hpp>
 #include <xtensor/xcsv.hpp>
@@ -15,9 +16,10 @@
 
 #include "NeuralNetwork.h"
 #include "MeanSquareErrorFunction.h"
-#include "CrossEntropyFunction.h"
+#include "CrossEntropyErrorFunction.h"
 #include "NetworkVisualizer.h"
 #include "IrisDataset.h"
+#include "CatDogDataset.h"
 
 #include "Test.h"
 
@@ -50,7 +52,7 @@ using namespace std;
 
 const int PRINT = 100;
 const double MIN_ERROR = 0.001f;
-const int MAX_ITERATIONS = 100000;
+const int MAX_EPOCHS = 100000;
 const double CONVERGENCE_W = 0.001;
 const double CONVERGENCE_E = 0.00000001;
 
@@ -196,7 +198,7 @@ void test_signal(int layers)
             layerShapes = new size_t[layers] { 1, 1 };
             functions = new ActivationFunctionType[layers]
             { ActivationFunctionType::None,
-              ActivationFunctionType::None };
+              ActivationFunctionType::Softsign };
             break;
         case 1:
         default:
@@ -209,7 +211,7 @@ void test_signal(int layers)
 
     ErrorFunction* errorFunction = new MeanSquareErrorFunction();
     NeuralNetwork network = NeuralNetwork(true);
-    network.setTrainingParameters(errorFunction, MAX_ITERATIONS, -MIN_ERROR, -CONVERGENCE_E, -CONVERGENCE_W); // TODO: Remove negatives
+    network.setErrorFunction(ErrorFunctionType::MeanSquaredError);
     network.setBatchSize(20);
     network.displayRegressionEstimation();
 
@@ -235,21 +237,21 @@ void test_signal(int layers)
     int i = 0;
     xt::xarray<int>::shape_type shape_x = { SAMPLES, 1 };
     xt::xarray<double> training_x = xt::xarray<double>(shape_x);
-    //xt::xarray<int>::shape_type shape_y = { SAMPLES, 1 };
-    xt::xarray<int>::shape_type shape_y = { SAMPLES, 1, 2 };
+    xt::xarray<int>::shape_type shape_y = { SAMPLES, 1 };
+    //xt::xarray<int>::shape_type shape_y = { SAMPLES, 1, 2 };
     xt::xarray<double> training_y = xt::xarray<double>(shape_y);
     for (double t = -twoPi; t < twoPi; t += inc)
     {
         training_x(i, 0) = t * RESCALE;
         //training_y(i, 0) = t * RESCALE;
         //training_y(i, 0) = (0.3 * t + 0.5) * RESCALE;
-        //training_y(i, 0) = tanh(3.0 * sin(3.0 * t + 0.5)) * RESCALE;
+        training_y(i, 0) = tanh(3.0 * sin(3.0 * t + 0.5)) * RESCALE;
         //training_y(i, 0) = (tanh(3.0 * sin(3.0 * t + 0.5)) + (0.5 * t)) * RESCALE;
         //training_y(i, 0) = (1.0 / (1.0 + exp(-t))) * RESCALE;
         //training_y(i, 0, 0) = cosh(3.0 * sin(3.0 * t + 0.5)) * RESCALE;
         //training_y(i, 0, 1) = cosh(3.0 * sin(3.0 * t + 0.5)) * RESCALE;
-        training_y(i, 0, 0) = -(3.0 * t + 0.5) * RESCALE;
-        training_y(i, 0, 1) = +(3.0 * t + 0.5) * RESCALE;
+        //training_y(i, 0, 0) = -(3.0 * t + 0.5) * RESCALE;
+        //training_y(i, 0, 1) = +(3.0 * t + 0.5) * RESCALE;
         i++;
     }
 
@@ -273,7 +275,7 @@ void test_signal(int layers)
     //network.feedForward(training_x);
     //network.backPropagate(training_x, training_y);
 
-    network.train(training_x, training_y);
+    network.train(training_x, training_y, MAX_EPOCHS);
 
     xt::xarray<double> predicted = network.feedForward(training_x);
     std::cout << endl;
@@ -330,9 +332,8 @@ void test_iris(int layers)
             break;
     }
 
-    ErrorFunction* errorFunction = new CrossEntropyFunction();
     NeuralNetwork network = NeuralNetwork();
-    network.setTrainingParameters(errorFunction, 1000, -MIN_ERROR, -CONVERGENCE_E, -CONVERGENCE_W); // TODO: Remove negatives
+    network.setErrorFunction(ErrorFunctionType::CrossEntropy);
     ImColor* classColors = new ImColor[3]
         { ImColor(1.0f, 0.0f, 0.0f, 1.0f),
           ImColor(0.0f, 1.0f, 0.0f, 1.0f),
@@ -360,7 +361,7 @@ void test_iris(int layers)
 
     //print_iris_results(irisPredictions, irisLabels);
 
-    network.train(irisFeatures, irisLabels);
+    network.train(irisFeatures, irisLabels, 1000);
 
     //irisPredictions = network.feedForward(irisFeatures);
     //print_iris_results(irisPredictions, irisLabels);
@@ -412,8 +413,7 @@ void test_binary()
     network.addDenseLayer(ActivationFunctionType::ReLU, CLASSES); // 32 -> 2
     network.addSoftmaxLayer(-1);
 
-    ErrorFunction* errorFunction = new CrossEntropyFunction();
-    network.setTrainingParameters(errorFunction, MAX_ITERATIONS, -MIN_ERROR, -CONVERGENCE_E, -CONVERGENCE_W);
+    network.setErrorFunction(ErrorFunctionType::CrossEntropy);
     network.setBatchSize(10);
 
     const int COLS = 5;
@@ -423,7 +423,7 @@ void test_binary()
       ImColor(1.0f, 1.0f, 1.0f, 1.0f) };
     network.displayClassificationEstimation(ROWS, COLS, classColors);
 
-    network.train(features, labels);
+    network.train(features, labels, MAX_EPOCHS);
 }
 
 void test_mnist()
@@ -467,14 +467,11 @@ void test_mnist()
     network.addConvolution2DLayer(NUM_KERNELS_2, { 5, 5 }, NUM_KERNELS_1); // 12x12x16 -> 8x8x16                                                         
     network.addMaxPooling2DLayer({ 2, 2 }); // 8x8x16 -> 4x4x16
     network.addFlattenLayer(4 * 4 * NUM_KERNELS_2); // 4x4x16 -> 256
-    network.addDenseLayer(ActivationFunctionType::CReLU, 32);
-    network.addFlattenLayer(32 * 2); // 32x2 -> 64
-    network.addDenseLayer(ActivationFunctionType::Sigmoid, 32); // (64) [256] -> 32
-    network.addDenseLayer(ActivationFunctionType::Sigmoid, CLASSES); // 32 -> 10
+    network.addDenseLayer(ActivationFunctionType::Sigmoid, 32); // 256 -> 32
+    network.addDenseLayer(ActivationFunctionType::Softplus, CLASSES); // 32 -> 10
     network.addSoftmaxLayer(-1);
 
-    ErrorFunction* errorFunction = new CrossEntropyFunction();
-    network.setTrainingParameters(errorFunction, MAX_ITERATIONS, -MIN_ERROR, -CONVERGENCE_E, -CONVERGENCE_W);
+    network.setErrorFunction(ErrorFunctionType::CrossEntropy);
     network.setBatchSize(20);
     network.setOutputRate(1);
 
@@ -493,7 +490,14 @@ void test_mnist()
       ImColor(0.0f,0.0f, 1.0f, 1.0f) };
     network.displayClassificationEstimation(ROWS, COLS, classColors);
 
-    network.train(features, labels);
+    network.train(features, labels, MAX_EPOCHS);
+}
+
+void test_catdog()
+{
+    xt::xarray<double> features;
+    xt::xarray<double> labels;
+    loadCatDogDataset(features, labels);
 }
 
 enum class network
@@ -501,7 +505,8 @@ enum class network
     signal = 0,
     iris = 1,
     binary = 2,
-    mnist = 3
+    mnist = 3,
+    catdog = 4
 };
 
 void test_network(network type, int layers = 0)
@@ -519,6 +524,9 @@ void test_network(network type, int layers = 0)
             break;
         case network::mnist:
             test_mnist();
+            break;
+        case network::catdog:
+            test_catdog();
             break;
         default:
             // Do nothing
@@ -766,7 +774,7 @@ void test_layers()
 
 int main(int argc, char** argv)
 {
-    test_network(network::mnist, 0);
+    test_network(network::signal, 2);
 
     //test_layers();
 

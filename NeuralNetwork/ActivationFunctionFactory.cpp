@@ -10,7 +10,7 @@
 //#include "SELUFunction.h"
 #include "GELUFunction.h"
 #include "LeakyReLUFunction.h"
-//#include "PReLUFunction.h"
+#include "PReLUFunction.h"
 #include "ReLU6Function.h"
 #include "ReLUnFunction.h"
 #include "SoftplusFunction.h"
@@ -19,11 +19,11 @@
 #include "SigmoidFunction.h"
 #include "TanhFunction.h"
 #include "HardSigmoidFunction.h"
-//#include "SoftsignFunction.h"
+#include "SoftsignFunction.h"
 //#include "SwishFunction.h"
 //#include "MaxoutFunction.h"
 
-ActivationFunction* ActivationFunctionFactory::getNewActivationFunction(ActivationFunctionType functionType)
+ActivationFunction* ActivationFunctionFactory::getNewActivationFunction(ActivationFunctionType functionType, std::map<string, double> additionalParameters)
 {
 	ActivationFunction* activationFunction;
 	switch (functionType)
@@ -52,9 +52,9 @@ ActivationFunction* ActivationFunctionFactory::getNewActivationFunction(Activati
 		case ActivationFunctionType::LeakyReLU:
 			activationFunction = new LeakyReLUFunction();
 			break;
-		/*case ActivationFunctionType::PReLU:
-			activationFunction = new PReLUFunction();
-			break;*/
+		case ActivationFunctionType::PReLU:
+			activationFunction = new PReLUFunction(((int)(additionalParameters["numUnits"])));
+			break;
 		case ActivationFunctionType::ReLU6:
 			activationFunction = new ReLU6Function();
 			break;
@@ -79,9 +79,9 @@ ActivationFunction* ActivationFunctionFactory::getNewActivationFunction(Activati
 		case ActivationFunctionType::HardSigmoid:
 			activationFunction = new HardSigmoidFunction();
 			break;
-		/*case ActivationFunctionType::Softsign:
+		case ActivationFunctionType::Softsign:
 			activationFunction = new SoftsignFunction();
-			break;*/
+			break;
 		/*case ActivationFunctionType::Swish:
 			activationFunction = new SwishFunction();
 			break;*/

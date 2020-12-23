@@ -10,7 +10,7 @@
 
 #include "Test.h"
 
-DenseNeuralLayer::DenseNeuralLayer(ActivationFunctionType functionType, NeuralLayer* parent, size_t numUnits, bool addBias)
+DenseNeuralLayer::DenseNeuralLayer(ActivationFunctionType functionType, NeuralLayer* parent, size_t numUnits, std::map<string, double> additionalParameters, bool addBias)
 {
 	this->numInputs = 0;
 	this->parent = parent;
@@ -24,7 +24,12 @@ DenseNeuralLayer::DenseNeuralLayer(ActivationFunctionType functionType, NeuralLa
 	this->numUnits = numUnits;
 	this->addBias = addBias;
 	this->functionType = functionType;
-	this->activationFunction = ActivationFunctionFactory::getNewActivationFunction(functionType);
+	if (functionType == ActivationFunctionType::PReLU) // PReLU needs to know how many units
+	{
+		additionalParameters["numUnits"] = numUnits;
+	}
+	else { }
+	this->activationFunction = ActivationFunctionFactory::getNewActivationFunction(functionType, additionalParameters);
 
 	if (addBias)
 	{
@@ -102,7 +107,8 @@ xt::xarray<double> DenseNeuralLayer::backPropagate(const xt::xarray<double>& sig
 double DenseNeuralLayer::applyBackPropagate()
 {
 	double deltaWeight = xt::sum(xt::abs(weights.getDeltaParameters()))();
-	weights.applyDeltaParameters();
+	weights.applyDeltaParameters(); // Update the weights
+	activationFunction->applyBackPropagate(); // Update any parameters the activation function needs to change
 	return deltaWeight; // Return the sum of how much the parameters have changed
 }
 

@@ -8,6 +8,7 @@
 #pragma warning(push, 0)
 #include "imgui.h"
 #include <vector>
+#include <map>
 #pragma warning(pop)
 
 using namespace std;
@@ -15,7 +16,8 @@ using namespace std;
 class DenseNeuralLayer : public NeuralLayer
 {
 public:
-	DenseNeuralLayer(ActivationFunctionType functionType, NeuralLayer* parent, size_t numUnits, bool addBias = true);
+	DenseNeuralLayer(ActivationFunctionType functionType, NeuralLayer* parent, size_t numUnits, 
+		std::map<string, double> additionalParameters = std::map<string, double>(), bool addBias = true);
 	~DenseNeuralLayer();
 
 	xt::xarray<double> feedForward(const xt::xarray<double>& input);

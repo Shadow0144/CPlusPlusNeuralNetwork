@@ -53,7 +53,7 @@ void CReLUFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int nu
 		position.x = NeuralLayer::getNeuronX(origin.x, LAYER_WIDTH, i, scale);
 
 		double slope = drawWeights(0, i);
-		double inv_slope = 1.0 / abs(slope);
+		double inv_slope = (slope == 0) ? (0.0) : (1.0 / abs(slope));
 		double x1, x2, y1, y2;
 
 		x1 = -min(1.0, inv_slope);

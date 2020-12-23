@@ -43,12 +43,6 @@
     <Filter Include="Source Files\NeuralLayer">
       <UniqueIdentifier>{c7798580-57a4-4aef-855c-4af2e7c941fd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\StoppingCondition">
-      <UniqueIdentifier>{a155607f-cdbc-48ea-ae74-bd56b4955ce6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\StoppingCondition">
-      <UniqueIdentifier>{d672be7b-4cda-49fc-93e6-d57adb7602cc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\NeuralLayer\ConvolutionLayer">
       <UniqueIdentifier>{a8a089b7-a9f8-4293-ba93-4b9cbc15b67a}</UniqueIdentifier>
     </Filter>
@@ -93,9 +87,6 @@
     <ClCompile Include="imgui_widgets.cpp">
       <Filter>Source Files\imgui</Filter>
     </ClCompile>
-    <ClCompile Include="CrossEntropyFunction.cpp">
-      <Filter>Source Files\ErrorFunction</Filter>
-    </ClCompile>
     <ClCompile Include="NetworkVisualizer.cpp">
       <Filter>Source Files\Visualizer</Filter>
     </ClCompile>
@@ -131,9 +122,6 @@
     </ClCompile>
     <ClCompile Include="ClassCell.cpp">
       <Filter>Source Files\Visualizer</Filter>
-    </ClCompile>
-    <ClCompile Include="StoppingCondition.cpp">
-      <Filter>Source Files\StoppingCondition</Filter>
     </ClCompile>
     <ClCompile Include="MeanSquareErrorFunction.cpp">
       <Filter>Source Files\ErrorFunction</Filter>
@@ -231,6 +219,9 @@
     <ClCompile Include="ActivationFunctionFactory.cpp">
       <Filter>Source Files\ActivationFunction</Filter>
     </ClCompile>
+    <ClCompile Include="CrossEntropyErrorFunction.cpp">
+      <Filter>Source Files\ErrorFunction</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NeuralNetwork.h">
@@ -272,9 +263,6 @@
     <ClInclude Include="imstb_truetype.h">
       <Filter>Header Files\imgui</Filter>
     </ClInclude>
-    <ClInclude Include="CrossEntropyFunction.h">
-      <Filter>Header Files\ErrorFunction</Filter>
-    </ClInclude>
     <ClInclude Include="NetworkVisualizer.h">
       <Filter>Header Files\Visualizer</Filter>
     </ClInclude>
@@ -310,9 +298,6 @@
     </ClInclude>
     <ClInclude Include="ClassCell.h">
       <Filter>Header Files\Visualizer</Filter>
-    </ClInclude>
-    <ClInclude Include="StoppingCondition.h">
-      <Filter>Header Files\StoppingCondition</Filter>
     </ClInclude>
     <ClInclude Include="MeanSquareErrorFunction.h">
       <Filter>Header Files\ErrorFunction</Filter>
@@ -409,6 +394,9 @@
     </ClInclude>
     <ClInclude Include="ActivationFunction.h">
       <Filter>Header Files\ActivationFunction</Filter>
+    </ClInclude>
+    <ClInclude Include="CrossEntropyErrorFunction.h">
+      <Filter>Header Files\ErrorFunction</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -162,7 +162,7 @@
     <ClCompile Include="Convolution2DNeuralLayer.cpp" />
     <ClCompile Include="CReLUFunction.cpp" />
     <ClCompile Include="Convolution3DNeuralLayer.cpp" />
-    <ClCompile Include="CrossEntropyFunction.cpp" />
+    <ClCompile Include="CrossEntropyErrorFunction.cpp" />
     <ClCompile Include="ELUFunction.cpp" />
     <ClCompile Include="ExponentialFunction.cpp" />
     <ClCompile Include="FlattenNeuralLayer.cpp" />
@@ -203,7 +203,6 @@
     <ClCompile Include="AbsoluteReLUFunction.cpp" />
     <ClCompile Include="SoftsignFunction.cpp" />
     <ClCompile Include="SqueezeNeuralLayer.cpp" />
-    <ClCompile Include="StoppingCondition.cpp" />
     <ClCompile Include="Test.cpp" />
     <ClCompile Include="SwishFunction.cpp" />
     <ClCompile Include="TanhFunction.cpp" />
@@ -219,7 +218,7 @@
     <ClInclude Include="Convolution2DNeuralLayer.h" />
     <ClInclude Include="CReLUFunction.h" />
     <ClInclude Include="Convolution3DNeuralLayer.h" />
-    <ClInclude Include="CrossEntropyFunction.h" />
+    <ClInclude Include="CrossEntropyErrorFunction.h" />
     <ClInclude Include="ErrorFunction.h" />
     <ClInclude Include="ExponentialFunction.h" />
     <ClInclude Include="ELUFunction.h" />
@@ -264,7 +263,6 @@
     <ClInclude Include="SoftmaxNeuralLayer.h" />
     <ClInclude Include="SoftsignFunction.h" />
     <ClInclude Include="SqueezeNeuralLayer.h" />
-    <ClInclude Include="StoppingCondition.h" />
     <ClInclude Include="SwishFunction.h" />
     <ClInclude Include="TanhFunction.h" />
     <ClInclude Include="Test.h" />

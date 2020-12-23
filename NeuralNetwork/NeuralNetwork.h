@@ -5,6 +5,7 @@
 
 #pragma warning(push, 0)
 #include <vector>
+#include <map>
 #pragma warning(pop)
 
 enum class ActivationFunctionType
@@ -31,6 +32,20 @@ enum class ActivationFunctionType
 	Maxout
 };
 
+enum class ErrorFunctionType
+{
+	CrossEntropy,
+	MeanSquaredError
+};
+
+enum class StoppingCondition
+{
+	Max_Epochs = 0, // Maximum number of epochs
+	Min_Error = 1, // Minimum error threshold
+	Min_Delta_Error = 2, // Minimum change in error between epochs
+	Min_Delta_Params = 3 // Minimum change in parameters between epochs
+};
+
 class NetworkVisualizer;
 
 using namespace std;
@@ -42,7 +57,8 @@ public:
 	~NeuralNetwork();
 
 	void addInputLayer(const std::vector<size_t>& inputShape);
-	void addDenseLayer(ActivationFunctionType layerFunction, size_t numUnits);
+	void addDenseLayer(ActivationFunctionType layerFunction, size_t numUnits, 
+		std::map<string, double> additionalParameters = std::map<string, double>(), bool addBias = true);
 	void addSoftmaxLayer(int axis = -1);
 	void addConvolution1DLayer(size_t numKernels, const std::vector<size_t>& convolutionShape, size_t inputChannels, size_t stride = 1);
 	void addConvolution2DLayer(size_t numKernels, const std::vector<size_t>& convolutionShape, size_t inputChannels, size_t stride = 1);
@@ -58,12 +74,15 @@ public:
 	xt::xarray<double> feedForward(const xt::xarray<double>& inputs); // Does not update internal values
 	xt::xarray<double> feedForwardTrain(const xt::xarray<double>& inputs); // Updates internal values such as last input and last output
 	bool backPropagate(const xt::xarray<double>& inputs, const xt::xarray<double>& targets); // Single step
-	void train(const xt::xarray<double>& inputs, const xt::xarray<double>& targets); // Train until a condition is met
+	void train(const xt::xarray<double>& inputs, const xt::xarray<double>& targets, int maxEpochs = -1); // Train until a condition is met
 
-	void setTrainingParameters(ErrorFunction* errorFunction, int maxIterations,
-		double minError, double errorConvergenceThreshold, double weightConvergenceThreshold);
+	void setErrorFunction(ErrorFunctionType errorFunctionType);
+	void enableStoppingCondition(StoppingCondition condition, double threshold);
+	void disableStoppingCondition(StoppingCondition);
+	bool getStoppingConditionEnabled(StoppingCondition condition);
+	double getStoppingConditionThreshold(StoppingCondition condition);
 
-	void setClassificationVisualizationParameters(int rows, int cols, ImColor* classColors);
+	//void setClassificationVisualizationParameters(int rows, int cols, ImColor* classColors);
 
 	double getError(const xt::xarray<double>& predicted, const xt::xarray<double>& actual);
 
@@ -96,6 +115,7 @@ private:
 	int outputRate;
 	int batchSize;
 	NetworkVisualizer* visualizer;
+	bool* stoppingConditionFlags;
 
 	enum class LearningState // For printing output
 	{

@@ -17,12 +17,12 @@ double SoftsignFunction::activate(double z)
 
 double SoftsignFunction::softsign(double z)
 {
-	return (z / (abs(z) + 1.0));
+	return (z / (1.0 + abs(z)));
 }
 
 xt::xarray<double> SoftsignFunction::softsign(const xt::xarray<double>& z)
 {
-	return (z / (abs(z) + 1.0));
+	return (z / (1.0 + abs(z)));
 }
 
 xt::xarray<double> SoftsignFunction::feedForward(const xt::xarray<double>& inputs)
@@ -32,10 +32,7 @@ xt::xarray<double> SoftsignFunction::feedForward(const xt::xarray<double>& input
 
 xt::xarray<double> SoftsignFunction::getGradient(const xt::xarray<double>& sigmas)
 {
-	// TODO!!!
-	//auto z = dotProduct(lastInput);
-	//return (1.0 / pow((1.0 + abs(z)), 2.0));
-	return lastInput;
+	return (sigmas * (1.0 / pow((1.0 + abs(lastInput)), 2.0)));
 }
 
 void SoftsignFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights)

@@ -154,6 +154,7 @@
     <ClCompile Include="TestApplication.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CatDogDataset.h" />
     <ClInclude Include="IrisDataset.h" />
     <ClInclude Include="MNISTDataset.h" />
   </ItemGroup>

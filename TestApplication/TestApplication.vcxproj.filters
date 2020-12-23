@@ -58,5 +58,8 @@
     <ClInclude Include="MNISTDataset.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CatDogDataset.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
