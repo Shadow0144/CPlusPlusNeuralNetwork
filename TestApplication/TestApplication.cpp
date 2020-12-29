@@ -162,22 +162,22 @@ void test_signal(int layers)
             layers = 7;
             layerShapes = new size_t[layers] { 1, 3, 3, 3, 3, 3, 1 };
             functions = new ActivationFunctionType[layers]
-            { ActivationFunctionType::None,
+            { ActivationFunctionType::Identity,
               ActivationFunctionType::LeakyReLU,
               ActivationFunctionType::Softplus,
               ActivationFunctionType::ReLU,
               ActivationFunctionType::Sigmoid,
               ActivationFunctionType::Tanh,
-              ActivationFunctionType::None };
+              ActivationFunctionType::Identity };
             break;
         case 5:
             layerShapes = new size_t[layers] { 5, 3, 3, 3, 1 };
             functions = new ActivationFunctionType[layers]
-            { ActivationFunctionType::None,
+            { ActivationFunctionType::Identity,
               ActivationFunctionType::ReLU,
               ActivationFunctionType::Sigmoid,
               ActivationFunctionType::Tanh,
-              ActivationFunctionType::None };
+              ActivationFunctionType::Identity };
             break;
         case 4:
             /*layerShapes = new size_t[layers] { 1, 3, 3, 1 };
@@ -185,19 +185,19 @@ void test_signal(int layers)
             { ActivationFunctionType::Linear,
               ActivationFunctionType::PReLU,
               ActivationFunctionType::ReLU,
-              ActivationFunctionType::None };
+              ActivationFunctionType::Identity };
             break;*/
         case 3:
-            /*layerShapes = new size_t[layers] { 1, 3, 1 };
+            layerShapes = new size_t[layers] { 1, 8, 1 };
             functions = new ActivationFunctionType[layers]
-            { DenseActivationFunction::CReLU,
-              DenseActivationFunction::Maxout,
-              DenseActivationFunction::None };
-            break;*/
+            { ActivationFunctionType::Identity,
+              ActivationFunctionType::PReLU,
+              ActivationFunctionType::Identity };
+            break;
         case 2:
             layerShapes = new size_t[layers] { 1, 1 };
             functions = new ActivationFunctionType[layers]
-            { ActivationFunctionType::None,
+            { ActivationFunctionType::Identity,
               ActivationFunctionType::Softsign };
             break;
         case 1:
@@ -245,7 +245,7 @@ void test_signal(int layers)
         training_x(i, 0) = t * RESCALE;
         //training_y(i, 0) = t * RESCALE;
         //training_y(i, 0) = (0.3 * t + 0.5) * RESCALE;
-        training_y(i, 0) = tanh(3.0 * sin(3.0 * t + 0.5)) * RESCALE;
+        training_y(i, 0) = tanh(3.0 * sin(1.0 * t + 0.5)) * RESCALE;
         //training_y(i, 0) = (tanh(3.0 * sin(3.0 * t + 0.5)) + (0.5 * t)) * RESCALE;
         //training_y(i, 0) = (1.0 / (1.0 + exp(-t))) * RESCALE;
         //training_y(i, 0, 0) = cosh(3.0 * sin(3.0 * t + 0.5)) * RESCALE;
@@ -256,7 +256,7 @@ void test_signal(int layers)
     }
 
     // Shuffle
-    xt::xstrided_slice_vector svI({ 0, xt::ellipsis() });
+    /*xt::xstrided_slice_vector svI({ 0, xt::ellipsis() });
     xt::xstrided_slice_vector svJ({ 0, xt::ellipsis() });
     const size_t N = training_x.shape()[0];
     for (size_t i = N - 1; i > 0; i--)
@@ -270,7 +270,7 @@ void test_signal(int layers)
         auto y = xt::strided_view(training_y, svI);
         xt::strided_view(training_y, svI) = xt::strided_view(training_y, svJ);
         xt::strided_view(training_y, svJ) = y;
-    }
+    }*/
 
     //network.feedForward(training_x);
     //network.backPropagate(training_x, training_y);
@@ -300,26 +300,26 @@ void test_iris(int layers)
             layerShapes = new size_t[layers] { 6, 6, 6, 3 };
             functions = new ActivationFunctionType[layers]
                 {
-                   ActivationFunctionType::None,
+                   ActivationFunctionType::Identity,
                    ActivationFunctionType::LeakyReLU,
                    ActivationFunctionType::Sigmoid,
-                   ActivationFunctionType::None
+                   ActivationFunctionType::Identity
                 };
             break;
         case 3:
             layerShapes = new size_t[layers] { 6, 3, 3 };
             functions = new ActivationFunctionType[layers]
                 {
-                   ActivationFunctionType::None,
+                   ActivationFunctionType::Identity,
                    ActivationFunctionType::Sigmoid,
-                   ActivationFunctionType::None
+                   ActivationFunctionType::Identity
                 };
             break;
         case 2:
             layerShapes = new size_t[layers] { 3, 3 };
             functions = new ActivationFunctionType[layers]
                 {
-                   ActivationFunctionType::None,
+                   ActivationFunctionType::Identity,
                    ActivationFunctionType::Sigmoid
                 };
             break;
@@ -328,7 +328,7 @@ void test_iris(int layers)
             layers = 1;
             layerShapes = new size_t[layers]{ 3 };
             functions = new ActivationFunctionType[layers]
-            { ActivationFunctionType::None };
+            { ActivationFunctionType::Identity };
             break;
     }
 
@@ -774,7 +774,7 @@ void test_layers()
 
 int main(int argc, char** argv)
 {
-    test_network(network::signal, 2);
+    test_network(network::signal, 3);
 
     //test_layers();
 

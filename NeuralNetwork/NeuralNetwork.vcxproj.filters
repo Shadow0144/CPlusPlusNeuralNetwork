@@ -177,9 +177,6 @@
     <ClCompile Include="LeakyReLUFunction.cpp">
       <Filter>Source Files\ActivationFunction</Filter>
     </ClCompile>
-    <ClCompile Include="LinearFunction.cpp">
-      <Filter>Source Files\ActivationFunction</Filter>
-    </ClCompile>
     <ClCompile Include="MaxoutFunction.cpp">
       <Filter>Source Files\ActivationFunction</Filter>
     </ClCompile>
@@ -221,6 +218,9 @@
     </ClCompile>
     <ClCompile Include="CrossEntropyErrorFunction.cpp">
       <Filter>Source Files\ErrorFunction</Filter>
+    </ClCompile>
+    <ClCompile Include="IdentityFunction.cpp">
+      <Filter>Source Files\ActivationFunction</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -350,9 +350,6 @@
     <ClInclude Include="LeakyReLUFunction.h">
       <Filter>Header Files\ActivationFunction</Filter>
     </ClInclude>
-    <ClInclude Include="LinearFunction.h">
-      <Filter>Header Files\ActivationFunction</Filter>
-    </ClInclude>
     <ClInclude Include="MaxoutFunction.h">
       <Filter>Header Files\ActivationFunction</Filter>
     </ClInclude>
@@ -397,6 +394,9 @@
     </ClInclude>
     <ClInclude Include="CrossEntropyErrorFunction.h">
       <Filter>Header Files\ErrorFunction</Filter>
+    </ClInclude>
+    <ClInclude Include="IdentityFunction.h">
+      <Filter>Header Files\ActivationFunction</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

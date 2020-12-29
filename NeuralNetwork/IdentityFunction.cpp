@@ -1,4 +1,4 @@
-#include "LinearFunction.h"
+#include "IdentityFunction.h"
 #include "NeuralLayer.h"
 
 #pragma warning(push, 0)
@@ -8,22 +8,22 @@
 
 using namespace std;
 
-LinearFunction::LinearFunction()
+IdentityFunction::IdentityFunction()
 {
 
 }
 
-xt::xarray<double> LinearFunction::feedForward(const xt::xarray<double>& inputs)
+xt::xarray<double> IdentityFunction::feedForward(const xt::xarray<double>& inputs)
 {
 	return inputs;
 }
 
-xt::xarray<double> LinearFunction::getGradient(const xt::xarray<double>& sigmas)
+xt::xarray<double> IdentityFunction::getGradient(const xt::xarray<double>& sigmas)
 {
 	return sigmas;
 }
 
-void LinearFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights)
+void IdentityFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights)
 {
 	ActivationFunction::draw(canvas, origin, scale, numUnits, weights);
 

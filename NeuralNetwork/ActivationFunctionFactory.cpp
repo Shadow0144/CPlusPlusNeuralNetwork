@@ -2,12 +2,12 @@
 
 #include "ActivationFunction.h"
 
-#include "LinearFunction.h"
+#include "IdentityFunction.h"
 #include "ReLUFunction.h"
 #include "AbsoluteReLUFunction.h"
 #include "CReLUFunction.h"
 #include "ELUFunction.h"
-//#include "SELUFunction.h"
+#include "SELUFunction.h"
 #include "GELUFunction.h"
 #include "LeakyReLUFunction.h"
 #include "PReLUFunction.h"
@@ -20,16 +20,15 @@
 #include "TanhFunction.h"
 #include "HardSigmoidFunction.h"
 #include "SoftsignFunction.h"
-//#include "SwishFunction.h"
-//#include "MaxoutFunction.h"
+#include "SwishFunction.h"
 
 ActivationFunction* ActivationFunctionFactory::getNewActivationFunction(ActivationFunctionType functionType, std::map<string, double> additionalParameters)
 {
 	ActivationFunction* activationFunction;
 	switch (functionType)
 	{
-		case ActivationFunctionType::None:
-			activationFunction = new LinearFunction();
+		case ActivationFunctionType::Identity:
+			activationFunction = new IdentityFunction();
 			break;
 		case ActivationFunctionType::ReLU:
 			activationFunction = new ReLUFunction();
@@ -43,9 +42,9 @@ ActivationFunction* ActivationFunctionFactory::getNewActivationFunction(Activati
 		case ActivationFunctionType::ELU:
 			activationFunction = new ELUFunction();
 			break;
-		/*case ActivationFunctionType::SELU:
+		case ActivationFunctionType::SELU:
 			activationFunction = new SELUFunction();
-			break;*/
+			break;
 		case ActivationFunctionType::GELU:
 			activationFunction = new GELUFunction();
 			break;
@@ -82,14 +81,11 @@ ActivationFunction* ActivationFunctionFactory::getNewActivationFunction(Activati
 		case ActivationFunctionType::Softsign:
 			activationFunction = new SoftsignFunction();
 			break;
-		/*case ActivationFunctionType::Swish:
+		case ActivationFunctionType::Swish:
 			activationFunction = new SwishFunction();
-			break;*/
-		/*case ActivationFunctionType::Maxout:
-			activationFunction = new MaxoutFunction(5); // TODO
-			break;*/
+			break;
 		default:
-			activationFunction = new LinearFunction();
+			activationFunction = new IdentityFunction();
 			break;
 	}
 	return activationFunction;

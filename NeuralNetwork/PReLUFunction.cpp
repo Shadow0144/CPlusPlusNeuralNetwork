@@ -31,8 +31,8 @@ xt::xarray<double> PReLUFunction::feedForward(const xt::xarray<double>& inputs)
 
 void PReLUFunction::applyBackPropagate()
 {
-	a -= 0.01 * deltaA; // TODO: Fix ALPHA
-	
+	const double ALPHA = 0.01;
+	a -= ALPHA * deltaA; // TODO: Fix ALPHA
 }
 
 xt::xarray<double> PReLUFunction::getGradient(const xt::xarray<double>& sigmas)
@@ -54,6 +54,7 @@ void PReLUFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int nu
 	ActivationFunction::draw(canvas, origin, scale, numUnits, weights);
 
 	const ImColor BLACK(0.0f, 0.0f, 0.0f, 1.0f);
+	const ImColor DARK_DULL_RED(0.6f, 0.3f, 0.3f, 1.0f);
 
 	xt::xarray<double> drawWeights = weights.getParameters();
 
@@ -64,28 +65,58 @@ void PReLUFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int nu
 		position.x = NeuralLayer::getNeuronX(origin.x, LAYER_WIDTH, i, scale);
 
 		double slope = drawWeights(0, i);
-		double inv_slope = (slope == 0) ? (0.0) : (1.0 / abs(slope));
-		double x1, x2, y1, y2;
-		if (slope > 0.0f)
+		double aSlope = a(i) * slope;
+		double x, y, ax, ay;
+
+		// Line of primary ReLU
+		if (slope > 0.0 && slope < 1.0)
 		{
-			x1 = max(-1.0, -a(i) * inv_slope);
-			x2 = min(+1.0, +inv_slope);
-			y1 = (-a(i) * slope);
-			y2 = (x2 * slope);
+			x = +1.0;
+			y = slope;
+		}
+		else if (slope > 0.0 && slope >= 1.0)
+		{
+			x = (slope != 0.0) ? (1.0 / slope) : 0.0;
+			y = +1.0;
+		}
+		else if (slope <= 0.0 && slope > -1.0)
+		{
+			x = -1.0;
+			y = slope;
 		}
 		else
 		{
-			x1 = max(-1.0, -inv_slope);
-			x2 = min(+1.0, +a(i) * inv_slope);
-			y1 = (x1 * slope);
-			y2 = (a(i) * slope);
+			x = (slope != 0.0) ? (1.0 / slope) : 0.0;
+			y = -1.0;
 		}
 
-		ImVec2 l_start(position.x + (NeuralLayer::DRAW_LEN * x1 * scale), position.y - (NeuralLayer::DRAW_LEN * y1 * scale));
-		ImVec2 l_mid(position.x, position.y);
-		ImVec2 l_end(position.x + (NeuralLayer::DRAW_LEN * x2 * scale), position.y - (NeuralLayer::DRAW_LEN * y2 * scale));
+		// Line of weighted negative ReLU
+		if (aSlope > 0.0 && aSlope < 1.0)
+		{
+			ax = -1.0;
+			ay = -aSlope;
+		}
+		else if (aSlope > 0.0 && aSlope >= 1.0)
+		{
+			ax = (aSlope != 0.0) ? (-1.0 / aSlope) : 0.0;
+			ay = -1.0;
+		}
+		else if (aSlope <= 0.0 && aSlope > -1.0)
+		{
+			ax = +1.0;
+			ay = -aSlope;
+		}
+		else
+		{
+			ax = (aSlope != 0.0) ? (-1.0 / aSlope) : 0.0;
+			ay = +1.0;
+		}
 
-		canvas->AddLine(l_start, l_mid, BLACK);
+		ImVec2 l_start(position.x + (NeuralLayer::DRAW_LEN * ax * scale), position.y - (NeuralLayer::DRAW_LEN * ay * scale));
+		ImVec2 l_mid(position.x, position.y);
+		ImVec2 l_end(position.x + (NeuralLayer::DRAW_LEN * x * scale), position.y - (NeuralLayer::DRAW_LEN * y * scale));
+
+		canvas->AddLine(l_start, l_mid, DARK_DULL_RED);
 		canvas->AddLine(l_mid, l_end, BLACK);
 	}
 }

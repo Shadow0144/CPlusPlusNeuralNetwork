@@ -2,11 +2,11 @@
 
 #include "ActivationFunction.h"
 
-// Linear / Pass-through
-class LinearFunction : public ActivationFunction
+// Identity / Linear / Pass-through
+class IdentityFunction : public ActivationFunction
 {
 public:
-	LinearFunction();
+	IdentityFunction();
 
 	xt::xarray<double> feedForward(const xt::xarray<double>& input);
 	xt::xarray<double> getGradient(const xt::xarray<double>& sigmas);

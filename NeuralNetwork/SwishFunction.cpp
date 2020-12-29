@@ -42,10 +42,8 @@ xt::xarray<double> SwishFunction::feedForward(const xt::xarray<double>& inputs)
 
 xt::xarray<double> SwishFunction::getGradient(const xt::xarray<double>& sigmas)
 {
-	// TODO!!!
-	//auto sig = sigmoid(dotProduct(lastInput));
-	//return (lastOutput + (sig * (1.0 - lastOutput)));
-	return lastInput;
+	auto sig = sigmoid(lastInput);
+	return (sigmas * (lastOutput + (sig * (1.0 - lastOutput))));
 }
 
 void SwishFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights)

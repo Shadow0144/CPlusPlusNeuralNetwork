@@ -131,7 +131,7 @@ void DenseNeuralLayer::draw(ImDrawList* canvas, ImVec2 origin, double scale, boo
 		canvas->AddCircleFilled(position, RADIUS * scale, LIGHT_GRAY, 32);
 	}
 
-	// Draw the activation function (If the activation function type is None, the Linear function will still draw)
+	// Draw the activation function (If the activation function type is Identity, the Linear function will still draw)
 	activationFunction->draw(canvas, origin, scale, numUnits, weights);
 
 	// Draw the links to the previous neurons

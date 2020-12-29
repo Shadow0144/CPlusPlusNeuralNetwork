@@ -35,10 +35,8 @@ xt::xarray<double> SELUFunction::feedForward(const xt::xarray<double>& inputs)
 
 xt::xarray<double> SELUFunction::getGradient(const xt::xarray<double>& sigmas)
 {
-	// TODO!!!
-	//auto mask = (dotProduct(lastInput) > 0.0);
-	//return ((mask * SCALE) + ((1.0 - mask) * lastOutput));
-	return lastInput;
+	auto mask = (lastInput > 0.0);
+	return (sigmas * SCALE * ((mask) + ((1.0 - mask) * ALPHA * exp(lastInput))));
 }
 
 void SELUFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights)

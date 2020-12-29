@@ -10,7 +10,7 @@
 
 enum class ActivationFunctionType
 {
-	None,
+	Identity,
 	ReLU,
 	AbsoluteReLU,
 	CReLU,

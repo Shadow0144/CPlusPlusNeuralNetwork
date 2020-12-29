@@ -169,7 +169,7 @@
     <ClCompile Include="GELUFunction.cpp" />
     <ClCompile Include="HardSigmoidFunction.cpp" />
     <ClCompile Include="ImageClassVisualizer.cpp" />
-    <ClCompile Include="LinearFunction.cpp" />
+    <ClCompile Include="IdentityFunction.cpp" />
     <ClCompile Include="ActivationFunction.cpp" />
     <ClCompile Include="FunctionVisualizer.cpp" />
     <ClCompile Include="gl3w\GL\gl3w.c" />
@@ -248,7 +248,7 @@
     <ClInclude Include="NetworkVisualizer.h" />
     <ClInclude Include="NeuralLayer.h" />
     <ClInclude Include="ParameterSet.h" />
-    <ClInclude Include="LinearFunction.h" />
+    <ClInclude Include="IdentityFunction.h" />
     <ClInclude Include="ActivationFunction.h" />
     <ClInclude Include="NeuralNetwork.h" />
     <ClInclude Include="DenseNeuralLayer.h" />
