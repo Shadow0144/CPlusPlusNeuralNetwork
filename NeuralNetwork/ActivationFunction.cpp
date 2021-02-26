@@ -95,7 +95,8 @@ void ActivationFunction::approximateFunction(ImDrawList* canvas, ImVec2 origin, 
 	{
 		position.x = NeuralLayer::getNeuronX(origin.x, LAYER_WIDTH, i, scale);
 
-		double x, y;
+		double x = 0;
+		double y = 0;
 		double lastX = -1.0;
 		int pointCount = 0;
 		int inflection = 0;

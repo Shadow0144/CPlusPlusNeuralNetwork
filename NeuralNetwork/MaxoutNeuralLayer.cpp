@@ -4,6 +4,7 @@
 
 #pragma warning(push, 0)
 #include <iostream>
+#include <limits>
 #include <xtensor/xsort.hpp>
 #include <xtensor-blas/xlinalg.hpp>
 #pragma warning(pop)
@@ -200,6 +201,11 @@ void MaxoutNeuralLayer::draw(ImDrawList* canvas, ImVec2 origin, double scale, bo
 	ImVec2 currentNeuronPt(0, origin.y - (RADIUS * scale));
 	previousY = origin.y - (DIAMETER * scale);
 
+	// Set up bias parameters
+	double biasX = NeuralLayer::getNeuronX(origin.x, PARENT_LAYER_WIDTH, parentCount, scale);
+	double biasY = previousY - RADIUS * scale;
+	ImVec2 biasPt(biasX + 0.5 * (BIAS_WIDTH * scale), biasY + (BIAS_HEIGHT * scale));
+
 	// Draw each neuron
 	for (int i = 0; i < numUnits; i++)
 	{
@@ -214,6 +220,18 @@ void MaxoutNeuralLayer::draw(ImDrawList* canvas, ImVec2 origin, double scale, bo
 
 	// Draw the softmax function
 	drawMaxout(canvas, origin, scale);
+
+	if (addBias)
+	{
+		// Draw the bias box
+		ImVec2 bTL = ImVec2(biasX, biasY);
+		ImVec2 bBR = ImVec2(biasX + (BIAS_WIDTH * scale), biasY + (BIAS_HEIGHT * scale));
+		biasPt = ImVec2(biasX + (BIAS_TEXT_X * scale), biasY);
+		canvas->AddRectFilled(bTL, bBR, VERY_LIGHT_GRAY);
+		canvas->AddRect(bTL, bBR, BLACK);
+		canvas->AddText(ImGui::GetFont(), (BIAS_FONT_SIZE * scale), biasPt, BLACK, to_string(1).c_str());
+	}
+	else { }
 
 	if (output)
 	{
@@ -238,5 +256,73 @@ void MaxoutNeuralLayer::draw(ImDrawList* canvas, ImVec2 origin, double scale, bo
 
 void MaxoutNeuralLayer::drawMaxout(ImDrawList* canvas, ImVec2 origin, double scale)
 {
+	const ImColor BLACK(0.0f, 0.0f, 0.0f, 1.0f);
+	const ImColor GRAY(0.3f, 0.3f, 0.3f, 1.0f);
+	const ImColor LIGHT_GRAY(0.6f, 0.6f, 0.6f, 1.0f);
+	const ImColor WHITE(1.0f, 1.0f, 1.0f, 1.0f);
 
+	const double RESCALE = NeuralLayer::DRAW_LEN * scale;
+
+	ImVec2 position(0, origin.y);
+	const double LAYER_WIDTH = NeuralLayer::getLayerWidth(numUnits, scale);
+	for (int i = 0; i < numUnits; i++)
+	{
+		position.x = NeuralLayer::getNeuronX(origin.x, LAYER_WIDTH, i, scale);
+		ImVec2 start(position.x - RESCALE, position.y + RESCALE);
+		ImVec2 end(position.x + RESCALE, position.y - RESCALE);
+
+		canvas->AddRectFilled(start, end, WHITE);
+		canvas->AddRect(start, end, BLACK);
+
+		ImVec2 zero_x_left(position.x - RESCALE, position.y);
+		ImVec2 zero_x_right(position.x + RESCALE, position.y);
+		canvas->AddLine(zero_x_left, zero_x_right, LIGHT_GRAY);
+		ImVec2 zero_y_base(position.x, position.y + RESCALE);
+		ImVec2 zero_y_top(position.x, position.y - RESCALE);
+		canvas->AddLine(zero_y_base, zero_y_top, LIGHT_GRAY);
+	}
+	
+	for (int i = 0; i < numUnits; i++)
+	{
+		double minSlope = std::numeric_limits<float>::max();
+		double maxSlope = std::numeric_limits<float>::min();
+		xt::xarray<double> drawWeights = weights.getParameters();
+		for (int f = 0; f < numFunctions; f++)
+		{
+			position.x = NeuralLayer::getNeuronX(origin.x, LAYER_WIDTH, i, scale);
+			double slope = drawWeights(0, i, f);
+			double inv_slope = 1.0 / abs(slope);
+			double x1 = -min(1.0, inv_slope);
+			double x2 = +min(1.0, inv_slope);
+			double y1 = x1 * slope;
+			double y2 = x2 * slope;
+
+			minSlope = min(minSlope, slope);
+			maxSlope = max(maxSlope, slope);
+
+			ImVec2 l_start(position.x + (x1 * NeuralLayer::DRAW_LEN * scale), position.y - (y1 * NeuralLayer::DRAW_LEN * scale));
+			ImVec2 l_end(position.x + (x2 * NeuralLayer::DRAW_LEN * scale), position.y - (y2 * NeuralLayer::DRAW_LEN * scale));
+
+			canvas->AddLine(l_start, l_end, LIGHT_GRAY);
+		} // for f
+
+		// Redraw the max and min slopes in black
+		double inv_minSlope = 1.0 / abs(minSlope);
+		double x1 = -min(1.0, inv_minSlope);
+		double y1 = x1 * minSlope;
+
+		ImVec2 l_minStart(position.x + (x1 * NeuralLayer::DRAW_LEN * scale), position.y - (y1 * NeuralLayer::DRAW_LEN * scale));
+		ImVec2 l_minEnd(position.x, position.y);
+
+		canvas->AddLine(l_minStart, l_minEnd, BLACK);
+
+		double inv_maxSlope = 1.0 / abs(maxSlope);
+		double x2 = +min(1.0, inv_maxSlope);
+		double y2 = x2 * maxSlope;
+
+		ImVec2 l_maxStart(position.x, position.y);
+		ImVec2 l_maxEnd(position.x + (x2 * NeuralLayer::DRAW_LEN * scale), position.y - (y2 * NeuralLayer::DRAW_LEN * scale));
+
+		canvas->AddLine(l_maxStart, l_maxEnd, BLACK);
+	} // for i
 }

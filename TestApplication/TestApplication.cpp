@@ -222,8 +222,7 @@ void test_signal(int layers)
     {
         //network.addDenseLayer(functions[i], layerShapes[i]);
     }
-    network.addMaxoutLayer(3, 5);
-    network.addMaxoutLayer(3, 5);
+    network.addMaxoutLayer(3, 3);
     network.addDenseLayer(ActivationFunctionType::Identity, 1);
 
     /* // Linear
