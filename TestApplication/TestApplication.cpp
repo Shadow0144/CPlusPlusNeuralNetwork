@@ -212,7 +212,7 @@ void test_signal(int layers)
     ErrorFunction* errorFunction = new MeanSquareErrorFunction();
     NeuralNetwork network = NeuralNetwork(true);
     network.setErrorFunction(ErrorFunctionType::MeanSquaredError);
-    network.setBatchSize(20);
+    network.setBatchSize(5);
     network.displayRegressionEstimation();
 
     vector<size_t> inputShape;
@@ -220,8 +220,11 @@ void test_signal(int layers)
     network.addInputLayer(inputShape);
     for (int i = 0; i < layers; i++)
     {
-        network.addDenseLayer(functions[i], layerShapes[i]);
+        //network.addDenseLayer(functions[i], layerShapes[i]);
     }
+    network.addMaxoutLayer(3, 5);
+    network.addMaxoutLayer(3, 5);
+    network.addDenseLayer(ActivationFunctionType::Identity, 1);
 
     /* // Linear
     const int SAMPLES = 10;

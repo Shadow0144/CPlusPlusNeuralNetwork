@@ -222,6 +222,9 @@
     <ClCompile Include="IdentityFunction.cpp">
       <Filter>Source Files\ActivationFunction</Filter>
     </ClCompile>
+    <ClCompile Include="MaxoutNeuralLayer.cpp">
+      <Filter>Source Files\NeuralLayer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NeuralNetwork.h">
@@ -397,6 +400,9 @@
     </ClInclude>
     <ClInclude Include="IdentityFunction.h">
       <Filter>Header Files\ActivationFunction</Filter>
+    </ClInclude>
+    <ClInclude Include="MaxoutNeuralLayer.h">
+      <Filter>Header Files\NeuralLayer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

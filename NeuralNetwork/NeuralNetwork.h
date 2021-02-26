@@ -59,6 +59,7 @@ public:
 	void addInputLayer(const std::vector<size_t>& inputShape);
 	void addDenseLayer(ActivationFunctionType layerFunction, size_t numUnits, 
 		std::map<string, double> additionalParameters = std::map<string, double>(), bool addBias = true);
+	void addMaxoutLayer(size_t numUnits, size_t numFunctions, bool addBias = true);
 	void addSoftmaxLayer(int axis = -1);
 	void addConvolution1DLayer(size_t numKernels, const std::vector<size_t>& convolutionShape, size_t inputChannels, size_t stride = 1);
 	void addConvolution2DLayer(size_t numKernels, const std::vector<size_t>& convolutionShape, size_t inputChannels, size_t stride = 1);

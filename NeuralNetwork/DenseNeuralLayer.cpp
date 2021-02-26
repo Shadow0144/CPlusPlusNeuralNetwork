@@ -89,12 +89,21 @@ xt::xarray<double> DenseNeuralLayer::feedForwardTrain(const xt::xarray<double>& 
 
 xt::xarray<double> DenseNeuralLayer::denseBackpropagate(const xt::xarray<double>& sigmas)
 {
+	// The delta weights are the last input dotted with the sigmas
 	auto delta = xt::linalg::tensordot(xt::transpose(lastInput), sigmas, 1);
-
 	weights.incrementDeltaParameters(-ALPHA * delta);
-	auto biaslessWeights = xt::view(weights.getParameters(), xt::range(0, lastInput.shape()[lastInput.dimension() - 1] - 1), xt::all());
 
-	auto newSigmas = xt::linalg::tensordot(sigmas, xt::transpose(biaslessWeights), 1); // The last axis of errors and the first axis of the transposed weights
+	// The new sigmas are the weights dotted with the sigmas
+	xt::xarray<double> xWeights; // The weights (with the bias removed if bias was added)
+	if (addBias)
+	{
+		xWeights = xt::view(weights.getParameters(), xt::range(0, lastInput.shape()[lastInput.dimension() - 1] - 1), xt::all());
+	}
+	else
+	{
+		xWeights = weights.getParameters();
+	}
+	auto newSigmas = xt::linalg::tensordot(sigmas, xt::transpose(xWeights), 1); // The last axis of errors and the first axis of the transposed weights
 
 	return newSigmas;
 }

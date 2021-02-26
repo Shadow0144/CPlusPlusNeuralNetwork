@@ -27,16 +27,12 @@ MaxPooling2DNeuralLayer::~MaxPooling2DNeuralLayer()
 
 xt::xarray<double> MaxPooling2DNeuralLayer::feedForward(const xt::xarray<double>& input)
 {
-	/*cv::Mat inputMat = convertChannelToMat(inputs);
-	cv::imshow("Input", inputMat);*/
-
 	const int DIMS = input.dimension();
 	const int DIM1 = DIMS - 3; // First dimension
 	const int DIM2 = DIMS - 2; // Second dimension
 	const int DIMC = DIMS - 1; // Channels
 	auto shape = input.shape();
 	auto maxShape = xt::svector<size_t>(shape);
-	//inputMask = xt::xarray<double>(shape); // Same shape as the input
 	shape[DIM1] = ceil(shape[DIM1] / filterShape[0]);
 	shape[DIM2] = ceil(shape[DIM2] / filterShape[1]);
 	xt::xarray<double> output = xt::xarray<double>(shape);
@@ -71,10 +67,6 @@ xt::xarray<double> MaxPooling2DNeuralLayer::feedForward(const xt::xarray<double>
 		}
 		l = 0;
 	}
-
-	/*cv::Mat outputMat = convertChannelToMat(output);
-	cv::imshow("Output", outputMat);
-	cv::waitKey(0);*/
 
 	return output;
 }

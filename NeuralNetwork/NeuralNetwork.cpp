@@ -5,6 +5,7 @@
 #include "InputNeuralLayer.h"
 #include "DenseNeuralLayer.h"
 #include "SoftmaxNeuralLayer.h"
+#include "MaxoutNeuralLayer.h"
 #include "Convolution1DNeuralLayer.h"
 #include "Convolution2DNeuralLayer.h"
 #include "Convolution3DNeuralLayer.h"
@@ -93,6 +94,13 @@ void NeuralNetwork::addInputLayer(const std::vector<size_t>& inputShape)
 void NeuralNetwork::addDenseLayer(ActivationFunctionType layerFunction, size_t numUnits, std::map<string, double> additionalParameters, bool addBias)
 {
 	DenseNeuralLayer* layer = new DenseNeuralLayer(layerFunction, layers->at(layerCount - 1), numUnits, additionalParameters, addBias);
+	layers->push_back(layer);
+	layerCount++;
+}
+
+void NeuralNetwork::addMaxoutLayer(size_t numUnits, size_t numFuctions, bool addBias)
+{
+	MaxoutNeuralLayer* layer = new MaxoutNeuralLayer(layers->at(layerCount - 1), numUnits, numFuctions, addBias);
 	layers->push_back(layer);
 	layerCount++;
 }
