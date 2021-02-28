@@ -27,13 +27,17 @@ AveragePooling2DNeuralLayer::~AveragePooling2DNeuralLayer()
 
 xt::xarray<double> AveragePooling2DNeuralLayer::feedForward(const xt::xarray<double>& input)
 {
-	const int DIM1 = input.dimension() - 3; // First dimension
-	const int DIM2 = input.dimension() - 2; // Second dimension
-	const int DIMC = input.dimension() - 1; // Channels
+	const int DIMS = input.dimension();
+	const int DIM1 = DIMS - 3; // First dimension
+	const int DIM2 = DIMS - 2; // Second dimension
+	const int DIMC = DIMS - 1; // Channels
 	auto shape = input.shape();
-	shape[DIM1] = ceil((shape[DIM1] - (filterShape[0] - 1)) / filterShape[0]);
-	shape[DIM2] = ceil((shape[DIM2] - (filterShape[1] - 1)) / filterShape[1]);
+	auto maxShape = xt::svector<size_t>(shape);
+	shape[DIM1] = ceil(shape[DIM1] / filterShape[0]);
+	shape[DIM2] = ceil(shape[DIM2] / filterShape[1]);
 	xt::xarray<double> output = xt::xarray<double>(shape);
+	maxShape[DIM1] = 1;
+	maxShape[DIM2] = 1;
 
 	xt::xstrided_slice_vector inputWindowView;
 	xt::xstrided_slice_vector outputWindowView;
@@ -43,30 +47,76 @@ xt::xarray<double> AveragePooling2DNeuralLayer::feedForward(const xt::xarray<dou
 		outputWindowView.push_back(xt::all());
 	}
 
-	int k = 0;
 	int l = 0;
-	const int I = (input.shape()[DIM1] - filterShape[0] + 1);
-	const int J = (input.shape()[DIM2] - filterShape[1] + 1);
+	int m = 0;
+	const int I = input.shape()[DIM1];
+	const int J = input.shape()[DIM2];
 	for (int i = 0; i < I; i += filterShape[0])
 	{
 		inputWindowView[DIM1] = xt::range(i, i + filterShape[0]);
-		outputWindowView[DIM1] = k++; // Increment after assignment
+		outputWindowView[DIM1] = l++; // Increment after assignment
 		for (int j = 0; j < J; j += filterShape[1])
 		{
 			inputWindowView[DIM2] = xt::range(j, j + filterShape[1]);
-			outputWindowView[DIM2] = l++; // Increment after assignment
+			outputWindowView[DIM2] = m++; // Increment after assignment
+			// Window contains subset of width and height and all channels of the input
 			auto window = xt::xarray<double>(xt::strided_view(input, inputWindowView));
-			xt::strided_view(output, outputWindowView) = xt::mean(window, { DIM1, DIM2 });
+			// Reduce the w x h x c window to 1 x 1 x c
+			auto maxes = xt::xarray<double>(xt::mean(window, { DIM1, DIM2 }));
+			xt::strided_view(output, outputWindowView) = maxes;
 		}
-		l = 0;
+		m = 0;
 	}
+	// l = 0;
 
 	return output;
 }
 
 xt::xarray<double> AveragePooling2DNeuralLayer::backPropagate(const xt::xarray<double>& sigmas)
 {
-	xt::xarray<double> sigmasPrime = xt::where(xt::equal(lastInput, lastOutput), 1, 0) * sigmas;
+	// Reverse what was done in feedforward, the input is now the output
+	const int DIMS = lastInput.dimension();
+	const int DIM1 = DIMS - 3; // First dimension
+	const int DIM2 = DIMS - 2; // Second dimension
+	const int DIMC = DIMS - 1; // Channels
+	auto sigmaShape = sigmas.shape();
+	sigmaShape[DIM1] = 1;
+	sigmaShape[DIM2] = 1;
+
+	xt::xarray<double> sigmasPrime = xt::zeros<double>(lastInput.shape());
+
+	xt::xstrided_slice_vector primeWindowView;
+	xt::xstrided_slice_vector sigmaWindowView;
+	for (int f = 0; f <= DIMC; f++)
+	{
+		primeWindowView.push_back(xt::all());
+		sigmaWindowView.push_back(xt::all());
+	}
+
+	int l = 0;
+	int m = 0;
+	const int I = lastInput.shape()[DIM1];
+	const int J = lastInput.shape()[DIM2];
+	for (int i = 0; i < I; i += filterShape[0])
+	{
+		primeWindowView[DIM1] = xt::range(i, i + filterShape[0]);
+		sigmaWindowView[DIM1] = l++; // Increment after assignment
+		for (int j = 0; j < J; j += filterShape[1])
+		{
+			primeWindowView[DIM2] = xt::range(j, j + filterShape[1]);
+			sigmaWindowView[DIM2] = m++; // Increment after assignment
+			auto sigma = xt::xarray<double>(xt::strided_view(sigmas, sigmaWindowView));
+			sigma = xt::expand_dims(sigma, DIM1);
+			sigma = xt::repeat(sigma, filterShape[0], DIM1);
+			sigma = xt::expand_dims(sigma, DIM2);
+			sigma = xt::repeat(sigma, filterShape[1], DIM2);
+			auto sigmaExp = (((sigma) / I) / J);
+			xt::strided_view(sigmasPrime, primeWindowView) += sigmaExp;
+		}
+		m = 0;
+	}
+	// l = 0;
+
 	return sigmasPrime;
 }
 
@@ -142,41 +192,48 @@ void AveragePooling2DNeuralLayer::draw(ImDrawList* canvas, ImVec2 origin, double
 
 void AveragePooling2DNeuralLayer::draw2DPooling(ImDrawList* canvas, ImVec2 origin, double scale)
 {
-	drawFunctionBackground(canvas, origin, scale, false);
+	drawConversionFunctionBackground(canvas, origin, scale, false);
 
-	const ImColor BLACK(0.0f, 0.0f, 0.0f, 1.0f);
+	const ImColor HALF_GRAY(0.5f, 0.5f, 0.5f, 1.0f);
 
-	xt::xarray<double> drawWeights = weights.getParameters();
+	const int X = filterShape.at(0);
+	const int Y = filterShape.at(1);
 
-	ImVec2 position(0, origin.y);
+	const double RESCALE = DRAW_LEN * scale * RERESCALE;
+	double yHeight = 2.0 * RESCALE / Y;
+	double xWidth = 2.0 * RESCALE / X;
+
+	const float CENTER_X = max(ceil((X - 1.0f) / 2.0f), 1.0f); // Avoid divide-by-zero
+	const float CENTER_Y = max(ceil((Y - 1.0f) / 2.0f), 1.0f); // Avoid divide-by-zero
+
 	const double LAYER_WIDTH = NeuralLayer::getLayerWidth(numUnits, scale);
-	for (int i = 0; i < numUnits; i++)
+	ImVec2 position(0, origin.y);
+	for (int n = 0; n < numUnits; n++) // TODO: Fix padding issues
 	{
-		position.x = NeuralLayer::getNeuronX(origin.x, LAYER_WIDTH, i, scale);
-
-		double slope = drawWeights(0, i);
-		double inv_slope = 1.0 / abs(slope);
-		double x1, x2, y1, y2;
-		if (slope > 0.0)
+		// Draw left
+		position.x = NeuralLayer::getNeuronX(origin.x, LAYER_WIDTH, n, scale) - (SHIFT * scale);
+		int y = RESCALE - yHeight;
+		for (int i = 0; i < Y; i++)
 		{
-			x1 = -1.0;
-			x2 = +min(1.0, inv_slope);
-			y1 = 0.0;
-			y2 = (x2 * slope);
-		}
-		else
-		{
-			x1 = -min(1.0, inv_slope);
-			x2 = 1.0;
-			y1 = (x1 * slope);
-			y2 = 0.0;
+			int x = -RESCALE;
+			for (int j = 0; j < X; j++)
+			{
+				float colorValue = 1.0f - (((abs(CENTER_X - j) / CENTER_X)
+					+ (abs(CENTER_Y - i) / CENTER_Y)) / 2.0f);
+				ImColor color(colorValue, colorValue, colorValue);
+				canvas->AddRectFilled(ImVec2(floor(position.x + x), floor(position.y - y)),
+					ImVec2(ceil(position.x + x + xWidth), ceil(position.y - y - yHeight)),
+					color);
+				x += xWidth;
+			}
+			y -= yHeight;
 		}
 
-		ImVec2 l_start(position.x + (DRAW_LEN * x1 * scale), position.y - (DRAW_LEN * y1 * scale));
-		ImVec2 l_mid(position.x, position.y);
-		ImVec2 l_end(position.x + (DRAW_LEN * x2 * scale), position.y - (DRAW_LEN * y2 * scale));
-
-		canvas->AddLine(l_start, l_mid, BLACK);
-		canvas->AddLine(l_mid, l_end, BLACK);
+		// Draw right
+		// Draw a grey square
+		position.x = NeuralLayer::getNeuronX(origin.x, LAYER_WIDTH, n, scale) + (SHIFT * scale);
+		canvas->AddRectFilled(ImVec2(floor(position.x), floor(position.y)),
+			ImVec2(ceil(position.x + (xWidth * X)), ceil(position.y - (yHeight * Y))),
+			HALF_GRAY);
 	}
 }

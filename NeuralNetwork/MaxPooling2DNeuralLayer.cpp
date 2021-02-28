@@ -1,5 +1,7 @@
 #include "MaxPooling2DNeuralLayer.h"
 
+#include "Test.h"
+
 #pragma warning(push, 0)
 #include <math.h>
 #include <tuple>
@@ -47,26 +49,27 @@ xt::xarray<double> MaxPooling2DNeuralLayer::feedForward(const xt::xarray<double>
 		outputWindowView.push_back(xt::all());
 	}
 
-	int k = 0;
 	int l = 0;
+	int m = 0;
 	const int I = input.shape()[DIM1];
 	const int J = input.shape()[DIM2];
 	for (int i = 0; i < I; i += filterShape[0])
 	{
 		inputWindowView[DIM1] = xt::range(i, i + filterShape[0]);
-		outputWindowView[DIM1] = k++; // Increment after assignment
+		outputWindowView[DIM1] = l++; // Increment after assignment
 		for (int j = 0; j < J; j += filterShape[1])
 		{
 			inputWindowView[DIM2] = xt::range(j, j + filterShape[1]);
-			outputWindowView[DIM2] = l++; // Increment after assignment
+			outputWindowView[DIM2] = m++; // Increment after assignment
 			// Window contains subset of width and height and all channels of the input
 			auto window = xt::xarray<double>(xt::strided_view(input, inputWindowView));
 			// Reduce the w x h x c window to 1 x 1 x c
 			auto maxes = xt::xarray<double>(xt::amax(window, { DIM1, DIM2 }));
 			xt::strided_view(output, outputWindowView) = maxes;
 		}
-		l = 0;
+		m = 0;
 	}
+	// l = 0;
 
 	return output;
 }
@@ -90,7 +93,7 @@ xt::xarray<double> MaxPooling2DNeuralLayer::backPropagate(const xt::xarray<doubl
 
 	auto inputMask = xt::xarray<double>(shape); // Same shape as the last input
 
-	xt::xarray<double> sigmasPrime = xt::xarray<double>(lastInput.shape());
+	xt::xarray<double> sigmasPrime = xt::zeros<double>(lastInput.shape());
 
 	xt::xstrided_slice_vector primeWindowView;
 	xt::xstrided_slice_vector sigmaWindowView;
@@ -100,18 +103,18 @@ xt::xarray<double> MaxPooling2DNeuralLayer::backPropagate(const xt::xarray<doubl
 		sigmaWindowView.push_back(xt::all());
 	}
 
-	int k = 0;
 	int l = 0;
+	int m = 0;
 	const int I = lastInput.shape()[DIM1];
 	const int J = lastInput.shape()[DIM2];
 	for (int i = 0; i < I; i += filterShape[0])
 	{
 		primeWindowView[DIM1] = xt::range(i, i + filterShape[0]);
-		sigmaWindowView[DIM1] = k++; // Increment after assignment
+		sigmaWindowView[DIM1] = l++; // Increment after assignment
 		for (int j = 0; j < J; j += filterShape[1])
 		{
 			primeWindowView[DIM2] = xt::range(j, j + filterShape[1]);
-			sigmaWindowView[DIM2] = l++; // Increment after assignment
+			sigmaWindowView[DIM2] = m++; // Increment after assignment
 			auto window = xt::strided_view(lastInput, primeWindowView);
 			xt::xarray<double> maxes = xt::xarray<double>(xt::strided_view(lastOutput, sigmaWindowView));
 			maxes = xt::expand_dims(maxes, DIM1);
@@ -124,10 +127,11 @@ xt::xarray<double> MaxPooling2DNeuralLayer::backPropagate(const xt::xarray<doubl
 			sigma = xt::expand_dims(sigma, DIM2);
 			sigma = xt::repeat(sigma, filterShape[1], DIM2);
 			auto sigmaExp = xt::where(xt::equal(window, maxes), sigma, 0);
-			xt::strided_view(sigmasPrime, primeWindowView) = sigmaExp;
+			xt::strided_view(sigmasPrime, primeWindowView) += sigmaExp;
 		}
-		l = 0;
+		m = 0;
 	}
+	// l = 0;
 
 	return sigmasPrime;
 }

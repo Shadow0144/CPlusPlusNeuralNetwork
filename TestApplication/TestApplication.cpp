@@ -258,21 +258,26 @@ void test_signal(int layers)
     }
 
     // Shuffle
-    /*xt::xstrided_slice_vector svI({ 0, xt::ellipsis() });
-    xt::xstrided_slice_vector svJ({ 0, xt::ellipsis() });
-    const size_t N = training_x.shape()[0];
-    for (size_t i = N - 1; i > 0; i--)
+    bool shuffle = false;
+    if (shuffle)
     {
-        size_t j = rand() % i;
-        svI[0] = i;
-        svJ[0] = j;
-        auto x = xt::strided_view(training_x, svI);
-        xt::strided_view(training_x, svI) = xt::strided_view(training_x, svJ);
-        xt::strided_view(training_x, svJ) = x;
-        auto y = xt::strided_view(training_y, svI);
-        xt::strided_view(training_y, svI) = xt::strided_view(training_y, svJ);
-        xt::strided_view(training_y, svJ) = y;
-    }*/
+        xt::xstrided_slice_vector svI({ 0, xt::ellipsis() });
+        xt::xstrided_slice_vector svJ({ 0, xt::ellipsis() });
+        const size_t N = training_x.shape()[0];
+        for (size_t i = N - 1; i > 0; i--)
+        {
+            size_t j = rand() % i;
+            svI[0] = i;
+            svJ[0] = j;
+            auto x = xt::xarray<double>(xt::strided_view(training_x, svI));
+            xt::strided_view(training_x, svI) = xt::strided_view(training_x, svJ);
+            xt::strided_view(training_x, svJ) = x;
+            auto y = xt::xarray<double>(xt::strided_view(training_y, svI));
+            xt::strided_view(training_y, svI) = xt::strided_view(training_y, svJ);
+            xt::strided_view(training_y, svJ) = y;
+        }
+    }
+    else { }
 
     //network.feedForward(training_x);
     //network.backPropagate(training_x, training_y);
@@ -500,6 +505,53 @@ void test_catdog()
     xt::xarray<double> features;
     xt::xarray<double> labels;
     loadCatDogDataset(features, labels);
+
+    const int N = features.shape()[0]; // Number of examples
+    const int IMG_ROWS = features.shape()[1]; // 1024
+    const int IMG_COLS = features.shape()[2]; // 1024
+    const int CHANNELS = features.shape()[3]; // 3
+    const int CLASSES = labels.shape()[1];
+
+    const int NUM_KERNELS_1 = 16;
+    const int NUM_KERNELS_2 = 16;
+    const int NUM_KERNELS_3 = 16;
+    const int NUM_KERNELS_4 = 4;
+
+    // Create the network
+    NeuralNetwork network(true);
+    network.addInputLayer({ (size_t)IMG_ROWS, (size_t)IMG_COLS, (size_t)CHANNELS }); // 1024x1024x3
+
+    network.addConvolution2DLayer(NUM_KERNELS_1, { 5, 5 }, (size_t)CHANNELS); // 1024x1024x3 -> 1020x1020x16                                            
+    network.addMaxPooling2DLayer({ 4, 4 }); // 1020x1020x16 -> 255x255x16
+
+    network.addConvolution2DLayer(NUM_KERNELS_2, { 4, 4 }, NUM_KERNELS_1); // 255x255x16 -> 252x252x16                                                         
+    network.addMaxPooling2DLayer({ 4, 4 }); // 506x506x16 -> 63x63x16
+
+    network.addConvolution2DLayer(NUM_KERNELS_3, { 4, 4 }, NUM_KERNELS_2); // 63x63x16 -> 60x60x16                                                         
+    network.addMaxPooling2DLayer({ 4, 4 }); // 60x60x16 -> 15x15x16
+
+    network.addConvolution2DLayer(NUM_KERNELS_4, { 6, 6 }, NUM_KERNELS_3); // 15x15x16 -> 10x10x16                                                         
+    network.addMaxPooling2DLayer({ 2, 2 }); // 10x10x16 -> 5x5x4
+
+    network.addFlattenLayer(5 * 5 * NUM_KERNELS_4); // 5x5x4 -> 100
+    network.addDenseLayer(ActivationFunctionType::Sigmoid, 32); // 100 -> 32
+    network.addDenseLayer(ActivationFunctionType::Softplus, CLASSES); // 32 -> 2
+    network.addSoftmaxLayer(-1);
+
+    network.setErrorFunction(ErrorFunctionType::CrossEntropy);
+    network.setBatchSize(1);
+    network.setOutputRate(1);
+
+    const int COLS = 5;
+    const int ROWS = min(N / COLS, 30);
+    ImColor* classColors = new ImColor[CLASSES]
+    { ImColor(0.0f, 0.0f, 0.0f, 1.0f),
+      ImColor(1.0, 1.0f, 1.0f, 1.0f) };
+    network.displayClassificationEstimation(ROWS, COLS, classColors);
+    
+    network.train(features, labels, MAX_EPOCHS);
+
+    system("pause");
 }
 
 enum class network
@@ -776,7 +828,7 @@ void test_layers()
 
 int main(int argc, char** argv)
 {
-    test_network(network::signal, 3);
+    test_network(network::catdog, 3);
 
     //test_layers();
 
