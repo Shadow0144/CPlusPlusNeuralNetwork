@@ -1,6 +1,6 @@
 #pragma once
 
-#include "NeuralLayer.h"
+#include "ParameterizedNeuralLayer.h"
 #include "ActivationFunction.h"
 
 #pragma warning(push, 0)
@@ -8,7 +8,7 @@
 #include <vector>
 #pragma warning(pop)
 
-class MaxPooling3DNeuralLayer : public NeuralLayer
+class MaxPooling3DNeuralLayer : public ParameterizedNeuralLayer
 {
 public:
 	MaxPooling3DNeuralLayer(NeuralLayer* parent, const std::vector<size_t>& filterShape);
@@ -22,8 +22,6 @@ public:
 
 private:
 	std::vector<size_t> filterShape;
-
-	ParameterSet weights;
 
 	void draw3DPooling(ImDrawList* canvas, ImVec2 origin, double scale);
 };

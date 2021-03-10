@@ -84,6 +84,7 @@ void ClassifierVisualizer::draw(ImDrawList* canvas, const xt::xarray<double>& pr
 	canvas->AddText(ImGui::GetFont(), TEXT_SIZE, ImVec2(midX - (TEXT_SIZE * 5), topLeft.y + (TEXT_BUFFER / 2.0f)), BLACK, "Predicted");
 	canvas->AddText(ImGui::GetFont(), TEXT_SIZE, ImVec2(midX, bottomRight.y - TEXT_BUFFER), BLACK, "Actual");
 
+	const int N = predicted.shape()[0];
 	size_t index = 0;
 	for (int i = 0; i < cols; i++)
 	{
@@ -112,10 +113,19 @@ void ClassifierVisualizer::draw(ImDrawList* canvas, const xt::xarray<double>& pr
 				canvas->AddRect(cellTopLeft, cellBottomRight, WRONG_COLOR);
 			}
 			index++;
+			if (index >= N)
+			{
+				break;
+			}
+			else { }
 		}
+		if (index >= N)
+		{
+			break;
+		}
+		else { }
 	}
 
-	const int N = actualIndices.shape()[0];
 	for (; index < N; index++)
 	{
 		if (predictedIndices(index) == actualIndices(index))

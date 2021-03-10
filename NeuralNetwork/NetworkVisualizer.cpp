@@ -2,7 +2,6 @@
 #include "NeuralNetwork.h"
 
 #pragma warning(push, 0)
-#include <Eigen/Dense>
 #include <GL/gl3w.h>
 #include "imgui_impl_sdl.h"
 #include "imgui_impl_opengl3.h"

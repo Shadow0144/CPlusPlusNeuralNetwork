@@ -1,6 +1,6 @@
 #pragma once
 
-#include "NeuralLayer.h"
+#include "ParameterizedNeuralLayer.h"
 #include "ParameterSet.h"
 
 #pragma warning(push, 0)
@@ -9,7 +9,7 @@
 #include <shared_mutex>
 #pragma warning(pop)
 
-class MaxoutNeuralLayer : public NeuralLayer
+class MaxoutNeuralLayer : public ParameterizedNeuralLayer
 {
 public:
 	MaxoutNeuralLayer(NeuralLayer* parent, size_t numUnits, size_t numFunctions, bool addBias = true);
@@ -28,8 +28,6 @@ private:
 	bool addBias;
 	int numInputs;
 	size_t numFunctions;
-
-	ParameterSet weights;
 
 	xt::xarray<double> maxMask; // For use by backpropagation
 

@@ -18,6 +18,9 @@ public:
 
 	virtual std::vector<size_t> getOutputShape();
 
+	virtual void saveParameters(std::string fileName);
+	virtual void loadParameters(std::string fileName);
+
 	// Drawing constants
 	const static double DRAW_LEN;// = 16.0;
 	const static double RERESCALE;// = 0.75;
@@ -62,4 +65,10 @@ protected:
 
 	void drawFunctionBackground(ImDrawList* canvas, ImVec2 origin, double scale, bool drawAxes);
 	void drawConversionFunctionBackground(ImDrawList* canvas, ImVec2 origin, double scale, bool drawAxes);
+
+	inline bool fileExists(const std::string& name)
+	{
+		struct stat buffer;
+		return (stat(name.c_str(), &buffer) == 0);
+	};
 };

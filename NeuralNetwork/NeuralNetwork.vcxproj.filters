@@ -225,6 +225,9 @@
     <ClCompile Include="MaxoutNeuralLayer.cpp">
       <Filter>Source Files\NeuralLayer</Filter>
     </ClCompile>
+    <ClCompile Include="ParameterizedNeuralLayer.cpp">
+      <Filter>Source Files\NeuralLayer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NeuralNetwork.h">
@@ -404,16 +407,13 @@
     <ClInclude Include="MaxoutNeuralLayer.h">
       <Filter>Header Files\NeuralLayer</Filter>
     </ClInclude>
+    <ClInclude Include="ParameterizedNeuralLayer.h">
+      <Filter>Header Files\NeuralLayer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="SuccessVisualStudioWindows.jpg">
       <Filter>Resource Files</Filter>
     </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <CopyFileToFolders Include="SDL2.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <Library Include="openblas.lib" />
   </ItemGroup>
 </Project>

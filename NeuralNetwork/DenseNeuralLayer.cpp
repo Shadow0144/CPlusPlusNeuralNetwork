@@ -2,6 +2,8 @@
 
 #include "DenseNeuralLayer.h"
 
+#include "ActivationFunctionFactory.h"
+
 #pragma warning(push, 0)
 #include <math.h>
 #include <tuple>

@@ -5,8 +5,6 @@
 #include "ParameterSet.h"
 
 #pragma warning(push, 0)
-#include <Eigen/Core>
-#include <Eigen/Dense>
 #include "imgui.h"
 #include <xtensor/xarray.hpp>
 #pragma warning(pop)
@@ -30,6 +28,6 @@ protected:
 	bool drawAxes = true;
 
 	virtual double activate(double z); // For drawing
-	Eigen::MatrixXd approximateBezier(const Eigen::MatrixXd& points); // For drawing
+	xt::xarray<double> approximateBezier(const xt::xarray<double>& points); // For drawing
 	void approximateFunction(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights); // For drawing
 };

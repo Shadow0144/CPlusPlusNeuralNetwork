@@ -7,6 +7,7 @@
 #include <limits>
 #include <xtensor/xsort.hpp>
 #include <xtensor-blas/xlinalg.hpp>
+#include <xtensor/xnpy.hpp>
 #pragma warning(pop)
 
 #include "Test.h"

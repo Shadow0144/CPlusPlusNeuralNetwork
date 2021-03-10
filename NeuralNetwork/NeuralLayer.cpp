@@ -68,6 +68,16 @@ xt::xarray<double> NeuralLayer::addBiasToInput(const xt::xarray<double>& input)
 	return biasedInput;
 }
 
+void NeuralLayer::saveParameters(std::string fileName)
+{
+	// Do nothing
+}
+
+void NeuralLayer::loadParameters(std::string fileName)
+{
+	// Do nothing
+}
+
 double NeuralLayer::getLayerWidth(size_t numUnits, double scale)
 {
 	return ((((DIAMETER + NEURON_SPACING) * numUnits) + NEURON_SPACING) * scale);

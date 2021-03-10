@@ -1,9 +1,7 @@
 #pragma once
 
-#include "NeuralLayer.h"
+#include "ParameterizedNeuralLayer.h"
 #include "ActivationFunction.h"
-#include "ActivationFunctionFactory.h"
-#include "ParameterSet.h"
 
 #pragma warning(push, 0)
 #include "imgui.h"
@@ -13,7 +11,7 @@
 
 using namespace std;
 
-class DenseNeuralLayer : public NeuralLayer
+class DenseNeuralLayer : public ParameterizedNeuralLayer
 {
 public:
 	DenseNeuralLayer(ActivationFunctionType functionType, NeuralLayer* parent, size_t numUnits, 
@@ -36,8 +34,6 @@ private:
 	xt::xarray<double> lastOutput;
 	bool addBias;
 	int numInputs;
-
-	ParameterSet weights;
 
 	xt::xarray<double> dotProduct(const xt::xarray<double>& input);
 	xt::xarray<double> denseBackpropagate(const xt::xarray<double>& sigmas);

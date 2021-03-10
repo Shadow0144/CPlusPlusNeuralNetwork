@@ -4,12 +4,12 @@
 #pragma warning(push, 0)
 #include <iostream>
 #include <xtensor-blas/xlinalg.hpp>
+#include <xtensor/xfixed.hpp>
 #pragma warning(pop)
 
 #include "Test.h"
 
 using namespace std;
-using namespace Eigen;
 
 xt::xarray<double> ActivationFunction::feedForwardTrain(const xt::xarray<double>& inputs)
 {
@@ -32,47 +32,34 @@ std::vector<size_t> ActivationFunction::getOutputShape(std::vector<size_t> outpu
 	return outputShape;
 }
 
-MatrixXd ActivationFunction::approximateBezier(const MatrixXd& points)
+xt::xarray<double> ActivationFunction::approximateBezier(const xt::xarray<double>& points)
 {
-	//int pCount = points.rows();
-	//int k = pCount - 1;
+	xt::xarray<double> T =
+			{ { 1.0,       0.0,       0.0,			0.0 },
+			  { 1.0,	1.0 / 3.0,	1.0 / 9.0,	1.0 / 27.0 },
+			  { 1.0,	2.0 / 3.0,	4.0 / 9.0,	8.0 / 27.0 },
+			  { 1.0,       1.0,       1.0,			1.0 } };
 
-	/*MatrixXd T(pCount, pCount);
-	for (int i = 0; i < pCount; i++)
-	{
-		for (int j = 0; j < pCount; j++)
-		{
-			double jk = ((double)j) / ((double)k);
-			T(k-i, k-j) = pow(jk, i);
-		}
-	}*/
+	xt::xarray<double> M =
+			{ { 1.0,	0.0,	0.0,	0.0},
+			  {-3.0,	3.0,	0.0,	0.0},
+			  {3.0,		-6.0,	3.0,	0.0},
+			  {-1.0,	3.0,	-3.0,	1.0} }; // 4
 
-	MatrixXd T(4, 4);
-	T << 1.0,       0.0,       0.0,        0.0,
-		 1.0, 1.0 / 3.0, 1.0 / 9.0, 1.0 / 27.0,
-		 1.0, 2.0 / 3.0, 4.0 / 9.0, 8.0 / 27.0,
-		 1.0,       1.0,       1.0,        1.0;
+	/*xt::xarray<double> M =
+			{ { 1.0,	0.0,	0.0,	0.0,	0.0,	0.0,	0.0 },
+			  { -6.0,   6.0,	0.0,	0.0,	0.0,	0.0,	0.0 },
+			  { 15.0,	-30.0,  15.0,   0.0,	0.0,	0.0,	0.0 },
+			  { -20.0,  60.0,	-60.0,	-20.0,  0.0,	0.0,	0.0 },
+			  { 15.0,	-60.0,  90.0,	-60.0,  15.0,   0.0,	0.0 },
+			  { -6.0,	30.0,	-60.0,	60.0,	-30.0,  6.0,	0.0 },
+			  { 1.0,	-6.0,	15.0,	-20.0,  15.0,	-6.0,   1.0 } }; // 7 */
 
-	MatrixXd M(4, 4);
-	M << 1,  0,  0,  0,
-		-3,  3,  0,  0,
-		 3, -6,  3,  0,
-		-1,  3, -3,  1;
+	auto Mi = xt::linalg::pinv(M);
+	auto TT = xt::transpose(T);
+	auto A = Mi * xt::linalg::pinv(TT * T) * TT;
 
-	/*MatrixXd M(7, 7);
-	M <<     1,   0,   0,   0,   0,   0,   0,
-			 -6,   6,   0,   0,   0,   0,   0,
-			 15, -30,  15,   0,   0,   0,   0,
-			-20,  60, -60, -20,   0,   0,   0,
-			 15, -60,  90, -60,  15,   0,   0,
-			 -6,  30, -60,  60, -30,   6,   0,
-			  1,  -6,  15, -20,  15,  -6,   1;*/
-
-	MatrixXd Mi = M.inverse();
-	MatrixXd TT = T.transpose();
-	MatrixXd A = Mi * (TT * T).inverse() * TT;
-
-	return A * points;
+	return (xt::linalg::tensordot(A, points, 1));
 }
 
 // TODO: Cap vertical draw
@@ -100,7 +87,7 @@ void ActivationFunction::approximateFunction(ImDrawList* canvas, ImVec2 origin, 
 		double lastX = -1.0;
 		int pointCount = 0;
 		int inflection = 0;
-		MatrixXd graphPoints(RESOLUTION, 2);
+		xt::xtensor_fixed<double, xt::xshape<RESOLUTION, 2> > graphPoints;
 		for (int r = 0; r < RESOLUTION; r++)
 		{
 			double x = RANGE * (2.0 * r) / (RESOLUTION - 1.0) - RANGE;
@@ -167,7 +154,7 @@ void ActivationFunction::approximateFunction(ImDrawList* canvas, ImVec2 origin, 
 		pointCount = pointCount - 2; // Do not go over
 		for (int d = 0; d < pointCount; d += 3) // Use the last point as a start of the next line
 		{
-			MatrixXd points = approximateBezier(graphPoints.block(d, 0, 4, 2)); // Grab 4 points
+			auto points = approximateBezier(xt::view(graphPoints, xt::range(d, d + 4), xt::all())); // Grab 4 points
 			canvas->AddBezierCurve(
 				ImVec2(position.x + (points(0, 0) * RESCALE), position.y - (points(0, 1) * RESCALE)),
 				ImVec2(position.x + (points(1, 0) * RESCALE), position.y - (points(1, 1) * RESCALE)),

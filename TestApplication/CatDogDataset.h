@@ -8,8 +8,8 @@ void loadCatDogDataset(xt::xarray<double>& features, xt::xarray<double>& labels,
 	std::string catLocation = "C:/Users/Corbi/Pictures/CNN/cat_archive/";
 	std::string dogLocation = "C:/Users/Corbi/Pictures/CNN/dog_archive/";
 
-	const int MAX_CATS = 10;// 0;
-	const int MAX_DOGS = 10;// 0;
+	const int MAX_CATS = 1;// 10;// 0;
+	const int MAX_DOGS = 1;// 10;// 0;
 
 	// The network relies on the images being this size
 	size_t maxWidth = 1024;
@@ -92,8 +92,6 @@ void loadCatDogDataset(xt::xarray<double>& features, xt::xarray<double>& labels,
 	}
 	//index += dogCount;
 
-	cout << labels << endl << endl;
-
 	// Shuffle
 	if (shuffle)
 	{
@@ -113,6 +111,4 @@ void loadCatDogDataset(xt::xarray<double>& features, xt::xarray<double>& labels,
 		}
 	}
 	else { }
-
-	cout << labels << endl << endl;
 }

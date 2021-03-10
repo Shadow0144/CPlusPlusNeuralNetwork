@@ -79,7 +79,7 @@ public:
 
 	void setErrorFunction(ErrorFunctionType errorFunctionType);
 	void enableStoppingCondition(StoppingCondition condition, double threshold);
-	void disableStoppingCondition(StoppingCondition);
+	void disableStoppingCondition(StoppingCondition condition);
 	bool getStoppingConditionEnabled(StoppingCondition condition);
 	double getStoppingConditionThreshold(StoppingCondition condition);
 
@@ -95,6 +95,14 @@ public:
 
 	int getOutputRate();
 	void setOutputRate(int outputRate);
+
+	void resetEpoch();
+
+	void loadParameters(string folderName);
+	void saveParameters(string folderName);
+	void enableAutosave(string folderName, int perIterations);
+	void disableAutosave();
+
 	bool getDrawingEnabled();
 	void setDrawingEnabled(bool drawingEnabled);
 	void displayRegressionEstimation();
@@ -109,7 +117,7 @@ private:
 	vector<size_t> inputShape;
 	vector<NeuralLayer*>* layers;
 	ErrorFunction* errorFunction;
-	int maxIterations;
+	int maxEpochs;
 	double minError;
 	double errorConvergenceThreshold;
 	double weightConvergenceThreshold;
@@ -118,6 +126,8 @@ private:
 	NetworkVisualizer* visualizer;
 	bool* stoppingConditionFlags;
 
+	int currentEpoch;
+
 	enum class LearningState // For printing output
 	{
 		untrained,
@@ -125,7 +135,24 @@ private:
 		trained
 	};
 
+	int autosaveFrequency;
+	string autosaveFileName;
+	bool autosaveEnabled;
+
 	void setupDrawing(const xt::xarray<double>& inputs, const xt::xarray<double>& targets);
 	void updateDrawing(const xt::xarray<double>& predicted);
-	void output(LearningState state, int iteration, const xt::xarray<double>& inputs, const xt::xarray<double>& targets, const xt::xarray<double>& predicted);
+	void output(LearningState state, int epoch, const xt::xarray<double>& inputs, 
+						const xt::xarray<double>& targets, const xt::xarray<double>& predicted);
+
+	inline bool folderExists(const std::string& name)
+	{
+		struct stat buffer;
+		return (stat(name.c_str(), &buffer) == 0 && buffer.st_mode & S_IFDIR);
+	};
+
+	inline bool fileExists(const std::string& name)
+	{
+		struct stat buffer;
+		return (stat(name.c_str(), &buffer) == 0);
+	};
 };

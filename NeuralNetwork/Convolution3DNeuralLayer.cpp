@@ -146,15 +146,11 @@ xt::xarray<double> Convolution3DNeuralLayer::feedForward(const xt::xarray<double
 		xt::strided_view(output, outputWindowView) = convolude3D(input, filter);
 	}
 
-	//output = xt::where(lastOutput > 0.0, lastOutput, 0); // TODO
-
 	return output;
 }
 
 xt::xarray<double> Convolution3DNeuralLayer::backPropagate(const xt::xarray<double>& sigma)
 {
-	//sigmas *= (lastOutput > 0.0); // TODO: Replace with correct derivative code
-
 	// The change in weights corresponds to a convolution between the input and the sigmas
 	// Assume the last dimension is the channel dimension
 	const int DIMS = lastInput.dimension();
@@ -200,8 +196,6 @@ xt::xarray<double> Convolution3DNeuralLayer::backPropagate(const xt::xarray<doub
 	}
 
 	weights.incrementDeltaParameters(-ALPHA * delta);
-
-	//cout << "Delta: " << xt::sum(delta)(0) << endl;
 
 	// The updated sigmas are a padded convolution between the original sigmas and the rotated filters
 	// Pad the sigmas and repeat for each of the input channels

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "NeuralLayer.h"
+#include "ParameterizedNeuralLayer.h"
 #include "ActivationFunction.h"
 
 #pragma warning(push, 0)
@@ -8,7 +8,7 @@
 #include <vector>
 #pragma warning(pop)
 
-class Convolution3DNeuralLayer : public NeuralLayer
+class Convolution3DNeuralLayer : public ParameterizedNeuralLayer
 {
 public:
 	Convolution3DNeuralLayer(NeuralLayer* parent, size_t numKernels, 
@@ -30,8 +30,6 @@ private:
 	size_t inputChannels;
 
 	xt::xstrided_slice_vector kernelWindowView;
-
-	ParameterSet weights;
 
 	xt::xarray<double> convolude3D(const xt::xarray<double>& f, const xt::xarray<double>& g);
 	void draw3DConvolution(ImDrawList* canvas, ImVec2 origin, double scale);

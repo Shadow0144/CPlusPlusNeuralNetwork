@@ -8,7 +8,7 @@
 #include <map>
 #include <windows.h> 
 #include <xtensor/xarray.hpp>
-#include <xtensor/xcsv.hpp>
+#include <xtensor/xnpy.hpp>
 #include <xtensor/xview.hpp>
 #include <xtensor/xio.hpp>
 #include <xtensor/xsort.hpp>
@@ -381,7 +381,7 @@ void test_binary()
     // Set up the data
     ifstream in_file;
     in_file.open("mnist_binary.csv");
-    auto data = xt::load_csv<double>(in_file);
+    auto data = xt::load_npy<double>(in_file);
     in_file.close();
 
     const int N = ((int)(data.shape()[0])); // Number of examples
@@ -439,7 +439,7 @@ void test_mnist()
     ifstream in_file;
     //in_file.open("mnist_mini.csv");
     in_file.open("mnist_fashion_test.csv");
-    auto data = xt::load_csv<double>(in_file);
+    auto data = xt::load_npy<double>(in_file);
     in_file.close();
 
     const int N = ((int)(data.shape()[0])); // Number of examples
@@ -543,13 +543,22 @@ void test_catdog()
     network.setOutputRate(1);
 
     const int COLS = 5;
-    const int ROWS = min(N / COLS, 30);
+    const int ROWS = max(1, min(N / COLS, 30));
     ImColor* classColors = new ImColor[CLASSES]
     { ImColor(0.0f, 0.0f, 0.0f, 1.0f),
       ImColor(1.0, 1.0f, 1.0f, 1.0f) };
     network.displayClassificationEstimation(ROWS, COLS, classColors);
+
+    std::cout << "Training on Cat / Dog Dataset" << endl << endl;
     
+    string networkParametersFileName = "catdog";
+    network.enableAutosave(networkParametersFileName, 1);
+    //network.saveParameters(networkParametersFileName);
+    network.loadParameters(networkParametersFileName);
+
     network.train(features, labels, MAX_EPOCHS);
+
+    network.saveParameters(networkParametersFileName);
 
     system("pause");
 }
@@ -592,7 +601,7 @@ void test_layers()
 {
     ifstream in_file;
     in_file.open("mnist_test.csv");
-    auto data = xt::load_csv<double>(in_file);
+    auto data = xt::load_npy<double>(in_file);
     in_file.close();
     int exampleCount = ((int)(data.shape()[0])); // Number of examples
     int width = sqrt((int)(data.shape()[1])); // 28 x 28

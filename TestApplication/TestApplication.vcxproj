@@ -1,14 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Debug|Win32">
-      <Configuration>Debug</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|Win32">
-      <Configuration>Release</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
       <Platform>x64</Platform>
@@ -26,19 +18,6 @@
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
@@ -57,12 +36,6 @@
   </ImportGroup>
   <ImportGroup Label="Shared">
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
@@ -70,65 +43,25 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LinkIncremental>true</LinkIncremental>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <LinkIncremental>false</LinkIncremental>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\NeuralNetwork;$(XTL_PATH);$(XTENSOR_PATH);$(EIGEN_PATH);$(SDL2_DIR)\include;$(OPENCV_DIR)\..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ClCompile>
-    <Link>
-      <SubSystem>Console</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\SDL2\SDL2-2.0.12\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;..\x86\Debug\NeuralNetworkd.lib;$(SDL2_DIR)\lib\x86\SDL2.lib;$(SDL2_DIR)\lib\x86\SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\NeuralNetwork;$(XTL_PATH);$(XTENSOR_PATH);$(EIGEN_PATH);$(SDL2_DIR)\include;$(OPENCV_DIR)\..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ClCompile>
-    <Link>
-      <SubSystem>Console</SubSystem>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\SDL2\SDL2-2.0.12\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;..\x86\Release\NeuralNetwork.lib;$(SDL2_DIR)\lib\x86\SDL2.lib;$(SDL2_DIR)\lib\x86\SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
-    </Link>
-  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\NeuralNetwork;$(XTL_PATH);$(XTENSOR_PATH);$(EIGEN_PATH);$(SDL2_DIR)\include;$(OPENCV_DIR)\..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\NeuralNetwork;$(XTL_PATH);$(XTENSOR_PATH);$(SDL2_DIR)\include;$(OPENCV_DIR)\..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\SDL2\SDL2-2.0.12\lib\x64;</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;..\x64\Debug\NeuralNetworkd.lib;$(SDL2_DIR)\lib\x64\SDL2.lib;$(SDL2_DIR)\lib\x64\SDL2main.lib;$(OPENCV_DIR)\lib\opencv_world430d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\SDL2\SDL2-2.0.12\lib\x64;$(OpenBLAS_DIR)\lib;$(MSBuildProjectDirectory)\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;libopenblas.a;..\x64\Debug\NeuralNetworkd.lib;$(SDL2_DIR)\lib\x64\SDL2.lib;$(SDL2_DIR)\lib\x64\SDL2main.lib;$(OPENCV_DIR)\lib\opencv_world430d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -139,14 +72,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\NeuralNetwork;$(XTL_PATH);$(XTENSOR_PATH);$(EIGEN_PATH);$(SDL2_DIR)\include;$(OPENCV_DIR)\..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\NeuralNetwork;$(XTL_PATH);$(XTENSOR_PATH);$(SDL2_DIR)\include;$(OPENCV_DIR)\..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\SDL2\SDL2-2.0.12\lib\x64;</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\SDL2\SDL2-2.0.12\lib\x64;$(MSBuildProjectDirectory)\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>opengl32.lib;..\x64\Release\NeuralNetwork.lib;$(SDL2_DIR)\lib\x64\SDL2.lib;$(SDL2_DIR)\lib\x64\SDL2main.lib;$(OPENCV_DIR)\lib\opencv_world430.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -195,7 +128,17 @@
       <FileType>Document</FileType>
     </CopyFileToFolders>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="..\packages\OpenBLAS.0.2.14.1\build\native\openblas.targets" Condition="Exists('..\packages\OpenBLAS.0.2.14.1\build\native\openblas.targets')" />
   </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\OpenBLAS.0.2.14.1\build\native\openblas.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\OpenBLAS.0.2.14.1\build\native\openblas.targets'))" />
+  </Target>
 </Project>

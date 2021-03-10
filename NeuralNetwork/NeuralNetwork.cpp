@@ -1,5 +1,18 @@
 #include "NeuralNetwork.h"
 
+#ifdef __GNUC__
+#define LINUX
+#else
+#define WINDOWS
+#endif
+#ifdef WINDOWS
+#include <direct.h>
+#define GetCurrentDir _getcwd
+#else
+#include <unistd.h>
+#define GetCurrentDir getcwd
+#endif
+
 #include "NetworkVisualizer.h"
 
 #include "InputNeuralLayer.h"
@@ -25,9 +38,11 @@
 #pragma warning(push, 0)
 #include <thread>
 #include <iostream>
+#include <fstream>
 #include <math.h>
 #include <cmath>
 #include <xtensor/xview.hpp>
+#include <filesystem>
 #pragma warning(pop)
 
 const double internalBatchLimit = 20;
@@ -39,8 +54,13 @@ NeuralNetwork::NeuralNetwork(bool drawingEnabled)
 	this->outputRate = 100;
 	this->drawingEnabled = drawingEnabled;
 
+	this->autosaveEnabled = false;
+	this->autosaveFrequency = 0;
+
+	this->currentEpoch = 0;
+
 	this->errorFunction = NULL;
-	this->maxIterations = -1;
+	this->maxEpochs = -1;
 	this->minError = -1;
 	this->errorConvergenceThreshold = -1;
 	this->weightConvergenceThreshold = -1;
@@ -295,20 +315,20 @@ void NeuralNetwork::train(const xt::xarray<double>& inputs, const xt::xarray<dou
 	{
 		xt::xarray<double> predicted = feedForward(inputs);
 		double error = abs(getError(predicted, targets));
-		output(LearningState::untrained, 0, inputs, targets, predicted);
+		output(LearningState::untrained, currentEpoch, inputs, targets, predicted);
 
 		updateDrawing(predicted);
 
 		cout << "Beginning training" << endl << endl;
 
-		int t = 0;
+		//currentEpoch = 0; //int t = 0; // This is set either in the constructor or when loading
 		bool converged = false;
 		double lastError = error;
 		double deltaError = error;
 		const int BATCHES = inputs.shape()[0] / batchSize;
 		int N = targets.shape()[0];
 		while 
-			(!((stoppingConditionFlags[((int)(StoppingCondition::Max_Epochs))]) && (t >= maxIterations)) &&
+			(!((stoppingConditionFlags[((int)(StoppingCondition::Max_Epochs))]) && (currentEpoch >= maxEpochs)) &&
 			 !((stoppingConditionFlags[((int)(StoppingCondition::Min_Error))]) && (error < 0 || error > minError)) &&
 			 !((stoppingConditionFlags[((int)(StoppingCondition::Min_Delta_Error))]) && (deltaError > errorConvergenceThreshold)) &&
 			 !((stoppingConditionFlags[((int)(StoppingCondition::Min_Delta_Params))]) && (!converged)))
@@ -338,13 +358,20 @@ void NeuralNetwork::train(const xt::xarray<double>& inputs, const xt::xarray<dou
 
 			updateDrawing(predicted);
 
-			if (t % outputRate == 0 && t != 0)
+			currentEpoch++;
+
+			if (currentEpoch % outputRate == 0 && currentEpoch != 0)
 			{
-				output(LearningState::training, t, inputs, targets, predicted);
+				output(LearningState::training, currentEpoch, inputs, targets, predicted);
 			}
 			else { }
 
-			t++;
+			if (autosaveEnabled && currentEpoch % autosaveFrequency == 0)
+			{
+				saveParameters(autosaveFileName);
+				cout << "Epoch " << currentEpoch << " parameters saved" << endl << endl;
+			}
+			else { }
 		}
 
 		if (verbosity >= 1)
@@ -361,15 +388,15 @@ void NeuralNetwork::train(const xt::xarray<double>& inputs, const xt::xarray<dou
 			{
 				cout << "Minimum loss condition reached" << endl << endl;
 			}
-			else if ((stoppingConditionFlags[((int)(StoppingCondition::Max_Epochs))]) && (t == maxIterations))
+			else if ((stoppingConditionFlags[((int)(StoppingCondition::Max_Epochs))]) && (currentEpoch == maxEpochs))
 			{
-				cout << "Maximum iterations reached" << endl << endl;
+				cout << "Maximum epochs reached" << endl << endl;
 			}
 			else { }
 		}
 		else { }
 
-		output(LearningState::trained, t, inputs, targets, predicted);
+		output(LearningState::trained, currentEpoch, inputs, targets, predicted);
 
 		cout << "Training complete" << endl << endl;
 
@@ -383,7 +410,7 @@ void NeuralNetwork::train(const xt::xarray<double>& inputs, const xt::xarray<dou
 	}
 }
 
-void NeuralNetwork::output(LearningState state, int iteration, const xt::xarray<double>& inputs, const xt::xarray<double>& targets, const xt::xarray<double>& predicted)
+void NeuralNetwork::output(LearningState state, int epoch, const xt::xarray<double>& inputs, const xt::xarray<double>& targets, const xt::xarray<double>& predicted)
 {
 	if (verbosity >= 1)
 	{
@@ -410,7 +437,7 @@ void NeuralNetwork::output(LearningState state, int iteration, const xt::xarray<
 			}
 		}
 		else { }
-		cout << "Iterations: " << iteration << endl;
+		cout << "Epochs: " << epoch << endl;
 		cout << "Error: " << getError(predicted, targets) << endl;
 		cout << endl;
 	}
@@ -442,7 +469,7 @@ void NeuralNetwork::enableStoppingCondition(StoppingCondition condition, double 
 	switch (condition)
 	{
 		case StoppingCondition::Max_Epochs:
-			this->maxIterations = threshold;
+			this->maxEpochs = threshold;
 			break;
 		case StoppingCondition::Min_Error:
 			this->minError = threshold;
@@ -472,7 +499,7 @@ double NeuralNetwork::getStoppingConditionThreshold(StoppingCondition condition)
 	switch (condition)
 	{
 		case StoppingCondition::Max_Epochs:
-			rValue = this->maxIterations;
+			rValue = this->maxEpochs;
 			break;
 		case StoppingCondition::Min_Error:
 			rValue = this->minError;
@@ -520,6 +547,81 @@ int NeuralNetwork::getOutputRate()
 void NeuralNetwork::setOutputRate(int outputRate)
 {
 	this->outputRate = outputRate;
+}
+
+void NeuralNetwork::resetEpoch()
+{
+	currentEpoch = 0;
+}
+
+std::string getCurrentDir()
+{
+	char buffer[FILENAME_MAX];
+	GetCurrentDir(buffer, FILENAME_MAX);
+	string currentWorkingDir(buffer);
+	return currentWorkingDir;
+}
+
+void NeuralNetwork::loadParameters(string folderName)
+{
+	string fullFolderName = getCurrentDir().append("\\" + folderName);
+	string fileName = fullFolderName + "\\" + folderName;
+	if (folderExists(fullFolderName) && fileExists(fileName + ".nnp"))
+	{
+		ifstream loadFile;
+		loadFile.open(fileName + ".nnp");
+		loadFile >> currentEpoch;
+		loadFile.close();
+		for (int l = 0; l < layerCount; l++)
+		{
+			layers->at(l)->loadParameters(fileName + "_" + to_string(l)); // The individual layers add their own file endings as needed
+		}
+		cout << "Loading complete" << endl << endl;
+	}
+	else
+	{
+		cout << "No parameters to load" << endl << endl;
+	}
+}
+
+void NeuralNetwork::saveParameters(string folderName)
+{	
+	bool success = true;
+	std::filesystem::path folderPath = getCurrentDir().append("\\" + folderName);
+	bool exists = std::filesystem::exists(folderPath);
+	if (!exists)
+	{
+		success = std::filesystem::create_directory(folderPath);
+	}
+	else { }
+	if (success)
+	{
+		string fileName = folderPath.string().append("\\" + folderName);
+		ofstream saveFile;
+		saveFile.open(fileName + ".nnp");
+		saveFile << currentEpoch;
+		saveFile.close();
+		for (int l = 0; l < layerCount; l++)
+		{
+			layers->at(l)->saveParameters(fileName + "_" + to_string(l)); // The individual layers add their own file endings as needed
+		}
+	}
+	else
+	{
+		cout << "Cannot create or access directory" << endl << endl;
+	}
+}
+
+void NeuralNetwork::enableAutosave(string folderName, int perIterations)
+{
+	this->autosaveFileName = folderName;
+	this->autosaveFrequency = perIterations;
+	this->autosaveEnabled = true;
+}
+
+void NeuralNetwork::disableAutosave()
+{
+	this->autosaveEnabled = false;
 }
 
 bool NeuralNetwork::getDrawingEnabled()
