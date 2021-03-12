@@ -4,6 +4,8 @@
 #include <xtensor/xnpy.hpp>
 #pragma warning(pop)
 
+using namespace std;
+
 void ParameterizedNeuralLayer::saveParameters(std::string fileName)
 {
 	xt::dump_npy(fileName + ".npy", weights.getParameters());
@@ -18,6 +20,6 @@ void ParameterizedNeuralLayer::loadParameters(std::string fileName)
 	}
 	else
 	{
-		cout << "Parameter file not found" << endl;
+		cout << "Parameter file " + fileName + ".npy" + "not found" << endl;
 	}
 }

@@ -9,7 +9,29 @@
 #include <xtensor/xarray.hpp>
 #pragma warning(pop)
 
-enum class ActivationFunctionType;
+enum class ActivationFunctionType
+{
+	Identity,
+	ReLU,
+	AbsoluteReLU,
+	CReLU,
+	ELU,
+	SELU,
+	GELU,
+	LeakyReLU,
+	PReLU,
+	ReLU6,
+	ReLUn,
+	Softplus,
+	Exponential,
+	Quadratic,
+	Sigmoid,
+	Tanh,
+	HardSigmoid,
+	Softsign,
+	Swish,
+	Maxout
+};
 
 class ActivationFunction
 {

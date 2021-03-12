@@ -44,7 +44,7 @@ double SqueezeNeuralLayer::applyBackPropagate()
 
 std::vector<size_t> SqueezeNeuralLayer::getOutputShape()
 {
-	return std::vector<size_t>();
+	return std::vector<size_t>(); // TODO
 }
 
 void SqueezeNeuralLayer::draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output)

@@ -3,8 +3,6 @@
 #include "NeuralLayer.h"
 #include "ParameterSet.h"
 
-using namespace std;
-
 class ParameterizedNeuralLayer : public NeuralLayer
 {
 public:

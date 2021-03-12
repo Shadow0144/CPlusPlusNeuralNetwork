@@ -2,35 +2,12 @@
 
 #include "NeuralLayer.h"
 #include "ErrorFunction.h"
+#include "ActivationFunction.h"
 
 #pragma warning(push, 0)
 #include <vector>
 #include <map>
 #pragma warning(pop)
-
-enum class ActivationFunctionType
-{
-	Identity,
-	ReLU,
-	AbsoluteReLU,
-	CReLU,
-	ELU,
-	SELU,
-	GELU,
-	LeakyReLU,
-	PReLU,
-	ReLU6,
-	ReLUn,
-	Softplus,
-	Exponential,
-	Quadratic,
-	Sigmoid,
-	Tanh,
-	HardSigmoid,
-	Softsign,
-	Swish,
-	Maxout
-};
 
 enum class ErrorFunctionType
 {
@@ -61,9 +38,9 @@ public:
 		std::map<string, double> additionalParameters = std::map<string, double>(), bool addBias = true);
 	void addMaxoutLayer(size_t numUnits, size_t numFunctions, bool addBias = true);
 	void addSoftmaxLayer(int axis = -1);
-	void addConvolution1DLayer(size_t numKernels, const std::vector<size_t>& convolutionShape, size_t inputChannels, size_t stride = 1);
-	void addConvolution2DLayer(size_t numKernels, const std::vector<size_t>& convolutionShape, size_t inputChannels, size_t stride = 1);
-	void addConvolution3DLayer(size_t numKernels, const std::vector<size_t>& convolutionShape, size_t inputChannels, size_t stride = 1);
+	void addConvolution1DLayer(size_t numKernels, const std::vector<size_t>& convolutionShape, size_t inputChannels, size_t stride = 1, bool addBias = false, ActivationFunctionType activationFunctionType = ActivationFunctionType::Identity, std::map<std::string, double> additionalParameters = std::map<std::string, double>());
+	void addConvolution2DLayer(size_t numKernels, const std::vector<size_t>& convolutionShape, size_t inputChannels, size_t stride = 1, bool addBias = false, ActivationFunctionType activationFunctionType = ActivationFunctionType::Identity, std::map<std::string, double> additionalParameters = std::map<std::string, double>());
+	void addConvolution3DLayer(size_t numKernels, const std::vector<size_t>& convolutionShape, size_t inputChannels, size_t stride = 1, bool addBias = false, ActivationFunctionType activationFunctionType = ActivationFunctionType::Identity, std::map<std::string, double> additionalParameters = std::map<std::string, double>());
 	void addAveragePooling1DLayer(const std::vector<size_t>& poolingShape);
 	void addAveragePooling2DLayer(const std::vector<size_t>& poolingShape);
 	void addAveragePooling3DLayer(const std::vector<size_t>& poolingShape);

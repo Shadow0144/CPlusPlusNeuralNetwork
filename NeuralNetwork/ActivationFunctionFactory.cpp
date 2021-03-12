@@ -22,6 +22,8 @@
 #include "SoftsignFunction.h"
 #include "SwishFunction.h"
 
+using namespace std;
+
 ActivationFunction* ActivationFunctionFactory::getNewActivationFunction(ActivationFunctionType functionType, std::map<string, double> additionalParameters)
 {
 	ActivationFunction* activationFunction;

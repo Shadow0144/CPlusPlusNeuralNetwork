@@ -228,6 +228,9 @@
     <ClCompile Include="ParameterizedNeuralLayer.cpp">
       <Filter>Source Files\NeuralLayer</Filter>
     </ClCompile>
+    <ClCompile Include="ConvolutionNeuralLayer.cpp">
+      <Filter>Source Files\NeuralLayer\ConvolutionLayer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NeuralNetwork.h">
@@ -409,6 +412,9 @@
     </ClInclude>
     <ClInclude Include="ParameterizedNeuralLayer.h">
       <Filter>Header Files\NeuralLayer</Filter>
+    </ClInclude>
+    <ClInclude Include="ConvolutionNeuralLayer.h">
+      <Filter>Header Files\NeuralLayer\ConvolutionLayer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

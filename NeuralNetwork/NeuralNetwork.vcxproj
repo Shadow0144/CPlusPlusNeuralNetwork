@@ -99,6 +99,7 @@
     <ClCompile Include="ClassifierVisualizer.cpp" />
     <ClCompile Include="Convolution1DNeuralLayer.cpp" />
     <ClCompile Include="Convolution2DNeuralLayer.cpp" />
+    <ClCompile Include="ConvolutionNeuralLayer.cpp" />
     <ClCompile Include="CReLUFunction.cpp" />
     <ClCompile Include="Convolution3DNeuralLayer.cpp" />
     <ClCompile Include="CrossEntropyErrorFunction.cpp" />
@@ -157,6 +158,7 @@
     <ClInclude Include="ClassifierVisualizer.h" />
     <ClInclude Include="Convolution1DNeuralLayer.h" />
     <ClInclude Include="Convolution2DNeuralLayer.h" />
+    <ClInclude Include="ConvolutionNeuralLayer.h" />
     <ClInclude Include="CReLUFunction.h" />
     <ClInclude Include="Convolution3DNeuralLayer.h" />
     <ClInclude Include="CrossEntropyErrorFunction.h" />

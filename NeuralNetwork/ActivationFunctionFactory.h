@@ -1,13 +1,13 @@
 #pragma once
 
-#include "NeuralNetwork.h"
+#include "ActivationFunction.h"
 
+#pragma warning(push, 0)
 #include <map>
-
-class ActivationFunction;
+#pragma warning(pop)
 
 class ActivationFunctionFactory
 {
 public:
-	static ActivationFunction* getNewActivationFunction(ActivationFunctionType functionType, std::map<string, double> additionalParameters);
+	static ActivationFunction* getNewActivationFunction(ActivationFunctionType functionType, std::map<std::string, double> additionalParameters);
 };

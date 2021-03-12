@@ -2,8 +2,11 @@
 
 #include "Convolution1DNeuralLayer.h"
 
+#include "ActivationFunctionFactory.h"
+
 #pragma warning(push, 0)
 #include <xtensor/xview.hpp>
+#include <xtensor/xrandom.hpp>
 #include <math.h>
 #include <tuple>
 #pragma warning(pop)
@@ -11,7 +14,8 @@
 using namespace std;
 
 Convolution1DNeuralLayer::Convolution1DNeuralLayer(NeuralLayer* parent, size_t numKernels,
-	const std::vector<size_t>& convolutionShape, size_t inputChannels, size_t stride)
+	const std::vector<size_t>& convolutionShape, size_t inputChannels, size_t stride, bool addBias,
+	ActivationFunctionType activationFunctionType, std::map<string, double> additionalParameters)
 {
 	this->parent = parent;
 	this->children = NULL;
@@ -26,8 +30,9 @@ Convolution1DNeuralLayer::Convolution1DNeuralLayer(NeuralLayer* parent, size_t n
 	this->inputChannels = inputChannels;
 	this->numKernels = numKernels;
 
-	//this->hasBias = false; // TODO!
-	// Add activation function too
+	this->hasBias = addBias;
+
+	this->activationFunction = ActivationFunctionFactory::getNewActivationFunction(activationFunctionType, additionalParameters);
 
 	std::vector<size_t> paramShape;
 	// convolution x ... x filters x kernel -shaped
@@ -42,6 +47,12 @@ Convolution1DNeuralLayer::Convolution1DNeuralLayer(NeuralLayer* parent, size_t n
 	paramShape.push_back(inputChannels);
 	paramShape.push_back(numKernels);
 	this->weights.setParametersRandom(paramShape);
+
+	if (hasBias)
+	{
+		this->biasWeights.setParametersRandom(numKernels);
+	}
+	else { }
 }
 
 Convolution1DNeuralLayer::~Convolution1DNeuralLayer()
@@ -88,7 +99,7 @@ xt::xarray<double> Convolution1DNeuralLayer::convolude1D(const xt::xarray<double
 	return h;
 }
 
-xt::xarray<double> Convolution1DNeuralLayer::feedForward(const xt::xarray<double>& input)
+xt::xarray<double> Convolution1DNeuralLayer::convolveInput(const xt::xarray<double>& input)
 {
 	// Assume the last dimension is the channel dimension
 	const int DIMS = input.dimension();
@@ -118,11 +129,19 @@ xt::xarray<double> Convolution1DNeuralLayer::feedForward(const xt::xarray<double
 		xt::strided_view(output, outputWindowView) = convolude1D(input, filter);
 	}
 
+	if (hasBias)
+	{
+		output += biasWeights.getParameters(); // Add bias
+	}
+	else { }
+
 	return output;
 }
 
 xt::xarray<double> Convolution1DNeuralLayer::backPropagate(const xt::xarray<double>& sigma)
 {
+	xt::xarray<double> actSigma = activationFunction->getGradient(sigma); // Pass the sigmas through the activation function first
+
 	// The change in weights corresponds to a convolution between the input and the sigmas
 	// Assume the last dimension is the channel dimension
 	const int DIMS = lastInput.dimension();
@@ -142,13 +161,24 @@ xt::xarray<double> Convolution1DNeuralLayer::backPropagate(const xt::xarray<doub
 
 	// Set up the tensor to hold the result
 	xt::xarray<double> delta = xt::xarray<double>(weights.getDeltaParameters().shape());
+	xt::xarray<double> deltaBias;
+	if (hasBias)
+	{
+		deltaBias = xt::xarray<double>(numKernels);
+	}
+	else { }
 
 	for (int k = 0; k < numKernels; k++)
 	{
 		// Select the kth sigma and the kth kernel to update
 		sigmasWindowView[DIMC] = k;
 		kernelWindowView[kDIMK] = k;
-		auto kernelSigma = xt::xarray<double>(xt::strided_view(sigma, sigmasWindowView));
+		auto kernelSigma = xt::xarray<double>(xt::strided_view(actSigma, sigmasWindowView));
+		if (hasBias) // The gradient for the bias is simply the sum of the sigmas for each kernel
+		{
+			deltaBias(k) = xt::sum(kernelSigma)();
+		}
+		else { }
 		// Repeat the sigma for each of the filters / channels
 		kernelSigma = xt::expand_dims(kernelSigma, DIMC); // The output dimensionality should match the input
 		kernelSigma = xt::repeat(kernelSigma, inputChannels, DIMC);
@@ -166,6 +196,11 @@ xt::xarray<double> Convolution1DNeuralLayer::backPropagate(const xt::xarray<doub
 	}
 
 	weights.incrementDeltaParameters(-ALPHA * delta);
+	if (hasBias)
+	{
+		biasWeights.incrementDeltaParameters(-ALPHA * deltaBias);
+	}
+	else { }
 
 	// The updated sigmas are a padded convolution between the original sigmas and the rotated filters
 	// Pad the sigmas and repeat for each of the input channels
@@ -231,13 +266,6 @@ xt::xarray<double> Convolution1DNeuralLayer::backPropagate(const xt::xarray<doub
 	kernelWindowView[kDIMF] = xt::all();
 
 	return sigmasPrime;
-}
-
-double Convolution1DNeuralLayer::applyBackPropagate()
-{
-	double deltaWeight = xt::sum(xt::abs(weights.getDeltaParameters()))();
-	weights.applyDeltaParameters();
-	return deltaWeight; // Return the sum of how much the parameters have changed
 }
 
 void Convolution1DNeuralLayer::draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output)

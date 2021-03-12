@@ -1,12 +1,26 @@
 #define _USE_MATH_DEFINES
 #define NOMINMAX
 
+#ifdef __GNUC__
+#define LINUX
+#else
+#define WINDOWS
+#endif
+#ifdef WINDOWS
+#include <direct.h>
+#define GetCurrentFolder _getcwd
+#else
+#include <unistd.h>
+#define GetCurrentFolder getcwd
+#endif
+
 #pragma warning(push, 0)
 #include <iostream>
 #include <math.h>
 #include <cmath>
 #include <map>
 #include <windows.h> 
+#include <filesystem>
 #include <xtensor/xarray.hpp>
 #include <xtensor/xnpy.hpp>
 #include <xtensor/xview.hpp>
@@ -69,6 +83,14 @@ int cv_test()
     imshow("Display window", image); // Show our image inside it.
     waitKey(0); // Wait for a keystroke in the window*/
     return 0;
+}
+
+std::string getCurrentFolder()
+{
+    char buffer[FILENAME_MAX];
+    GetCurrentFolder(buffer, FILENAME_MAX);
+    std::string currentWorkingDir(buffer);
+    return currentWorkingDir;
 }
 
 void print_iris_results(xt::xarray<double> predicted, xt::xarray<double> actual)
@@ -521,7 +543,7 @@ void test_catdog()
     NeuralNetwork network(true);
     network.addInputLayer({ (size_t)IMG_ROWS, (size_t)IMG_COLS, (size_t)CHANNELS }); // 1024x1024x3
 
-    network.addConvolution2DLayer(NUM_KERNELS_1, { 5, 5 }, (size_t)CHANNELS); // 1024x1024x3 -> 1020x1020x16                                            
+    network.addConvolution2DLayer(NUM_KERNELS_1, { 5, 5 }, (size_t)CHANNELS, 1, true, ActivationFunctionType::ReLU); // 1024x1024x3 -> 1020x1020x16                                            
     network.addMaxPooling2DLayer({ 4, 4 }); // 1020x1020x16 -> 255x255x16
 
     network.addConvolution2DLayer(NUM_KERNELS_2, { 4, 4 }, NUM_KERNELS_1); // 255x255x16 -> 252x252x16                                                         
@@ -552,6 +574,7 @@ void test_catdog()
     std::cout << "Training on Cat / Dog Dataset" << endl << endl;
     
     string networkParametersFileName = "catdog";
+    std::filesystem::remove_all(getCurrentFolder().append("\\" + networkParametersFileName)); ////
     network.enableAutosave(networkParametersFileName, 1);
     //network.saveParameters(networkParametersFileName);
     network.loadParameters(networkParametersFileName);
