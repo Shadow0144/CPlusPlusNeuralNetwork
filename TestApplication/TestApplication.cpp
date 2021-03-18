@@ -26,6 +26,10 @@
 #include <xtensor/xview.hpp>
 #include <xtensor/xio.hpp>
 #include <xtensor/xsort.hpp>
+#include <opencv2/core.hpp>
+#include <opencv2/imgcodecs.hpp>
+#include <opencv2/highgui.hpp>
+#include <opencv2/imgproc.hpp>
 #pragma warning(pop)
 
 #include "NeuralNetwork.h"
@@ -36,11 +40,6 @@
 #include "CatDogDataset.h"
 
 #include "Test.h"
-
-#include <opencv2/core.hpp>
-#include <opencv2/imgcodecs.hpp>
-#include <opencv2/highgui.hpp>
-#include <opencv2/imgproc.hpp>
 
 //#include "Convolution2DFunction.h"
 //#include "MaxPooling2DFunction.h"
@@ -88,6 +87,7 @@ int cv_test()
 std::string getCurrentFolder()
 {
     char buffer[FILENAME_MAX];
+    #pragma warning(suppress : 6031)
     GetCurrentFolder(buffer, FILENAME_MAX);
     std::string currentWorkingDir(buffer);
     return currentWorkingDir;
@@ -244,7 +244,11 @@ void test_signal(int layers)
     {
         //network.addDenseLayer(functions[i], layerShapes[i]);
     }
-    network.addMaxoutLayer(3, 3);
+    //network.addMaxoutLayer(3, 3);
+    network.addDenseLayer(ActivationFunctionType::Identity, 9);
+    network.addReshapeLayer({ 3, 3 });
+    network.addFlattenLayer(9);
+    network.addDenseLayer(ActivationFunctionType::Sigmoid, 6);
     network.addDenseLayer(ActivationFunctionType::Identity, 1);
 
     /* // Linear
@@ -315,7 +319,7 @@ void test_signal(int layers)
     }
     std::cout << endl;
 
-    system("pause");
+    std::system("pause");
 }
 
 void test_iris(int layers)
@@ -395,7 +399,7 @@ void test_iris(int layers)
     //irisPredictions = network.feedForward(irisFeatures);
     //print_iris_results(irisPredictions, irisLabels);
 
-    system("pause");
+    std::system("pause");
 }
 
 void test_binary()
@@ -407,7 +411,7 @@ void test_binary()
     in_file.close();
 
     const int N = ((int)(data.shape()[0])); // Number of examples
-    const int IMG_DIM = sqrt((int)(data.shape()[1])); // 28 x 28
+    const int IMG_DIM = (int)sqrt((int)(data.shape()[1])); // 28 x 28
     const int C = 1;
 
     const int CLASSES = 2;
@@ -465,7 +469,7 @@ void test_mnist()
     in_file.close();
 
     const int N = ((int)(data.shape()[0])); // Number of examples
-    const int IMG_DIM = sqrt((int)(data.shape()[1])); // 28 x 28
+    const int IMG_DIM = (int)sqrt((int)(data.shape()[1])); // 28 x 28
     const int C = 1;
 
     const int CLASSES = 10;
@@ -528,11 +532,11 @@ void test_catdog()
     xt::xarray<double> labels;
     loadCatDogDataset(features, labels);
 
-    const int N = features.shape()[0]; // Number of examples
-    const int IMG_ROWS = features.shape()[1]; // 1024
-    const int IMG_COLS = features.shape()[2]; // 1024
-    const int CHANNELS = features.shape()[3]; // 3
-    const int CLASSES = labels.shape()[1];
+    const int N = (int)features.shape()[0]; // Number of examples
+    const int IMG_ROWS = (int)features.shape()[1]; // 1024
+    const int IMG_COLS = (int)features.shape()[2]; // 1024
+    const int CHANNELS = (int)features.shape()[3]; // 3
+    const int CLASSES = (int)labels.shape()[1];
 
     const int NUM_KERNELS_1 = 16;
     const int NUM_KERNELS_2 = 16;
@@ -583,7 +587,7 @@ void test_catdog()
 
     network.saveParameters(networkParametersFileName);
 
-    system("pause");
+    std::system("pause");
 }
 
 enum class network
@@ -627,7 +631,7 @@ void test_layers()
     auto data = xt::load_npy<double>(in_file);
     in_file.close();
     int exampleCount = ((int)(data.shape()[0])); // Number of examples
-    int width = sqrt((int)(data.shape()[1])); // 28 x 28
+    int width = (int)sqrt((int)(data.shape()[1])); // 28 x 28
     auto classes = xt::col(data, 0);
     xt::xarray<double> features = xt::reshape_view(xt::view(data, xt::all(), xt::range(1, _)), { exampleCount, width, width });
     features /= 255.0;
@@ -670,7 +674,7 @@ void test_layers()
 
     size_t batchSize = 20;
     const int ITERATIONS = 20000;
-    int len = classes.shape()[0];
+    int len = (int)classes.shape()[0];
     for (int i = 0; i < ITERATIONS; i++)
     {
         xt::xarray<double> answers = xt::zeros<double>({ (int)batchSize, 10 });
@@ -855,12 +859,12 @@ void test_layers()
     std::cout << "Waiting..." << endl;
     //cv::waitKey();
     std::cout << "Continuing..." << endl;
-    system("pause");
+    std::system("pause");
 }
 
 int main(int argc, char** argv)
 {
-    test_network(network::catdog, 3);
+    test_network(network::signal, 3);
 
     //test_layers();
 

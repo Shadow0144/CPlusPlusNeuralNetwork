@@ -1,15 +1,20 @@
 #include "PReLUFunction.h"
 #include "NeuralLayer.h"
+#include "NeuralNetworkFileHelper.h"
 
 #pragma warning(push, 0)
 #include <iostream>
 #include <random>
 #include <xtensor/xrandom.hpp>
+#include <xtensor/xnpy.hpp>
 #pragma warning(pop)
 
 #include "Test.h"
 
 using namespace std;
+
+const string PReLUFunction::NUM_UNITS = "numUnits";
+const string PReLUFunction::A = "a";
 
 PReLUFunction::PReLUFunction(int numUnits)
 {
@@ -17,25 +22,50 @@ PReLUFunction::PReLUFunction(int numUnits)
 	this->deltaA = xt::zeros<double>({ numUnits });
 }
 
-xt::xarray<double> PReLUFunction::PReLU(const xt::xarray<double>& z)
+PReLUFunction::PReLUFunction(int numUnits, const xt::xarray<double>& a)
+{
+	if (a.size() != 1 || a.shape()[0] != numUnits)
+	{
+		throw std::invalid_argument(std::string("a must be a vector of size numUnits"));
+	}
+	else { }
+	this->a = a;
+	this->deltaA = xt::zeros<double>({ numUnits });
+}
+
+xt::xarray<double> PReLUFunction::PReLU(const xt::xarray<double>& z) const
 {
 	auto nMask = (z <= 0.0);
 	auto pMask = (z > 0.0);
 	return (a * z * nMask) + (z * pMask);
 }
 
-xt::xarray<double> PReLUFunction::feedForward(const xt::xarray<double>& inputs)
+xt::xarray<double> PReLUFunction::feedForward(const xt::xarray<double>& inputs) const
 {
 	return PReLU(inputs);
 }
 
-void PReLUFunction::applyBackPropagate()
+xt::xarray<double> PReLUFunction::feedForwardTrain(const xt::xarray<double>& inputs)
 {
-	const double ALPHA = 0.01;
-	a -= ALPHA * deltaA; // TODO: Fix ALPHA
+	// Update deltaA
+	auto nMask = (lastInput <= 0.0);
+	std::vector<size_t> dims;
+	int DIMS = lastInput.dimension() - 1;
+	for (int i = 0; i < DIMS; i++)
+	{
+		dims.push_back(i);
+	}
+	deltaA = xt::sum<double>(lastInput * nMask, dims) / lastInput.shape()[0];
+
+	return feedForward(inputs);
 }
 
-xt::xarray<double> PReLUFunction::getGradient(const xt::xarray<double>& sigmas)
+void PReLUFunction::applyBackPropagate(double alpha)
+{
+	a -= alpha * deltaA;
+}
+
+xt::xarray<double> PReLUFunction::getGradient(const xt::xarray<double>& sigmas) const
 {
 	auto nMask = (lastInput <= 0.0);
 	auto pMask = (lastInput > 0.0);
@@ -45,11 +75,91 @@ xt::xarray<double> PReLUFunction::getGradient(const xt::xarray<double>& sigmas)
 	{
 		dims.push_back(i);
 	}
-	deltaA = xt::sum<double>(lastInput * nMask, dims) / lastInput.shape()[0];
 	return (sigmas * (pMask + (a * (xt::ones<double>(pMask.shape()) - pMask))));
 }
 
-void PReLUFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights)
+double PReLUFunction::getParameter(const std::string& parameterName) const
+{
+	if (parameterName.compare(PReLUFunction::NUM_UNITS) == 0)
+	{
+		return a.shape()[0];
+	}
+	else if (parameterName.compare(PReLUFunction::A) == 0)
+	{
+		if (parameterName.length() <= 1)
+		{
+			throw std::invalid_argument(std::string("Parameter ") + parameterName + " missing index");
+		}
+		else { }
+		int index = stoi(parameterName);
+		if (index < 0 || index >= a.shape()[0])
+		{
+			throw std::invalid_argument(std::string("Parameter ") + parameterName + " uses invalid index");
+		}
+		return a[index];
+	}
+	else
+	{
+		throw std::invalid_argument(std::string("Parameter ") + parameterName + " does not exist");
+	}
+}
+
+void PReLUFunction::setParameter(const std::string& parameterName, double value)
+{
+	if (parameterName.compare(PReLUFunction::NUM_UNITS) == 0)
+	{
+		throw std::invalid_argument(std::string("Parameter ") + parameterName + " cannot be changed");
+	}
+	else if (parameterName.compare(PReLUFunction::A) == 0)
+	{
+		if (parameterName.length() <= 1)
+		{
+			throw std::invalid_argument(std::string("Parameter ") + parameterName + " missing index");
+		}
+		else { }
+		int index = stoi(parameterName);
+		if (index < 0 || index >= a.shape()[0])
+		{
+			throw std::invalid_argument(std::string("Parameter ") + parameterName + " uses invalid index");
+		}
+		a[index] = value;
+	}
+	else
+	{
+		throw std::invalid_argument(std::string("Parameter ") + parameterName + " does not exist");
+	}
+}
+
+void PReLUFunction::saveParameters(std::string fileName)
+{
+	xt::dump_npy(fileName + "_a.npy", a);
+}
+
+void PReLUFunction::loadParameters(std::string fileName)
+{
+	bool exists = NeuralNetworkFileHelper::fileExists(fileName + "_a.npy");
+	if (exists)
+	{
+		a = xt::load_npy<double>(fileName + "_a.npy");
+		deltaA = xt::zeros<double>(a.shape());
+	}
+	else
+	{
+		cout << "Parameter file " + fileName + "_a.npy" + "not found" << endl;
+	}
+}
+
+xt::xarray<double> PReLUFunction::getA() const
+{
+	return a;
+}
+
+void PReLUFunction::setA(xt::xarray<double> a)
+{
+	this->a = a;
+}
+
+void PReLUFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights) const
 {
 	ActivationFunction::draw(canvas, origin, scale, numUnits, weights);
 

@@ -1,7 +1,10 @@
 #pragma once
+
+#pragma warning(push, 0)
 #include <opencv2/core/utility.hpp>
 #include <opencv2/core.hpp>
 #include <opencv2/imgcodecs.hpp>
+#pragma warning(pop)
 
 void loadCatDogDataset(xt::xarray<double>& features, xt::xarray<double>& labels, bool shuffle = true)
 {
@@ -72,7 +75,7 @@ void loadCatDogDataset(xt::xarray<double>& features, xt::xarray<double>& labels,
 		}
 		labels(n + index, 0) = 1; // Cat
 	}
-	index += catCount;
+	index += (int)catCount;
 
 	for (int n = 0; n < dogCount; n++)
 	{
@@ -90,14 +93,14 @@ void loadCatDogDataset(xt::xarray<double>& features, xt::xarray<double>& labels,
 		}
 		labels(n + index, 1) = 1; // Dog
 	}
-	//index += dogCount;
+	//index += (int)dogCount;
 
 	// Shuffle
 	if (shuffle)
 	{
 		xt::xstrided_slice_vector svI({ 0, xt::ellipsis() });
 		xt::xstrided_slice_vector svJ({ 0, xt::ellipsis() });
-		for (int i = (N - 1); i > 0; i--)
+		for (int i = (int)(N - 1); i > 0; i--)
 		{
 			int j = rand() % i;
 			svI[0] = i;

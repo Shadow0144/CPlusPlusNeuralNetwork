@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ParameterizedNeuralLayer.h"
+#include "NeuralLayer.h"
 #include "ActivationFunction.h"
 
 #pragma warning(push, 0)
@@ -11,12 +11,12 @@
 
 using namespace std;
 
-class DenseNeuralLayer : public ParameterizedNeuralLayer
+class ActivationFunctionNeuralLayer : public NeuralLayer
 {
 public:
-	DenseNeuralLayer(ActivationFunctionType functionType, NeuralLayer* parent, size_t numUnits, 
-		std::map<string, double> additionalParameters = std::map<string, double>(), bool addBias = true);
-	~DenseNeuralLayer();
+	ActivationFunctionNeuralLayer(ActivationFunctionType functionType, NeuralLayer* parent,
+		std::map<string, double> additionalParameters = std::map<string, double>());
+	~ActivationFunctionNeuralLayer();
 
 	xt::xarray<double> feedForward(const xt::xarray<double>& input);
 	xt::xarray<double> feedForwardTrain(const xt::xarray<double>& input);
@@ -33,11 +33,5 @@ public:
 private:
 	ActivationFunctionType functionType;
 	ActivationFunction* activationFunction;
-	xt::xarray<double> lastInput;
-	xt::xarray<double> lastOutput;
-	bool addBias;
 	int numInputs;
-
-	xt::xarray<double> dotProduct(const xt::xarray<double>& input);
-	xt::xarray<double> denseBackpropagate(const xt::xarray<double>& sigmas);
 };

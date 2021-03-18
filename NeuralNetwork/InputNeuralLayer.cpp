@@ -2,8 +2,10 @@
 
 #include "InputNeuralLayer.h"
 
+#pragma warning(push, 0)
 #include <math.h>
 #include <tuple>
+#pragma warning(pop)
 
 // Input shape is the shape of a single example
 InputNeuralLayer::InputNeuralLayer(const std::vector<size_t>& inputShape)

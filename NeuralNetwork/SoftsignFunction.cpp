@@ -10,32 +10,32 @@ SoftsignFunction::SoftsignFunction()
 
 }
 
-double SoftsignFunction::activate(double z)
+double SoftsignFunction::activate(double z) const
 {
 	return softsign(z);
 }
 
-double SoftsignFunction::softsign(double z)
+double SoftsignFunction::softsign(double z) const
 {
 	return (z / (1.0 + abs(z)));
 }
 
-xt::xarray<double> SoftsignFunction::softsign(const xt::xarray<double>& z)
+xt::xarray<double> SoftsignFunction::softsign(const xt::xarray<double>& z) const
 {
 	return (z / (1.0 + abs(z)));
 }
 
-xt::xarray<double> SoftsignFunction::feedForward(const xt::xarray<double>& inputs)
+xt::xarray<double> SoftsignFunction::feedForward(const xt::xarray<double>& inputs) const
 {
 	return softsign(inputs);
 }
 
-xt::xarray<double> SoftsignFunction::getGradient(const xt::xarray<double>& sigmas)
+xt::xarray<double> SoftsignFunction::getGradient(const xt::xarray<double>& sigmas) const
 {
 	return (sigmas * (1.0 / pow((1.0 + abs(lastInput)), 2.0)));
 }
 
-void SoftsignFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights)
+void SoftsignFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights) const
 {
 	ActivationFunction::draw(canvas, origin, scale, numUnits, weights);
 

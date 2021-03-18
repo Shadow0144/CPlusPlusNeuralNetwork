@@ -18,21 +18,41 @@ xt::xarray<double> ActivationFunction::feedForwardTrain(const xt::xarray<double>
 	return lastOutput;
 }
 
-double ActivationFunction::activate(double z)
+double ActivationFunction::activate(double z) const
 {
 	return z;
 }
- void ActivationFunction::applyBackPropagate()
+ void ActivationFunction::applyBackPropagate(double alpha)
 {
 	// Do nothing
 }
 
-std::vector<size_t> ActivationFunction::getOutputShape(std::vector<size_t> outputShape)
+ double ActivationFunction::getParameter(const std::string& parameterName) const
+ {
+	 throw std::invalid_argument(std::string("Parameter ") + parameterName + " does not exist");
+ }
+
+ void ActivationFunction::setParameter(const std::string& parameterName, double value)
+ {
+	 throw std::invalid_argument(std::string("Parameter ") + parameterName + " does not exist");
+ }
+
+ void ActivationFunction::saveParameters(std::string fileName)
+ {
+	 // Do nothing
+ }
+
+ void ActivationFunction::loadParameters(std::string fileName)
+ {
+	 // Do nothing
+ }
+
+std::vector<size_t> ActivationFunction::getOutputShape(std::vector<size_t> outputShape) const
 {
 	return outputShape;
 }
 
-xt::xarray<double> ActivationFunction::approximateBezier(const xt::xarray<double>& points)
+xt::xarray<double> ActivationFunction::approximateBezier(const xt::xarray<double>& points) const
 {
 	xt::xarray<double> T =
 			{ { 1.0,       0.0,       0.0,			0.0 },
@@ -63,7 +83,7 @@ xt::xarray<double> ActivationFunction::approximateBezier(const xt::xarray<double
 }
 
 // TODO: Cap vertical draw
-void ActivationFunction::approximateFunction(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights)
+void ActivationFunction::approximateFunction(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights) const
 {
 	const ImColor BLACK(0.0f, 0.0f, 0.0f, 1.0f);
 
@@ -165,7 +185,7 @@ void ActivationFunction::approximateFunction(ImDrawList* canvas, ImVec2 origin, 
 	}
 }
 
-void ActivationFunction::draw(ImDrawList * canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights)
+void ActivationFunction::draw(ImDrawList * canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights) const
 {
 	const ImColor BLACK(0.0f, 0.0f, 0.0f, 1.0f);
 	const ImColor GRAY(0.3f, 0.3f, 0.3f, 1.0f);
@@ -198,7 +218,7 @@ void ActivationFunction::draw(ImDrawList * canvas, ImVec2 origin, double scale, 
 	}
 }
 
-void ActivationFunction::drawConversion(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights)
+void ActivationFunction::drawConversion(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights) const
 {
 	const ImColor BLACK(0.0f, 0.0f, 0.0f, 1.0f);
 	const ImColor GRAY(0.3f, 0.3f, 0.3f, 1.0f);

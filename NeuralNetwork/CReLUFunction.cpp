@@ -14,30 +14,30 @@ CReLUFunction::CReLUFunction()
 
 // Returns a concatenated result of a ReLU that selects only positive predicted with a ReLU that selects only negative predicted
 // Note: This increases the dimension by one
-xt::xarray<double> CReLUFunction::CReLU(const xt::xarray<double>& z)
+xt::xarray<double> CReLUFunction::CReLU(const xt::xarray<double>& z) const
 {
 	return xt::stack(xt::xtuple(xt::maximum(0.0, z), xt::maximum(0.0, -z)), z.dimension());
 }
 
-xt::xarray<double> CReLUFunction::feedForward(const xt::xarray<double>& inputs)
+xt::xarray<double> CReLUFunction::feedForward(const xt::xarray<double>& inputs) const
 {
 	return CReLU(inputs);
 }
 
-xt::xarray<double> CReLUFunction::getGradient(const xt::xarray<double>& sigmas)
+xt::xarray<double> CReLUFunction::getGradient(const xt::xarray<double>& sigmas) const
 {
 	xt::xarray<double> newSigmas = sigmas;
 	xt::strided_view(newSigmas, { xt::ellipsis(), 1 }) *= -1;
 	return xt::sum(newSigmas, -1);
 }
 
-std::vector<size_t> CReLUFunction::getOutputShape(std::vector<size_t> outputShape)
+std::vector<size_t> CReLUFunction::getOutputShape(std::vector<size_t> outputShape) const
 {
 	outputShape.push_back(2);
 	return outputShape;
 }
 
-void CReLUFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights)
+void CReLUFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights) const
 {
 	ActivationFunction::draw(canvas, origin, scale, numUnits, weights);
 

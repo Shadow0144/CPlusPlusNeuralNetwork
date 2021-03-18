@@ -12,22 +12,22 @@ ReLUFunction::ReLUFunction()
 
 }
 
-xt::xarray<double> ReLUFunction::reLU(const xt::xarray<double>& z)
+xt::xarray<double> ReLUFunction::reLU(const xt::xarray<double>& z) const
 {
 	return xt::maximum(0.0, z);
 }
 
-xt::xarray<double> ReLUFunction::feedForward(const xt::xarray<double>& inputs)
+xt::xarray<double> ReLUFunction::feedForward(const xt::xarray<double>& inputs) const
 {
 	return reLU(inputs);
 }
 
-xt::xarray<double> ReLUFunction::getGradient(const xt::xarray<double>& sigmas)
+xt::xarray<double> ReLUFunction::getGradient(const xt::xarray<double>& sigmas) const
 {
 	return (sigmas * (lastOutput > 0.0));
 }
 
-void ReLUFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights)
+void ReLUFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights) const
 {
 	ActivationFunction::draw(canvas, origin, scale, numUnits, weights);
 

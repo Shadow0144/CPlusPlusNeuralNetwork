@@ -1,33 +1,84 @@
 #include "ReLUnFunction.h"
 #include "NeuralLayer.h"
+#include "NeuralNetworkFileHelper.h"
 
 #pragma warning(push, 0)
 #include <iostream>
+#include <xtensor/xnpy.hpp>
 #pragma warning(pop)
 
 using namespace std;
+
+const std::string ReLUnFunction::N = "n"; // Parameter string [OPTIONAL]
 
 ReLUnFunction::ReLUnFunction()
 {
 
 }
 
-xt::xarray<double> ReLUnFunction::reLUn(const xt::xarray<double>& z)
+ReLUnFunction::ReLUnFunction(double n)
+{
+	this->n = n;
+}
+
+xt::xarray<double> ReLUnFunction::reLUn(const xt::xarray<double>& z) const
 {
 	return xt::minimum(xt::maximum(0.0, z), n);
 }
 
-xt::xarray<double> ReLUnFunction::feedForward(const xt::xarray<double>& inputs)
+xt::xarray<double> ReLUnFunction::feedForward(const xt::xarray<double>& inputs) const
 {
 	return reLUn(inputs);
 }
 
-xt::xarray<double> ReLUnFunction::getGradient(const xt::xarray<double>& sigmas)
+xt::xarray<double> ReLUnFunction::getGradient(const xt::xarray<double>& sigmas) const
 {
 	return (sigmas * ((lastOutput > 0.0) < n));
 }
 
-double ReLUnFunction::getN()
+double ReLUnFunction::getParameter(const std::string& parameterName) const
+{
+	if (parameterName.compare(ReLUnFunction::N) == 0)
+	{
+		return n;
+	}
+	else
+	{
+		throw std::invalid_argument(std::string("Parameter ") + parameterName + " does not exist");
+	}
+}
+
+void ReLUnFunction::setParameter(const std::string& parameterName, double value)
+{
+	if (parameterName.compare(ReLUnFunction::N) == 0)
+	{
+		n = value;
+	}
+	else
+	{
+		throw std::invalid_argument(std::string("Parameter ") + parameterName + " does not exist");
+	}
+}
+
+void ReLUnFunction::saveParameters(std::string fileName)
+{
+	xt::dump_npy(fileName + "_n.npy", xt::xarray<double>({ n }));
+}
+
+void ReLUnFunction::loadParameters(std::string fileName)
+{
+	bool exists = NeuralNetworkFileHelper::fileExists(fileName + "_n.npy");
+	if (exists)
+	{
+		n = xt::load_npy<double>(fileName + "_n.npy")(0);
+	}
+	else
+	{
+		cout << "Parameter file " + fileName + "_n.npy" + "not found" << endl;
+	}
+}
+
+double ReLUnFunction::getN() const
 {
 	return n;
 }
@@ -37,7 +88,7 @@ void ReLUnFunction::setN(double n)
 	this->n = n;
 }
 
-void ReLUnFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights)
+void ReLUnFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights) const
 {
 	ActivationFunction::draw(canvas, origin, scale, numUnits, weights);
 

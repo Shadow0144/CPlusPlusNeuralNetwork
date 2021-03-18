@@ -10,7 +10,6 @@
 
 using namespace std;
 
-
 static bool seedSet; // Defaults to false
 ParameterSet::ParameterSet()
 {

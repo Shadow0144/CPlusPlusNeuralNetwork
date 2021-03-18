@@ -17,27 +17,27 @@ GELUFunction::GELUFunction()
 
 }
 
-double GELUFunction::GELU(double z)
+double GELUFunction::GELU(double z) const
 {
 	return (-0.5 * z * (1 + tanh(SQRT_2_PI * (z + 0.044715 * pow(z, 3)))));
 }
 
-xt::xarray<double> GELUFunction::GELU(const xt::xarray<double>& z)
+xt::xarray<double> GELUFunction::GELU(const xt::xarray<double>& z) const
 {
 	return (-0.5 * z * (1 + tanh(SQRT_2_PI * (z + 0.044715 * pow(z, 3)))));
 }
 
-double GELUFunction::activate(double z)
+double GELUFunction::activate(double z) const
 {
 	return GELU(z);
 }
 
-xt::xarray<double> GELUFunction::feedForward(const xt::xarray<double>& inputs)
+xt::xarray<double> GELUFunction::feedForward(const xt::xarray<double>& inputs) const
 {
 	return GELU(inputs);
 }
 
-xt::xarray<double> GELUFunction::getGradient(const xt::xarray<double>& sigmas)
+xt::xarray<double> GELUFunction::getGradient(const xt::xarray<double>& sigmas) const
 {
 	auto z = lastOutput;
 	auto z3 = pow(z, 3);
@@ -45,7 +45,7 @@ xt::xarray<double> GELUFunction::getGradient(const xt::xarray<double>& sigmas)
 	return (sigmas * ((0.5 * tanh((0.0356774 * z3) + (0.797885 * z))) + (((0.0535161 * z3) + (0.398942 * z)) * sech2) + 0.5));
 }
 
-void GELUFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights)
+void GELUFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights) const
 {
 	ActivationFunction::draw(canvas, origin, scale, numUnits, weights);
 

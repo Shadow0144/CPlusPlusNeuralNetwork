@@ -1,5 +1,6 @@
 #include "NeuralNetwork.h"
 
+#pragma warning(push, 0)
 #ifdef __GNUC__
 #define LINUX
 #else
@@ -12,6 +13,7 @@
 #include <unistd.h>
 #define GetCurrentDir getcwd
 #endif
+#pragma warning(pop)
 
 #include "NetworkVisualizer.h"
 
@@ -29,6 +31,8 @@
 #include "MaxPooling2DNeuralLayer.h"
 #include "MaxPooling3DNeuralLayer.h"
 #include "FlattenNeuralLayer.h"
+#include "SqueezeNeuralLayer.h"
+#include "ReshapeNeuralLayer.h"
 
 #include "CrossEntropyErrorFunction.h"
 #include "MeanSquareErrorFunction.h"
@@ -213,6 +217,20 @@ void NeuralNetwork::addMaxPooling3DLayer(const std::vector<size_t>& poolingShape
 void NeuralNetwork::addFlattenLayer(int numOutputs)
 {
 	FlattenNeuralLayer* layer = new FlattenNeuralLayer(layers->at(layerCount - 1), numOutputs);
+	layers->push_back(layer);
+	layerCount++;
+}
+
+void NeuralNetwork::addSqueezeLayer(const std::vector<size_t>& squeezeDims)
+{
+	SqueezeNeuralLayer* layer = new SqueezeNeuralLayer(layers->at(layerCount - 1), squeezeDims);
+	layers->push_back(layer);
+	layerCount++;
+}
+
+void NeuralNetwork::addReshapeLayer(const std::vector<size_t>& newShape)
+{
+	ReshapeNeuralLayer* layer = new ReshapeNeuralLayer(layers->at(layerCount - 1), newShape);
 	layers->push_back(layer);
 	layerCount++;
 }
@@ -572,6 +590,7 @@ void NeuralNetwork::resetEpoch()
 std::string getCurrentDir()
 {
 	char buffer[FILENAME_MAX];
+	#pragma warning(suppress : 6031)
 	GetCurrentDir(buffer, FILENAME_MAX);
 	string currentWorkingDir(buffer);
 	return currentWorkingDir;

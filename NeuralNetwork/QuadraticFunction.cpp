@@ -8,17 +8,17 @@ QuadraticFunction::QuadraticFunction()
 
 }
 
-xt::xarray<double> QuadraticFunction::feedForward(const xt::xarray<double>& inputs)
+xt::xarray<double> QuadraticFunction::feedForward(const xt::xarray<double>& inputs) const
 {
 	return pow(inputs, 2.0);
 }
 
-xt::xarray<double> QuadraticFunction::getGradient(const xt::xarray<double>& sigmas)
+xt::xarray<double> QuadraticFunction::getGradient(const xt::xarray<double>& sigmas) const
 {
 	return (sigmas * (2.0 * lastInput));
 }
 
-void QuadraticFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights)
+void QuadraticFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights) const
 {
 	ActivationFunction::draw(canvas, origin, scale, numUnits, weights);
 

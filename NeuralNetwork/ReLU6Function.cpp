@@ -12,22 +12,22 @@ ReLU6Function::ReLU6Function()
 
 }
 
-xt::xarray<double> ReLU6Function::reLU6(const xt::xarray<double>& z)
+xt::xarray<double> ReLU6Function::reLU6(const xt::xarray<double>& z) const
 {
 	return xt::minimum(xt::maximum(0.0, z), 6.0);
 }
 
-xt::xarray<double> ReLU6Function::feedForward(const xt::xarray<double>& inputs)
+xt::xarray<double> ReLU6Function::feedForward(const xt::xarray<double>& inputs) const
 {
 	return reLU6(inputs);
 }
 
-xt::xarray<double> ReLU6Function::getGradient(const xt::xarray<double>& sigmas)
+xt::xarray<double> ReLU6Function::getGradient(const xt::xarray<double>& sigmas) const
 {
 	return (sigmas * ((lastOutput > 0.0) < 6.0));
 }
 
-void ReLU6Function::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights)
+void ReLU6Function::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights) const
 {
 	ActivationFunction::draw(canvas, origin, scale, numUnits, weights);
 

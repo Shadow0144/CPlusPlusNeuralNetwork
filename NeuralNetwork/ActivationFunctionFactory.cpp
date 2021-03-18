@@ -22,6 +22,10 @@
 #include "SoftsignFunction.h"
 #include "SwishFunction.h"
 
+#pragma warning(push, 0)
+#include <exception>
+#pragma warning(pop)
+
 using namespace std;
 
 ActivationFunction* ActivationFunctionFactory::getNewActivationFunction(ActivationFunctionType functionType, std::map<string, double> additionalParameters)
@@ -42,7 +46,14 @@ ActivationFunction* ActivationFunctionFactory::getNewActivationFunction(Activati
 			activationFunction = new CReLUFunction();
 			break;
 		case ActivationFunctionType::ELU:
-			activationFunction = new ELUFunction();
+			if (additionalParameters.find(ELUFunction::ALPHA) == additionalParameters.end())
+			{
+				activationFunction = new ELUFunction(additionalParameters[ELUFunction::ALPHA]);
+			}
+			else
+			{
+				activationFunction = new ELUFunction();
+			}
 			break;
 		case ActivationFunctionType::SELU:
 			activationFunction = new SELUFunction();
@@ -51,19 +62,56 @@ ActivationFunction* ActivationFunctionFactory::getNewActivationFunction(Activati
 			activationFunction = new GELUFunction();
 			break;
 		case ActivationFunctionType::LeakyReLU:
-			activationFunction = new LeakyReLUFunction();
+			if (additionalParameters.find(LeakyReLUFunction::A) == additionalParameters.end())
+			{
+				activationFunction = new LeakyReLUFunction(additionalParameters[LeakyReLUFunction::A]);
+			}
+			else
+			{
+				activationFunction = new LeakyReLUFunction();
+			}
 			break;
 		case ActivationFunctionType::PReLU:
-			activationFunction = new PReLUFunction(((int)(additionalParameters["numUnits"])));
+			if (additionalParameters.find(PReLUFunction::NUM_UNITS) == additionalParameters.end())
+			{
+				throw std::invalid_argument(std::string("Missing required parameter: ") +
+					"PReLUFunction::NUM_UNITS" + " (\"" + PReLUFunction::NUM_UNITS + "\")");
+			}
+			else
+			{
+				if (additionalParameters.find(PReLUFunction::A) == additionalParameters.end())
+				{
+					activationFunction = new PReLUFunction(((int)(additionalParameters[PReLUFunction::NUM_UNITS],
+																  additionalParameters[PReLUFunction::A])));
+				}
+				else
+				{
+					activationFunction = new PReLUFunction(((int)(additionalParameters[PReLUFunction::NUM_UNITS])));
+				}
+			}
 			break;
 		case ActivationFunctionType::ReLU6:
 			activationFunction = new ReLU6Function();
 			break;
 		case ActivationFunctionType::ReLUn:
-			activationFunction = new ReLUnFunction();
+			if (additionalParameters.find(ReLUnFunction::N) == additionalParameters.end())
+			{
+				activationFunction = new ReLUnFunction(additionalParameters[ReLUnFunction::N]);
+			}
+			else
+			{
+				activationFunction = new ReLUnFunction();
+			}
 			break;
 		case ActivationFunctionType::Softplus:
-			activationFunction = new SoftplusFunction();
+			if (additionalParameters.find(SoftplusFunction::K) == additionalParameters.end())
+			{
+				activationFunction = new SoftplusFunction(additionalParameters[SoftplusFunction::K]);
+			}
+			else
+			{
+				activationFunction = new SoftplusFunction();
+			}
 			break;
 		case ActivationFunctionType::Exponential:
 			activationFunction = new ExponentialFunction();

@@ -11,23 +11,23 @@ AbsoluteReLUFunction::AbsoluteReLUFunction()
 {
 }
 
-xt::xarray<double> AbsoluteReLUFunction::absoluteReLU(const xt::xarray<double>& z)
+xt::xarray<double> AbsoluteReLUFunction::absoluteReLU(const xt::xarray<double>& z) const
 {
 	return xt::abs(z);
 }
 
-xt::xarray<double> AbsoluteReLUFunction::feedForward(const xt::xarray<double>& inputs)
+xt::xarray<double> AbsoluteReLUFunction::feedForward(const xt::xarray<double>& inputs) const
 {
 	return absoluteReLU(inputs);
 }
 
-xt::xarray<double> AbsoluteReLUFunction::getGradient(const xt::xarray<double>& sigmas)
+xt::xarray<double> AbsoluteReLUFunction::getGradient(const xt::xarray<double>& sigmas) const
 {
 	auto mask = (lastOutput > 0.0);
 	return (sigmas * (mask + (mask - (xt::ones<double>(mask.shape())))));
 }
 
-void AbsoluteReLUFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights)
+void AbsoluteReLUFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights) const
 {
 	ActivationFunction::draw(canvas, origin, scale, numUnits, weights);
 

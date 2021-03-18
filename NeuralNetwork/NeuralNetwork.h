@@ -48,6 +48,8 @@ public:
 	void addMaxPooling2DLayer(const std::vector<size_t>& poolingShape);
 	void addMaxPooling3DLayer(const std::vector<size_t>& poolingShape);
 	void addFlattenLayer(int numOutputs);
+	void addSqueezeLayer(const std::vector<size_t>& squeezeDims = std::vector<size_t>());
+	void addReshapeLayer(const std::vector<size_t>& newShape);
 
 	xt::xarray<double> feedForward(const xt::xarray<double>& inputs); // Does not update internal values
 	xt::xarray<double> feedForwardTrain(const xt::xarray<double>& inputs); // Updates internal values such as last input and last output

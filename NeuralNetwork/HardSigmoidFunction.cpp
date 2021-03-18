@@ -8,7 +8,7 @@ HardSigmoidFunction::HardSigmoidFunction()
 
 }
 
-xt::xarray<double> HardSigmoidFunction::hard_sigmoid(const xt::xarray<double>& z)
+xt::xarray<double> HardSigmoidFunction::hard_sigmoid(const xt::xarray<double>& z) const
 {
 	auto zero = (z < -2.5); // 0
 	auto one = (z > 2.5); // 1
@@ -17,17 +17,17 @@ xt::xarray<double> HardSigmoidFunction::hard_sigmoid(const xt::xarray<double>& z
 	return r;
 }
 
-xt::xarray<double> HardSigmoidFunction::feedForward(const xt::xarray<double>& inputs)
+xt::xarray<double> HardSigmoidFunction::feedForward(const xt::xarray<double>& inputs) const
 {
 	return hard_sigmoid(inputs);
 }
 
-xt::xarray<double> HardSigmoidFunction::getGradient(const xt::xarray<double>& sigmas)
+xt::xarray<double> HardSigmoidFunction::getGradient(const xt::xarray<double>& sigmas) const
 {
 	return (sigmas * ((lastOutput < 1) * (lastOutput > 0))); // The slope is 1 between these two ranges, 0 otherwise
 }
 
-void HardSigmoidFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights)
+void HardSigmoidFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights) const
 {
 	ActivationFunction::draw(canvas, origin, scale, numUnits, weights);
 

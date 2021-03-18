@@ -1,4 +1,5 @@
 #include "ParameterizedNeuralLayer.h"
+#include "NeuralNetworkFileHelper.h"
 
 #pragma warning(push, 0)
 #include <xtensor/xnpy.hpp>
@@ -13,7 +14,7 @@ void ParameterizedNeuralLayer::saveParameters(std::string fileName)
 
 void ParameterizedNeuralLayer::loadParameters(std::string fileName)
 {
-	bool exists = fileExists(fileName + ".npy");
+	bool exists = NeuralNetworkFileHelper::fileExists(fileName + ".npy");
 	if (exists)
 	{
 		weights.setParameters(xt::load_npy<double>(fileName + ".npy"));

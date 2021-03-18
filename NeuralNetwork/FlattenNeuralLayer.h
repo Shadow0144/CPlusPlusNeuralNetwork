@@ -1,22 +1,18 @@
 #pragma once
 
-#include "NeuralLayer.h"
-#include "ActivationFunction.h"
+#include "ShapeNeuralLayer.h"
 
+#pragma warning(push, 0)
 #include <vector>
+#pragma warning(pop)
 
-using namespace std;
-
-class FlattenNeuralLayer : public NeuralLayer
+class FlattenNeuralLayer : public ShapeNeuralLayer
 {
 public:
 	FlattenNeuralLayer(NeuralLayer* parent, int numOutputs);
 	~FlattenNeuralLayer();
 
 	xt::xarray<double> feedForward(const xt::xarray<double>& input);
-	xt::xarray<double> feedForwardTrain(const xt::xarray<double>& input);
-	xt::xarray<double> backPropagate(const xt::xarray<double>& sigmas);
-	double applyBackPropagate();
 
 	void draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output);
 

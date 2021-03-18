@@ -1,6 +1,8 @@
 #include "CrossEntropyErrorFunction.h"
 
+#pragma warning(push, 0)
 #include <iostream>
+#pragma warning(pop)
 
 using namespace std;
 

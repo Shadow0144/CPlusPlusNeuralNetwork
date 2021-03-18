@@ -92,10 +92,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ActivationFunctionFactory.cpp" />
+    <ClCompile Include="ActivationFunctionNeuralLayer.cpp" />
     <ClCompile Include="AveragePooling1DNeuralLayer.cpp" />
     <ClCompile Include="AveragePooling2DNeuralLayer.cpp" />
     <ClCompile Include="AveragePooling3DNeuralLayer.cpp" />
-    <ClCompile Include="ClassCell.cpp" />
     <ClCompile Include="ClassifierVisualizer.cpp" />
     <ClCompile Include="Convolution1DNeuralLayer.cpp" />
     <ClCompile Include="Convolution2DNeuralLayer.cpp" />
@@ -121,7 +121,6 @@
     <ClCompile Include="imgui_widgets.cpp" />
     <ClCompile Include="InputNeuralLayer.cpp" />
     <ClCompile Include="LeakyReLUFunction.cpp" />
-    <ClCompile Include="MaxoutFunction.cpp" />
     <ClCompile Include="MaxoutNeuralLayer.cpp" />
     <ClCompile Include="MaxPooling1DNeuralLayer.cpp" />
     <ClCompile Include="MaxPooling2DNeuralLayer.cpp" />
@@ -138,7 +137,9 @@
     <ClCompile Include="ReLU6Function.cpp" />
     <ClCompile Include="ReLUFunction.cpp" />
     <ClCompile Include="ReLUnFunction.cpp" />
+    <ClCompile Include="ReshapeNeuralLayer.cpp" />
     <ClCompile Include="SELUFunction.cpp" />
+    <ClCompile Include="ShapeNeuralLayer.cpp" />
     <ClCompile Include="SigmoidFunction.cpp" />
     <ClCompile Include="SoftmaxNeuralLayer.cpp" />
     <ClCompile Include="SoftplusFunction.cpp" />
@@ -152,9 +153,9 @@
   <ItemGroup>
     <ClInclude Include="AbsoluteReLUFunction.h" />
     <ClInclude Include="ActivationFunctionFactory.h" />
+    <ClInclude Include="ActivationFunctionNeuralLayer.h" />
     <ClInclude Include="AveragePooling1DNeuralLayer.h" />
     <ClInclude Include="AveragePooling2DNeuralLayer.h" />
-    <ClInclude Include="ClassCell.h" />
     <ClInclude Include="ClassifierVisualizer.h" />
     <ClInclude Include="Convolution1DNeuralLayer.h" />
     <ClInclude Include="Convolution2DNeuralLayer.h" />
@@ -183,7 +184,6 @@
     <ClInclude Include="imstb_truetype.h" />
     <ClInclude Include="InputNeuralLayer.h" />
     <ClInclude Include="LeakyReLUFunction.h" />
-    <ClInclude Include="MaxoutFunction.h" />
     <ClInclude Include="MaxoutNeuralLayer.h" />
     <ClInclude Include="MaxPooling1DNeuralLayer.h" />
     <ClInclude Include="MaxPooling2DNeuralLayer.h" />
@@ -191,6 +191,7 @@
     <ClInclude Include="MeanSquareErrorFunction.h" />
     <ClInclude Include="NetworkVisualizer.h" />
     <ClInclude Include="NeuralLayer.h" />
+    <ClInclude Include="NeuralNetworkFileHelper.h" />
     <ClInclude Include="ParameterizedNeuralLayer.h" />
     <ClInclude Include="ParameterSet.h" />
     <ClInclude Include="IdentityFunction.h" />
@@ -202,7 +203,9 @@
     <ClInclude Include="ReLU6Function.h" />
     <ClInclude Include="ReLUFunction.h" />
     <ClInclude Include="ReLUnFunction.h" />
+    <ClInclude Include="ReshapeNeuralLayer.h" />
     <ClInclude Include="SELUFunction.h" />
+    <ClInclude Include="ShapeNeuralLayer.h" />
     <ClInclude Include="SigmoidFunction.h" />
     <ClInclude Include="SoftplusFunction.h" />
     <ClInclude Include="SoftmaxNeuralLayer.h" />

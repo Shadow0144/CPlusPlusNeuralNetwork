@@ -1,9 +1,15 @@
 #include "SqueezeNeuralLayer.h"
 
-// Input shape is the shape of a single example
-SqueezeNeuralLayer::SqueezeNeuralLayer(const std::vector<size_t>& squeezeDims)
+// The squeeze dims account for only the shape of a single example
+SqueezeNeuralLayer::SqueezeNeuralLayer(NeuralLayer* parent, const std::vector<size_t>& squeezeDims)
 {
+	this->parent = parent;
 	this->children = NULL;
+	if (parent != NULL)
+	{
+		parent->addChildren(this);
+	}
+	else { }
 	this->squeezeDims = squeezeDims;
 	this->numUnits = 1;
 }
@@ -19,32 +25,11 @@ xt::xarray<double> SqueezeNeuralLayer::feedForward(const xt::xarray<double>& inp
 	const int DIMS = squeezeDims.size();
 	for (int i = 0; i < DIMS; i++)
 	{
-		shape[squeezeDims[i]] = 0;
+		shape[squeezeDims[i]+1] = 0;
 	}
 	auto result = xt::xarray<double>(input);
 	result.reshape(shape);
 	return result;
-}
-
-xt::xarray<double> SqueezeNeuralLayer::feedForwardTrain(const xt::xarray<double>& input)
-{
-	// TODO?
-	return feedForward(input);
-}
-
-xt::xarray<double> SqueezeNeuralLayer::backPropagate(const xt::xarray<double>& sigmas)
-{
-	return sigmas; // TODO
-}
-
-double SqueezeNeuralLayer::applyBackPropagate()
-{
-	return 0; // No parameters
-}
-
-std::vector<size_t> SqueezeNeuralLayer::getOutputShape()
-{
-	return std::vector<size_t>(); // TODO
 }
 
 void SqueezeNeuralLayer::draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output)

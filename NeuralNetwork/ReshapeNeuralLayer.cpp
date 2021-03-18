@@ -1,13 +1,13 @@
 #define _USE_MATH_DEFINES
 
-#include "FlattenNeuralLayer.h"
+#include "ReshapeNeuralLayer.h"
 
 #pragma warning(push, 0)
 #include <math.h>
 #include <tuple>
 #pragma warning(pop)
 
-FlattenNeuralLayer::FlattenNeuralLayer(NeuralLayer* parent, int numOutputs)
+ReshapeNeuralLayer::ReshapeNeuralLayer(NeuralLayer* parent, const std::vector<size_t>& newShape)
 {
 	this->parent = parent;
 	this->children = NULL;
@@ -16,29 +16,29 @@ FlattenNeuralLayer::FlattenNeuralLayer(NeuralLayer* parent, int numOutputs)
 		parent->addChildren(this);
 	}
 	else { }
-	this->numUnits = numOutputs;
+	this->newShape = newShape;
+	this->numUnits = 1;
 }
 
-FlattenNeuralLayer::~FlattenNeuralLayer()
+ReshapeNeuralLayer::~ReshapeNeuralLayer()
 {
 
 }
 
-xt::xarray<double> FlattenNeuralLayer::feedForward(const xt::xarray<double>& input)
+xt::xarray<double> ReshapeNeuralLayer::feedForward(const xt::xarray<double>& input)
 {
-	auto shape = input.shape();
-	const int DIMS = shape.size();
-	size_t newShape = 1;
-	for (int i = 1; i < DIMS; i++)
+	xt::xarray<double> result = input;
+	std::vector<size_t> fullNewShape = { result.shape()[0] };
+	const int DIMS = newShape.size();
+	for (int i = 0; i < DIMS; i++) // Need to account for the example count dimension
 	{
-		newShape *= shape[i];
+		fullNewShape.push_back(newShape[i]);
 	}
-	auto result = xt::xarray<double>(input);
-	result.reshape({ shape[0], newShape });
+	result.reshape(fullNewShape);
 	return result;
 }
 
-void FlattenNeuralLayer::draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output)
+void ReshapeNeuralLayer::draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output)
 {
 	// Draw the neuron
 	ImVec2 position = ImVec2(origin);
@@ -47,7 +47,7 @@ void FlattenNeuralLayer::draw(ImDrawList* canvas, ImVec2 origin, double scale, b
 	canvas->AddCircleFilled(position, RADIUS * scale, LIGHT_GRAY, 32);
 
 	// Draw the activation function
-	drawFlattenFunction(canvas, origin, scale);
+	drawReshapeFunction(canvas, origin, scale);
 
 	// Draw the links to the previous neurons
 	double previousX, previousY;
@@ -80,7 +80,7 @@ void FlattenNeuralLayer::draw(ImDrawList* canvas, ImVec2 origin, double scale, b
 	canvas->AddCircle(position, RADIUS * scale, BLACK, 32);
 }
 
-void FlattenNeuralLayer::drawFlattenFunction(ImDrawList* canvas, ImVec2 origin, double scale)
+void ReshapeNeuralLayer::drawReshapeFunction(ImDrawList* canvas, ImVec2 origin, double scale)
 {
 	const ImColor BLACK(0.0f, 0.0f, 0.0f, 1.0f);
 	const ImColor GRAY(0.3f, 0.3f, 0.3f, 1.0f);
@@ -111,24 +111,8 @@ void FlattenNeuralLayer::drawFlattenFunction(ImDrawList* canvas, ImVec2 origin, 
 
 	//Draw left
 	position.x = origin.x - (SHIFT * scale);
-	ImVec2 start(position.x - RESCALE, position.y + RESCALE);
-	ImVec2 end(position.x + RESCALE, position.y - RESCALE);
-
-	canvas->AddRectFilled(start, end, WHITE);
-	canvas->AddRect(start, end, BLACK);
-
-	// Draw 4 boxes in a square
-	ImVec2 zero_x_left(position.x - RESCALE, position.y);
-	ImVec2 zero_x_right(position.x + RESCALE, position.y);
-	canvas->AddLine(zero_x_left, zero_x_right, BLACK);
-	ImVec2 zero_y_base(position.x, position.y + RESCALE);
-	ImVec2 zero_y_top(position.x, position.y - RESCALE);
-	canvas->AddLine(zero_y_base, zero_y_top, BLACK);
-
-	// Draw right
-	position.x = origin.x + (SHIFT * scale);
-	start = ImVec2(position.x - RESCALE, position.y + QUAR_RESCALE);
-	end = ImVec2(position.x + RESCALE, position.y - QUAR_RESCALE);
+	ImVec2 start(position.x - RESCALE, position.y + QUAR_RESCALE);
+	ImVec2 end(position.x + RESCALE, position.y - QUAR_RESCALE);
 
 	canvas->AddRectFilled(start, end, WHITE);
 	canvas->AddRect(start, end, BLACK);
@@ -143,4 +127,20 @@ void FlattenNeuralLayer::drawFlattenFunction(ImDrawList* canvas, ImVec2 origin, 
 	canvas->AddLine(leftTop, leftBot, BLACK);
 	canvas->AddLine(centerTop, centerBot, BLACK);
 	canvas->AddLine(rightTop, rightBot, BLACK);
+
+	// Draw right
+	position.x = origin.x + (SHIFT * scale);
+	start = ImVec2(position.x - RESCALE, position.y + RESCALE);
+	end = ImVec2(position.x + RESCALE, position.y - RESCALE);
+
+	canvas->AddRectFilled(start, end, WHITE);
+	canvas->AddRect(start, end, BLACK);
+
+	// Draw 4 boxes in a square
+	ImVec2 zero_x_left(position.x - RESCALE, position.y);
+	ImVec2 zero_x_right(position.x + RESCALE, position.y);
+	canvas->AddLine(zero_x_left, zero_x_right, BLACK);
+	ImVec2 zero_y_base(position.x, position.y + RESCALE);
+	ImVec2 zero_y_top(position.x, position.y - RESCALE);
+	canvas->AddLine(zero_y_base, zero_y_top, BLACK);
 }

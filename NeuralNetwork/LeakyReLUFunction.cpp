@@ -1,34 +1,85 @@
 #include "LeakyReLUFunction.h"
 #include "NeuralLayer.h"
+#include "NeuralNetworkFileHelper.h"
 
 #pragma warning(push, 0)
 #include <iostream>
+#include <xtensor/xnpy.hpp>
 #pragma warning(pop)
 
 using namespace std;
+
+const std::string LeakyReLUFunction::A = "a"; // Parameter string [OPTIONAL]
 
 LeakyReLUFunction::LeakyReLUFunction()
 {
 
 }
 
-xt::xarray<double> LeakyReLUFunction::leakyReLU(const xt::xarray<double>& z)
+LeakyReLUFunction::LeakyReLUFunction(double a)
+{
+	this->a = a;
+}
+
+xt::xarray<double> LeakyReLUFunction::leakyReLU(const xt::xarray<double>& z) const
 {
 	return xt::maximum(a * z, z);
 }
 
-xt::xarray<double> LeakyReLUFunction::feedForward(const xt::xarray<double>& inputs)
+xt::xarray<double> LeakyReLUFunction::feedForward(const xt::xarray<double>& inputs) const
 {
 	return leakyReLU(inputs);
 }
 
-xt::xarray<double> LeakyReLUFunction::getGradient(const xt::xarray<double>& sigmas)
+xt::xarray<double> LeakyReLUFunction::getGradient(const xt::xarray<double>& sigmas) const
 {
 	auto mask = (lastOutput > 0.0);
 	return (sigmas * (mask + (a * (xt::ones<double>(mask.shape()) - mask))));
 }
 
-double LeakyReLUFunction::getA() 
+double LeakyReLUFunction::getParameter(const std::string& parameterName) const
+{
+	if (parameterName.compare(LeakyReLUFunction::A) == 0)
+	{
+		return a;
+	}
+	else
+	{
+		throw std::invalid_argument(std::string("Parameter ") + parameterName + " does not exist");
+	}
+}
+
+void LeakyReLUFunction::setParameter(const std::string& parameterName, double value)
+{
+	if (parameterName.compare(LeakyReLUFunction::A) == 0)
+	{
+		a = value;
+	}
+	else
+	{
+		throw std::invalid_argument(std::string("Parameter ") + parameterName + " does not exist");
+	}
+}
+
+void LeakyReLUFunction::saveParameters(std::string fileName)
+{
+	xt::dump_npy(fileName + "_a.npy", xt::xarray<double>({ a }));
+}
+
+void LeakyReLUFunction::loadParameters(std::string fileName)
+{
+	bool exists = NeuralNetworkFileHelper::fileExists(fileName + "_a.npy");
+	if (exists)
+	{
+		a = xt::load_npy<double>(fileName + "_a.npy")(0);
+	}
+	else
+	{
+		cout << "Parameter file " + fileName + "_a.npy" + "not found" << endl;
+	}
+}
+
+double LeakyReLUFunction::getA() const
 { 
 	return a;
 }
@@ -38,7 +89,7 @@ void LeakyReLUFunction::setA(double a)
 	this->a = a;
 }
 
-void LeakyReLUFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights)
+void LeakyReLUFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights) const
 {
 	ActivationFunction::draw(canvas, origin, scale, numUnits, weights);
 

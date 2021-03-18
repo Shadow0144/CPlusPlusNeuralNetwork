@@ -12,22 +12,22 @@ TanhFunction::TanhFunction()
 
 }
 
-double TanhFunction::activate(double z)
+double TanhFunction::activate(double z) const
 {
 	return tanh(z);
 }
 
-xt::xarray<double> TanhFunction::feedForward(const xt::xarray<double>& inputs)
+xt::xarray<double> TanhFunction::feedForward(const xt::xarray<double>& inputs) const
 {
 	return xt::tanh(inputs);
 }
 
-xt::xarray<double> TanhFunction::getGradient(const xt::xarray<double>& sigmas)
+xt::xarray<double> TanhFunction::getGradient(const xt::xarray<double>& sigmas) const
 {
 	return (sigmas * (1.0 - xt::pow(lastOutput, 2.0)));
 }
 
-void TanhFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights)
+void TanhFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights) const
 {
 	ActivationFunction::draw(canvas, origin, scale, numUnits, weights);
 

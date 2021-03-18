@@ -6,12 +6,12 @@
 class ConvolutionNeuralLayer : public ParameterizedNeuralLayer
 {
 public:
-	void saveParameters(std::string fileName);
-	void loadParameters(std::string fileName);
-
 	xt::xarray<double> feedForward(const xt::xarray<double>& input);
 	xt::xarray<double> feedForwardTrain(const xt::xarray<double>& input);
 	double applyBackPropagate();
+
+	void saveParameters(std::string fileName);
+	void loadParameters(std::string fileName);
 
 protected:
 	ActivationFunction* activationFunction;

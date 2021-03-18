@@ -1,4 +1,5 @@
 #include "ConvolutionNeuralLayer.h"
+#include "NeuralNetworkFileHelper.h"
 
 #pragma warning(push, 0)
 #include <xtensor/xnpy.hpp>
@@ -39,11 +40,12 @@ void ConvolutionNeuralLayer::saveParameters(std::string fileName)
 		xt::dump_npy(fileName + "_b.npy", biasWeights.getParameters());
 	}
 	else { }
+	activationFunction->saveParameters(fileName);
 }
 
 void ConvolutionNeuralLayer::loadParameters(std::string fileName)
 {
-	bool exists = fileExists(fileName + ".npy");
+	bool exists = NeuralNetworkFileHelper::fileExists(fileName + ".npy");
 	if (exists)
 	{
 		weights.setParameters(xt::load_npy<double>(fileName + ".npy"));
@@ -54,7 +56,7 @@ void ConvolutionNeuralLayer::loadParameters(std::string fileName)
 	}
 	if (hasBias)
 	{
-		exists = fileExists(fileName + "_b.npy");
+		exists = NeuralNetworkFileHelper::fileExists(fileName + "_b.npy");
 		if (exists)
 		{
 			weights.setParameters(xt::load_npy<double>(fileName + "_b.npy"));
@@ -65,4 +67,5 @@ void ConvolutionNeuralLayer::loadParameters(std::string fileName)
 		}
 	}
 	else { }
+	activationFunction->loadParameters(fileName);
 }

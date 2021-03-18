@@ -13,17 +13,17 @@ IdentityFunction::IdentityFunction()
 
 }
 
-xt::xarray<double> IdentityFunction::feedForward(const xt::xarray<double>& inputs)
+xt::xarray<double> IdentityFunction::feedForward(const xt::xarray<double>& inputs) const
 {
 	return inputs;
 }
 
-xt::xarray<double> IdentityFunction::getGradient(const xt::xarray<double>& sigmas)
+xt::xarray<double> IdentityFunction::getGradient(const xt::xarray<double>& sigmas) const
 {
 	return sigmas;
 }
 
-void IdentityFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights)
+void IdentityFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights) const
 {
 	ActivationFunction::draw(canvas, origin, scale, numUnits, weights);
 

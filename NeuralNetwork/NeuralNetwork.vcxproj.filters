@@ -58,6 +58,12 @@
     <Filter Include="Header Files\NeuralLayer\PoolingLayer">
       <UniqueIdentifier>{3ed52359-dc90-45bd-aa8a-332646844d6f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\NeuralLayer\ShapeLayer">
+      <UniqueIdentifier>{4ec51ac0-1006-43c4-90ec-f1c0f4fed230}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\NeuralLayer\ShapeLayer">
+      <UniqueIdentifier>{be0b9343-8cec-4768-b939-e45268b9186d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="NeuralNetwork.cpp">
@@ -111,16 +117,7 @@
     <ClCompile Include="Test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SqueezeNeuralLayer.cpp">
-      <Filter>Source Files\NeuralLayer</Filter>
-    </ClCompile>
-    <ClCompile Include="FlattenNeuralLayer.cpp">
-      <Filter>Source Files\NeuralLayer</Filter>
-    </ClCompile>
     <ClCompile Include="ImageClassVisualizer.cpp">
-      <Filter>Source Files\Visualizer</Filter>
-    </ClCompile>
-    <ClCompile Include="ClassCell.cpp">
       <Filter>Source Files\Visualizer</Filter>
     </ClCompile>
     <ClCompile Include="MeanSquareErrorFunction.cpp">
@@ -177,9 +174,6 @@
     <ClCompile Include="LeakyReLUFunction.cpp">
       <Filter>Source Files\ActivationFunction</Filter>
     </ClCompile>
-    <ClCompile Include="MaxoutFunction.cpp">
-      <Filter>Source Files\ActivationFunction</Filter>
-    </ClCompile>
     <ClCompile Include="PReLUFunction.cpp">
       <Filter>Source Files\ActivationFunction</Filter>
     </ClCompile>
@@ -230,6 +224,21 @@
     </ClCompile>
     <ClCompile Include="ConvolutionNeuralLayer.cpp">
       <Filter>Source Files\NeuralLayer\ConvolutionLayer</Filter>
+    </ClCompile>
+    <ClCompile Include="ShapeNeuralLayer.cpp">
+      <Filter>Source Files\NeuralLayer\ShapeLayer</Filter>
+    </ClCompile>
+    <ClCompile Include="FlattenNeuralLayer.cpp">
+      <Filter>Source Files\NeuralLayer\ShapeLayer</Filter>
+    </ClCompile>
+    <ClCompile Include="SqueezeNeuralLayer.cpp">
+      <Filter>Source Files\NeuralLayer\ShapeLayer</Filter>
+    </ClCompile>
+    <ClCompile Include="ReshapeNeuralLayer.cpp">
+      <Filter>Source Files\NeuralLayer\ShapeLayer</Filter>
+    </ClCompile>
+    <ClCompile Include="ActivationFunctionNeuralLayer.cpp">
+      <Filter>Source Files\NeuralLayer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -296,16 +305,7 @@
     <ClInclude Include="Test.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SqueezeNeuralLayer.h">
-      <Filter>Header Files\NeuralLayer</Filter>
-    </ClInclude>
-    <ClInclude Include="FlattenNeuralLayer.h">
-      <Filter>Header Files\NeuralLayer</Filter>
-    </ClInclude>
     <ClInclude Include="ImageClassVisualizer.h">
-      <Filter>Header Files\Visualizer</Filter>
-    </ClInclude>
-    <ClInclude Include="ClassCell.h">
       <Filter>Header Files\Visualizer</Filter>
     </ClInclude>
     <ClInclude Include="MeanSquareErrorFunction.h">
@@ -357,9 +357,6 @@
       <Filter>Header Files\ActivationFunction</Filter>
     </ClInclude>
     <ClInclude Include="LeakyReLUFunction.h">
-      <Filter>Header Files\ActivationFunction</Filter>
-    </ClInclude>
-    <ClInclude Include="MaxoutFunction.h">
       <Filter>Header Files\ActivationFunction</Filter>
     </ClInclude>
     <ClInclude Include="PReLUFunction.h">
@@ -415,6 +412,24 @@
     </ClInclude>
     <ClInclude Include="ConvolutionNeuralLayer.h">
       <Filter>Header Files\NeuralLayer\ConvolutionLayer</Filter>
+    </ClInclude>
+    <ClInclude Include="ShapeNeuralLayer.h">
+      <Filter>Header Files\NeuralLayer\ShapeLayer</Filter>
+    </ClInclude>
+    <ClInclude Include="ReshapeNeuralLayer.h">
+      <Filter>Header Files\NeuralLayer\ShapeLayer</Filter>
+    </ClInclude>
+    <ClInclude Include="SqueezeNeuralLayer.h">
+      <Filter>Header Files\NeuralLayer\ShapeLayer</Filter>
+    </ClInclude>
+    <ClInclude Include="FlattenNeuralLayer.h">
+      <Filter>Header Files\NeuralLayer\ShapeLayer</Filter>
+    </ClInclude>
+    <ClInclude Include="ActivationFunctionNeuralLayer.h">
+      <Filter>Header Files\NeuralLayer</Filter>
+    </ClInclude>
+    <ClInclude Include="NeuralNetworkFileHelper.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

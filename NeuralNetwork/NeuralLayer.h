@@ -49,8 +49,8 @@ public:
 	virtual void draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output) = 0;
 
 protected:
-	NeuralLayer* parent;
-	NeuralLayer* children;
+	NeuralLayer* parent = nullptr;
+	NeuralLayer* children = nullptr;
 
 	std::vector<size_t> inputShape;
 	xt::xarray<double> lastInput;
@@ -65,10 +65,4 @@ protected:
 
 	void drawFunctionBackground(ImDrawList* canvas, ImVec2 origin, double scale, bool drawAxes);
 	void drawConversionFunctionBackground(ImDrawList* canvas, ImVec2 origin, double scale, bool drawAxes);
-
-	inline bool fileExists(const std::string& name)
-	{
-		struct stat buffer;
-		return (stat(name.c_str(), &buffer) == 0);
-	};
 };

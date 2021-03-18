@@ -4,6 +4,8 @@
 
 #include "ActivationFunctionFactory.h"
 
+#include "PReLUFunction.h"
+
 #pragma warning(push, 0)
 #include <math.h>
 #include <tuple>
@@ -28,7 +30,20 @@ DenseNeuralLayer::DenseNeuralLayer(ActivationFunctionType functionType, NeuralLa
 	this->functionType = functionType;
 	if (functionType == ActivationFunctionType::PReLU) // PReLU needs to know how many units
 	{
-		additionalParameters["numUnits"] = numUnits;
+		if (additionalParameters.find(PReLUFunction::NUM_UNITS) == additionalParameters.end())
+		{
+			additionalParameters[PReLUFunction::NUM_UNITS] = numUnits; // Add the number of units if it's not already set
+		}
+		else
+		{
+			if (additionalParameters[PReLUFunction::NUM_UNITS] != numUnits)
+			{
+				throw std::invalid_argument(std::string("Parameter: ") +
+					"PReLUFunction::NUM_UNITS" + " (\"" + PReLUFunction::NUM_UNITS + "\") needs to agree with the value of numUnits passed to DenseNeuralLayer\n"
+					+ "Either pass the same value or leave the value unset to let the layer set it itself using numUnits");
+			}
+			else { }
+		}
 	}
 	else { }
 	this->activationFunction = ActivationFunctionFactory::getNewActivationFunction(functionType, additionalParameters);
@@ -119,7 +134,7 @@ double DenseNeuralLayer::applyBackPropagate()
 {
 	double deltaWeight = xt::sum(xt::abs(weights.getDeltaParameters()))();
 	weights.applyDeltaParameters(); // Update the weights
-	activationFunction->applyBackPropagate(); // Update any parameters the activation function needs to change
+	activationFunction->applyBackPropagate(ALPHA); // Update any parameters the activation function needs to change
 	return deltaWeight; // Return the sum of how much the parameters have changed
 }
 
@@ -129,6 +144,18 @@ std::vector<size_t> DenseNeuralLayer::getOutputShape()
 	outputShape.push_back(numUnits);
 	outputShape = activationFunction->getOutputShape(outputShape);
 	return outputShape;
+}
+
+void DenseNeuralLayer::saveParameters(std::string fileName)
+{
+	ParameterizedNeuralLayer::saveParameters(fileName);
+	activationFunction->saveParameters(fileName);
+}
+
+void DenseNeuralLayer::loadParameters(std::string fileName)
+{
+	ParameterizedNeuralLayer::loadParameters(fileName);
+	activationFunction->loadParameters(fileName);
 }
 
 void DenseNeuralLayer::draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output)

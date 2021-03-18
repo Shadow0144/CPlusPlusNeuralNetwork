@@ -10,43 +10,43 @@ SwishFunction::SwishFunction()
 
 }
 
-double SwishFunction::sigmoid(double z)
+double SwishFunction::sigmoid(double z) const
 {
 	return (1.0 / (1.0 + exp(-z)));
 }
 
-xt::xarray<double> SwishFunction::sigmoid(const xt::xarray<double>& z)
+xt::xarray<double> SwishFunction::sigmoid(const xt::xarray<double>& z) const
 {
 	return (1.0 / (1.0 + exp(-z)));
 }
 
-double SwishFunction::activate(double z)
+double SwishFunction::activate(double z) const
 {
 	return swish(z);
 }
 
-double SwishFunction::swish(double z)
+double SwishFunction::swish(double z) const
 {
 	return (z * sigmoid(z));
 }
 
-xt::xarray<double> SwishFunction::swish(const xt::xarray<double>& z)
+xt::xarray<double> SwishFunction::swish(const xt::xarray<double>& z) const
 {
 	return (z * sigmoid(z));
 }
 
-xt::xarray<double> SwishFunction::feedForward(const xt::xarray<double>& inputs)
+xt::xarray<double> SwishFunction::feedForward(const xt::xarray<double>& inputs) const
 {
 	return swish(inputs);
 }
 
-xt::xarray<double> SwishFunction::getGradient(const xt::xarray<double>& sigmas)
+xt::xarray<double> SwishFunction::getGradient(const xt::xarray<double>& sigmas) const
 {
 	auto sig = sigmoid(lastInput);
 	return (sigmas * (lastOutput + (sig * (1.0 - lastOutput))));
 }
 
-void SwishFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights)
+void SwishFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights) const
 {
 	ActivationFunction::draw(canvas, origin, scale, numUnits, weights);
 
