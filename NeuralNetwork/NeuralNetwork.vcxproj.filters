@@ -64,6 +64,12 @@
     <Filter Include="Source Files\NeuralLayer\ShapeLayer">
       <UniqueIdentifier>{be0b9343-8cec-4768-b939-e45268b9186d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Optimizer">
+      <UniqueIdentifier>{149511b3-4430-4658-80ee-91ac5c0b1d13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Optimizer">
+      <UniqueIdentifier>{9becd34e-e9be-496d-89d6-72dab45fb252}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="NeuralNetwork.cpp">
@@ -239,6 +245,15 @@
     </ClCompile>
     <ClCompile Include="ActivationFunctionNeuralLayer.cpp">
       <Filter>Source Files\NeuralLayer</Filter>
+    </ClCompile>
+    <ClCompile Include="DropoutNeuralLayer.cpp">
+      <Filter>Source Files\NeuralLayer</Filter>
+    </ClCompile>
+    <ClCompile Include="SGDOptimizer.cpp">
+      <Filter>Source Files\Optimizer</Filter>
+    </ClCompile>
+    <ClCompile Include="Optimizer.cpp">
+      <Filter>Source Files\Optimizer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -430,6 +445,15 @@
     </ClInclude>
     <ClInclude Include="NeuralNetworkFileHelper.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DropoutNeuralLayer.h">
+      <Filter>Header Files\NeuralLayer</Filter>
+    </ClInclude>
+    <ClInclude Include="Optimizer.h">
+      <Filter>Header Files\Optimizer</Filter>
+    </ClInclude>
+    <ClInclude Include="SGDOptimizer.h">
+      <Filter>Header Files\Optimizer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -19,8 +19,8 @@ MaxoutNeuralLayer::MaxoutNeuralLayer(NeuralLayer* parent, size_t numUnits, size_
 {
 	this->numInputs = 0;
 	this->parent = parent;
-	this->children = NULL;
-	if (parent != NULL)
+	this->children = nullptr;
+	if (parent != nullptr)
 	{
 		parent->addChildren(this);
 		this->numInputs = parent->getNumUnits();

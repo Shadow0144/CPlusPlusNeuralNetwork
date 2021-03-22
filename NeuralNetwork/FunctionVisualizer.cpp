@@ -84,7 +84,7 @@ void FunctionVisualizer::draw(ImDrawList* canvas, const xt::xarray<double>& inpu
 	// Fix: Clipping y
 	xt::xarray<double> xs = xt::zeros<double>(inputShape);
 	xt::strided_view(xs, inputsSV) = xt::linspace<double>(-1.0, 1.0, inputShape[0]);
-	auto ys = network->feedForward(xs);
+	auto ys = network->predict(xs);
 	for (int i = 0; i < (inputShape[0] - 1); i++)
 	{
 		float x1 = (rescale * xt::strided_view(xs, inputsSV)(i));

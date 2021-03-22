@@ -15,7 +15,7 @@ ParameterSet::ParameterSet()
 {
 	if (!seedSet)
 	{
-		xt::random::seed(time(NULL));
+		xt::random::seed(time(nullptr));
 		seedSet = true;
 	}
 	else { }

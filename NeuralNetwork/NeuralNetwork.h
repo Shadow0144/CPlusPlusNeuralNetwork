@@ -1,6 +1,7 @@
 #pragma once
 
 #include "NeuralLayer.h"
+#include "Optimizer.h"
 #include "ErrorFunction.h"
 #include "ActivationFunction.h"
 
@@ -8,6 +9,11 @@
 #include <vector>
 #include <map>
 #pragma warning(pop)
+
+enum class OptimizerType
+{
+	SGD // Stochastic Gradient Descent
+};
 
 enum class ErrorFunctionType
 {
@@ -36,6 +42,7 @@ public:
 	void addInputLayer(const std::vector<size_t>& inputShape);
 	void addDenseLayer(ActivationFunctionType layerFunction, size_t numUnits, 
 		std::map<string, double> additionalParameters = std::map<string, double>(), bool addBias = true);
+	void addActivationFunctionLayer(ActivationFunctionType layerFunction, std::map<string, double> additionalParameters = std::map<string, double>());
 	void addMaxoutLayer(size_t numUnits, size_t numFunctions, bool addBias = true);
 	void addSoftmaxLayer(int axis = -1);
 	void addConvolution1DLayer(size_t numKernels, const std::vector<size_t>& convolutionShape, size_t inputChannels, size_t stride = 1, bool addBias = false, ActivationFunctionType activationFunctionType = ActivationFunctionType::Identity, std::map<std::string, double> additionalParameters = std::map<std::string, double>());
@@ -50,11 +57,12 @@ public:
 	void addFlattenLayer(int numOutputs);
 	void addSqueezeLayer(const std::vector<size_t>& squeezeDims = std::vector<size_t>());
 	void addReshapeLayer(const std::vector<size_t>& newShape);
+	void addDropoutLayer(double dropRate = 0.5);
 
-	xt::xarray<double> feedForward(const xt::xarray<double>& inputs); // Does not update internal values
-	xt::xarray<double> feedForwardTrain(const xt::xarray<double>& inputs); // Updates internal values such as last input and last output
-	bool backPropagate(const xt::xarray<double>& inputs, const xt::xarray<double>& targets); // Single step
+	xt::xarray<double> predict(const xt::xarray<double>& inputs); // Does not update training values
 	void train(const xt::xarray<double>& inputs, const xt::xarray<double>& targets, int maxEpochs = -1); // Train until a condition is met
+
+	void setOptimizer(OptimizerType optimizerType);
 
 	void setErrorFunction(ErrorFunctionType errorFunctionType);
 	void enableStoppingCondition(StoppingCondition condition, double threshold);
@@ -96,6 +104,7 @@ private:
 	vector<size_t> inputShape;
 	vector<NeuralLayer*>* layers;
 	ErrorFunction* errorFunction;
+	Optimizer* optimizer;
 	int maxEpochs;
 	double minError;
 	double errorConvergenceThreshold;
@@ -122,16 +131,4 @@ private:
 	void updateDrawing(const xt::xarray<double>& predicted);
 	void output(LearningState state, int epoch, const xt::xarray<double>& inputs, 
 						const xt::xarray<double>& targets, const xt::xarray<double>& predicted);
-
-	inline bool folderExists(const std::string& name)
-	{
-		struct stat buffer;
-		return (stat(name.c_str(), &buffer) == 0 && buffer.st_mode & S_IFDIR);
-	};
-
-	inline bool fileExists(const std::string& name)
-	{
-		struct stat buffer;
-		return (stat(name.c_str(), &buffer) == 0);
-	};
 };

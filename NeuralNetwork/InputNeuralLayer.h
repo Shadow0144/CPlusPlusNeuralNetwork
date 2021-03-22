@@ -20,6 +20,4 @@ public:
 	std::vector<size_t> getOutputShape();
 
 	void draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output);
-
-private:
 };

@@ -10,8 +10,8 @@
 FlattenNeuralLayer::FlattenNeuralLayer(NeuralLayer* parent, int numOutputs)
 {
 	this->parent = parent;
-	this->children = NULL;
-	if (parent != NULL)
+	this->children = nullptr;
+	if (parent != nullptr)
 	{
 		parent->addChildren(this);
 	}

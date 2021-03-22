@@ -233,6 +233,7 @@ void test_signal(int layers)
 
     ErrorFunction* errorFunction = new MeanSquareErrorFunction();
     NeuralNetwork network = NeuralNetwork(true);
+    network.setOptimizer(OptimizerType::SGD);
     network.setErrorFunction(ErrorFunctionType::MeanSquaredError);
     network.setBatchSize(5);
     network.displayRegressionEstimation();
@@ -246,8 +247,9 @@ void test_signal(int layers)
     }
     //network.addMaxoutLayer(3, 3);
     network.addDenseLayer(ActivationFunctionType::Identity, 9);
-    network.addReshapeLayer({ 3, 3 });
-    network.addFlattenLayer(9);
+    //network.addReshapeLayer({ 3, 3 });
+    //network.addFlattenLayer(9);
+    network.addDropoutLayer();
     network.addDenseLayer(ActivationFunctionType::Sigmoid, 6);
     network.addDenseLayer(ActivationFunctionType::Identity, 1);
 
@@ -310,7 +312,7 @@ void test_signal(int layers)
 
     network.train(training_x, training_y, MAX_EPOCHS);
 
-    xt::xarray<double> predicted = network.feedForward(training_x);
+    xt::xarray<double> predicted = network.predict(training_x);
     std::cout << endl;
     for (int i = 0; i < SAMPLES; i += 10)
     {
@@ -366,6 +368,7 @@ void test_iris(int layers)
     }
 
     NeuralNetwork network = NeuralNetwork();
+    network.setOptimizer(OptimizerType::SGD);
     network.setErrorFunction(ErrorFunctionType::CrossEntropy);
     ImColor* classColors = new ImColor[3]
         { ImColor(1.0f, 0.0f, 0.0f, 1.0f),
@@ -446,6 +449,7 @@ void test_binary()
     network.addDenseLayer(ActivationFunctionType::ReLU, CLASSES); // 32 -> 2
     network.addSoftmaxLayer(-1);
 
+    network.setOptimizer(OptimizerType::SGD);
     network.setErrorFunction(ErrorFunctionType::CrossEntropy);
     network.setBatchSize(10);
 
@@ -504,6 +508,7 @@ void test_mnist()
     network.addDenseLayer(ActivationFunctionType::Softplus, CLASSES); // 32 -> 10
     network.addSoftmaxLayer(-1);
 
+    network.setOptimizer(OptimizerType::SGD);
     network.setErrorFunction(ErrorFunctionType::CrossEntropy);
     network.setBatchSize(20);
     network.setOutputRate(1);
@@ -564,6 +569,7 @@ void test_catdog()
     network.addDenseLayer(ActivationFunctionType::Softplus, CLASSES); // 32 -> 2
     network.addSoftmaxLayer(-1);
 
+    network.setOptimizer(OptimizerType::SGD);
     network.setErrorFunction(ErrorFunctionType::CrossEntropy);
     network.setBatchSize(1);
     network.setOutputRate(1);

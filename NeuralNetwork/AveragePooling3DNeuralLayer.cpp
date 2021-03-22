@@ -10,8 +10,8 @@ using namespace std;
 AveragePooling3DNeuralLayer::AveragePooling3DNeuralLayer(NeuralLayer* parent, const std::vector<size_t>& filterShape)
 {
 	this->parent = parent;
-	this->children = NULL;
-	if (parent != NULL)
+	this->children = nullptr;
+	if (parent != nullptr)
 	{
 		parent->addChildren(this);
 	}

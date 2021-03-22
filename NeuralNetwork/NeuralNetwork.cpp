@@ -19,6 +19,7 @@
 
 #include "InputNeuralLayer.h"
 #include "DenseNeuralLayer.h"
+#include "ActivationFunctionNeuralLayer.h"
 #include "SoftmaxNeuralLayer.h"
 #include "MaxoutNeuralLayer.h"
 #include "Convolution1DNeuralLayer.h"
@@ -33,9 +34,14 @@
 #include "FlattenNeuralLayer.h"
 #include "SqueezeNeuralLayer.h"
 #include "ReshapeNeuralLayer.h"
+#include "DropoutNeuralLayer.h"
+
+#include "SGDOptimizer.h"
 
 #include "CrossEntropyErrorFunction.h"
 #include "MeanSquareErrorFunction.h"
+
+#include "NeuralNetworkFileHelper.h"
 
 #include "Test.h"
 
@@ -49,7 +55,7 @@
 #include <filesystem>
 #pragma warning(pop)
 
-const double internalBatchLimit = 20;
+const double INTERNAL_BATCH_LIMIT = 20;
 
 NeuralNetwork::NeuralNetwork(bool drawingEnabled)
 {
@@ -63,7 +69,8 @@ NeuralNetwork::NeuralNetwork(bool drawingEnabled)
 
 	this->currentEpoch = 0;
 
-	this->errorFunction = NULL;
+	this->optimizer = nullptr;
+	this->errorFunction = nullptr;
 	this->maxEpochs = -1;
 	this->minError = -1;
 	this->errorConvergenceThreshold = -1;
@@ -80,7 +87,7 @@ NeuralNetwork::NeuralNetwork(bool drawingEnabled)
 	}
 	else 
 	{
-		visualizer = NULL;
+		visualizer = nullptr;
 	}
 
 	this->layerCount = 0;
@@ -89,20 +96,28 @@ NeuralNetwork::NeuralNetwork(bool drawingEnabled)
 
 NeuralNetwork::~NeuralNetwork()
 {
-	if (visualizer != NULL)
+	if (visualizer != nullptr)
 	{
 		delete visualizer;
 	}
 	else { }
-	if (layers != NULL)
+	if (layers != nullptr)
 	{
-		// TODO: Delete each layer in layers
+		for (int i = 0; i < layerCount; i++) // Loop through the layers
+		{
+			delete layers->at(i);
+		}
 		delete layers;
 	}
 	else { }
-	if (errorFunction != NULL)
+	if (errorFunction != nullptr)
 	{
 		delete errorFunction;
+	}
+	else { }
+	if (optimizer != nullptr)
+	{
+		delete optimizer;
 	}
 	else { }
 }
@@ -118,6 +133,13 @@ void NeuralNetwork::addInputLayer(const std::vector<size_t>& inputShape)
 void NeuralNetwork::addDenseLayer(ActivationFunctionType layerFunction, size_t numUnits, std::map<string, double> additionalParameters, bool addBias)
 {
 	DenseNeuralLayer* layer = new DenseNeuralLayer(layerFunction, layers->at(layerCount - 1), numUnits, additionalParameters, addBias);
+	layers->push_back(layer);
+	layerCount++;
+}
+
+void NeuralNetwork::addActivationFunctionLayer(ActivationFunctionType layerFunction, std::map<string, double> additionalParameters)
+{
+	ActivationFunctionNeuralLayer* layer = new ActivationFunctionNeuralLayer(layerFunction, layers->at(layerCount - 1), additionalParameters);
 	layers->push_back(layer);
 	layerCount++;
 }
@@ -235,10 +257,17 @@ void NeuralNetwork::addReshapeLayer(const std::vector<size_t>& newShape)
 	layerCount++;
 }
 
-xt::xarray<double> NeuralNetwork::feedForward(const xt::xarray<double>& inputs)
+void NeuralNetwork::addDropoutLayer(double dropRate)
+{
+	DropoutNeuralLayer* layer = new DropoutNeuralLayer(layers->at(layerCount - 1), dropRate);
+	layers->push_back(layer);
+	layerCount++;
+}
+
+xt::xarray<double> NeuralNetwork::predict(const xt::xarray<double>& inputs)
 {
 	const int N = inputs.shape()[0];
-	const int INTERNAL_BATCHES = ceil(N / internalBatchLimit);
+	const int INTERNAL_BATCHES = ceil(N / INTERNAL_BATCH_LIMIT);
 	int iBatchSize = N / INTERNAL_BATCHES;
 
 	auto shape = layers->at(layerCount - 1)->getOutputShape();
@@ -271,66 +300,6 @@ xt::xarray<double> NeuralNetwork::feedForward(const xt::xarray<double>& inputs)
 	return predicted;
 }
 
-// Called internally only, internal batching is handled in backPropagate
-xt::xarray<double> NeuralNetwork::feedForwardTrain(const xt::xarray<double>& inputs)
-{
-	xt::xarray<double> predicted = inputs;
-
-	for (int i = 0; i < layerCount; i++) // Loop through the layers
-	{
-		predicted = layers->at(i)->feedForwardTrain(predicted);
-	}
-
-	return predicted;
-}
-
-bool NeuralNetwork::backPropagate(const xt::xarray<double>& inputs, const xt::xarray<double>& targets)
-{
-	bool converged = true;
-
-	const int N = inputs.shape()[0];
-	const int INTERNAL_BATCHES = ceil(N / internalBatchLimit);
-	int iBatchSize = N / INTERNAL_BATCHES;
-
-	auto shape = layers->at(layerCount - 1)->getOutputShape();
-	shape[0] = N;
-	//shape.insert(shape.begin(), N);
-	xt::xarray<double> predicted = xt::xarray<double>(shape);
-
-	for (int i = 0; i < INTERNAL_BATCHES; i++)
-	{
-		// Set up the batch
-		int iBatchStart = ((i + 0) * iBatchSize) % N;
-		int iBatchEnd = ((i + 1) * iBatchSize) % N;
-		if ((iBatchEnd - iBatchStart) != iBatchSize)
-		{
-			iBatchEnd = N;
-		}
-		else { }
-
-		xt::xstrided_slice_vector iBatchSV({ xt::range(iBatchStart, iBatchEnd), xt::ellipsis() });
-
-		// Feed forward and calculate the gradient
-		xt::xarray<double> predicted = feedForwardTrain(xt::strided_view(inputs, iBatchSV));
-		xt::xarray<double> errors = errorFunction->getDerivativeOfError(predicted, xt::strided_view(targets, iBatchSV));
-
-		// Backpropagate through the layers until the input layer
-		for (int l = (layerCount - 1); l > 0; l--)
-		{
-			errors = layers->at(l)->backPropagate(errors);
-		}
-	}
-
-	// Apply the backpropagation
-	for (int l = 0; l < layerCount; l++)
-	{
-		double deltaSum = layers->at(l)->applyBackPropagate();
-		converged = (deltaSum < weightConvergenceThreshold) && converged;
-	}
-
-	return converged;
-}
-
 void NeuralNetwork::train(const xt::xarray<double>& inputs, const xt::xarray<double>& targets, int maxEpochs)
 {
 	setupDrawing(inputs, targets);
@@ -344,102 +313,109 @@ void NeuralNetwork::train(const xt::xarray<double>& inputs, const xt::xarray<dou
 		disableStoppingCondition(StoppingCondition::Max_Epochs);
 	}
 
-	if (errorFunction != NULL)
+	if (optimizer != nullptr)
 	{
-		xt::xarray<double> predicted = feedForward(inputs);
-		double error = abs(getError(predicted, targets));
-		output(LearningState::untrained, currentEpoch, inputs, targets, predicted);
-
-		updateDrawing(predicted);
-
-		cout << "Beginning training" << endl << endl;
-
-		//currentEpoch = 0; //int t = 0; // This is set either in the constructor or when loading
-		bool converged = false;
-		double lastError = error;
-		double deltaError = error;
-		const int BATCHES = inputs.shape()[0] / batchSize;
-		int N = targets.shape()[0];
-		while 
-			(!((stoppingConditionFlags[((int)(StoppingCondition::Max_Epochs))]) && (currentEpoch >= maxEpochs)) &&
-			 !((stoppingConditionFlags[((int)(StoppingCondition::Min_Error))]) && (error < 0 || error > minError)) &&
-			 !((stoppingConditionFlags[((int)(StoppingCondition::Min_Delta_Error))]) && (deltaError > errorConvergenceThreshold)) &&
-			 !((stoppingConditionFlags[((int)(StoppingCondition::Min_Delta_Params))]) && (!converged)))
+		if (errorFunction != nullptr)
 		{
-			converged = true;
-			for (int i = 0; i < BATCHES; i++)
-			{
-				// Set up the batch
-				int batchStart = ((i + 0) * batchSize) % N;
-				int batchEnd = ((i + 1) * batchSize) % N;
-				if ((batchEnd - batchStart) != batchSize)
-				{
-					batchEnd = N;
-				}
-				else { }
-
-				xt::xstrided_slice_vector batchSV({ xt::range(batchStart, batchEnd), xt::ellipsis() });
-				xt::xarray<double> examples = xt::strided_view(inputs, batchSV);
-				xt::xarray<double> exampleTargets = xt::strided_view(targets, batchSV);
-				converged = backPropagate(examples, exampleTargets) && converged;
-			}
-
-			predicted = feedForward(inputs);
-			error = getError(predicted, targets);
-			deltaError = abs(lastError - error);
-			lastError = error;
+			xt::xarray<double> predicted = predict(inputs);
+			double error = abs(getError(predicted, targets));
+			output(LearningState::untrained, currentEpoch, inputs, targets, predicted);
 
 			updateDrawing(predicted);
 
-			currentEpoch++;
+			cout << "Beginning training" << endl << endl;
 
-			if (currentEpoch % outputRate == 0 && currentEpoch != 0)
+			//currentEpoch = 0; //int t = 0; // This is set either in the constructor or when loading
+			bool converged = false;
+			double lastError = error;
+			double deltaError = error;
+			const int BATCHES = inputs.shape()[0] / batchSize;
+			int N = targets.shape()[0];
+			while
+				(!((stoppingConditionFlags[((int)(StoppingCondition::Max_Epochs))]) && (currentEpoch >= maxEpochs)) &&
+					!((stoppingConditionFlags[((int)(StoppingCondition::Min_Error))]) && (error < 0 || error > minError)) &&
+					!((stoppingConditionFlags[((int)(StoppingCondition::Min_Delta_Error))]) && (deltaError > errorConvergenceThreshold)) &&
+					!((stoppingConditionFlags[((int)(StoppingCondition::Min_Delta_Params))]) && (!converged)))
 			{
-				output(LearningState::training, currentEpoch, inputs, targets, predicted);
+				converged = true;
+				for (int i = 0; i < BATCHES; i++)
+				{
+					// Set up the batch
+					int batchStart = ((i + 0) * batchSize) % N;
+					int batchEnd = ((i + 1) * batchSize) % N;
+					if ((batchEnd - batchStart) != batchSize)
+					{
+						batchEnd = N;
+					}
+					else { }
+
+					xt::xstrided_slice_vector batchSV({ xt::range(batchStart, batchEnd), xt::ellipsis() });
+					xt::xarray<double> examples = xt::strided_view(inputs, batchSV);
+					xt::xarray<double> exampleTargets = xt::strided_view(targets, batchSV);
+					converged = optimizer->backPropagate(examples, exampleTargets) && converged;
+				}
+
+				predicted = predict(inputs);
+				error = getError(predicted, targets);
+				deltaError = abs(lastError - error);
+				lastError = error;
+
+				updateDrawing(predicted);
+
+				currentEpoch++;
+
+				if (currentEpoch % outputRate == 0 && currentEpoch != 0)
+				{
+					output(LearningState::training, currentEpoch, inputs, targets, predicted);
+				}
+				else { }
+
+				if (autosaveEnabled && currentEpoch % autosaveFrequency == 0)
+				{
+					saveParameters(autosaveFileName);
+					cout << "Epoch " << currentEpoch << " parameters saved" << endl << endl;
+				}
+				else { }
+			}
+
+			if (verbosity >= 1)
+			{
+				if ((stoppingConditionFlags[((int)(StoppingCondition::Min_Delta_Params))]) && (converged))
+				{
+					cout << "Weights have converged" << endl << endl;
+				}
+				else if ((stoppingConditionFlags[((int)(StoppingCondition::Min_Delta_Error))]) && (deltaError <= errorConvergenceThreshold))
+				{
+					cout << "Error has converged" << endl << endl;
+				}
+				else if ((stoppingConditionFlags[((int)(StoppingCondition::Min_Error))]) && (error >= 0 && error <= minError))
+				{
+					cout << "Minimum loss condition reached" << endl << endl;
+				}
+				else if ((stoppingConditionFlags[((int)(StoppingCondition::Max_Epochs))]) && (currentEpoch == maxEpochs))
+				{
+					cout << "Maximum epochs reached" << endl << endl;
+				}
+				else { }
 			}
 			else { }
 
-			if (autosaveEnabled && currentEpoch % autosaveFrequency == 0)
-			{
-				saveParameters(autosaveFileName);
-				cout << "Epoch " << currentEpoch << " parameters saved" << endl << endl;
-			}
-			else { }
+			output(LearningState::trained, currentEpoch, inputs, targets, predicted);
+
+			cout << "Training complete" << endl << endl;
+
+			updateDrawing(predicted);
+
+			system("pause");
 		}
-
-		if (verbosity >= 1)
+		else
 		{
-			if ((stoppingConditionFlags[((int)(StoppingCondition::Min_Delta_Params))]) && (converged))
-			{
-				cout << "Weights have converged" << endl << endl;
-			}
-			else if ((stoppingConditionFlags[((int)(StoppingCondition::Min_Delta_Error))]) && (deltaError <= errorConvergenceThreshold))
-			{
-				cout << "Error has converged" << endl << endl;
-			}
-			else if ((stoppingConditionFlags[((int)(StoppingCondition::Min_Error))]) && (error >= 0 && error <= minError))
-			{
-				cout << "Minimum loss condition reached" << endl << endl;
-			}
-			else if ((stoppingConditionFlags[((int)(StoppingCondition::Max_Epochs))]) && (currentEpoch == maxEpochs))
-			{
-				cout << "Maximum epochs reached" << endl << endl;
-			}
-			else { }
+			cout << "No error function set" << endl;
 		}
-		else { }
-
-		output(LearningState::trained, currentEpoch, inputs, targets, predicted);
-
-		cout << "Training complete" << endl << endl;
-
-		updateDrawing(predicted);
-
-		system("pause");
 	}
 	else
 	{
-		cout << "No error function set" << endl;
+		cout << "No optimizer set" << endl;
 	}
 }
 
@@ -477,9 +453,31 @@ void NeuralNetwork::output(LearningState state, int epoch, const xt::xarray<doub
 	else { }
 }
 
+void NeuralNetwork::setOptimizer(OptimizerType optimizerType)
+{
+	if (optimizer != nullptr)
+	{
+		delete optimizer;
+	}
+	else { }
+
+	switch (optimizerType)
+	{
+		case OptimizerType::SGD:
+			this->optimizer = new SGDOptimizer(layers);
+			break;
+	}
+
+	if (errorFunction != nullptr)
+	{
+		optimizer->setErrorFunction(errorFunction);
+	}
+	else { }
+}
+
 void NeuralNetwork::setErrorFunction(ErrorFunctionType errorFunctionType)
 {
-	if (errorFunction == NULL)
+	if (errorFunction != nullptr)
 	{
 		delete errorFunction;
 	}
@@ -494,6 +492,12 @@ void NeuralNetwork::setErrorFunction(ErrorFunctionType errorFunctionType)
 			this->errorFunction = new MeanSquareErrorFunction();
 			break;
 	}
+
+	if (optimizer != nullptr)
+	{
+		optimizer->setErrorFunction(errorFunction);
+	}
+	else { }
 }
 
 void NeuralNetwork::enableStoppingCondition(StoppingCondition condition, double threshold)
@@ -600,7 +604,7 @@ void NeuralNetwork::loadParameters(string folderName)
 {
 	string fullFolderName = getCurrentDir().append("\\" + folderName);
 	string fileName = fullFolderName + "\\" + folderName;
-	if (folderExists(fullFolderName) && fileExists(fileName + ".nnp"))
+	if (NeuralNetworkFileHelper::folderExists(fullFolderName) && NeuralNetworkFileHelper::fileExists(fileName + ".nnp"))
 	{
 		ifstream loadFile;
 		loadFile.open(fileName + ".nnp");
@@ -666,14 +670,14 @@ bool NeuralNetwork::getDrawingEnabled()
 void NeuralNetwork::setDrawingEnabled(bool drawingEnabled)
 {
 	this->drawingEnabled = drawingEnabled;
-	if (drawingEnabled && visualizer == NULL)
+	if (drawingEnabled && visualizer == nullptr)
 	{
 		visualizer = new NetworkVisualizer(this);
 	}
-	else if (!drawingEnabled && visualizer != NULL)
+	else if (!drawingEnabled && visualizer != nullptr)
 	{ 
 		delete visualizer;
-		visualizer = NULL;
+		visualizer = nullptr;
 	}
 	else { }
 }

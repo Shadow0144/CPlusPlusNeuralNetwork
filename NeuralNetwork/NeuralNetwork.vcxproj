@@ -103,6 +103,7 @@
     <ClCompile Include="CReLUFunction.cpp" />
     <ClCompile Include="Convolution3DNeuralLayer.cpp" />
     <ClCompile Include="CrossEntropyErrorFunction.cpp" />
+    <ClCompile Include="DropoutNeuralLayer.cpp" />
     <ClCompile Include="ELUFunction.cpp" />
     <ClCompile Include="ExponentialFunction.cpp" />
     <ClCompile Include="FlattenNeuralLayer.cpp" />
@@ -130,6 +131,7 @@
     <ClCompile Include="NeuralLayer.cpp" />
     <ClCompile Include="NeuralNetwork.cpp" />
     <ClCompile Include="DenseNeuralLayer.cpp" />
+    <ClCompile Include="Optimizer.cpp" />
     <ClCompile Include="ParameterizedNeuralLayer.cpp" />
     <ClCompile Include="ParameterSet.cpp" />
     <ClCompile Include="PReLUFunction.cpp" />
@@ -139,6 +141,7 @@
     <ClCompile Include="ReLUnFunction.cpp" />
     <ClCompile Include="ReshapeNeuralLayer.cpp" />
     <ClCompile Include="SELUFunction.cpp" />
+    <ClCompile Include="SGDOptimizer.cpp" />
     <ClCompile Include="ShapeNeuralLayer.cpp" />
     <ClCompile Include="SigmoidFunction.cpp" />
     <ClCompile Include="SoftmaxNeuralLayer.cpp" />
@@ -163,6 +166,7 @@
     <ClInclude Include="CReLUFunction.h" />
     <ClInclude Include="Convolution3DNeuralLayer.h" />
     <ClInclude Include="CrossEntropyErrorFunction.h" />
+    <ClInclude Include="DropoutNeuralLayer.h" />
     <ClInclude Include="ErrorFunction.h" />
     <ClInclude Include="ExponentialFunction.h" />
     <ClInclude Include="ELUFunction.h" />
@@ -192,6 +196,7 @@
     <ClInclude Include="NetworkVisualizer.h" />
     <ClInclude Include="NeuralLayer.h" />
     <ClInclude Include="NeuralNetworkFileHelper.h" />
+    <ClInclude Include="Optimizer.h" />
     <ClInclude Include="ParameterizedNeuralLayer.h" />
     <ClInclude Include="ParameterSet.h" />
     <ClInclude Include="IdentityFunction.h" />
@@ -205,6 +210,7 @@
     <ClInclude Include="ReLUnFunction.h" />
     <ClInclude Include="ReshapeNeuralLayer.h" />
     <ClInclude Include="SELUFunction.h" />
+    <ClInclude Include="SGDOptimizer.h" />
     <ClInclude Include="ShapeNeuralLayer.h" />
     <ClInclude Include="SigmoidFunction.h" />
     <ClInclude Include="SoftplusFunction.h" />
