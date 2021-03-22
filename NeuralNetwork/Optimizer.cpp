@@ -35,7 +35,7 @@ void Optimizer::setErrorFunction(ErrorFunction* errorFunction)
 	this->errorFunction = errorFunction;
 }
 
-// Called internally only, internal batching is handled in backPropagate
+// Called internally only, internal batching is handled in getDeltaWeight
 xt::xarray<double> Optimizer::feedForwardTrain(const xt::xarray<double>& inputs)
 {
 	xt::xarray<double> predicted = inputs;

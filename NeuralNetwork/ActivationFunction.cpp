@@ -22,7 +22,7 @@ double ActivationFunction::activate(double z) const
 {
 	return z;
 }
- void ActivationFunction::applyBackPropagate(double alpha)
+ void ActivationFunction::applyBackPropagate()
 {
 	// Do nothing
 }
@@ -77,9 +77,9 @@ xt::xarray<double> ActivationFunction::approximateBezier(const xt::xarray<double
 
 	auto Mi = xt::linalg::pinv(M);
 	auto TT = xt::transpose(T);
-	auto A = Mi * xt::linalg::pinv(TT * T) * TT;
+	auto A = xt::linalg::dot(Mi, xt::linalg::dot(xt::linalg::pinv(xt::linalg::dot(TT, T)), TT));
 
-	return (xt::linalg::tensordot(A, points, 1));
+	return (xt::linalg::dot(A, points));
 }
 
 // TODO: Cap vertical draw

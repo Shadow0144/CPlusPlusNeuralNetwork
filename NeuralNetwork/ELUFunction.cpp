@@ -41,7 +41,7 @@ xt::xarray<double> ELUFunction::feedForward(const xt::xarray<double>& inputs) co
 	return ELU(inputs);
 }
 
-xt::xarray<double> ELUFunction::getGradient(const xt::xarray<double>& sigmas) const
+xt::xarray<double> ELUFunction::getGradient(const xt::xarray<double>& sigmas, Optimizer* optimizer)
 {
 	return (sigmas * xt::maximum(lastOutput + alpha, 1.0));
 }

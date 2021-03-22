@@ -30,7 +30,7 @@ xt::xarray<double> SoftsignFunction::feedForward(const xt::xarray<double>& input
 	return softsign(inputs);
 }
 
-xt::xarray<double> SoftsignFunction::getGradient(const xt::xarray<double>& sigmas) const
+xt::xarray<double> SoftsignFunction::getGradient(const xt::xarray<double>& sigmas, Optimizer* optimizer)
 {
 	return (sigmas * (1.0 / pow((1.0 + abs(lastInput)), 2.0)));
 }

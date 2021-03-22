@@ -72,7 +72,7 @@ xt::xarray<double> AveragePooling2DNeuralLayer::feedForward(const xt::xarray<dou
 	return output;
 }
 
-xt::xarray<double> AveragePooling2DNeuralLayer::backPropagate(const xt::xarray<double>& sigmas)
+xt::xarray<double> AveragePooling2DNeuralLayer::getGradient(const xt::xarray<double>& sigmas, Optimizer* optimizer)
 {
 	// Reverse what was done in feedforward, the input is now the output
 	const int DIMS = lastInput.dimension();

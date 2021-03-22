@@ -1,5 +1,7 @@
 #include "MeanSquareErrorFunction.h"
 
+#include "Optimizer.h"
+
 #pragma warning(push, 0)
 #include <iostream>
 #pragma warning(pop)
@@ -20,7 +22,7 @@ double MeanSquareErrorFunction::getError(const xt::xarray<double>& predicted, co
 	return error();
 }
 
-xt::xarray<double> MeanSquareErrorFunction::getDerivativeOfError(const xt::xarray<double>& predicted, const xt::xarray<double>& actual)
+xt::xarray<double> MeanSquareErrorFunction::getGradient(const xt::xarray<double>& predicted, const xt::xarray<double>& actual)
 {
 	return (2.0 * (predicted - actual));
 }

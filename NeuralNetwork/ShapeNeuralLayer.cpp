@@ -13,7 +13,7 @@ xt::xarray<double> ShapeNeuralLayer::feedForwardTrain(const xt::xarray<double>& 
 	return feedForward(input);
 }
 
-xt::xarray<double> ShapeNeuralLayer::backPropagate(const xt::xarray<double>& sigmas)
+xt::xarray<double> ShapeNeuralLayer::getGradient(const xt::xarray<double>& sigmas, Optimizer* optimizer)
 {
 	auto sigmasPrime = xt::xarray<double>(sigmas);
 	sigmasPrime.reshape(lastShape);

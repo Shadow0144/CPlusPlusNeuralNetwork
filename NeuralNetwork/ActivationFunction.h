@@ -3,6 +3,7 @@
 #pragma warning( disable : 26451 )
 
 #include "ParameterSet.h"
+#include "Optimizer.h"
 
 #pragma warning(push, 0)
 #include "imgui.h"
@@ -38,8 +39,8 @@ class ActivationFunction
 public:
 	virtual xt::xarray<double> feedForward(const xt::xarray<double>& inputs) const = 0;
 	virtual xt::xarray<double> feedForwardTrain(const xt::xarray<double>& inputs);
-	virtual xt::xarray<double> getGradient(const xt::xarray<double>& sigmas) const = 0;
-	virtual void applyBackPropagate(double alpha); // Alpha is the learning rate
+	virtual xt::xarray<double> getGradient(const xt::xarray<double>& sigmas, Optimizer* optimizer) = 0;
+	virtual void applyBackPropagate(); // Updates the parameters
 
 	virtual double getParameter(const std::string& parameterName) const;
 	virtual void setParameter(const std::string& parameterName, double value);

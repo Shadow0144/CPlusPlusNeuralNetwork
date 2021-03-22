@@ -104,11 +104,11 @@ xt::xarray<double> DenseNeuralLayer::feedForwardTrain(const xt::xarray<double>& 
 	return lastOutput;
 }
 
-xt::xarray<double> DenseNeuralLayer::denseBackpropagate(const xt::xarray<double>& sigmas)
+xt::xarray<double> DenseNeuralLayer::denseBackpropagate(const xt::xarray<double>& sigmas, Optimizer* optimizer)
 {
 	// The delta weights are the last input dotted with the sigmas
 	auto delta = xt::linalg::tensordot(xt::transpose(lastInput), sigmas, 1);
-	weights.incrementDeltaParameters(-ALPHA * delta);
+	weights.incrementDeltaParameters(optimizer->getDeltaWeight(delta));
 
 	// The new sigmas are the weights dotted with the sigmas
 	xt::xarray<double> xWeights; // The weights (with the bias removed if bias was added)
@@ -125,16 +125,16 @@ xt::xarray<double> DenseNeuralLayer::denseBackpropagate(const xt::xarray<double>
 	return newSigmas;
 }
 
-xt::xarray<double> DenseNeuralLayer::backPropagate(const xt::xarray<double>& sigmas)
+xt::xarray<double> DenseNeuralLayer::getGradient(const xt::xarray<double>& sigmas, Optimizer* optimizer)
 {
-	return denseBackpropagate(activationFunction->getGradient(sigmas));
+	return denseBackpropagate(activationFunction->getGradient(sigmas, optimizer), optimizer);
 }
 
 double DenseNeuralLayer::applyBackPropagate()
 {
 	double deltaWeight = xt::sum(xt::abs(weights.getDeltaParameters()))();
 	weights.applyDeltaParameters(); // Update the weights
-	activationFunction->applyBackPropagate(ALPHA); // Update any parameters the activation function needs to change
+	activationFunction->applyBackPropagate(); // Update any parameters the activation function needs to change
 	return deltaWeight; // Return the sum of how much the parameters have changed
 }
 

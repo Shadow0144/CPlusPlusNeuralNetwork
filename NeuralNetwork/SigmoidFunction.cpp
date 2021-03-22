@@ -32,7 +32,7 @@ xt::xarray<double> SigmoidFunction::feedForward(const xt::xarray<double>& inputs
 	return sigmoid(inputs);
 }
 
-xt::xarray<double> SigmoidFunction::getGradient(const xt::xarray<double>& sigmas) const
+xt::xarray<double> SigmoidFunction::getGradient(const xt::xarray<double>& sigmas, Optimizer* optimizer)
 {
 	return (sigmas * (lastOutput * (1.0 - lastOutput)));
 }

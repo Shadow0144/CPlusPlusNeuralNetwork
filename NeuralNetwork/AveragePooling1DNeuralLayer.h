@@ -15,7 +15,7 @@ public:
 	~AveragePooling1DNeuralLayer();
 
 	xt::xarray<double> feedForward(const xt::xarray<double>& input);
-	xt::xarray<double> backPropagate(const xt::xarray<double>& sigmas);
+	xt::xarray<double> getGradient(const xt::xarray<double>& sigmas, Optimizer* optimizer);
 	double applyBackPropagate();
 
 	void draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output);

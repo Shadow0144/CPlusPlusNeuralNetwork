@@ -22,7 +22,7 @@ xt::xarray<double> ReLU6Function::feedForward(const xt::xarray<double>& inputs) 
 	return reLU6(inputs);
 }
 
-xt::xarray<double> ReLU6Function::getGradient(const xt::xarray<double>& sigmas) const
+xt::xarray<double> ReLU6Function::getGradient(const xt::xarray<double>& sigmas, Optimizer* optimizer)
 {
 	return (sigmas * ((lastOutput > 0.0) < 6.0));
 }

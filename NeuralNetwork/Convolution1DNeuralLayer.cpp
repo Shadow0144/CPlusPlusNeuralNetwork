@@ -138,9 +138,9 @@ xt::xarray<double> Convolution1DNeuralLayer::convolveInput(const xt::xarray<doub
 	return output;
 }
 
-xt::xarray<double> Convolution1DNeuralLayer::backPropagate(const xt::xarray<double>& sigma)
+xt::xarray<double> Convolution1DNeuralLayer::getGradient(const xt::xarray<double>& sigma, Optimizer* optimizer)
 {
-	xt::xarray<double> actSigma = activationFunction->getGradient(sigma); // Pass the sigmas through the activation function first
+	xt::xarray<double> actSigma = activationFunction->getGradient(sigma, optimizer); // Pass the sigmas through the activation function first
 
 	// The change in weights corresponds to a convolution between the input and the sigmas
 	// Assume the last dimension is the channel dimension

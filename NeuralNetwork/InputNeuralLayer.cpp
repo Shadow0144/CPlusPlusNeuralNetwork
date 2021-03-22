@@ -25,7 +25,7 @@ xt::xarray<double> InputNeuralLayer::feedForward(const xt::xarray<double>& input
 	return input;
 }
 
-xt::xarray<double> InputNeuralLayer::backPropagate(const xt::xarray<double>& sigmas)
+xt::xarray<double> InputNeuralLayer::getGradient(const xt::xarray<double>& sigmas, Optimizer* optimizer)
 {
 	return sigmas;
 }

@@ -4,9 +4,15 @@ const double INTERNAL_BATCH_LIMIT = 20;
 
 using namespace std;
 
-SGDOptimizer::SGDOptimizer(vector<NeuralLayer*>* layers) : Optimizer(layers)
-{
+const std::string SGDOptimizer::ALPHA = "alpha"; // Parameter string [REQUIRED]
+const std::string SGDOptimizer::BATCH_SIZE = "batchSize"; // Parameter string [OPTIONAL]
+const std::string SGDOptimizer::MOMENTUM = "momentum"; // Parameter string [OPTIONAL]
 
+SGDOptimizer::SGDOptimizer(vector<NeuralLayer*>* layers, double alpha, int batchSize, double momentum) : Optimizer(layers)
+{
+	this->alpha = alpha;
+	this->batchSize = batchSize;
+	this->momentum = momentum;
 }
 
 bool SGDOptimizer::backPropagate(const xt::xarray<double>& inputs, const xt::xarray<double>& targets)
@@ -15,49 +21,85 @@ bool SGDOptimizer::backPropagate(const xt::xarray<double>& inputs, const xt::xar
 
 	if (errorFunction != nullptr)
 	{
-		// We need to limit the size of the data being processed at once for memory reasons, but the update will still be on the entire batch
 		const int N = inputs.shape()[0];
-		const int INTERNAL_BATCHES = ceil(N / INTERNAL_BATCH_LIMIT);
-		int iBatchSize = N / INTERNAL_BATCHES;
+		int batches = 1;
+		if (batchSize > 0) // If there's a batch size set, then use batches
+		{
+			batches = N / batchSize;
+		}
+		else { }
 
-		size_t layerCount = layers->size();
-		auto shape = layers->at(layerCount - 1)->getOutputShape();
-		shape[0] = N;
-		//shape.insert(shape.begin(), N);
-		xt::xarray<double> predicted = xt::xarray<double>(shape);
-
-		for (int i = 0; i < INTERNAL_BATCHES; i++)
+		for (int i = 0; i < batches; i++)
 		{
 			// Set up the batch
-			int iBatchStart = ((i + 0) * iBatchSize) % N;
-			int iBatchEnd = ((i + 1) * iBatchSize) % N;
-			if ((iBatchEnd - iBatchStart) != iBatchSize)
+			int batchStart = ((i + 0) * batchSize) % N;
+			int batchEnd = ((i + 1) * batchSize) % N;
+			if ((batchEnd - batchStart) != batchSize)
 			{
-				iBatchEnd = N;
+				batchEnd = N;
 			}
 			else { }
 
-			xt::xstrided_slice_vector iBatchSV({ xt::range(iBatchStart, iBatchEnd), xt::ellipsis() });
-
-			// Feed forward and calculate the gradient
-			xt::xarray<double> predicted = feedForwardTrain(xt::strided_view(inputs, iBatchSV));
-			xt::xarray<double> errors = errorFunction->getDerivativeOfError(predicted, xt::strided_view(targets, iBatchSV));
-
-			// Backpropagate through the layers until the input layer
-			for (int l = (layerCount - 1); l > 0; l--)
-			{
-				errors = layers->at(l)->backPropagate(errors);
-			}
-		}
-
-		// Apply the backpropagation
-		for (int l = 0; l < layerCount; l++)
-		{
-			double deltaSum = layers->at(l)->applyBackPropagate();
-			converged = (deltaSum < weightConvergenceThreshold) && converged;
+			xt::xstrided_slice_vector batchSV({ xt::range(batchStart, batchEnd), xt::ellipsis() });
+			xt::xarray<double> examples = xt::strided_view(inputs, batchSV);
+			xt::xarray<double> exampleTargets = xt::strided_view(targets, batchSV);
+			converged = backPropagateBatch(examples, exampleTargets) && converged;
 		}
 	}
 	else { }
 
 	return converged;
+}
+
+bool SGDOptimizer::backPropagateBatch(const xt::xarray<double>& inputs, const xt::xarray<double>& targets)
+{
+	bool converged = true;
+
+	// We need to limit the size of the data being processed at once for memory reasons, but the update will still be on the entire batch
+	const int N = inputs.shape()[0];
+	const int INTERNAL_BATCHES = ceil(N / INTERNAL_BATCH_LIMIT);
+	int iBatchSize = N / INTERNAL_BATCHES;
+
+	size_t layerCount = layers->size();
+	auto shape = layers->at(layerCount - 1)->getOutputShape();
+	shape[0] = N;
+	xt::xarray<double> predicted = xt::xarray<double>(shape);
+
+	for (int i = 0; i < INTERNAL_BATCHES; i++)
+	{
+		// Set up the batch
+		int iBatchStart = ((i + 0) * iBatchSize) % N;
+		int iBatchEnd = ((i + 1) * iBatchSize) % N;
+		if ((iBatchEnd - iBatchStart) != iBatchSize)
+		{
+			iBatchEnd = N;
+		}
+		else { }
+
+		xt::xstrided_slice_vector iBatchSV({ xt::range(iBatchStart, iBatchEnd), xt::ellipsis() });
+
+		// Feed forward and calculate the gradient
+		xt::xarray<double> predicted = feedForwardTrain(xt::strided_view(inputs, iBatchSV));
+		xt::xarray<double> sigma = errorFunction->getGradient(predicted, xt::strided_view(targets, iBatchSV));
+
+		// Backpropagate through the layers until the input layer
+		for (int l = (layerCount - 1); l > 0; l--)
+		{
+			sigma = layers->at(l)->getGradient(sigma, this);
+		}
+	}
+
+	// Apply the backpropagation
+	for (int l = 0; l < layerCount; l++)
+	{
+		double deltaSum = layers->at(l)->applyBackPropagate();
+		converged = (deltaSum < weightConvergenceThreshold) && converged;
+	}
+
+	return converged;
+}
+
+xt::xarray<double> SGDOptimizer::getDeltaWeight(const xt::xarray<double>& gradient)
+{
+	return -alpha * gradient; // Multiply by the learning rate
 }

@@ -21,7 +21,7 @@ xt::xarray<double> AbsoluteReLUFunction::feedForward(const xt::xarray<double>& i
 	return absoluteReLU(inputs);
 }
 
-xt::xarray<double> AbsoluteReLUFunction::getGradient(const xt::xarray<double>& sigmas) const
+xt::xarray<double> AbsoluteReLUFunction::getGradient(const xt::xarray<double>& sigmas, Optimizer* optimizer)
 {
 	auto mask = (lastOutput > 0.0);
 	return (sigmas * (mask + (mask - (xt::ones<double>(mask.shape())))));

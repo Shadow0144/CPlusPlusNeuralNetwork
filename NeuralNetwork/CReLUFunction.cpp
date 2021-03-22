@@ -24,7 +24,7 @@ xt::xarray<double> CReLUFunction::feedForward(const xt::xarray<double>& inputs) 
 	return CReLU(inputs);
 }
 
-xt::xarray<double> CReLUFunction::getGradient(const xt::xarray<double>& sigmas) const
+xt::xarray<double> CReLUFunction::getGradient(const xt::xarray<double>& sigmas, Optimizer* optimizer)
 {
 	xt::xarray<double> newSigmas = sigmas;
 	xt::strided_view(newSigmas, { xt::ellipsis(), 1 }) *= -1;

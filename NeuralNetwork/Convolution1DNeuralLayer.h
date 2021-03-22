@@ -19,7 +19,7 @@ public:
 		std::map<std::string, double> additionalParameters = std::map<std::string, double>());
 	~Convolution1DNeuralLayer();
 
-	xt::xarray<double> backPropagate(const xt::xarray<double>& errors);
+	xt::xarray<double> getGradient(const xt::xarray<double>& errors, Optimizer* optimizer);
 
 	void draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output);
 

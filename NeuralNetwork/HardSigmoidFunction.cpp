@@ -22,7 +22,7 @@ xt::xarray<double> HardSigmoidFunction::feedForward(const xt::xarray<double>& in
 	return hard_sigmoid(inputs);
 }
 
-xt::xarray<double> HardSigmoidFunction::getGradient(const xt::xarray<double>& sigmas) const
+xt::xarray<double> HardSigmoidFunction::getGradient(const xt::xarray<double>& sigmas, Optimizer* optimizer)
 {
 	return (sigmas * ((lastOutput < 1) * (lastOutput > 0))); // The slope is 1 between these two ranges, 0 otherwise
 }

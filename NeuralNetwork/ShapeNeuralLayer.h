@@ -10,7 +10,7 @@ class ShapeNeuralLayer : public NeuralLayer
 {
 public:
 	xt::xarray<double> feedForwardTrain(const xt::xarray<double>& input);
-	xt::xarray<double> backPropagate(const xt::xarray<double>& sigmas);
+	xt::xarray<double> getGradient(const xt::xarray<double>& sigmas, Optimizer* optimizer);
 	double applyBackPropagate();
 
 protected:

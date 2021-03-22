@@ -5,6 +5,8 @@
 #include <xtensor/xarray.hpp>
 #pragma warning(pop)
 
+class Optimizer;
+
 class NeuralLayer
 {
 public:
@@ -13,7 +15,8 @@ public:
 
 	virtual xt::xarray<double> feedForward(const xt::xarray<double>& input) = 0;
 	virtual xt::xarray<double> feedForwardTrain(const xt::xarray<double>& input);
-	virtual xt::xarray<double> backPropagate(const xt::xarray<double>& sigmas) = 0;
+	// Returns the new sigmas and updates gradient with the local gradient
+	virtual xt::xarray<double> getGradient(const xt::xarray<double>& sigmas, Optimizer* optimizer) = 0;
 	virtual double applyBackPropagate() = 0;
 
 	virtual std::vector<size_t> getOutputShape();

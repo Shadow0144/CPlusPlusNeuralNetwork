@@ -31,7 +31,7 @@ xt::xarray<double> ReLUnFunction::feedForward(const xt::xarray<double>& inputs) 
 	return reLUn(inputs);
 }
 
-xt::xarray<double> ReLUnFunction::getGradient(const xt::xarray<double>& sigmas) const
+xt::xarray<double> ReLUnFunction::getGradient(const xt::xarray<double>& sigmas, Optimizer* optimizer)
 {
 	return (sigmas * ((lastOutput > 0.0) < n));
 }

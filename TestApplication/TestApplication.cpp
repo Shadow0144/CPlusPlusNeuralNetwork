@@ -35,6 +35,7 @@
 #include "NeuralNetwork.h"
 #include "MeanSquareErrorFunction.h"
 #include "CrossEntropyErrorFunction.h"
+#include "SGDOptimizer.h"
 #include "NetworkVisualizer.h"
 #include "IrisDataset.h"
 #include "CatDogDataset.h"
@@ -233,9 +234,11 @@ void test_signal(int layers)
 
     ErrorFunction* errorFunction = new MeanSquareErrorFunction();
     NeuralNetwork network = NeuralNetwork(true);
-    network.setOptimizer(OptimizerType::SGD);
+    std::map<string, double> optimizerParams;
+    optimizerParams[SGDOptimizer::ALPHA] = 0.1;
+    optimizerParams[SGDOptimizer::BATCH_SIZE] = 5;
+    network.setOptimizer(OptimizerType::SGD, optimizerParams);
     network.setErrorFunction(ErrorFunctionType::MeanSquaredError);
-    network.setBatchSize(5);
     network.displayRegressionEstimation();
 
     vector<size_t> inputShape;
@@ -249,7 +252,7 @@ void test_signal(int layers)
     network.addDenseLayer(ActivationFunctionType::Identity, 9);
     //network.addReshapeLayer({ 3, 3 });
     //network.addFlattenLayer(9);
-    network.addDropoutLayer();
+    //network.addDropoutLayer();
     network.addDenseLayer(ActivationFunctionType::Sigmoid, 6);
     network.addDenseLayer(ActivationFunctionType::Identity, 1);
 
@@ -308,7 +311,7 @@ void test_signal(int layers)
     else { }
 
     //network.feedForward(training_x);
-    //network.backPropagate(training_x, training_y);
+    //network.getDeltaWeight(training_x, training_y);
 
     network.train(training_x, training_y, MAX_EPOCHS);
 
@@ -368,7 +371,9 @@ void test_iris(int layers)
     }
 
     NeuralNetwork network = NeuralNetwork();
-    network.setOptimizer(OptimizerType::SGD);
+    std::map<string, double> optimizerParams;
+    optimizerParams[SGDOptimizer::ALPHA] = 0.1;
+    network.setOptimizer(OptimizerType::SGD, optimizerParams);
     network.setErrorFunction(ErrorFunctionType::CrossEntropy);
     ImColor* classColors = new ImColor[3]
         { ImColor(1.0f, 0.0f, 0.0f, 1.0f),
@@ -449,9 +454,11 @@ void test_binary()
     network.addDenseLayer(ActivationFunctionType::ReLU, CLASSES); // 32 -> 2
     network.addSoftmaxLayer(-1);
 
-    network.setOptimizer(OptimizerType::SGD);
+    std::map<string, double> optimizerParams;
+    optimizerParams[SGDOptimizer::ALPHA] = 0.1;
+    optimizerParams[SGDOptimizer::BATCH_SIZE] = 10;
+    network.setOptimizer(OptimizerType::SGD, optimizerParams);
     network.setErrorFunction(ErrorFunctionType::CrossEntropy);
-    network.setBatchSize(10);
 
     const int COLS = 5;
     const int ROWS = min(EXAMPLE_COUNT / COLS, 30);
@@ -508,9 +515,11 @@ void test_mnist()
     network.addDenseLayer(ActivationFunctionType::Softplus, CLASSES); // 32 -> 10
     network.addSoftmaxLayer(-1);
 
-    network.setOptimizer(OptimizerType::SGD);
+    std::map<string, double> optimizerParams;
+    optimizerParams[SGDOptimizer::ALPHA] = 0.1;
+    optimizerParams[SGDOptimizer::BATCH_SIZE] = 20;
+    network.setOptimizer(OptimizerType::SGD, optimizerParams);
     network.setErrorFunction(ErrorFunctionType::CrossEntropy);
-    network.setBatchSize(20);
     network.setOutputRate(1);
 
     const int COLS = 5;
@@ -569,9 +578,11 @@ void test_catdog()
     network.addDenseLayer(ActivationFunctionType::Softplus, CLASSES); // 32 -> 2
     network.addSoftmaxLayer(-1);
 
-    network.setOptimizer(OptimizerType::SGD);
+    std::map<string, double> optimizerParams;
+    optimizerParams[SGDOptimizer::ALPHA] = 0.1;
+    optimizerParams[SGDOptimizer::BATCH_SIZE] = 1;
+    network.setOptimizer(OptimizerType::SGD, optimizerParams);
     network.setErrorFunction(ErrorFunctionType::CrossEntropy);
-    network.setBatchSize(1);
     network.setOutputRate(1);
 
     const int COLS = 5;
@@ -726,13 +737,13 @@ void test_layers()
         }*/
 
         //back = softfunc1.backPropagateCrossEntropy(back);
-        //back = densefunc2.backPropagate(back);
-        //back = densefunc1.backPropagate(back);
-        /*back = flatfunc1.backPropagate(back);
-        back = poolfunc2.backPropagate(back);
-        back = convfunc2.backPropagate(back);
-        back = poolfunc1.backPropagate(back);
-        back = convfunc1.backPropagate(back);*/
+        //back = densefunc2.getDeltaWeight(back);
+        //back = densefunc1.getDeltaWeight(back);
+        /*back = flatfunc1.getDeltaWeight(back);
+        back = poolfunc2.getDeltaWeight(back);
+        back = convfunc2.getDeltaWeight(back);
+        back = poolfunc1.getDeltaWeight(back);
+        back = convfunc1.getDeltaWeight(back);*/
 
         /*cout << "Delta2: " << endl;
         xt::xarray<double> ddf2 = densefunc2.getWeights().getDeltaParameters();

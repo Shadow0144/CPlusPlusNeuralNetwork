@@ -18,7 +18,7 @@ xt::xarray<double> IdentityFunction::feedForward(const xt::xarray<double>& input
 	return inputs;
 }
 
-xt::xarray<double> IdentityFunction::getGradient(const xt::xarray<double>& sigmas) const
+xt::xarray<double> IdentityFunction::getGradient(const xt::xarray<double>& sigmas, Optimizer* optimizer)
 {
 	return sigmas;
 }

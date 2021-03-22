@@ -37,7 +37,7 @@ xt::xarray<double> GELUFunction::feedForward(const xt::xarray<double>& inputs) c
 	return GELU(inputs);
 }
 
-xt::xarray<double> GELUFunction::getGradient(const xt::xarray<double>& sigmas) const
+xt::xarray<double> GELUFunction::getGradient(const xt::xarray<double>& sigmas, Optimizer* optimizer)
 {
 	auto z = lastOutput;
 	auto z3 = pow(z, 3);

@@ -11,8 +11,8 @@ public:
 
 	xt::xarray<double> feedForward(const xt::xarray<double>& input) const;
 	xt::xarray<double> feedForwardTrain(const xt::xarray<double>& input);
-	xt::xarray<double> getGradient(const xt::xarray<double>& sigmas) const;
-	void applyBackPropagate(double alpha);
+	xt::xarray<double> getGradient(const xt::xarray<double>& sigmas, Optimizer* optimizer);
+	void applyBackPropagate();
 	void draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights) const;
 
 	double getParameter(const std::string& parameterName) const;

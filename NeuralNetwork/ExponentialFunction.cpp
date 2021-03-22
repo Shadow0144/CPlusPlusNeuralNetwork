@@ -22,7 +22,7 @@ xt::xarray<double> ExponentialFunction::feedForward(const xt::xarray<double>& in
 	return exp(inputs);
 }
 
-xt::xarray<double> ExponentialFunction::getGradient(const xt::xarray<double>& sigmas) const
+xt::xarray<double> ExponentialFunction::getGradient(const xt::xarray<double>& sigmas, Optimizer* optimizer)
 {
 	return (sigmas * lastOutput);
 }

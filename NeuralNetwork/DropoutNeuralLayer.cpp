@@ -59,7 +59,7 @@ xt::xarray<double> DropoutNeuralLayer::feedForwardTrain(const xt::xarray<double>
 	return output;
 }
 
-xt::xarray<double> DropoutNeuralLayer::backPropagate(const xt::xarray<double>& sigmas)
+xt::xarray<double> DropoutNeuralLayer::getGradient(const xt::xarray<double>& sigmas, Optimizer* optimizer)
 {
 	// Sigmas need to be masked and scaled the same as the input
 	xt::xarray<double> sigmasPrime = (sigmas * lastMask) + (sigmas * ((1 - lastMask) * (1 / (1 - dropRate))));

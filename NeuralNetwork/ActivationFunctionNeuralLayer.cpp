@@ -43,14 +43,14 @@ xt::xarray<double> ActivationFunctionNeuralLayer::feedForwardTrain(const xt::xar
 	return activationFunction->feedForwardTrain(input);
 }
 
-xt::xarray<double> ActivationFunctionNeuralLayer::backPropagate(const xt::xarray<double>& sigmas)
+xt::xarray<double> ActivationFunctionNeuralLayer::getGradient(const xt::xarray<double>& sigmas, Optimizer* optimizer)
 {
-	return activationFunction->getGradient(sigmas);
+	return activationFunction->getGradient(sigmas, optimizer);
 }
 
 double ActivationFunctionNeuralLayer::applyBackPropagate()
 {
-	activationFunction->applyBackPropagate(ALPHA); // Update any parameters the activation function needs to change
+	activationFunction->applyBackPropagate(); // Update any parameters the activation function needs to change
 	return 0; // No weights to update
 }
 

@@ -13,7 +13,7 @@ xt::xarray<double> QuadraticFunction::feedForward(const xt::xarray<double>& inpu
 	return pow(inputs, 2.0);
 }
 
-xt::xarray<double> QuadraticFunction::getGradient(const xt::xarray<double>& sigmas) const
+xt::xarray<double> QuadraticFunction::getGradient(const xt::xarray<double>& sigmas, Optimizer* optimizer)
 {
 	return (sigmas * (2.0 * lastInput));
 }

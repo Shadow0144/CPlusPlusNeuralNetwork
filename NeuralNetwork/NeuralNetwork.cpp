@@ -60,7 +60,6 @@ const double INTERNAL_BATCH_LIMIT = 20;
 NeuralNetwork::NeuralNetwork(bool drawingEnabled)
 {
 	this->verbosity = 1;
-	this->batchSize = 1;
 	this->outputRate = 100;
 	this->drawingEnabled = drawingEnabled;
 
@@ -264,7 +263,7 @@ void NeuralNetwork::addDropoutLayer(double dropRate)
 	layerCount++;
 }
 
-xt::xarray<double> NeuralNetwork::predict(const xt::xarray<double>& inputs)
+xt::xarray<double> NeuralNetwork::predict(const xt::xarray<double>& inputs) const
 {
 	const int N = inputs.shape()[0];
 	const int INTERNAL_BATCHES = ceil(N / INTERNAL_BATCH_LIMIT);
@@ -329,7 +328,6 @@ void NeuralNetwork::train(const xt::xarray<double>& inputs, const xt::xarray<dou
 			bool converged = false;
 			double lastError = error;
 			double deltaError = error;
-			const int BATCHES = inputs.shape()[0] / batchSize;
 			int N = targets.shape()[0];
 			while
 				(!((stoppingConditionFlags[((int)(StoppingCondition::Max_Epochs))]) && (currentEpoch >= maxEpochs)) &&
@@ -337,23 +335,7 @@ void NeuralNetwork::train(const xt::xarray<double>& inputs, const xt::xarray<dou
 					!((stoppingConditionFlags[((int)(StoppingCondition::Min_Delta_Error))]) && (deltaError > errorConvergenceThreshold)) &&
 					!((stoppingConditionFlags[((int)(StoppingCondition::Min_Delta_Params))]) && (!converged)))
 			{
-				converged = true;
-				for (int i = 0; i < BATCHES; i++)
-				{
-					// Set up the batch
-					int batchStart = ((i + 0) * batchSize) % N;
-					int batchEnd = ((i + 1) * batchSize) % N;
-					if ((batchEnd - batchStart) != batchSize)
-					{
-						batchEnd = N;
-					}
-					else { }
-
-					xt::xstrided_slice_vector batchSV({ xt::range(batchStart, batchEnd), xt::ellipsis() });
-					xt::xarray<double> examples = xt::strided_view(inputs, batchSV);
-					xt::xarray<double> exampleTargets = xt::strided_view(targets, batchSV);
-					converged = optimizer->backPropagate(examples, exampleTargets) && converged;
-				}
+				converged = optimizer->backPropagate(predicted, targets);
 
 				predicted = predict(inputs);
 				error = getError(predicted, targets);
@@ -453,7 +435,7 @@ void NeuralNetwork::output(LearningState state, int epoch, const xt::xarray<doub
 	else { }
 }
 
-void NeuralNetwork::setOptimizer(OptimizerType optimizerType)
+void NeuralNetwork::setOptimizer(OptimizerType optimizerType, std::map<string, double> additionalParameters)
 {
 	if (optimizer != nullptr)
 	{
@@ -464,7 +446,36 @@ void NeuralNetwork::setOptimizer(OptimizerType optimizerType)
 	switch (optimizerType)
 	{
 		case OptimizerType::SGD:
-			this->optimizer = new SGDOptimizer(layers);
+			if (additionalParameters.find(SGDOptimizer::ALPHA) == additionalParameters.end())
+			{
+				throw std::invalid_argument(std::string("Missing required parameter: ") +
+					"SGDOptimizer::ALPHA" + " (\"" + SGDOptimizer::ALPHA + "\")");
+			}
+			else
+			{
+				if (additionalParameters.find(SGDOptimizer::BATCH_SIZE) == additionalParameters.end())
+				{
+					if (additionalParameters.find(SGDOptimizer::MOMENTUM) == additionalParameters.end())
+					{
+						this->optimizer = new SGDOptimizer(layers, additionalParameters[SGDOptimizer::ALPHA]);
+					}
+					else
+					{
+						this->optimizer = new SGDOptimizer(layers, additionalParameters[SGDOptimizer::ALPHA], -1, additionalParameters[SGDOptimizer::BATCH_SIZE]);
+					}
+				}
+				else
+				{
+					if (additionalParameters.find(SGDOptimizer::MOMENTUM) == additionalParameters.end())
+					{
+						this->optimizer = new SGDOptimizer(layers, additionalParameters[SGDOptimizer::ALPHA], additionalParameters[SGDOptimizer::BATCH_SIZE]);
+					}
+					else
+					{
+						this->optimizer = new SGDOptimizer(layers, additionalParameters[SGDOptimizer::ALPHA], additionalParameters[SGDOptimizer::BATCH_SIZE], additionalParameters[SGDOptimizer::MOMENTUM]);
+					}
+				}
+			}
 			break;
 	}
 
@@ -564,16 +575,6 @@ int NeuralNetwork::getVerbosity()
 void NeuralNetwork::setVerbosity(int verbosity)
 {
 	this->verbosity = verbosity;
-}
-
-int NeuralNetwork::getBatchSize()
-{
-	return batchSize;
-}
-
-void NeuralNetwork::setBatchSize(int batchSize)
-{
-	this->batchSize = batchSize;
 }
 
 int NeuralNetwork::getOutputRate()

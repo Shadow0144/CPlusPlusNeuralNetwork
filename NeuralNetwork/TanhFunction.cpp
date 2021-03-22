@@ -22,7 +22,7 @@ xt::xarray<double> TanhFunction::feedForward(const xt::xarray<double>& inputs) c
 	return xt::tanh(inputs);
 }
 
-xt::xarray<double> TanhFunction::getGradient(const xt::xarray<double>& sigmas) const
+xt::xarray<double> TanhFunction::getGradient(const xt::xarray<double>& sigmas, Optimizer* optimizer)
 {
 	return (sigmas * (1.0 - xt::pow(lastOutput, 2.0)));
 }

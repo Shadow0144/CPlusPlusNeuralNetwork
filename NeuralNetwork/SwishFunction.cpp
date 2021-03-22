@@ -40,7 +40,7 @@ xt::xarray<double> SwishFunction::feedForward(const xt::xarray<double>& inputs) 
 	return swish(inputs);
 }
 
-xt::xarray<double> SwishFunction::getGradient(const xt::xarray<double>& sigmas) const
+xt::xarray<double> SwishFunction::getGradient(const xt::xarray<double>& sigmas, Optimizer* optimizer)
 {
 	auto sig = sigmoid(lastInput);
 	return (sigmas * (lastOutput + (sig * (1.0 - lastOutput))));

@@ -1,5 +1,7 @@
 #include "CrossEntropyErrorFunction.h"
 
+#include "Optimizer.h"
+
 #pragma warning(push, 0)
 #include <iostream>
 #pragma warning(pop)
@@ -16,7 +18,7 @@ double CrossEntropyErrorFunction::getError(const xt::xarray<double>& predicted, 
 	return error();
 }
 
-xt::xarray<double> CrossEntropyErrorFunction::getDerivativeOfError(const xt::xarray<double>& predicted, const xt::xarray<double>& actual)
+xt::xarray<double> CrossEntropyErrorFunction::getGradient(const xt::xarray<double>& predicted, const xt::xarray<double>& actual)
 {
 	//auto errors = -(actual / (predicted + 0.00001)); // Need to account for divide-by-zero
 	auto errors = (predicted - actual);

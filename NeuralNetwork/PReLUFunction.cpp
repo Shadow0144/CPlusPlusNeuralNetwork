@@ -47,25 +47,16 @@ xt::xarray<double> PReLUFunction::feedForward(const xt::xarray<double>& inputs) 
 
 xt::xarray<double> PReLUFunction::feedForwardTrain(const xt::xarray<double>& inputs)
 {
-	// Update deltaA
-	auto nMask = (lastInput <= 0.0);
-	std::vector<size_t> dims;
-	int DIMS = lastInput.dimension() - 1;
-	for (int i = 0; i < DIMS; i++)
-	{
-		dims.push_back(i);
-	}
-	deltaA = xt::sum<double>(lastInput * nMask, dims) / lastInput.shape()[0];
-
-	return feedForward(inputs);
+	lastInput = inputs;
+	return feedForward(lastInput);
 }
 
-void PReLUFunction::applyBackPropagate(double alpha)
+void PReLUFunction::applyBackPropagate()
 {
-	a -= alpha * deltaA;
+	a -= deltaA;
 }
 
-xt::xarray<double> PReLUFunction::getGradient(const xt::xarray<double>& sigmas) const
+xt::xarray<double> PReLUFunction::getGradient(const xt::xarray<double>& sigmas, Optimizer* optimizer)
 {
 	auto nMask = (lastInput <= 0.0);
 	auto pMask = (lastInput > 0.0);
@@ -75,6 +66,11 @@ xt::xarray<double> PReLUFunction::getGradient(const xt::xarray<double>& sigmas) 
 	{
 		dims.push_back(i);
 	}
+
+	// Update deltaA
+	deltaA = xt::sum<double>(lastInput * nMask, dims) / lastInput.shape()[0];
+	deltaA = optimizer->getDeltaWeight(deltaA);
+
 	return (sigmas * (pMask + (a * (xt::ones<double>(pMask.shape()) - pMask))));
 }
 

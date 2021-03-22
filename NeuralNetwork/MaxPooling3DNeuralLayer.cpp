@@ -83,7 +83,7 @@ xt::xarray<double> MaxPooling3DNeuralLayer::feedForward(const xt::xarray<double>
 	return output;
 }
 
-xt::xarray<double> MaxPooling3DNeuralLayer::backPropagate(const xt::xarray<double>& sigmas)
+xt::xarray<double> MaxPooling3DNeuralLayer::getGradient(const xt::xarray<double>& sigmas, Optimizer* optimizer)
 {
 	// Reverse what was done in feedforward, the input is now the output
 	const int DIMS = lastInput.dimension();

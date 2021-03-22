@@ -33,7 +33,7 @@ xt::xarray<double> SELUFunction::feedForward(const xt::xarray<double>& inputs) c
 	return SELU(inputs);
 }
 
-xt::xarray<double> SELUFunction::getGradient(const xt::xarray<double>& sigmas) const
+xt::xarray<double> SELUFunction::getGradient(const xt::xarray<double>& sigmas, Optimizer* optimizer)
 {
 	auto mask = (lastInput > 0.0);
 	return (sigmas * SCALE * ((mask) + ((1.0 - mask) * ALPHA * exp(lastInput))));

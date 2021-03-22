@@ -117,7 +117,7 @@ xt::xarray<double> MaxoutNeuralLayer::feedForwardTrain(const xt::xarray<double>&
 	return lastOutput;
 }
 
-xt::xarray<double> MaxoutNeuralLayer::backPropagate(const xt::xarray<double>& sigmas)
+xt::xarray<double> MaxoutNeuralLayer::getGradient(const xt::xarray<double>& sigmas, Optimizer* optimizer)
 {
 	const int DIMF = lastOutput.dimension();
 	

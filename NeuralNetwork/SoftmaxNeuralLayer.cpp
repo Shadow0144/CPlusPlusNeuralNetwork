@@ -68,13 +68,13 @@ xt::xarray<double> SoftmaxNeuralLayer::feedForwardTrain(const xt::xarray<double>
 	return lastOutput;
 }
 
-xt::xarray<double> SoftmaxNeuralLayer::backPropagate(const xt::xarray<double>& sigmas)
+xt::xarray<double> SoftmaxNeuralLayer::getGradient(const xt::xarray<double>& sigmas, Optimizer* optimizer)
 {
 	//auto newSigmas = xt::pow(sigmas, 2.0); // TODO? Potentially wrong equation
 	return sigmas; // TODO Temp
 }
 
-xt::xarray<double> SoftmaxNeuralLayer::backPropagateCrossEntropy(const xt::xarray<double>& sigmas)
+xt::xarray<double> SoftmaxNeuralLayer::getGradientCrossEntropy(const xt::xarray<double>& sigmas, Optimizer* optimizer)
 {
 	return sigmas;
 }
