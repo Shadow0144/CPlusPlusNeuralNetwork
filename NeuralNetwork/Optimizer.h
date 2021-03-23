@@ -13,7 +13,7 @@ public:
 	Optimizer(std::vector<NeuralLayer*>* layers);
 	~Optimizer();
 
-	virtual bool backPropagate(const xt::xarray<double>& inputs, const xt::xarray<double>& targets) = 0; // Single step
+	virtual double backPropagate(const xt::xarray<double>& inputs, const xt::xarray<double>& targets) = 0; // Single step
 	virtual xt::xarray<double> getDeltaWeight(long parameterID, const xt::xarray<double>& gradient) = 0; // Adjusts the gradient based on the optimizer
 
 	void setErrorFunction(ErrorFunction* errorFunction);
@@ -24,12 +24,4 @@ protected:
 	std::vector<NeuralLayer*>* layers;
 	ErrorFunction* errorFunction;
 	xt::xarray<double> groundTruth;
-
-	int currentEpoch;
-
-	int maxEpochs;
-	double minError;
-	double errorConvergenceThreshold;
-	double weightConvergenceThreshold;
-	bool* stoppingConditionFlags;
 };

@@ -13,7 +13,7 @@ class SGDOptimizer : public Optimizer
 public:
 	SGDOptimizer(std::vector<NeuralLayer*>* layers, double alpha, int batchSize = -1, double momentum = 0);
 
-	bool backPropagate(const xt::xarray<double>& inputs, const xt::xarray<double>& targets); // Single step
+	double backPropagate(const xt::xarray<double>& inputs, const xt::xarray<double>& targets); // Single step, returns the sum of the changes in weights
 	xt::xarray<double> getDeltaWeight(long parameterID, const xt::xarray<double>& gradient); // Adjusts the gradient based on the optimizer
 
 	const static std::string ALPHA; // = "alpha"; // Parameter string [REQUIRED]
@@ -27,5 +27,5 @@ private:
 
 	std::map<long, xt::xarray<double>> previousVelocity;
 
-	bool backPropagateBatch(const xt::xarray<double>& inputs, const xt::xarray<double>& targets);
+	double backPropagateBatch(const xt::xarray<double>& inputs, const xt::xarray<double>& targets);
 };

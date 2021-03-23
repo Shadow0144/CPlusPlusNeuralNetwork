@@ -254,8 +254,8 @@ void test_signal(int layers)
     //network.addReshapeLayer({ 3, 3 });
     //network.addFlattenLayer(9);
     //network.addDropoutLayer();
+    network.addDenseLayer(ActivationFunctionType::ReLU, 6);
     network.addDenseLayer(ActivationFunctionType::Sigmoid, 6);
-    network.addDenseLayer(ActivationFunctionType::Identity, 6);
     network.addDenseLayer(ActivationFunctionType::Identity, 1);
 
     /* // Linear
@@ -280,8 +280,8 @@ void test_signal(int layers)
         training_x(i, 0) = t * RESCALE;
         //training_y(i, 0) = t * RESCALE;
         //training_y(i, 0) = (0.3 * t + 0.5) * RESCALE;
-        //training_y(i, 0) = tanh(3.0 * sin(1.0 * t + 0.5)) * RESCALE;
-        training_y(i, 0) = (tanh(3.0 * sin(3.0 * t + 0.5)) + (0.5 * t)) * RESCALE;
+        training_y(i, 0) = tanh(3.0 * sin(1.0 * t + 0.5)) * RESCALE;
+        //training_y(i, 0) = (tanh(3.0 * sin(3.0 * t + 0.5)) + (0.5 * t)) * RESCALE;
         //training_y(i, 0) = (1.0 / (1.0 + exp(-t))) * RESCALE;
         //training_y(i, 0, 0) = cosh(3.0 * sin(3.0 * t + 0.5)) * RESCALE;
         //training_y(i, 0, 1) = cosh(3.0 * sin(3.0 * t + 0.5)) * RESCALE;
@@ -315,6 +315,7 @@ void test_signal(int layers)
     //network.feedForward(training_x);
     //network.getDeltaWeight(training_x, training_y);
 
+    network.enableStoppingCondition(StoppingCondition::Min_Delta_Error, 0.00000001);
     network.train(training_x, training_y, MAX_EPOCHS);
 
     xt::xarray<double> predicted = network.predict(training_x);

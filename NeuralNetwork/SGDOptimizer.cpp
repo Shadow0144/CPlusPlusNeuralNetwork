@@ -15,9 +15,9 @@ SGDOptimizer::SGDOptimizer(vector<NeuralLayer*>* layers, double alpha, int batch
 	this->momentum = momentum;
 }
 
-bool SGDOptimizer::backPropagate(const xt::xarray<double>& inputs, const xt::xarray<double>& targets)
+double SGDOptimizer::backPropagate(const xt::xarray<double>& inputs, const xt::xarray<double>& targets)
 {
-	bool converged = true;
+	double deltaWeights = 0.0;
 
 	if (errorFunction != nullptr)
 	{
@@ -43,15 +43,15 @@ bool SGDOptimizer::backPropagate(const xt::xarray<double>& inputs, const xt::xar
 			xt::xstrided_slice_vector batchSV({ xt::range(batchStart, batchEnd), xt::ellipsis() });
 			xt::xarray<double> examples = xt::strided_view(inputs, batchSV);
 			xt::xarray<double> exampleTargets = xt::strided_view(targets, batchSV);
-			converged = backPropagateBatch(examples, exampleTargets) && converged;
+			deltaWeights += backPropagateBatch(examples, exampleTargets);
 		}
 	}
 	else { }
 
-	return converged;
+	return deltaWeights;
 }
 
-bool SGDOptimizer::backPropagateBatch(const xt::xarray<double>& inputs, const xt::xarray<double>& targets)
+double SGDOptimizer::backPropagateBatch(const xt::xarray<double>& inputs, const xt::xarray<double>& targets)
 {
 	bool converged = true;
 
@@ -95,9 +95,8 @@ bool SGDOptimizer::backPropagateBatch(const xt::xarray<double>& inputs, const xt
 	{
 		deltaSum += layers->at(l)->applyBackPropagate();
 	}
-	converged = (deltaSum < weightConvergenceThreshold) && converged;
 
-	return converged;
+	return deltaSum;
 }
 
 xt::xarray<double> SGDOptimizer::getDeltaWeight(long parameterID, const xt::xarray<double>& gradient)

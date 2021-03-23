@@ -328,14 +328,14 @@ void NeuralNetwork::train(const xt::xarray<double>& inputs, const xt::xarray<dou
 			bool converged = false;
 			double lastError = error;
 			double deltaError = error;
-			int N = targets.shape()[0];
 			while
 				(!((stoppingConditionFlags[((int)(StoppingCondition::Max_Epochs))]) && (currentEpoch >= maxEpochs)) &&
 					!((stoppingConditionFlags[((int)(StoppingCondition::Min_Error))]) && (error < 0 || error > minError)) &&
-					!((stoppingConditionFlags[((int)(StoppingCondition::Min_Delta_Error))]) && (deltaError > errorConvergenceThreshold)) &&
+					!((stoppingConditionFlags[((int)(StoppingCondition::Min_Delta_Error))]) && (deltaError < errorConvergenceThreshold)) &&
 					!((stoppingConditionFlags[((int)(StoppingCondition::Min_Delta_Params))]) && (!converged)))
 			{
-				converged = optimizer->backPropagate(inputs, targets);
+				double deltaSum = optimizer->backPropagate(inputs, targets);
+				converged = (deltaSum < weightConvergenceThreshold);
 
 				predicted = predict(inputs);
 				error = getError(predicted, targets);

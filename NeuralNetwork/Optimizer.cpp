@@ -5,24 +5,11 @@ using namespace std;
 Optimizer::Optimizer(vector<NeuralLayer*>* layers)
 {
 	this->layers = layers;
-
-	this->currentEpoch = 0;
-
 	this->errorFunction = nullptr;
-	this->maxEpochs = -1;
-	this->minError = -1;
-	this->errorConvergenceThreshold = -1;
-	this->weightConvergenceThreshold = -1;
-	this->stoppingConditionFlags = new bool[4]; // There are four stopping conditions
-	for (int i = 0; i < 4; i++)
-	{
-		stoppingConditionFlags[i] = false;
-	}
 }
 
 Optimizer::~Optimizer()
 {
-	delete[] stoppingConditionFlags;
 }
 
 void Optimizer::setErrorFunction(ErrorFunction* errorFunction)
