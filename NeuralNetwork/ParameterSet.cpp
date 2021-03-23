@@ -10,6 +10,8 @@
 
 using namespace std;
 
+long ParameterSet::nextParameterID = 0;
+
 static bool seedSet; // Defaults to false
 ParameterSet::ParameterSet()
 {
@@ -23,7 +25,7 @@ ParameterSet::ParameterSet()
 	parameters = xt::xarray<double>();
 	weightsMutex.unlock();
 	deltaParameters = xt::xarray<double>();
-	batchSize = 0;
+	parameterID = nextParameterID++;
 }
 
 ParameterSet::ParameterSet(const ParameterSet& parameterSet)
@@ -31,6 +33,12 @@ ParameterSet::ParameterSet(const ParameterSet& parameterSet)
 	parameterSet.weightsMutex.lock_shared();
 	this->setParameters(parameterSet.parameters);
 	parameterSet.weightsMutex.unlock_shared();
+	parameterID = nextParameterID++;
+}
+
+long ParameterSet::getID()
+{
+	return parameterID;
 }
 
 xt::xarray<double> ParameterSet::getParameters() const
@@ -58,7 +66,6 @@ void ParameterSet::setParametersRandom(size_t numParameters)
 	weightsMutex.unlock();
 
 	deltaParameters = xt::zeros<double>(parameters.shape());
-	batchSize = 0;
 }
 
 void ParameterSet::setParametersRandom(const std::vector<size_t>& numParameters)
@@ -68,7 +75,27 @@ void ParameterSet::setParametersRandom(const std::vector<size_t>& numParameters)
 	weightsMutex.unlock();
 
 	deltaParameters = xt::zeros<double>(parameters.shape());
-	batchSize = 0;
+}
+
+void ParameterSet::setParametersPositiveRandom(size_t numParameters)
+{
+	std::vector<size_t> pSize;
+	pSize.push_back(numParameters);
+
+	weightsMutex.lock();
+	parameters = xt::random::rand<double>(pSize);
+	weightsMutex.unlock();
+
+	deltaParameters = xt::zeros<double>(parameters.shape());
+}
+
+void ParameterSet::setParametersPositiveRandom(const std::vector<size_t>& numParameters)
+{
+	weightsMutex.lock();
+	parameters = xt::random::rand<double>(numParameters);
+	weightsMutex.unlock();
+
+	deltaParameters = xt::zeros<double>(parameters.shape());
 }
 
 void ParameterSet::setParametersZero(size_t numParameters)
@@ -81,7 +108,6 @@ void ParameterSet::setParametersZero(size_t numParameters)
 	weightsMutex.unlock();
 
 	deltaParameters = xt::zeros<double>(parameters.shape());
-	batchSize = 0;
 }
 
 void ParameterSet::setParametersZero(const std::vector<size_t>& numParameters)
@@ -91,7 +117,6 @@ void ParameterSet::setParametersZero(const std::vector<size_t>& numParameters)
 	weightsMutex.unlock();
 
 	deltaParameters = xt::zeros<double>(parameters.shape());
-	batchSize = 0;
 }
 
 void ParameterSet::setParametersOne(size_t numParameters)
@@ -104,7 +129,6 @@ void ParameterSet::setParametersOne(size_t numParameters)
 	weightsMutex.unlock();
 
 	deltaParameters = xt::zeros<double>(parameters.shape());
-	batchSize = 0;
 }
 
 void ParameterSet::setParametersOne(const std::vector<size_t>& numParameters)
@@ -114,7 +138,6 @@ void ParameterSet::setParametersOne(const std::vector<size_t>& numParameters)
 	weightsMutex.unlock();
 
 	deltaParameters = xt::zeros<double>(parameters.shape());
-	batchSize = 0;
 }
 
 xt::xarray<double> ParameterSet::getDeltaParameters() const
@@ -122,21 +145,15 @@ xt::xarray<double> ParameterSet::getDeltaParameters() const
 	return deltaParameters;
 }
 
-void ParameterSet::incrementDeltaParameters(const xt::xarray<double>& deltaParameters)
+void ParameterSet::setDeltaParameters(const xt::xarray<double>& deltaParameters)
 {
-	this->deltaParameters += deltaParameters;
-	batchSize++;
+	this->deltaParameters = deltaParameters;
 }
 
 void ParameterSet::applyDeltaParameters()
 {
 	weightsMutex.lock();
-	if (batchSize != 0)
-	{
-		parameters += (deltaParameters / batchSize);
-	}
-	else { }
+	parameters += deltaParameters;
 	weightsMutex.unlock();
 	deltaParameters = xt::zeros<double>(parameters.shape());
-	batchSize = 0;
 }

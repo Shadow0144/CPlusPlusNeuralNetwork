@@ -14,7 +14,7 @@ public:
 	~Optimizer();
 
 	virtual bool backPropagate(const xt::xarray<double>& inputs, const xt::xarray<double>& targets) = 0; // Single step
-	virtual xt::xarray<double> getDeltaWeight(const xt::xarray<double>& gradient) = 0; // Adjusts the gradient based on the optimizer
+	virtual xt::xarray<double> getDeltaWeight(long parameterID, const xt::xarray<double>& gradient) = 0; // Adjusts the gradient based on the optimizer
 
 	void setErrorFunction(ErrorFunction* errorFunction);
 

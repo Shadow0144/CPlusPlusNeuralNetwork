@@ -22,11 +22,6 @@ Optimizer::Optimizer(vector<NeuralLayer*>* layers)
 
 Optimizer::~Optimizer()
 {
-	if (errorFunction != nullptr)
-	{
-		delete errorFunction;
-	}
-	else { }
 	delete[] stoppingConditionFlags;
 }
 

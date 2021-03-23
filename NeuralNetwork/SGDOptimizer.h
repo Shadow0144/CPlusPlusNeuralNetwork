@@ -14,7 +14,7 @@ public:
 	SGDOptimizer(std::vector<NeuralLayer*>* layers, double alpha, int batchSize = -1, double momentum = 0);
 
 	bool backPropagate(const xt::xarray<double>& inputs, const xt::xarray<double>& targets); // Single step
-	xt::xarray<double> getDeltaWeight(const xt::xarray<double>& gradient); // Adjusts the gradient based on the optimizer
+	xt::xarray<double> getDeltaWeight(long parameterID, const xt::xarray<double>& gradient); // Adjusts the gradient based on the optimizer
 
 	const static std::string ALPHA; // = "alpha"; // Parameter string [REQUIRED]
 	const static std::string BATCH_SIZE; // = "batchSize"; // Parameter string [OPTIONAL] // Values less than 0 for batch size = N
@@ -24,6 +24,8 @@ private:
 	double alpha; // Learning rate
 	int batchSize; // The size of a single batch
 	double momentum; // Gamma
+
+	std::map<long, xt::xarray<double>> previousVelocity;
 
 	bool backPropagateBatch(const xt::xarray<double>& inputs, const xt::xarray<double>& targets);
 };

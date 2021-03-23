@@ -236,7 +236,8 @@ void test_signal(int layers)
     NeuralNetwork network = NeuralNetwork(true);
     std::map<string, double> optimizerParams;
     optimizerParams[SGDOptimizer::ALPHA] = 0.1;
-    optimizerParams[SGDOptimizer::BATCH_SIZE] = 5;
+    optimizerParams[SGDOptimizer::BATCH_SIZE] = 1;
+    optimizerParams[SGDOptimizer::MOMENTUM] = 0.9;
     network.setOptimizer(OptimizerType::SGD, optimizerParams);
     network.setErrorFunction(ErrorFunctionType::MeanSquaredError);
     network.displayRegressionEstimation();
@@ -249,12 +250,12 @@ void test_signal(int layers)
         //network.addDenseLayer(functions[i], layerShapes[i]);
     }
     //network.addMaxoutLayer(3, 3);
-    network.addDenseLayer(ActivationFunctionType::Identity, 9);
+    //network.addDenseLayer(ActivationFunctionType::Identity, 9);
     //network.addReshapeLayer({ 3, 3 });
     //network.addFlattenLayer(9);
     //network.addDropoutLayer();
-    network.addDenseLayer(ActivationFunctionType::Sigmoid, 6);
-    network.addDenseLayer(ActivationFunctionType::Identity, 1);
+    network.addDenseLayer(ActivationFunctionType::ReLU, 16);
+    network.addDenseLayer(ActivationFunctionType::Sigmoid, 1);
 
     /* // Linear
     const int SAMPLES = 10;
@@ -289,7 +290,7 @@ void test_signal(int layers)
     }
 
     // Shuffle
-    bool shuffle = false;
+    bool shuffle = true;
     if (shuffle)
     {
         xt::xstrided_slice_vector svI({ 0, xt::ellipsis() });
@@ -372,7 +373,7 @@ void test_iris(int layers)
 
     NeuralNetwork network = NeuralNetwork();
     std::map<string, double> optimizerParams;
-    optimizerParams[SGDOptimizer::ALPHA] = 0.1;
+    optimizerParams[SGDOptimizer::ALPHA] = 0.01;
     network.setOptimizer(OptimizerType::SGD, optimizerParams);
     network.setErrorFunction(ErrorFunctionType::CrossEntropy);
     ImColor* classColors = new ImColor[3]
@@ -455,7 +456,7 @@ void test_binary()
     network.addSoftmaxLayer(-1);
 
     std::map<string, double> optimizerParams;
-    optimizerParams[SGDOptimizer::ALPHA] = 0.1;
+    optimizerParams[SGDOptimizer::ALPHA] = 0.01;
     optimizerParams[SGDOptimizer::BATCH_SIZE] = 10;
     network.setOptimizer(OptimizerType::SGD, optimizerParams);
     network.setErrorFunction(ErrorFunctionType::CrossEntropy);
@@ -516,7 +517,7 @@ void test_mnist()
     network.addSoftmaxLayer(-1);
 
     std::map<string, double> optimizerParams;
-    optimizerParams[SGDOptimizer::ALPHA] = 0.1;
+    optimizerParams[SGDOptimizer::ALPHA] = 0.01;
     optimizerParams[SGDOptimizer::BATCH_SIZE] = 20;
     network.setOptimizer(OptimizerType::SGD, optimizerParams);
     network.setErrorFunction(ErrorFunctionType::CrossEntropy);
@@ -579,7 +580,7 @@ void test_catdog()
     network.addSoftmaxLayer(-1);
 
     std::map<string, double> optimizerParams;
-    optimizerParams[SGDOptimizer::ALPHA] = 0.1;
+    optimizerParams[SGDOptimizer::ALPHA] = 0.01;
     optimizerParams[SGDOptimizer::BATCH_SIZE] = 1;
     network.setOptimizer(OptimizerType::SGD, optimizerParams);
     network.setErrorFunction(ErrorFunctionType::CrossEntropy);

@@ -50,8 +50,8 @@ xt::xarray<double> ActivationFunctionNeuralLayer::getGradient(const xt::xarray<d
 
 double ActivationFunctionNeuralLayer::applyBackPropagate()
 {
-	activationFunction->applyBackPropagate(); // Update any parameters the activation function needs to change
-	return 0; // No weights to update
+	double deltaWeight = activationFunction->applyBackPropagate(); // Update any parameters the activation function needs to change
+	return deltaWeight;
 }
 
 std::vector<size_t> ActivationFunctionNeuralLayer::getOutputShape()

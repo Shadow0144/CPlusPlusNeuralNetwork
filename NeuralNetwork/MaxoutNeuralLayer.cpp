@@ -2,6 +2,8 @@
 
 #include "MaxoutNeuralLayer.h"
 
+#include "Optimizer.h"
+
 #pragma warning(push, 0)
 #include <iostream>
 #include <limits>
@@ -128,7 +130,7 @@ xt::xarray<double> MaxoutNeuralLayer::getGradient(const xt::xarray<double>& sigm
 
 	// The delta weights are the last input dotted with the sigmas
 	auto delta = xt::linalg::tensordot(xt::transpose(lastInput), sigmasMax, 1);
-	weights.incrementDeltaParameters(-ALPHA * delta);
+	weights.setDeltaParameters(optimizer->getDeltaWeight(weights.getID(), delta));
 
 	// The new sigmas are the weights dotted with the sigmas
 	xt::xarray<double> xWeights; // The weights (with the bias removed if bias was added)

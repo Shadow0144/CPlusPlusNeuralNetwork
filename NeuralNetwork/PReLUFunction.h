@@ -12,7 +12,7 @@ public:
 	xt::xarray<double> feedForward(const xt::xarray<double>& input) const;
 	xt::xarray<double> feedForwardTrain(const xt::xarray<double>& input);
 	xt::xarray<double> getGradient(const xt::xarray<double>& sigmas, Optimizer* optimizer);
-	void applyBackPropagate();
+	double applyBackPropagate();
 	void draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights) const;
 
 	double getParameter(const std::string& parameterName) const;
@@ -30,6 +30,5 @@ public:
 private:
 	xt::xarray<double> PReLU(const xt::xarray<double>& z) const;
 	
-	xt::xarray<double> a; // Leak coefficients
-	xt::xarray<double> deltaA;
+	ParameterSet a; // Leak coefficients
 };

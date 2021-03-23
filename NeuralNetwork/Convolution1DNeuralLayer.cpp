@@ -195,10 +195,10 @@ xt::xarray<double> Convolution1DNeuralLayer::getGradient(const xt::xarray<double
 		xt::strided_view(delta, kernelWindowView) = result;
 	}
 
-	weights.incrementDeltaParameters(-ALPHA * delta);
+	weights.setDeltaParameters(optimizer->getDeltaWeight(weights.getID(), delta));
 	if (hasBias)
 	{
-		biasWeights.incrementDeltaParameters(-ALPHA * deltaBias);
+		biasWeights.setDeltaParameters(optimizer->getDeltaWeight(biasWeights.getID(), deltaBias));
 	}
 	else { }
 

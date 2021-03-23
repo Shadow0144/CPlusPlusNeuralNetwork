@@ -40,7 +40,7 @@ public:
 	virtual xt::xarray<double> feedForward(const xt::xarray<double>& inputs) const = 0;
 	virtual xt::xarray<double> feedForwardTrain(const xt::xarray<double>& inputs);
 	virtual xt::xarray<double> getGradient(const xt::xarray<double>& sigmas, Optimizer* optimizer) = 0;
-	virtual void applyBackPropagate(); // Updates the parameters
+	virtual double applyBackPropagate(); // Updates the parameters and returns the magnitude of the change
 
 	virtual double getParameter(const std::string& parameterName) const;
 	virtual void setParameter(const std::string& parameterName, double value);

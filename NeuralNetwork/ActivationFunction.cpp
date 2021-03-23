@@ -22,9 +22,11 @@ double ActivationFunction::activate(double z) const
 {
 	return z;
 }
- void ActivationFunction::applyBackPropagate()
+
+double ActivationFunction::applyBackPropagate()
 {
 	// Do nothing
+	return 0;
 }
 
  double ActivationFunction::getParameter(const std::string& parameterName) const

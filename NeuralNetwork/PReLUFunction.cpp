@@ -18,8 +18,7 @@ const string PReLUFunction::A = "a";
 
 PReLUFunction::PReLUFunction(int numUnits)
 {
-	this->a = xt::random::rand<double>({ numUnits }); // Strictly positive values
-	this->deltaA = xt::zeros<double>({ numUnits });
+	this->a.setParametersPositiveRandom(numUnits); // Strictly positive values
 }
 
 PReLUFunction::PReLUFunction(int numUnits, const xt::xarray<double>& a)
@@ -29,15 +28,14 @@ PReLUFunction::PReLUFunction(int numUnits, const xt::xarray<double>& a)
 		throw std::invalid_argument(std::string("a must be a vector of size numUnits"));
 	}
 	else { }
-	this->a = a;
-	this->deltaA = xt::zeros<double>({ numUnits });
+	this->a.setParameters(a);
 }
 
 xt::xarray<double> PReLUFunction::PReLU(const xt::xarray<double>& z) const
 {
 	auto nMask = (z <= 0.0);
 	auto pMask = (z > 0.0);
-	return (a * z * nMask) + (z * pMask);
+	return (a.getParameters() * z * nMask) + (z * pMask);
 }
 
 xt::xarray<double> PReLUFunction::feedForward(const xt::xarray<double>& inputs) const
@@ -51,9 +49,11 @@ xt::xarray<double> PReLUFunction::feedForwardTrain(const xt::xarray<double>& inp
 	return feedForward(lastInput);
 }
 
-void PReLUFunction::applyBackPropagate()
+double PReLUFunction::applyBackPropagate()
 {
-	a -= deltaA;
+	double deltaWeight = xt::sum(xt::abs(a.getDeltaParameters()))();
+	a.applyDeltaParameters();
+	return deltaWeight;
 }
 
 xt::xarray<double> PReLUFunction::getGradient(const xt::xarray<double>& sigmas, Optimizer* optimizer)
@@ -68,17 +68,17 @@ xt::xarray<double> PReLUFunction::getGradient(const xt::xarray<double>& sigmas, 
 	}
 
 	// Update deltaA
-	deltaA = xt::sum<double>(lastInput * nMask, dims) / lastInput.shape()[0];
-	deltaA = optimizer->getDeltaWeight(deltaA);
+	auto deltaA = xt::sum<double>(lastInput * nMask, dims) / lastInput.shape()[0];
+	a.setDeltaParameters(optimizer->getDeltaWeight(a.getID(), deltaA));
 
-	return (sigmas * (pMask + (a * (xt::ones<double>(pMask.shape()) - pMask))));
+	return (sigmas * (pMask + (a.getParameters() * (xt::ones<double>(pMask.shape()) - pMask))));
 }
 
 double PReLUFunction::getParameter(const std::string& parameterName) const
 {
 	if (parameterName.compare(PReLUFunction::NUM_UNITS) == 0)
 	{
-		return a.shape()[0];
+		return a.getParameters().shape()[0];
 	}
 	else if (parameterName.compare(PReLUFunction::A) == 0)
 	{
@@ -88,11 +88,11 @@ double PReLUFunction::getParameter(const std::string& parameterName) const
 		}
 		else { }
 		int index = stoi(parameterName);
-		if (index < 0 || index >= a.shape()[0])
+		if (index < 0 || index >= a.getParameters().shape()[0])
 		{
 			throw std::invalid_argument(std::string("Parameter ") + parameterName + " uses invalid index");
 		}
-		return a[index];
+		return a.getParameters()[index];
 	}
 	else
 	{
@@ -114,11 +114,11 @@ void PReLUFunction::setParameter(const std::string& parameterName, double value)
 		}
 		else { }
 		int index = stoi(parameterName);
-		if (index < 0 || index >= a.shape()[0])
+		if (index < 0 || index >= a.getParameters().shape()[0])
 		{
 			throw std::invalid_argument(std::string("Parameter ") + parameterName + " uses invalid index");
 		}
-		a[index] = value;
+		a.getParameters()[index] = value;
 	}
 	else
 	{
@@ -128,7 +128,7 @@ void PReLUFunction::setParameter(const std::string& parameterName, double value)
 
 void PReLUFunction::saveParameters(std::string fileName)
 {
-	xt::dump_npy(fileName + "_a.npy", a);
+	xt::dump_npy(fileName + "_a.npy", a.getParameters());
 }
 
 void PReLUFunction::loadParameters(std::string fileName)
@@ -136,8 +136,7 @@ void PReLUFunction::loadParameters(std::string fileName)
 	bool exists = NeuralNetworkFileHelper::fileExists(fileName + "_a.npy");
 	if (exists)
 	{
-		a = xt::load_npy<double>(fileName + "_a.npy");
-		deltaA = xt::zeros<double>(a.shape());
+		a.setParameters(xt::load_npy<double>(fileName + "_a.npy"));
 	}
 	else
 	{
@@ -147,12 +146,12 @@ void PReLUFunction::loadParameters(std::string fileName)
 
 xt::xarray<double> PReLUFunction::getA() const
 {
-	return a;
+	return a.getParameters();
 }
 
 void PReLUFunction::setA(xt::xarray<double> a)
 {
-	this->a = a;
+	this->a.setParameters(a);
 }
 
 void PReLUFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights) const
@@ -171,7 +170,7 @@ void PReLUFunction::draw(ImDrawList* canvas, ImVec2 origin, double scale, int nu
 		position.x = NeuralLayer::getNeuronX(origin.x, LAYER_WIDTH, i, scale);
 
 		double slope = drawWeights(0, i);
-		double aSlope = a(i) * slope;
+		double aSlope = a.getParameters()(i) * slope;
 		double x, y, ax, ay;
 
 		// Line of primary ReLU

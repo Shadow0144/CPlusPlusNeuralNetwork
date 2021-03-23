@@ -81,12 +81,12 @@ ActivationFunction* ActivationFunctionFactory::getNewActivationFunction(Activati
 			{
 				if (additionalParameters.find(PReLUFunction::A) == additionalParameters.end())
 				{
-					activationFunction = new PReLUFunction(((int)(additionalParameters[PReLUFunction::NUM_UNITS],
-																  additionalParameters[PReLUFunction::A])));
+					activationFunction = new PReLUFunction(((int)(additionalParameters[PReLUFunction::NUM_UNITS])));
 				}
 				else
 				{
-					activationFunction = new PReLUFunction(((int)(additionalParameters[PReLUFunction::NUM_UNITS])));
+					activationFunction = new PReLUFunction(((int)(additionalParameters[PReLUFunction::NUM_UNITS],
+																  additionalParameters[PReLUFunction::A])));
 				}
 			}
 			break;

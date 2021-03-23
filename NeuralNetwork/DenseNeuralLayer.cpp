@@ -108,7 +108,7 @@ xt::xarray<double> DenseNeuralLayer::denseBackpropagate(const xt::xarray<double>
 {
 	// The delta weights are the last input dotted with the sigmas
 	auto delta = xt::linalg::tensordot(xt::transpose(lastInput), sigmas, 1);
-	weights.incrementDeltaParameters(optimizer->getDeltaWeight(delta));
+	weights.setDeltaParameters(optimizer->getDeltaWeight(weights.getID(), delta));
 
 	// The new sigmas are the weights dotted with the sigmas
 	xt::xarray<double> xWeights; // The weights (with the bias removed if bias was added)
@@ -134,7 +134,7 @@ double DenseNeuralLayer::applyBackPropagate()
 {
 	double deltaWeight = xt::sum(xt::abs(weights.getDeltaParameters()))();
 	weights.applyDeltaParameters(); // Update the weights
-	activationFunction->applyBackPropagate(); // Update any parameters the activation function needs to change
+	deltaWeight += activationFunction->applyBackPropagate(); // Update any parameters the activation function needs to change
 	return deltaWeight; // Return the sum of how much the parameters have changed
 }
 

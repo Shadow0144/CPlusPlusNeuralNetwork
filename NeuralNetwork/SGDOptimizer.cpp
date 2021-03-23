@@ -90,16 +90,32 @@ bool SGDOptimizer::backPropagateBatch(const xt::xarray<double>& inputs, const xt
 	}
 
 	// Apply the backpropagation
+	double deltaSum = 0.0;
 	for (int l = 0; l < layerCount; l++)
 	{
-		double deltaSum = layers->at(l)->applyBackPropagate();
-		converged = (deltaSum < weightConvergenceThreshold) && converged;
+		deltaSum += layers->at(l)->applyBackPropagate();
 	}
+	converged = (deltaSum < weightConvergenceThreshold) && converged;
 
 	return converged;
 }
 
-xt::xarray<double> SGDOptimizer::getDeltaWeight(const xt::xarray<double>& gradient)
+xt::xarray<double> SGDOptimizer::getDeltaWeight(long parameterID, const xt::xarray<double>& gradient)
 {
-	return -alpha * gradient; // Multiply by the learning rate
+	xt::xarray<double> optimizedGradient;
+	if (momentum > 0.0)
+	{
+		if (previousVelocity.find(parameterID) == previousVelocity.end())
+		{
+			previousVelocity[parameterID] = xt::zeros<double>(gradient.shape());
+		}
+		xt::xarray<double> velocity = momentum * previousVelocity[parameterID] + alpha * gradient;
+		optimizedGradient = -velocity;
+		previousVelocity[parameterID] = velocity;
+	}
+	else // Skip storing and updating the velocity if the momentum is 0
+	{
+		optimizedGradient = -alpha * gradient; // Multiply by the learning rate
+	}
+	return optimizedGradient;
 }

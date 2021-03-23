@@ -29,6 +29,7 @@ double ConvolutionNeuralLayer::applyBackPropagate()
 		biasWeights.applyDeltaParameters();
 	}
 	else { }
+	deltaWeight += activationFunction->applyBackPropagate();
 	return deltaWeight; // Return the sum of how much the parameters have changed
 }
 
