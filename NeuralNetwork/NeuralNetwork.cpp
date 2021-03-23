@@ -335,7 +335,7 @@ void NeuralNetwork::train(const xt::xarray<double>& inputs, const xt::xarray<dou
 					!((stoppingConditionFlags[((int)(StoppingCondition::Min_Delta_Error))]) && (deltaError > errorConvergenceThreshold)) &&
 					!((stoppingConditionFlags[((int)(StoppingCondition::Min_Delta_Params))]) && (!converged)))
 			{
-				converged = optimizer->backPropagate(predicted, targets);
+				converged = optimizer->backPropagate(inputs, targets);
 
 				predicted = predict(inputs);
 				error = getError(predicted, targets);

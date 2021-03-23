@@ -235,8 +235,8 @@ void test_signal(int layers)
     ErrorFunction* errorFunction = new MeanSquareErrorFunction();
     NeuralNetwork network = NeuralNetwork(true);
     std::map<string, double> optimizerParams;
-    optimizerParams[SGDOptimizer::ALPHA] = 0.1;
-    optimizerParams[SGDOptimizer::BATCH_SIZE] = 1;
+    optimizerParams[SGDOptimizer::ALPHA] = 0.01;
+    optimizerParams[SGDOptimizer::BATCH_SIZE] = 10;
     optimizerParams[SGDOptimizer::MOMENTUM] = 0.9;
     network.setOptimizer(OptimizerType::SGD, optimizerParams);
     network.setErrorFunction(ErrorFunctionType::MeanSquaredError);
@@ -254,8 +254,9 @@ void test_signal(int layers)
     //network.addReshapeLayer({ 3, 3 });
     //network.addFlattenLayer(9);
     //network.addDropoutLayer();
-    network.addDenseLayer(ActivationFunctionType::ReLU, 16);
-    network.addDenseLayer(ActivationFunctionType::Sigmoid, 1);
+    network.addDenseLayer(ActivationFunctionType::Sigmoid, 6);
+    network.addDenseLayer(ActivationFunctionType::Identity, 6);
+    network.addDenseLayer(ActivationFunctionType::Identity, 1);
 
     /* // Linear
     const int SAMPLES = 10;
@@ -279,8 +280,8 @@ void test_signal(int layers)
         training_x(i, 0) = t * RESCALE;
         //training_y(i, 0) = t * RESCALE;
         //training_y(i, 0) = (0.3 * t + 0.5) * RESCALE;
-        training_y(i, 0) = tanh(3.0 * sin(1.0 * t + 0.5)) * RESCALE;
-        //training_y(i, 0) = (tanh(3.0 * sin(3.0 * t + 0.5)) + (0.5 * t)) * RESCALE;
+        //training_y(i, 0) = tanh(3.0 * sin(1.0 * t + 0.5)) * RESCALE;
+        training_y(i, 0) = (tanh(3.0 * sin(3.0 * t + 0.5)) + (0.5 * t)) * RESCALE;
         //training_y(i, 0) = (1.0 / (1.0 + exp(-t))) * RESCALE;
         //training_y(i, 0, 0) = cosh(3.0 * sin(3.0 * t + 0.5)) * RESCALE;
         //training_y(i, 0, 1) = cosh(3.0 * sin(3.0 * t + 0.5)) * RESCALE;
