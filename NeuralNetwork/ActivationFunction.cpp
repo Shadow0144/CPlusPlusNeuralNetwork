@@ -49,6 +49,16 @@ double ActivationFunction::applyBackPropagate()
 	 // Do nothing
  }
 
+ void ActivationFunction::substituteParameters(Optimizer* optimizer)
+ {
+	 // Do nothing
+ }
+
+ void ActivationFunction::restoreParameters(Optimizer* optimizer)
+ {
+	 // Do nothing
+ }
+
 std::vector<size_t> ActivationFunction::getOutputShape(std::vector<size_t> outputShape) const
 {
 	return outputShape;

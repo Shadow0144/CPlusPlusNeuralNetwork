@@ -144,6 +144,16 @@ void PReLUFunction::loadParameters(std::string fileName)
 	}
 }
 
+void PReLUFunction::substituteParameters(Optimizer* optimizer)
+{
+	optimizer->substituteParameters(a);
+}
+
+void PReLUFunction::restoreParameters(Optimizer* optimizer)
+{
+	optimizer->restoreParameters(a);
+}
+
 xt::xarray<double> PReLUFunction::getA() const
 {
 	return a.getParameters();

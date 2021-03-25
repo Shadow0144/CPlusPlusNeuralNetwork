@@ -5,11 +5,15 @@
 #include <xtensor/xarray.hpp>
 #pragma warning(pop)
 
+#include "ActivationFunction.h"
+
 class Optimizer;
 
 class NeuralLayer
 {
 public:
+	~NeuralLayer();
+
 	virtual void addChildren(NeuralLayer* children);
 	size_t getNumUnits();
 
@@ -23,6 +27,10 @@ public:
 
 	virtual void saveParameters(std::string fileName);
 	virtual void loadParameters(std::string fileName);
+
+	// Used by some optimizers
+	virtual void substituteParameters(Optimizer* optimizer);
+	virtual void restoreParameters(Optimizer* optimizer);
 
 	// Drawing constants
 	const static double DRAW_LEN;// = 16.0;
@@ -54,6 +62,9 @@ public:
 protected:
 	NeuralLayer* parent = nullptr;
 	NeuralLayer* children = nullptr;
+
+	ActivationFunctionType functionType;
+	ActivationFunction* activationFunction = nullptr;
 
 	std::vector<size_t> inputShape;
 	xt::xarray<double> lastInput;

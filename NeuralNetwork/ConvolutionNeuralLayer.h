@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ParameterizedNeuralLayer.h"
-#include "ActivationFunction.h"
 
 class ConvolutionNeuralLayer : public ParameterizedNeuralLayer
 {
@@ -14,7 +13,6 @@ public:
 	void loadParameters(std::string fileName);
 
 protected:
-	ActivationFunction* activationFunction;
 	bool hasBias;
 	ParameterSet biasWeights;
 

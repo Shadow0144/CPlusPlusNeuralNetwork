@@ -7,12 +7,51 @@ using namespace std;
 const std::string SGDOptimizer::ALPHA = "alpha"; // Parameter string [REQUIRED]
 const std::string SGDOptimizer::BATCH_SIZE = "batchSize"; // Parameter string [OPTIONAL]
 const std::string SGDOptimizer::MOMENTUM = "momentum"; // Parameter string [OPTIONAL]
+const std::string SGDOptimizer::NESTEROV = "nesterov"; // Parameter string [OPTIONAL]
 
-SGDOptimizer::SGDOptimizer(vector<NeuralLayer*>* layers, double alpha, int batchSize, double momentum) : Optimizer(layers)
+SGDOptimizer::SGDOptimizer(vector<NeuralLayer*>* layers, double alpha, int batchSize, double momentum, bool nesterov) : Optimizer(layers)
 {
 	this->alpha = alpha;
 	this->batchSize = batchSize;
 	this->momentum = momentum;
+	this->nesterov = nesterov;
+}
+
+SGDOptimizer::SGDOptimizer(vector<NeuralLayer*>* layers, std::map<std::string, double> additionalParameters) : Optimizer(layers)
+{
+	if (additionalParameters.find(ALPHA) == additionalParameters.end())
+	{
+		throw std::invalid_argument(std::string("Missing required parameter: ") +
+			"SGDOptimizer::ALPHA" + " (\"" + ALPHA + "\")");
+	}
+	else
+	{
+		this->alpha = additionalParameters[ALPHA];
+		if (additionalParameters.find(BATCH_SIZE) == additionalParameters.end())
+		{
+			this->batchSize = -1;
+		}
+		else
+		{
+			this->batchSize = additionalParameters[BATCH_SIZE];
+		}
+		if (additionalParameters.find(MOMENTUM) == additionalParameters.end())
+		{
+			this->momentum = 0;
+		}
+		else
+		{
+			this->momentum = additionalParameters[MOMENTUM];
+		}
+		if (additionalParameters.find(NESTEROV) == additionalParameters.end())
+		{
+			this->nesterov = false;
+		}
+		else
+		{
+			this->nesterov = (additionalParameters[NESTEROV] != 0);
+		}
+	}
 }
 
 double SGDOptimizer::backPropagate(const xt::xarray<double>& inputs, const xt::xarray<double>& targets)
@@ -63,6 +102,11 @@ double SGDOptimizer::backPropagateBatch(const xt::xarray<double>& inputs, const 
 	size_t layerCount = layers->size();
 	auto shape = layers->at(layerCount - 1)->getOutputShape();
 	shape[0] = N;
+	if (nesterov) // If Nesterov accelerated gradient (NAG) is enabled, we want to find the gradient of the predicted weights
+	{
+		substituteAllParameters();
+	}
+	else { }
 	xt::xarray<double> predicted = xt::xarray<double>(shape);
 
 	for (int i = 0; i < INTERNAL_BATCHES; i++)
@@ -89,6 +133,12 @@ double SGDOptimizer::backPropagateBatch(const xt::xarray<double>& inputs, const 
 		}
 	}
 
+	if (nesterov) // If Nesterov accelerated gradient (NAG) is enabled, restore the weights before updating them
+	{
+		substituteAllParameters();
+	}
+	else { }
+
 	// Apply the backpropagation
 	double deltaSum = 0.0;
 	for (int l = 0; l < layerCount; l++)
@@ -108,6 +158,7 @@ xt::xarray<double> SGDOptimizer::getDeltaWeight(long parameterID, const xt::xarr
 		{
 			previousVelocity[parameterID] = xt::zeros<double>(gradient.shape());
 		}
+		else { }
 		xt::xarray<double> velocity = momentum * previousVelocity[parameterID] + alpha * gradient;
 		optimizedGradient = -velocity;
 		previousVelocity[parameterID] = velocity;
@@ -117,4 +168,22 @@ xt::xarray<double> SGDOptimizer::getDeltaWeight(long parameterID, const xt::xarr
 		optimizedGradient = -alpha * gradient; // Multiply by the learning rate
 	}
 	return optimizedGradient;
+}
+
+void SGDOptimizer::substituteParameters(ParameterSet& parameterSet)
+{
+	auto parameters = parameterSet.getParameters();
+	long parameterID = parameterSet.getID();
+	if (previousVelocity.find(parameterID) == previousVelocity.end())
+	{
+		previousVelocity[parameterID] = xt::zeros<double>(parameters.shape());
+	}
+	else { }
+	parameterSet.setParameters(parameterSet.getParameters() - (momentum * previousVelocity[parameterID]));
+}
+
+void SGDOptimizer::restoreParameters(ParameterSet& parameterSet)
+{
+	long parameterID = parameterSet.getID();
+	parameterSet.setParameters(parameterSet.getParameters() + (momentum * previousVelocity[parameterID]));
 }

@@ -1,5 +1,7 @@
 #include "Optimizer.h"
 
+#include "NeuralLayer.h"
+
 using namespace std;
 
 Optimizer::Optimizer(vector<NeuralLayer*>* layers)
@@ -10,6 +12,7 @@ Optimizer::Optimizer(vector<NeuralLayer*>* layers)
 
 Optimizer::~Optimizer()
 {
+
 }
 
 void Optimizer::setErrorFunction(ErrorFunction* errorFunction)
@@ -29,4 +32,32 @@ xt::xarray<double> Optimizer::feedForwardTrain(const xt::xarray<double>& inputs)
 	}
 
 	return predicted;
+}
+
+void Optimizer::substituteParameters(ParameterSet& parameterSet)
+{
+	// Do nothing
+}
+
+void Optimizer::restoreParameters(ParameterSet& parameterSet)
+{
+	// Do nothing
+}
+
+void Optimizer::substituteAllParameters()
+{
+	const int L = layers->size();
+	for (int i = 0; i < L; i++)
+	{
+		layers->at(i)->substituteParameters(this);
+	}
+}
+
+void Optimizer::restoreAllParameters()
+{
+	const int L = layers->size();
+	for (int i = 0; i < L; i++)
+	{
+		layers->at(i)->restoreParameters(this);
+	}
 }

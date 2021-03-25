@@ -48,6 +48,10 @@ public:
 	virtual void saveParameters(std::string fileName);
 	virtual void loadParameters(std::string fileName);
 
+	// Used by some optimizers
+	virtual void substituteParameters(Optimizer* optimizer);
+	virtual void restoreParameters(Optimizer* optimizer);
+
 	virtual std::vector<size_t> getOutputShape(std::vector<size_t> outputShape) const;
 
 	virtual void draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights) const;

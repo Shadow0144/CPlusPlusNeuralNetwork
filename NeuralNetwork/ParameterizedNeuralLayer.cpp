@@ -1,5 +1,6 @@
 #include "ParameterizedNeuralLayer.h"
 #include "NeuralNetworkFileHelper.h"
+#include "Optimizer.h"
 
 #pragma warning(push, 0)
 #include <xtensor/xnpy.hpp>
@@ -10,6 +11,7 @@ using namespace std;
 void ParameterizedNeuralLayer::saveParameters(std::string fileName)
 {
 	xt::dump_npy(fileName + ".npy", weights.getParameters());
+	NeuralLayer::saveParameters(fileName); // Handles the activation function
 }
 
 void ParameterizedNeuralLayer::loadParameters(std::string fileName)
@@ -23,4 +25,17 @@ void ParameterizedNeuralLayer::loadParameters(std::string fileName)
 	{
 		cout << "Parameter file " + fileName + ".npy" + "not found" << endl;
 	}
+	NeuralLayer::loadParameters(fileName); // Handles the activation function
+}
+
+void ParameterizedNeuralLayer::substituteParameters(Optimizer* optimizer)
+{
+	optimizer->substituteParameters(weights);
+	NeuralLayer::substituteParameters(optimizer);
+}
+
+void ParameterizedNeuralLayer::restoreParameters(Optimizer* optimizer)
+{
+	optimizer->restoreParameters(weights);
+	NeuralLayer::restoreParameters(optimizer);
 }

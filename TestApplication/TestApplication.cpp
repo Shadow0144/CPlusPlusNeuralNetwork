@@ -238,6 +238,7 @@ void test_signal(int layers)
     optimizerParams[SGDOptimizer::ALPHA] = 0.01;
     optimizerParams[SGDOptimizer::BATCH_SIZE] = 10;
     optimizerParams[SGDOptimizer::MOMENTUM] = 0.9;
+    optimizerParams[SGDOptimizer::NESTEROV] = 1.0; // Enable
     network.setOptimizer(OptimizerType::SGD, optimizerParams);
     network.setErrorFunction(ErrorFunctionType::MeanSquaredError);
     network.displayRegressionEstimation();
@@ -315,7 +316,7 @@ void test_signal(int layers)
     //network.feedForward(training_x);
     //network.getDeltaWeight(training_x, training_y);
 
-    network.enableStoppingCondition(StoppingCondition::Min_Delta_Error, 0.00000001);
+    network.enableStoppingCondition(StoppingCondition::Min_Delta_Error, 1e-12);
     network.train(training_x, training_y, MAX_EPOCHS);
 
     xt::xarray<double> predicted = network.predict(training_x);

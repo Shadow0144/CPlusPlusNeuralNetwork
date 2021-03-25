@@ -26,6 +26,15 @@ const ImColor NeuralLayer::WHITE = ImColor(1.0f, 1.0f, 1.0f, 1.0f);
 
 using namespace std;
 
+NeuralLayer::~NeuralLayer()
+{
+	if (activationFunction != nullptr)
+	{
+		delete activationFunction;
+	}
+	else { }
+}
+
 void NeuralLayer::addChildren(NeuralLayer* children)
 {
 	this->children = children;
@@ -70,12 +79,38 @@ xt::xarray<double> NeuralLayer::addBiasToInput(const xt::xarray<double>& input)
 
 void NeuralLayer::saveParameters(std::string fileName)
 {
-	// Do nothing
+	if (activationFunction != nullptr)
+	{
+		activationFunction->saveParameters(fileName);
+	}
+	else { }
 }
 
 void NeuralLayer::loadParameters(std::string fileName)
 {
-	// Do nothing
+	if (activationFunction != nullptr)
+	{
+		activationFunction->loadParameters(fileName);
+	}
+	else { }
+}
+
+void NeuralLayer::substituteParameters(Optimizer* optimizer)
+{
+	if (activationFunction != nullptr)
+	{
+		activationFunction->substituteParameters(optimizer);
+	}
+	else { }
+}
+
+void NeuralLayer::restoreParameters(Optimizer* optimizer)
+{
+	if (activationFunction != nullptr)
+	{
+		activationFunction->restoreParameters(optimizer);
+	}
+	else { }
 }
 
 double NeuralLayer::getLayerWidth(size_t numUnits, double scale)

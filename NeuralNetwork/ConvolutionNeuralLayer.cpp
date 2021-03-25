@@ -35,29 +35,20 @@ double ConvolutionNeuralLayer::applyBackPropagate()
 
 void ConvolutionNeuralLayer::saveParameters(std::string fileName)
 {
-	xt::dump_npy(fileName + ".npy", weights.getParameters());
+	ParameterizedNeuralLayer::saveParameters(fileName); // Handles the wieghts and activation function
 	if (hasBias)
 	{
 		xt::dump_npy(fileName + "_b.npy", biasWeights.getParameters());
 	}
 	else { }
-	activationFunction->saveParameters(fileName);
 }
 
 void ConvolutionNeuralLayer::loadParameters(std::string fileName)
 {
-	bool exists = NeuralNetworkFileHelper::fileExists(fileName + ".npy");
-	if (exists)
-	{
-		weights.setParameters(xt::load_npy<double>(fileName + ".npy"));
-	}
-	else
-	{
-		cout << "Parameter file " + fileName + ".npy" + " not found" << endl;
-	}
+	ParameterizedNeuralLayer::loadParameters(fileName); // Handles the weights and activation function
 	if (hasBias)
 	{
-		exists = NeuralNetworkFileHelper::fileExists(fileName + "_b.npy");
+		bool exists = NeuralNetworkFileHelper::fileExists(fileName + "_b.npy");
 		if (exists)
 		{
 			weights.setParameters(xt::load_npy<double>(fileName + "_b.npy"));
@@ -68,5 +59,4 @@ void ConvolutionNeuralLayer::loadParameters(std::string fileName)
 		}
 	}
 	else { }
-	activationFunction->loadParameters(fileName);
 }

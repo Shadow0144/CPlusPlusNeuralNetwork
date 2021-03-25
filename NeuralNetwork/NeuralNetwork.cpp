@@ -446,36 +446,7 @@ void NeuralNetwork::setOptimizer(OptimizerType optimizerType, std::map<string, d
 	switch (optimizerType)
 	{
 		case OptimizerType::SGD:
-			if (additionalParameters.find(SGDOptimizer::ALPHA) == additionalParameters.end())
-			{
-				throw std::invalid_argument(std::string("Missing required parameter: ") +
-					"SGDOptimizer::ALPHA" + " (\"" + SGDOptimizer::ALPHA + "\")");
-			}
-			else
-			{
-				if (additionalParameters.find(SGDOptimizer::BATCH_SIZE) == additionalParameters.end())
-				{
-					if (additionalParameters.find(SGDOptimizer::MOMENTUM) == additionalParameters.end())
-					{
-						this->optimizer = new SGDOptimizer(layers, additionalParameters[SGDOptimizer::ALPHA]);
-					}
-					else
-					{
-						this->optimizer = new SGDOptimizer(layers, additionalParameters[SGDOptimizer::ALPHA], -1, additionalParameters[SGDOptimizer::BATCH_SIZE]);
-					}
-				}
-				else
-				{
-					if (additionalParameters.find(SGDOptimizer::MOMENTUM) == additionalParameters.end())
-					{
-						this->optimizer = new SGDOptimizer(layers, additionalParameters[SGDOptimizer::ALPHA], additionalParameters[SGDOptimizer::BATCH_SIZE]);
-					}
-					else
-					{
-						this->optimizer = new SGDOptimizer(layers, additionalParameters[SGDOptimizer::ALPHA], additionalParameters[SGDOptimizer::BATCH_SIZE], additionalParameters[SGDOptimizer::MOMENTUM]);
-					}
-				}
-			}
+			this->optimizer = new SGDOptimizer(layers, additionalParameters);
 			break;
 	}
 

@@ -62,11 +62,6 @@ DenseNeuralLayer::DenseNeuralLayer(ActivationFunctionType functionType, NeuralLa
 	
 }
 
-DenseNeuralLayer::~DenseNeuralLayer()
-{
-	delete activationFunction;
-}
-
 xt::xarray<double> DenseNeuralLayer::dotProduct(const xt::xarray<double>& input)
 {
 	return xt::linalg::tensordot(input, weights.getParameters(), 1); // The last dimension of the input with the first dimension of the weights
@@ -144,18 +139,6 @@ std::vector<size_t> DenseNeuralLayer::getOutputShape()
 	outputShape.push_back(numUnits);
 	outputShape = activationFunction->getOutputShape(outputShape);
 	return outputShape;
-}
-
-void DenseNeuralLayer::saveParameters(std::string fileName)
-{
-	ParameterizedNeuralLayer::saveParameters(fileName);
-	activationFunction->saveParameters(fileName);
-}
-
-void DenseNeuralLayer::loadParameters(std::string fileName)
-{
-	ParameterizedNeuralLayer::loadParameters(fileName);
-	activationFunction->loadParameters(fileName);
 }
 
 void DenseNeuralLayer::draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output)

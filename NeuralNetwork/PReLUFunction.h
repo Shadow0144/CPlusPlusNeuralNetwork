@@ -21,6 +21,9 @@ public:
 	void saveParameters(std::string fileName);
 	void loadParameters(std::string fileName);
 
+	void substituteParameters(Optimizer* optimizer);
+	void restoreParameters(Optimizer* optimizer);
+
 	// a is usually learned and does not necessarily need setting
 	xt::xarray<double> getA() const;
 	void setA(xt::xarray<double> a);

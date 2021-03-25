@@ -62,16 +62,6 @@ std::vector<size_t> ActivationFunctionNeuralLayer::getOutputShape()
 	return outputShape;
 }
 
-void ActivationFunctionNeuralLayer::saveParameters(std::string fileName)
-{
-	activationFunction->saveParameters(fileName);
-}
-
-void ActivationFunctionNeuralLayer::loadParameters(std::string fileName)
-{
-	activationFunction->loadParameters(fileName);
-}
-
 void ActivationFunctionNeuralLayer::draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output)
 {
 	// Draw the neurons
