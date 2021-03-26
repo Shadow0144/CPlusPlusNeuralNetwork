@@ -40,6 +40,7 @@
 #include "SGDOptimizer.h"
 #include "AdagradOptimizer.h"
 #include "RMSPropOptimizer.h"
+#include "AdamOptimizer.h"
 
 #include "NetworkVisualizer.h"
 
@@ -264,9 +265,9 @@ void test_signal(int layers)
     optimizerParams[SGDOptimizer::BATCH_SIZE] = 10;
     optimizerParams[SGDOptimizer::GAMMA] = 0.9;
     optimizerParams[SGDOptimizer::NESTEROV] = 1.0; // Enable*/
-    optimizerParams[RMSPropOptimizer::ETA] = 0.01;
-    optimizerParams[RMSPropOptimizer::BATCH_SIZE] = 10;
-    network.setOptimizer(OptimizerType::RMSProp, optimizerParams);
+    optimizerParams[AdamOptimizer::ETA] = 0.01;
+    optimizerParams[AdamOptimizer::BATCH_SIZE] = 10;
+    network.setOptimizer(OptimizerType::Adam, optimizerParams);
     network.displayRegressionEstimation();
 
     /* // Linear

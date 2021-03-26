@@ -95,6 +95,7 @@
     <ClCompile Include="ActivationFunctionNeuralLayer.cpp" />
     <ClCompile Include="AdadeltaOptimizer.cpp" />
     <ClCompile Include="AdagradOptimizer.cpp" />
+    <ClCompile Include="AdamOptimizer.cpp" />
     <ClCompile Include="AveragePooling1DNeuralLayer.cpp" />
     <ClCompile Include="AveragePooling2DNeuralLayer.cpp" />
     <ClCompile Include="AveragePooling3DNeuralLayer.cpp" />
@@ -162,6 +163,7 @@
     <ClInclude Include="ActivationFunctionNeuralLayer.h" />
     <ClInclude Include="AdadeltaOptimizer.h" />
     <ClInclude Include="AdagradOptimizer.h" />
+    <ClInclude Include="AdamOptimizer.h" />
     <ClInclude Include="AveragePooling1DNeuralLayer.h" />
     <ClInclude Include="AveragePooling2DNeuralLayer.h" />
     <ClInclude Include="ClassifierVisualizer.h" />
