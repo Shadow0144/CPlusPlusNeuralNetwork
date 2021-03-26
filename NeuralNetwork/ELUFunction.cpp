@@ -8,7 +8,7 @@
 
 using namespace std;
 
-const std::string ELUFunction::ALPHA = "alpha"; // Parameter string [OPTIONAL]
+const std::string ELUFunction::ALPHA = "eta"; // Parameter string [OPTIONAL]
 
 ELUFunction::ELUFunction()
 {

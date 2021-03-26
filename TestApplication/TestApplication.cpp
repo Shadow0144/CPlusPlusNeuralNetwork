@@ -36,6 +36,7 @@
 #include "MeanSquareErrorFunction.h"
 #include "CrossEntropyErrorFunction.h"
 #include "SGDOptimizer.h"
+#include "AdagradOptimizer.h"
 #include "NetworkVisualizer.h"
 #include "IrisDataset.h"
 #include "CatDogDataset.h"
@@ -235,11 +236,13 @@ void test_signal(int layers)
     ErrorFunction* errorFunction = new MeanSquareErrorFunction();
     NeuralNetwork network = NeuralNetwork(true);
     std::map<string, double> optimizerParams;
-    optimizerParams[SGDOptimizer::ALPHA] = 0.01;
+    /*optimizerParams[SGDOptimizer::ETA] = 0.01;
     optimizerParams[SGDOptimizer::BATCH_SIZE] = 10;
-    optimizerParams[SGDOptimizer::MOMENTUM] = 0.9;
-    optimizerParams[SGDOptimizer::NESTEROV] = 1.0; // Enable
-    network.setOptimizer(OptimizerType::SGD, optimizerParams);
+    optimizerParams[SGDOptimizer::GAMMA] = 0.9;
+    optimizerParams[SGDOptimizer::NESTEROV] = 1.0; // Enable*/
+    optimizerParams[AdagradOptimizer::ETA] = 0.01;
+    optimizerParams[AdagradOptimizer::BATCH_SIZE] = 10;
+    network.setOptimizer(OptimizerType::Adagrad, optimizerParams);
     network.setErrorFunction(ErrorFunctionType::MeanSquaredError);
     network.displayRegressionEstimation();
 
@@ -316,7 +319,7 @@ void test_signal(int layers)
     //network.feedForward(training_x);
     //network.getDeltaWeight(training_x, training_y);
 
-    network.enableStoppingCondition(StoppingCondition::Min_Delta_Error, 1e-12);
+    network.enableStoppingCondition(StoppingCondition::Min_Delta_Error, 1e-8);
     network.train(training_x, training_y, MAX_EPOCHS);
 
     xt::xarray<double> predicted = network.predict(training_x);
@@ -376,7 +379,7 @@ void test_iris(int layers)
 
     NeuralNetwork network = NeuralNetwork();
     std::map<string, double> optimizerParams;
-    optimizerParams[SGDOptimizer::ALPHA] = 0.01;
+    optimizerParams[SGDOptimizer::ETA] = 0.01;
     network.setOptimizer(OptimizerType::SGD, optimizerParams);
     network.setErrorFunction(ErrorFunctionType::CrossEntropy);
     ImColor* classColors = new ImColor[3]
@@ -459,7 +462,7 @@ void test_binary()
     network.addSoftmaxLayer(-1);
 
     std::map<string, double> optimizerParams;
-    optimizerParams[SGDOptimizer::ALPHA] = 0.01;
+    optimizerParams[SGDOptimizer::ETA] = 0.01;
     optimizerParams[SGDOptimizer::BATCH_SIZE] = 10;
     network.setOptimizer(OptimizerType::SGD, optimizerParams);
     network.setErrorFunction(ErrorFunctionType::CrossEntropy);
@@ -520,7 +523,7 @@ void test_mnist()
     network.addSoftmaxLayer(-1);
 
     std::map<string, double> optimizerParams;
-    optimizerParams[SGDOptimizer::ALPHA] = 0.01;
+    optimizerParams[SGDOptimizer::ETA] = 0.01;
     optimizerParams[SGDOptimizer::BATCH_SIZE] = 20;
     network.setOptimizer(OptimizerType::SGD, optimizerParams);
     network.setErrorFunction(ErrorFunctionType::CrossEntropy);
@@ -583,7 +586,7 @@ void test_catdog()
     network.addSoftmaxLayer(-1);
 
     std::map<string, double> optimizerParams;
-    optimizerParams[SGDOptimizer::ALPHA] = 0.01;
+    optimizerParams[SGDOptimizer::ETA] = 0.01;
     optimizerParams[SGDOptimizer::BATCH_SIZE] = 1;
     network.setOptimizer(OptimizerType::SGD, optimizerParams);
     network.setErrorFunction(ErrorFunctionType::CrossEntropy);

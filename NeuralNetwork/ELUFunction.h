@@ -21,7 +21,7 @@ public:
 
 	double getAlpha() const;
 	void setAlpha(double alpha);
-	const static std::string ALPHA; // = "alpha"; // Parameter string [OPTIONAL]
+	const static std::string ALPHA; // = "eta"; // Parameter string [OPTIONAL]
 
 private:
 	double activate(double z) const;

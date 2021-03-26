@@ -255,6 +255,9 @@
     <ClCompile Include="Optimizer.cpp">
       <Filter>Source Files\Optimizer</Filter>
     </ClCompile>
+    <ClCompile Include="AdagradOptimizer.cpp">
+      <Filter>Source Files\Optimizer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NeuralNetwork.h">
@@ -453,6 +456,9 @@
       <Filter>Header Files\Optimizer</Filter>
     </ClInclude>
     <ClInclude Include="SGDOptimizer.h">
+      <Filter>Header Files\Optimizer</Filter>
+    </ClInclude>
+    <ClInclude Include="AdagradOptimizer.h">
       <Filter>Header Files\Optimizer</Filter>
     </ClInclude>
   </ItemGroup>

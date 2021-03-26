@@ -37,6 +37,7 @@
 #include "DropoutNeuralLayer.h"
 
 #include "SGDOptimizer.h"
+#include "AdagradOptimizer.h"
 
 #include "CrossEntropyErrorFunction.h"
 #include "MeanSquareErrorFunction.h"
@@ -447,6 +448,9 @@ void NeuralNetwork::setOptimizer(OptimizerType optimizerType, std::map<string, d
 	{
 		case OptimizerType::SGD:
 			this->optimizer = new SGDOptimizer(layers, additionalParameters);
+			break;
+		case OptimizerType::Adagrad:
+			this->optimizer = new AdagradOptimizer(layers, additionalParameters);
 			break;
 	}
 

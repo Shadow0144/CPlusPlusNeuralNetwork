@@ -93,6 +93,7 @@
   <ItemGroup>
     <ClCompile Include="ActivationFunctionFactory.cpp" />
     <ClCompile Include="ActivationFunctionNeuralLayer.cpp" />
+    <ClCompile Include="AdagradOptimizer.cpp" />
     <ClCompile Include="AveragePooling1DNeuralLayer.cpp" />
     <ClCompile Include="AveragePooling2DNeuralLayer.cpp" />
     <ClCompile Include="AveragePooling3DNeuralLayer.cpp" />
@@ -157,6 +158,7 @@
     <ClInclude Include="AbsoluteReLUFunction.h" />
     <ClInclude Include="ActivationFunctionFactory.h" />
     <ClInclude Include="ActivationFunctionNeuralLayer.h" />
+    <ClInclude Include="AdagradOptimizer.h" />
     <ClInclude Include="AveragePooling1DNeuralLayer.h" />
     <ClInclude Include="AveragePooling2DNeuralLayer.h" />
     <ClInclude Include="ClassifierVisualizer.h" />

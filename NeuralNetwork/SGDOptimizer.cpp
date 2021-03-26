@@ -4,29 +4,29 @@ const double INTERNAL_BATCH_LIMIT = 20;
 
 using namespace std;
 
-const std::string SGDOptimizer::ALPHA = "alpha"; // Parameter string [REQUIRED]
+const std::string SGDOptimizer::ETA = "eta"; // Parameter string [REQUIRED]
 const std::string SGDOptimizer::BATCH_SIZE = "batchSize"; // Parameter string [OPTIONAL]
-const std::string SGDOptimizer::MOMENTUM = "momentum"; // Parameter string [OPTIONAL]
+const std::string SGDOptimizer::GAMMA = "gamma"; // Parameter string [OPTIONAL]
 const std::string SGDOptimizer::NESTEROV = "nesterov"; // Parameter string [OPTIONAL]
 
-SGDOptimizer::SGDOptimizer(vector<NeuralLayer*>* layers, double alpha, int batchSize, double momentum, bool nesterov) : Optimizer(layers)
+SGDOptimizer::SGDOptimizer(vector<NeuralLayer*>* layers, double eta, int batchSize, double gamma, bool nesterov) : Optimizer(layers)
 {
-	this->alpha = alpha;
+	this->eta = eta;
 	this->batchSize = batchSize;
-	this->momentum = momentum;
+	this->gamma = gamma;
 	this->nesterov = nesterov;
 }
 
 SGDOptimizer::SGDOptimizer(vector<NeuralLayer*>* layers, std::map<std::string, double> additionalParameters) : Optimizer(layers)
 {
-	if (additionalParameters.find(ALPHA) == additionalParameters.end())
+	if (additionalParameters.find(ETA) == additionalParameters.end())
 	{
 		throw std::invalid_argument(std::string("Missing required parameter: ") +
-			"SGDOptimizer::ALPHA" + " (\"" + ALPHA + "\")");
+			"SGDOptimizer::ETA" + " (\"" + ETA + "\")");
 	}
 	else
 	{
-		this->alpha = additionalParameters[ALPHA];
+		this->eta = additionalParameters[ETA];
 		if (additionalParameters.find(BATCH_SIZE) == additionalParameters.end())
 		{
 			this->batchSize = -1;
@@ -35,13 +35,13 @@ SGDOptimizer::SGDOptimizer(vector<NeuralLayer*>* layers, std::map<std::string, d
 		{
 			this->batchSize = additionalParameters[BATCH_SIZE];
 		}
-		if (additionalParameters.find(MOMENTUM) == additionalParameters.end())
+		if (additionalParameters.find(GAMMA) == additionalParameters.end())
 		{
-			this->momentum = 0;
+			this->gamma = 0;
 		}
 		else
 		{
-			this->momentum = additionalParameters[MOMENTUM];
+			this->gamma = additionalParameters[GAMMA];
 		}
 		if (additionalParameters.find(NESTEROV) == additionalParameters.end())
 		{
@@ -152,20 +152,20 @@ double SGDOptimizer::backPropagateBatch(const xt::xarray<double>& inputs, const 
 xt::xarray<double> SGDOptimizer::getDeltaWeight(long parameterID, const xt::xarray<double>& gradient)
 {
 	xt::xarray<double> optimizedGradient;
-	if (momentum > 0.0)
+	if (gamma > 0.0)
 	{
 		if (previousVelocity.find(parameterID) == previousVelocity.end())
 		{
 			previousVelocity[parameterID] = xt::zeros<double>(gradient.shape());
 		}
 		else { }
-		xt::xarray<double> velocity = momentum * previousVelocity[parameterID] + alpha * gradient;
+		xt::xarray<double> velocity = gamma * previousVelocity[parameterID] + eta * gradient;
 		optimizedGradient = -velocity;
 		previousVelocity[parameterID] = velocity;
 	}
 	else // Skip storing and updating the velocity if the momentum is 0
 	{
-		optimizedGradient = -alpha * gradient; // Multiply by the learning rate
+		optimizedGradient = -eta * gradient; // Multiply by the learning rate
 	}
 	return optimizedGradient;
 }
@@ -179,11 +179,11 @@ void SGDOptimizer::substituteParameters(ParameterSet& parameterSet)
 		previousVelocity[parameterID] = xt::zeros<double>(parameters.shape());
 	}
 	else { }
-	parameterSet.setParameters(parameterSet.getParameters() - (momentum * previousVelocity[parameterID]));
+	parameterSet.setParameters(parameterSet.getParameters() - (gamma * previousVelocity[parameterID]));
 }
 
 void SGDOptimizer::restoreParameters(ParameterSet& parameterSet)
 {
 	long parameterID = parameterSet.getID();
-	parameterSet.setParameters(parameterSet.getParameters() + (momentum * previousVelocity[parameterID]));
+	parameterSet.setParameters(parameterSet.getParameters() + (gamma * previousVelocity[parameterID]));
 }
