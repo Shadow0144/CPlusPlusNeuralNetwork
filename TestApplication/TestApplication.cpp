@@ -33,15 +33,15 @@
 #pragma warning(pop)
 
 #include "NeuralNetwork.h"
-#include "MeanSquareErrorFunction.h"
-#include "CrossEntropyErrorFunction.h"
+
+//#include "MeanSquareErrorFunction.h"
+//#include "CrossEntropyErrorFunction.h"
+
 #include "SGDOptimizer.h"
 #include "AdagradOptimizer.h"
-#include "NetworkVisualizer.h"
-#include "IrisDataset.h"
-#include "CatDogDataset.h"
+#include "RMSPropOptimizer.h"
 
-#include "Test.h"
+#include "NetworkVisualizer.h"
 
 //#include "Convolution2DFunction.h"
 //#include "MaxPooling2DFunction.h"
@@ -49,6 +49,11 @@
 #include "ReLUFunction.h"
 #include "SigmoidFunction.h"
 //#include "SoftmaxFunction.h"
+
+#include "IrisDataset.h"
+#include "CatDogDataset.h"
+
+#include "Test.h"
 
 //#define ALL
 //#define FIVE
@@ -233,18 +238,7 @@ void test_signal(int layers)
             break;
     }
 
-    ErrorFunction* errorFunction = new MeanSquareErrorFunction();
     NeuralNetwork network = NeuralNetwork(true);
-    std::map<string, double> optimizerParams;
-    /*optimizerParams[SGDOptimizer::ETA] = 0.01;
-    optimizerParams[SGDOptimizer::BATCH_SIZE] = 10;
-    optimizerParams[SGDOptimizer::GAMMA] = 0.9;
-    optimizerParams[SGDOptimizer::NESTEROV] = 1.0; // Enable*/
-    optimizerParams[AdagradOptimizer::ETA] = 0.01;
-    optimizerParams[AdagradOptimizer::BATCH_SIZE] = 10;
-    network.setOptimizer(OptimizerType::Adadelta, optimizerParams);
-    network.setErrorFunction(ErrorFunctionType::MeanSquaredError);
-    network.displayRegressionEstimation();
 
     vector<size_t> inputShape;
     inputShape.push_back(1);
@@ -261,6 +255,19 @@ void test_signal(int layers)
     network.addDenseLayer(ActivationFunctionType::ReLU, 6);
     network.addDenseLayer(ActivationFunctionType::Sigmoid, 6);
     network.addDenseLayer(ActivationFunctionType::Identity, 1);
+
+    //network.enableStoppingCondition(StoppingCondition::Min_Delta_Error, 1e-8);
+    network.setErrorFunction(ErrorFunctionType::MeanSquaredError);
+
+    std::map<string, double> optimizerParams;
+    /*optimizerParams[SGDOptimizer::ETA] = 0.01;
+    optimizerParams[SGDOptimizer::BATCH_SIZE] = 10;
+    optimizerParams[SGDOptimizer::GAMMA] = 0.9;
+    optimizerParams[SGDOptimizer::NESTEROV] = 1.0; // Enable*/
+    optimizerParams[RMSPropOptimizer::ETA] = 0.01;
+    optimizerParams[RMSPropOptimizer::BATCH_SIZE] = 10;
+    network.setOptimizer(OptimizerType::RMSProp, optimizerParams);
+    network.displayRegressionEstimation();
 
     /* // Linear
     const int SAMPLES = 10;
@@ -318,8 +325,6 @@ void test_signal(int layers)
 
     //network.feedForward(training_x);
     //network.getDeltaWeight(training_x, training_y);
-
-    network.enableStoppingCondition(StoppingCondition::Min_Delta_Error, 1e-8);
     network.train(training_x, training_y, MAX_EPOCHS);
 
     xt::xarray<double> predicted = network.predict(training_x);

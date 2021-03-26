@@ -142,6 +142,7 @@
     <ClCompile Include="ReLUFunction.cpp" />
     <ClCompile Include="ReLUnFunction.cpp" />
     <ClCompile Include="ReshapeNeuralLayer.cpp" />
+    <ClCompile Include="RMSPropOptimizer.cpp" />
     <ClCompile Include="SELUFunction.cpp" />
     <ClCompile Include="SGDOptimizer.cpp" />
     <ClCompile Include="ShapeNeuralLayer.cpp" />
@@ -213,6 +214,7 @@
     <ClInclude Include="ReLUFunction.h" />
     <ClInclude Include="ReLUnFunction.h" />
     <ClInclude Include="ReshapeNeuralLayer.h" />
+    <ClInclude Include="RMSPropOptimizer.h" />
     <ClInclude Include="SELUFunction.h" />
     <ClInclude Include="SGDOptimizer.h" />
     <ClInclude Include="ShapeNeuralLayer.h" />

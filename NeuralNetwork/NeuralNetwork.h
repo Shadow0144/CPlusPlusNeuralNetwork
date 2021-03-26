@@ -14,7 +14,8 @@ enum class OptimizerType
 {
 	SGD, // Stochastic Gradient Descent
 	Adagrad, // Adagrad
-	Adadelta // Adadelta
+	Adadelta, // Adadelta
+	RMSProp // Root Mean Square Propagation
 };
 
 enum class ErrorFunctionType

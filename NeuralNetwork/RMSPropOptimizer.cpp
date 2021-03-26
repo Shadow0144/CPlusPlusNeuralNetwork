@@ -1,26 +1,26 @@
-#include "AdagradOptimizer.h"
+#include "RMSPropOptimizer.h"
 
 const double INTERNAL_BATCH_LIMIT = 20;
 
 using namespace std;
 
-const std::string AdagradOptimizer::ETA = "eta"; // Parameter string [REQUIRED]
-const std::string AdagradOptimizer::BATCH_SIZE = "batchSize"; // Parameter string [OPTIONAL]
-const std::string AdagradOptimizer::EPSILON = "epsilon"; // Parameter string [OPTIONAL]
+const std::string RMSPropOptimizer::ETA = "eta"; // Parameter string [REQUIRED]
+const std::string RMSPropOptimizer::BATCH_SIZE = "batchSize"; // Parameter string [OPTIONAL]
+const std::string RMSPropOptimizer::EPSILON = "epsilon"; // Parameter string [OPTIONAL]
 
-AdagradOptimizer::AdagradOptimizer(vector<NeuralLayer*>* layers, double eta, int batchSize, double epsilon) : Optimizer(layers)
+RMSPropOptimizer::RMSPropOptimizer(vector<NeuralLayer*>* layers, double eta, int batchSize, double epsilon) : Optimizer(layers)
 {
 	this->eta = eta;
 	this->batchSize = batchSize;
 	this->epsilon = epsilon;
 }
 
-AdagradOptimizer::AdagradOptimizer(vector<NeuralLayer*>* layers, std::map<std::string, double> additionalParameters) : Optimizer(layers)
+RMSPropOptimizer::RMSPropOptimizer(vector<NeuralLayer*>* layers, std::map<std::string, double> additionalParameters) : Optimizer(layers)
 {
 	if (additionalParameters.find(ETA) == additionalParameters.end())
 	{
 		throw std::invalid_argument(std::string("Missing required parameter: ") +
-			"AdagradOptimizer::ETA" + " (\"" + ETA + "\")");
+			"RMSPropOptimizer::ETA" + " (\"" + ETA + "\")");
 	}
 	else
 	{
@@ -44,7 +44,7 @@ AdagradOptimizer::AdagradOptimizer(vector<NeuralLayer*>* layers, std::map<std::s
 	}
 }
 
-double AdagradOptimizer::backPropagate(const xt::xarray<double>& inputs, const xt::xarray<double>& targets)
+double RMSPropOptimizer::backPropagate(const xt::xarray<double>& inputs, const xt::xarray<double>& targets)
 {
 	double deltaWeights = 0.0;
 
@@ -80,7 +80,7 @@ double AdagradOptimizer::backPropagate(const xt::xarray<double>& inputs, const x
 	return deltaWeights;
 }
 
-double AdagradOptimizer::backPropagateBatch(const xt::xarray<double>& inputs, const xt::xarray<double>& targets)
+double RMSPropOptimizer::backPropagateBatch(const xt::xarray<double>& inputs, const xt::xarray<double>& targets)
 {
 	bool converged = true;
 
@@ -128,15 +128,14 @@ double AdagradOptimizer::backPropagateBatch(const xt::xarray<double>& inputs, co
 	return deltaSum;
 }
 
-xt::xarray<double> AdagradOptimizer::getDeltaWeight(long parameterID, const xt::xarray<double>& gradient)
+xt::xarray<double> RMSPropOptimizer::getDeltaWeight(long parameterID, const xt::xarray<double>& gradient)
 {
-	xt::xarray<double> optimizedGradient;
-	if (G.find(parameterID) == G.end())
+	if (Eg2.find(parameterID) == Eg2.end())
 	{
-		G[parameterID] = xt::zeros<double>(gradient.shape());
+		Eg2[parameterID] = xt::zeros<double>(gradient.shape());
 	}
 	else { }
-	G[parameterID] += xt::pow(gradient, 2.0);
-	optimizedGradient = -eta * (xt::pow((G[parameterID] + epsilon), -0.5)) * gradient;
+	Eg2[parameterID] = (0.9 * Eg2[parameterID]) + ((0.1) * xt::pow(gradient, 2.0));
+	xt::xarray<double> optimizedGradient = -eta * xt::pow(Eg2[parameterID] + epsilon, 0.5) * gradient;
 	return optimizedGradient;
 }

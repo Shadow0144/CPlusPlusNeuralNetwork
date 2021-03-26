@@ -4,14 +4,12 @@ const double INTERNAL_BATCH_LIMIT = 20;
 
 using namespace std;
 
-const std::string AdadeltaOptimizer::ETA = "eta"; // Parameter string [REQUIRED]
 const std::string AdadeltaOptimizer::BATCH_SIZE = "batchSize"; // Parameter string [OPTIONAL]
 const std::string AdadeltaOptimizer::GAMMA = "gamma"; // Parameter string [OPTIONAL]
 const std::string AdadeltaOptimizer::EPSILON = "epsilon"; // Parameter string [OPTIONAL]
 
-AdadeltaOptimizer::AdadeltaOptimizer(vector<NeuralLayer*>* layers, double eta, int batchSize, double gamma, double epsilon) : Optimizer(layers)
+AdadeltaOptimizer::AdadeltaOptimizer(vector<NeuralLayer*>* layers, int batchSize, double gamma, double epsilon) : Optimizer(layers)
 {
-	this->eta = eta;
 	this->batchSize = batchSize;
 	this->gamma = gamma;
 	this->epsilon = epsilon;
@@ -19,38 +17,29 @@ AdadeltaOptimizer::AdadeltaOptimizer(vector<NeuralLayer*>* layers, double eta, i
 
 AdadeltaOptimizer::AdadeltaOptimizer(vector<NeuralLayer*>* layers, std::map<std::string, double> additionalParameters) : Optimizer(layers)
 {
-	if (additionalParameters.find(ETA) == additionalParameters.end())
+	if (additionalParameters.find(BATCH_SIZE) == additionalParameters.end())
 	{
-		throw std::invalid_argument(std::string("Missing required parameter: ") +
-			"SGDOptimizer::ETA" + " (\"" + ETA + "\")");
+		this->batchSize = -1;
 	}
 	else
 	{
-		this->eta = additionalParameters[ETA];
-		if (additionalParameters.find(BATCH_SIZE) == additionalParameters.end())
-		{
-			this->batchSize = -1;
-		}
-		else
-		{
-			this->batchSize = additionalParameters[BATCH_SIZE];
-		}
-		if (additionalParameters.find(GAMMA) == additionalParameters.end())
-		{
-			this->gamma = 0.9;
-		}
-		else
-		{
-			this->gamma = additionalParameters[GAMMA];
-		}
-		if (additionalParameters.find(EPSILON) == additionalParameters.end())
-		{
-			this->epsilon = 1e-7;
-		}
-		else
-		{
-			this->epsilon = additionalParameters[EPSILON];
-		}
+		this->batchSize = additionalParameters[BATCH_SIZE];
+	}
+	if (additionalParameters.find(GAMMA) == additionalParameters.end())
+	{
+		this->gamma = 0.9;
+	}
+	else
+	{
+		this->gamma = additionalParameters[GAMMA];
+	}
+	if (additionalParameters.find(EPSILON) == additionalParameters.end())
+	{
+		this->epsilon = 1e-7;
+	}
+	else
+	{
+		this->epsilon = additionalParameters[EPSILON];
 	}
 }
 
