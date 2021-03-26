@@ -242,7 +242,7 @@ void test_signal(int layers)
     optimizerParams[SGDOptimizer::NESTEROV] = 1.0; // Enable*/
     optimizerParams[AdagradOptimizer::ETA] = 0.01;
     optimizerParams[AdagradOptimizer::BATCH_SIZE] = 10;
-    network.setOptimizer(OptimizerType::Adagrad, optimizerParams);
+    network.setOptimizer(OptimizerType::Adadelta, optimizerParams);
     network.setErrorFunction(ErrorFunctionType::MeanSquaredError);
     network.displayRegressionEstimation();
 

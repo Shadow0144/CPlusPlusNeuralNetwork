@@ -38,6 +38,7 @@
 
 #include "SGDOptimizer.h"
 #include "AdagradOptimizer.h"
+#include "AdadeltaOptimizer.h"
 
 #include "CrossEntropyErrorFunction.h"
 #include "MeanSquareErrorFunction.h"
@@ -451,6 +452,9 @@ void NeuralNetwork::setOptimizer(OptimizerType optimizerType, std::map<string, d
 			break;
 		case OptimizerType::Adagrad:
 			this->optimizer = new AdagradOptimizer(layers, additionalParameters);
+			break;
+		case OptimizerType::Adadelta:
+			this->optimizer = new AdadeltaOptimizer(layers, additionalParameters);
 			break;
 	}
 

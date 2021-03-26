@@ -13,7 +13,8 @@
 enum class OptimizerType
 {
 	SGD, // Stochastic Gradient Descent
-	Adagrad // Adagrad
+	Adagrad, // Adagrad
+	Adadelta // Adadelta
 };
 
 enum class ErrorFunctionType
