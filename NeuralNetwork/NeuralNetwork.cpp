@@ -39,6 +39,7 @@
 #include "SGDOptimizer.h"
 #include "AdagradOptimizer.h"
 #include "AdadeltaOptimizer.h"
+#include "AdamaxOptimizer.h"
 #include "RMSPropOptimizer.h"
 #include "AdamOptimizer.h"
 
@@ -458,6 +459,9 @@ void NeuralNetwork::setOptimizer(OptimizerType optimizerType, std::map<string, d
 		case OptimizerType::Adadelta:
 			this->optimizer = new AdadeltaOptimizer(layers, additionalParameters);
 			break;
+		case OptimizerType::Adamax:
+				this->optimizer = new AdamaxOptimizer(layers, additionalParameters);
+				break;
 		case OptimizerType::RMSProp:
 			this->optimizer = new RMSPropOptimizer(layers, additionalParameters);
 			break;

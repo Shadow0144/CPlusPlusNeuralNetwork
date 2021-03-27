@@ -14,7 +14,6 @@ public:
 	AdagradOptimizer(std::vector<NeuralLayer*>* layers, double eta, int batchSize = -1, double epsilon = 1e-7);
 	AdagradOptimizer(std::vector<NeuralLayer*>* layers, std::map<std::string, double> additionalParameters = std::map<std::string, double>());
 
-	double backPropagate(const xt::xarray<double>& inputs, const xt::xarray<double>& targets); // Single step, returns the sum of the changes in weights
 	xt::xarray<double> getDeltaWeight(long parameterID, const xt::xarray<double>& gradient); // Adjusts the gradient based on the optimizer
 
 	const static std::string ETA; // = "eta"; // Parameter string [REQUIRED] // Learning rate
@@ -23,10 +22,7 @@ public:
 
 private:
 	double eta; // Learning rate
-	int batchSize; // The size of a single batch
 	double epsilon; // Small term to prevent divide-by-zero errors
 
 	std::map<long, xt::xarray<double>> G; // Sum of squares of past gradients
-
-	double backPropagateBatch(const xt::xarray<double>& inputs, const xt::xarray<double>& targets);
 };

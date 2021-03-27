@@ -15,6 +15,7 @@ enum class OptimizerType
 	SGD, // Stochastic Gradient Descent
 	Adagrad, // Adagrad
 	Adadelta, // Adadelta
+	Adamax, // Adamax
 	RMSProp, // Root Mean Square Propagation
 	Adam // Adaptive Moment Estimation
 };

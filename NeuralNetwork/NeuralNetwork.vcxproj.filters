@@ -267,6 +267,9 @@
     <ClCompile Include="AdamOptimizer.cpp">
       <Filter>Source Files\Optimizer</Filter>
     </ClCompile>
+    <ClCompile Include="AdamaxOptimizer.cpp">
+      <Filter>Source Files\Optimizer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NeuralNetwork.h">
@@ -477,6 +480,9 @@
       <Filter>Header Files\Optimizer</Filter>
     </ClInclude>
     <ClInclude Include="AdamOptimizer.h">
+      <Filter>Header Files\Optimizer</Filter>
+    </ClInclude>
+    <ClInclude Include="AdamaxOptimizer.h">
       <Filter>Header Files\Optimizer</Filter>
     </ClInclude>
   </ItemGroup>

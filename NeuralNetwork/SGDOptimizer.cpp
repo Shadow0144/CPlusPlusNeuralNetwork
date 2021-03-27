@@ -54,42 +54,6 @@ SGDOptimizer::SGDOptimizer(vector<NeuralLayer*>* layers, std::map<std::string, d
 	}
 }
 
-double SGDOptimizer::backPropagate(const xt::xarray<double>& inputs, const xt::xarray<double>& targets)
-{
-	double deltaWeights = 0.0;
-
-	if (errorFunction != nullptr)
-	{
-		const int N = inputs.shape()[0];
-		int batches = 1;
-		if (batchSize > 0) // If there's a batch size set, then use batches
-		{
-			batches = N / batchSize;
-		}
-		else { }
-
-		for (int i = 0; i < batches; i++)
-		{
-			// Set up the batch
-			int batchStart = ((i + 0) * batchSize) % N;
-			int batchEnd = ((i + 1) * batchSize) % N;
-			if ((batchEnd - batchStart) != batchSize)
-			{
-				batchEnd = N;
-			}
-			else { }
-
-			xt::xstrided_slice_vector batchSV({ xt::range(batchStart, batchEnd), xt::ellipsis() });
-			xt::xarray<double> examples = xt::strided_view(inputs, batchSV);
-			xt::xarray<double> exampleTargets = xt::strided_view(targets, batchSV);
-			deltaWeights += backPropagateBatch(examples, exampleTargets);
-		}
-	}
-	else { }
-
-	return deltaWeights;
-}
-
 double SGDOptimizer::backPropagateBatch(const xt::xarray<double>& inputs, const xt::xarray<double>& targets)
 {
 	bool converged = true;

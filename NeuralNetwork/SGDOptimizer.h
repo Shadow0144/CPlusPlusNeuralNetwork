@@ -14,7 +14,6 @@ public:
 	SGDOptimizer(std::vector<NeuralLayer*>* layers, double eta, int batchSize = -1, double gamma = 0, bool nesterov = false);
 	SGDOptimizer(std::vector<NeuralLayer*>* layers, std::map<std::string, double> additionalParameters = std::map<std::string, double>());
 
-	double backPropagate(const xt::xarray<double>& inputs, const xt::xarray<double>& targets); // Single step, returns the sum of the changes in weights
 	xt::xarray<double> getDeltaWeight(long parameterID, const xt::xarray<double>& gradient); // Adjusts the gradient based on the optimizer
 
 	void substituteParameters(ParameterSet& parameterSet);
@@ -27,7 +26,6 @@ public:
 
 private:
 	double eta; // Learning rate
-	int batchSize; // The size of a single batch
 	double gamma; // Momentum rate
 	bool nesterov; // Using Nestrov accelerated gradient or not
 
