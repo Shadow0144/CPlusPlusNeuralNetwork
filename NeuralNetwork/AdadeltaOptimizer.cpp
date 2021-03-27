@@ -1,7 +1,5 @@
 #include "AdadeltaOptimizer.h"
 
-const double INTERNAL_BATCH_LIMIT = 20;
-
 using namespace std;
 
 const std::string AdadeltaOptimizer::BATCH_SIZE = "batchSize"; // Parameter string [OPTIONAL]

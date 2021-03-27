@@ -41,6 +41,7 @@
 #include "AdagradOptimizer.h"
 #include "AdadeltaOptimizer.h"
 #include "AdamaxOptimizer.h"
+#include "RPropOptimizer.h"
 #include "RMSPropOptimizer.h"
 #include "AdamOptimizer.h"
 
@@ -265,9 +266,9 @@ void test_signal(int layers)
     std::map<string, double> optimizerParams;
     /*optimizerParams[SGDOptimizer::GAMMA] = 0.9;
     optimizerParams[SGDOptimizer::NESTEROV] = 1.0; // Enable*/
-    optimizerParams[AdamOptimizer::ETA] = 0.002;
-    optimizerParams[AdamOptimizer::BATCH_SIZE] = 10;
-    network.setOptimizer(OptimizerType::Adamax, optimizerParams);
+    //optimizerParams[AdamOptimizer::ETA] = 0.002;
+    //optimizerParams[AdamOptimizer::BATCH_SIZE] = 10;
+    network.setOptimizer(OptimizerType::RProp, optimizerParams);
     network.displayRegressionEstimation();
 
     /* // Linear

@@ -1,7 +1,5 @@
 #include "RMSPropOptimizer.h"
 
-const double INTERNAL_BATCH_LIMIT = 20;
-
 using namespace std;
 
 const std::string RMSPropOptimizer::ETA = "eta"; // Parameter string [REQUIRED]

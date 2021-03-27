@@ -16,6 +16,7 @@ enum class OptimizerType
 	Adagrad, // Adagrad
 	Adadelta, // Adadelta
 	Adamax, // Adamax
+	RProp, // Resilient Propagation
 	RMSProp, // Root Mean Square Propagation
 	Adam // Adaptive Moment Estimation
 };

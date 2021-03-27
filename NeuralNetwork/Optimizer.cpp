@@ -10,6 +10,7 @@ Optimizer::Optimizer(vector<NeuralLayer*>* layers)
 {
 	this->layers = layers;
 	this->errorFunction = nullptr;
+	this->batchSize = -1;
 }
 
 Optimizer::~Optimizer()

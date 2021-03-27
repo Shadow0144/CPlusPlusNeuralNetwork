@@ -270,6 +270,9 @@
     <ClCompile Include="AdamaxOptimizer.cpp">
       <Filter>Source Files\Optimizer</Filter>
     </ClCompile>
+    <ClCompile Include="RPropOptimizer.cpp">
+      <Filter>Source Files\Optimizer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NeuralNetwork.h">
@@ -483,6 +486,9 @@
       <Filter>Header Files\Optimizer</Filter>
     </ClInclude>
     <ClInclude Include="AdamaxOptimizer.h">
+      <Filter>Header Files\Optimizer</Filter>
+    </ClInclude>
+    <ClInclude Include="RPropOptimizer.h">
       <Filter>Header Files\Optimizer</Filter>
     </ClInclude>
   </ItemGroup>
