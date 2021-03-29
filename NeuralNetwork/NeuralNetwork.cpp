@@ -43,6 +43,9 @@
 #include "RPropOptimizer.h"
 #include "RMSPropOptimizer.h"
 #include "AdamOptimizer.h"
+#include "NadamOptimizer.h"
+#include "AMSGradOptimizer.h"
+#include "FtrlOptimizer.h"
 
 #include "CrossEntropyErrorFunction.h"
 #include "MeanSquareErrorFunction.h"
@@ -471,6 +474,15 @@ void NeuralNetwork::setOptimizer(OptimizerType optimizerType, std::map<string, d
 			break;
 		case OptimizerType::Adam:
 			this->optimizer = new AdamOptimizer(layers, additionalParameters);
+			break;
+		case OptimizerType::Nadam:
+			this->optimizer = new NadamOptimizer(layers, additionalParameters);
+			break;
+		case OptimizerType::AMSGrad:
+			this->optimizer = new AMSGradOptimizer(layers, additionalParameters);
+			break;
+		case OptimizerType::Ftrl:
+			this->optimizer = new FtrlOptimizer(layers, additionalParameters);
 			break;
 	}
 

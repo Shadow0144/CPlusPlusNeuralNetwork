@@ -31,5 +31,5 @@ private:
 
 	std::map<long, xt::xarray<double>> previousVelocity;
 
-	double backPropagateBatch(const xt::xarray<double>& inputs, const xt::xarray<double>& targets);
+	void backPropagateBatch(const xt::xarray<double>& inputs, const xt::xarray<double>& targets);
 };

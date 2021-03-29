@@ -65,7 +65,14 @@ double Optimizer::backPropagate(const xt::xarray<double>& inputs, const xt::xarr
 			xt::xstrided_slice_vector batchSV({ xt::range(batchStart, batchEnd), xt::ellipsis() });
 			xt::xarray<double> examples = xt::strided_view(inputs, batchSV);
 			xt::xarray<double> exampleTargets = xt::strided_view(targets, batchSV);
-			deltaWeights += backPropagateBatch(examples, exampleTargets);
+			backPropagateBatch(examples, exampleTargets);
+
+			// Apply the backpropagation
+			size_t layerCount = layers->size();
+			for (int l = 0; l < layerCount; l++)
+			{
+				deltaWeights += layers->at(l)->applyBackPropagate();
+			}
 		}
 	}
 	else { }
@@ -73,7 +80,7 @@ double Optimizer::backPropagate(const xt::xarray<double>& inputs, const xt::xarr
 	return deltaWeights;
 }
 
-double Optimizer::backPropagateBatch(const xt::xarray<double>& inputs, const xt::xarray<double>& targets)
+void Optimizer::backPropagateBatch(const xt::xarray<double>& inputs, const xt::xarray<double>& targets)
 {
 	bool converged = true;
 
@@ -110,15 +117,6 @@ double Optimizer::backPropagateBatch(const xt::xarray<double>& inputs, const xt:
 			sigma = layers->at(l)->getGradient(sigma, this);
 		}
 	}
-
-	// Apply the backpropagation
-	double deltaSum = 0.0;
-	for (int l = 0; l < layerCount; l++)
-	{
-		deltaSum += layers->at(l)->applyBackPropagate();
-	}
-
-	return deltaSum;
 }
 
 void Optimizer::substituteParameters(ParameterSet& parameterSet)

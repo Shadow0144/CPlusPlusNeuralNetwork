@@ -25,7 +25,7 @@ public:
 
 protected:
 	xt::xarray<double> feedForwardTrain(const xt::xarray<double>& inputs); // Updates internal values such as last input and last output
-	virtual double backPropagateBatch(const xt::xarray<double>& inputs, const xt::xarray<double>& targets);
+	virtual void backPropagateBatch(const xt::xarray<double>& inputs, const xt::xarray<double>& targets);
 
 	void substituteAllParameters();
 	void restoreAllParameters();

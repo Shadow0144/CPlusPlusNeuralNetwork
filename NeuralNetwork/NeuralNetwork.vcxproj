@@ -97,6 +97,7 @@
     <ClCompile Include="AdagradOptimizer.cpp" />
     <ClCompile Include="AdamaxOptimizer.cpp" />
     <ClCompile Include="AdamOptimizer.cpp" />
+    <ClCompile Include="AMSGradOptimizer.cpp" />
     <ClCompile Include="AveragePooling1DNeuralLayer.cpp" />
     <ClCompile Include="AveragePooling2DNeuralLayer.cpp" />
     <ClCompile Include="AveragePooling3DNeuralLayer.cpp" />
@@ -131,6 +132,7 @@
     <ClCompile Include="MaxPooling2DNeuralLayer.cpp" />
     <ClCompile Include="MaxPooling3DNeuralLayer.cpp" />
     <ClCompile Include="MeanSquareErrorFunction.cpp" />
+    <ClCompile Include="NadamOptimizer.cpp" />
     <ClCompile Include="NetworkVisualizer.cpp" />
     <ClCompile Include="NeuralLayer.cpp" />
     <ClCompile Include="NeuralNetwork.cpp" />
@@ -167,6 +169,7 @@
     <ClInclude Include="AdagradOptimizer.h" />
     <ClInclude Include="AdamaxOptimizer.h" />
     <ClInclude Include="AdamOptimizer.h" />
+    <ClInclude Include="AMSGradOptimizer.h" />
     <ClInclude Include="AveragePooling1DNeuralLayer.h" />
     <ClInclude Include="AveragePooling2DNeuralLayer.h" />
     <ClInclude Include="ClassifierVisualizer.h" />
@@ -181,6 +184,8 @@
     <ClInclude Include="ExponentialFunction.h" />
     <ClInclude Include="ELUFunction.h" />
     <ClInclude Include="FlattenNeuralLayer.h" />
+    <ClCompile Include="FtrlOptimizer.cpp" />
+    <ClInclude Include="FtrlOptimizer.h" />
     <ClInclude Include="FunctionVisualizer.h" />
     <ClInclude Include="GELUFunction.h" />
     <ClInclude Include="gl3w\GL\gl3w.h" />
@@ -203,6 +208,7 @@
     <ClInclude Include="MaxPooling2DNeuralLayer.h" />
     <ClInclude Include="MaxPooling3DNeuralLayer.h" />
     <ClInclude Include="MeanSquareErrorFunction.h" />
+    <ClInclude Include="NadamOptimizer.h" />
     <ClInclude Include="NetworkVisualizer.h" />
     <ClInclude Include="NeuralLayer.h" />
     <ClInclude Include="NeuralNetworkFileHelper.h" />

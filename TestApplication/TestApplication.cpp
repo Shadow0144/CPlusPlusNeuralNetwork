@@ -44,6 +44,9 @@
 #include "RPropOptimizer.h"
 #include "RMSPropOptimizer.h"
 #include "AdamOptimizer.h"
+#include "NadamOptimizer.h"
+#include "AMSGradOptimizer.h"
+#include "FtrlOptimizer.h"
 
 #include "NetworkVisualizer.h"
 
@@ -266,9 +269,11 @@ void test_signal(int layers)
     std::map<string, double> optimizerParams;
     /*optimizerParams[SGDOptimizer::GAMMA] = 0.9;
     optimizerParams[SGDOptimizer::NESTEROV] = 1.0; // Enable*/
-    //optimizerParams[AdamOptimizer::ETA] = 0.002;
-    //optimizerParams[AdamOptimizer::BATCH_SIZE] = 10;
-    network.setOptimizer(OptimizerType::RProp, optimizerParams);
+    //optimizerParams[SGDOptimizer::ETA] = 0.002;
+    //optimizerParams[FtrlOptimizer::BATCH_SIZE] = 10;
+    optimizerParams[FtrlOptimizer::LAMDA1] = 0.0001;
+    optimizerParams[FtrlOptimizer::LAMDA2] = 0.0001;
+    network.setOptimizer(OptimizerType::Ftrl, optimizerParams);
     network.displayRegressionEstimation();
 
     /* // Linear

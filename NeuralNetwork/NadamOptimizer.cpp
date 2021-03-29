@@ -1,14 +1,14 @@
-#include "AdamOptimizer.h"
+#include "NadamOptimizer.h"
 
 using namespace std;
 
-const std::string AdamOptimizer::ETA = "eta"; // Parameter string [REQUIRED]
-const std::string AdamOptimizer::BATCH_SIZE = "batchSize"; // Parameter string [OPTIONAL]
-const std::string AdamOptimizer::BETA1 = "beta1"; // Parameter string [OPTIONAL]
-const std::string AdamOptimizer::BETA2 = "beta2"; // Parameter string [OPTIONAL]
-const std::string AdamOptimizer::EPSILON = "epsilon"; // Parameter string [OPTIONAL]
+const std::string NadamOptimizer::ETA = "eta"; // Parameter string [REQUIRED]
+const std::string NadamOptimizer::BATCH_SIZE = "batchSize"; // Parameter string [OPTIONAL]
+const std::string NadamOptimizer::BETA1 = "beta1"; // Parameter string [OPTIONAL]
+const std::string NadamOptimizer::BETA2 = "beta2"; // Parameter string [OPTIONAL]
+const std::string NadamOptimizer::EPSILON = "epsilon"; // Parameter string [OPTIONAL]
 
-AdamOptimizer::AdamOptimizer(vector<NeuralLayer*>* layers, double eta, int batchSize, double beta1, double beta2, double epsilon) : Optimizer(layers)
+NadamOptimizer::NadamOptimizer(vector<NeuralLayer*>* layers, double eta, int batchSize, double beta1, double beta2, double epsilon) : Optimizer(layers)
 {
 	this->eta = eta;
 	this->batchSize = batchSize;
@@ -18,12 +18,12 @@ AdamOptimizer::AdamOptimizer(vector<NeuralLayer*>* layers, double eta, int batch
 	this->t = 0;
 }
 
-AdamOptimizer::AdamOptimizer(vector<NeuralLayer*>* layers, std::map<std::string, double> additionalParameters) : Optimizer(layers)
+NadamOptimizer::NadamOptimizer(vector<NeuralLayer*>* layers, std::map<std::string, double> additionalParameters) : Optimizer(layers)
 {
 	if (additionalParameters.find(ETA) == additionalParameters.end())
 	{
 		throw std::invalid_argument(std::string("Missing required parameter: ") +
-			"AdamOptimizer::ETA" + " (\"" + ETA + "\")");
+			"NadamOptimizer::ETA" + " (\"" + ETA + "\")");
 	}
 	else
 	{
@@ -72,7 +72,7 @@ AdamOptimizer::AdamOptimizer(vector<NeuralLayer*>* layers, std::map<std::string,
 	}
 }
 
-xt::xarray<double> AdamOptimizer::getDeltaWeight(long parameterID, const xt::xarray<double>& gradient)
+xt::xarray<double> NadamOptimizer::getDeltaWeight(long parameterID, const xt::xarray<double>& gradient)
 {
 	if (m.find(parameterID) == m.end() ||
 		v.find(parameterID) == v.end())
@@ -87,6 +87,7 @@ xt::xarray<double> AdamOptimizer::getDeltaWeight(long parameterID, const xt::xar
 	v[parameterID] = (beta2 * v[parameterID]) + ((1 - beta2) * xt::pow(gradient, 2.0));
 	auto mHat = m[parameterID] / (1 - std::pow(beta1, t));
 	auto vHat = v[parameterID] / (1 - std::pow(beta2, t));
-	xt::xarray<double> optimizedGradient = -eta / (xt::pow(vHat, 0.5) + epsilon) * mHat;
+	xt::xarray<double> optimizedGradient = -eta / (xt::pow(vHat, 0.5) + epsilon) * 
+											((beta1 * mHat) + (((1 - beta1) * gradient) / (1 - std::pow(beta1, t))));
 	return optimizedGradient;
 }

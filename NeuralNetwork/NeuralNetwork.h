@@ -18,7 +18,10 @@ enum class OptimizerType
 	Adamax, // Adamax
 	RProp, // Resilient Propagation
 	RMSProp, // Root Mean Square Propagation
-	Adam // Adaptive Moment Estimation
+	Adam, // Adaptive Moment Estimation
+	Nadam, // Nesterov-accelerated Adaptive Moment Estimation
+	AMSGrad, // AMSGrad
+	Ftrl // Follow The Regularized Leader (-Proximal)
 };
 
 enum class ErrorFunctionType

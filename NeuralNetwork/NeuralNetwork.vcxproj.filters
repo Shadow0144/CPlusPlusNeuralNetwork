@@ -273,6 +273,15 @@
     <ClCompile Include="RPropOptimizer.cpp">
       <Filter>Source Files\Optimizer</Filter>
     </ClCompile>
+    <ClCompile Include="NadamOptimizer.cpp">
+      <Filter>Source Files\Optimizer</Filter>
+    </ClCompile>
+    <ClCompile Include="AMSGradOptimizer.cpp">
+      <Filter>Source Files\Optimizer</Filter>
+    </ClCompile>
+    <ClCompile Include="FtrlOptimizer.cpp">
+      <Filter>Source Files\Optimizer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NeuralNetwork.h">
@@ -489,6 +498,15 @@
       <Filter>Header Files\Optimizer</Filter>
     </ClInclude>
     <ClInclude Include="RPropOptimizer.h">
+      <Filter>Header Files\Optimizer</Filter>
+    </ClInclude>
+    <ClInclude Include="NadamOptimizer.h">
+      <Filter>Header Files\Optimizer</Filter>
+    </ClInclude>
+    <ClInclude Include="AMSGradOptimizer.h">
+      <Filter>Header Files\Optimizer</Filter>
+    </ClInclude>
+    <ClInclude Include="FtrlOptimizer.h">
       <Filter>Header Files\Optimizer</Filter>
     </ClInclude>
   </ItemGroup>

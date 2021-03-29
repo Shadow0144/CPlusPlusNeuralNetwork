@@ -52,63 +52,21 @@ SGDOptimizer::SGDOptimizer(vector<NeuralLayer*>* layers, std::map<std::string, d
 	}
 }
 
-double SGDOptimizer::backPropagateBatch(const xt::xarray<double>& inputs, const xt::xarray<double>& targets)
+void SGDOptimizer::backPropagateBatch(const xt::xarray<double>& inputs, const xt::xarray<double>& targets)
 {
-	bool converged = true;
-
-	// We need to limit the size of the data being processed at once for memory reasons, but the update will still be on the entire batch
-	const int N = inputs.shape()[0];
-	const int INTERNAL_BATCHES = ceil(N / INTERNAL_BATCH_LIMIT);
-	int iBatchSize = N / INTERNAL_BATCHES;
-
-	size_t layerCount = layers->size();
-	auto shape = layers->at(layerCount - 1)->getOutputShape();
-	shape[0] = N;
 	if (nesterov) // If Nesterov accelerated gradient (NAG) is enabled, we want to find the gradient of the predicted weights
 	{
 		substituteAllParameters();
 	}
 	else { }
-	xt::xarray<double> predicted = xt::xarray<double>(shape);
 
-	for (int i = 0; i < INTERNAL_BATCHES; i++)
-	{
-		// Set up the batch
-		int iBatchStart = ((i + 0) * iBatchSize) % N;
-		int iBatchEnd = ((i + 1) * iBatchSize) % N;
-		if ((iBatchEnd - iBatchStart) != iBatchSize)
-		{
-			iBatchEnd = N;
-		}
-		else { }
-
-		xt::xstrided_slice_vector iBatchSV({ xt::range(iBatchStart, iBatchEnd), xt::ellipsis() });
-
-		// Feed forward and calculate the gradient
-		xt::xarray<double> predicted = feedForwardTrain(xt::strided_view(inputs, iBatchSV));
-		xt::xarray<double> sigma = errorFunction->getGradient(predicted, xt::strided_view(targets, iBatchSV));
-
-		// Backpropagate through the layers until the input layer
-		for (int l = (layerCount - 1); l > 0; l--)
-		{
-			sigma = layers->at(l)->getGradient(sigma, this);
-		}
-	}
-
+	Optimizer::backPropagateBatch(inputs, targets);
+	
 	if (nesterov) // If Nesterov accelerated gradient (NAG) is enabled, restore the weights before updating them
 	{
-		substituteAllParameters();
+		restoreAllParameters();
 	}
 	else { }
-
-	// Apply the backpropagation
-	double deltaSum = 0.0;
-	for (int l = 0; l < layerCount; l++)
-	{
-		deltaSum += layers->at(l)->applyBackPropagate();
-	}
-
-	return deltaSum;
 }
 
 xt::xarray<double> SGDOptimizer::getDeltaWeight(long parameterID, const xt::xarray<double>& gradient)
