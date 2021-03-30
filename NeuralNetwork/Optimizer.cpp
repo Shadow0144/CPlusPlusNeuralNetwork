@@ -6,6 +6,22 @@ using namespace std;
 
 const double Optimizer::INTERNAL_BATCH_LIMIT = 20;
 
+const std::string Optimizer::BATCH_SIZE = "batchSize";
+const std::string Optimizer::ETA = "eta";
+const std::string Optimizer::ALPHA = "alpha";
+const std::string Optimizer::BETA = "beta";
+const std::string Optimizer::BETA1 = "beta1";
+const std::string Optimizer::BETA2 = "beta2";
+const std::string Optimizer::GAMMA = "gamma";
+const std::string Optimizer::EPSILON = "epsilon";
+const std::string Optimizer::NESTEROV = "nesterov";
+const std::string Optimizer::MIN_ALPHA = "minAlpha";
+const std::string Optimizer::MAX_ALPHA = "maxAlpha";
+const std::string Optimizer::SHRINK_ALPHA = "shrinkAlpha";
+const std::string Optimizer::GROW_ALPHA = "growAlpha";
+const std::string Optimizer::LAMDA1 = "lamda1";
+const std::string Optimizer::LAMDA2 = "lamda2";
+
 Optimizer::Optimizer(vector<NeuralLayer*>* layers)
 {
 	this->layers = layers;

@@ -11,7 +11,7 @@
 class SGDOptimizer : public Optimizer
 {
 public:
-	SGDOptimizer(std::vector<NeuralLayer*>* layers, double eta, int batchSize = -1, double gamma = 0, bool nesterov = false);
+	SGDOptimizer(std::vector<NeuralLayer*>* layers, int batchSize = -1, double eta = 0.01, double gamma = 0, bool nesterov = false);
 	SGDOptimizer(std::vector<NeuralLayer*>* layers, std::map<std::string, double> additionalParameters = std::map<std::string, double>());
 
 	xt::xarray<double> getDeltaWeight(long parameterID, const xt::xarray<double>& gradient); // Adjusts the gradient based on the optimizer
@@ -19,10 +19,14 @@ public:
 	void substituteParameters(ParameterSet& parameterSet);
 	void restoreParameters(ParameterSet& parameterSet);
 
-	const static std::string ETA; // = "eta"; // Parameter string [REQUIRED] // Learning rate
-	const static std::string BATCH_SIZE; // = "batchSize"; // Parameter string [OPTIONAL] // Values less than 0 for batch size = N
-	const static std::string GAMMA; // = "gamma"; // Parameter string [OPTIONAL] // Momentum rate
-	const static std::string NESTEROV; // = "nesterov"; // Parameter string [OPTIONAL] // Non-zero values for enabled
+	inline std::vector<std::string> getHyperparameterStrings() {
+		return {
+			BATCH_SIZE, // = "batchSize"; // Values less than 0 for batch size = N
+			ETA, // = "eta"; // Learning rate
+			GAMMA, // = "gamma"; // Momentum rate
+			NESTEROV // = "nesterov"; // Non-zero values for enabled
+		};
+	}
 
 private:
 	double eta; // Learning rate

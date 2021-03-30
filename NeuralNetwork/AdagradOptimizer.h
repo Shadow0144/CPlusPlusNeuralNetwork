@@ -11,14 +11,18 @@
 class AdagradOptimizer : public Optimizer
 {
 public:
-	AdagradOptimizer(std::vector<NeuralLayer*>* layers, double eta, int batchSize = -1, double epsilon = 1e-7);
+	AdagradOptimizer(std::vector<NeuralLayer*>* layers, int batchSize = -1, double eta = 0.01,  double epsilon = 1e-7);
 	AdagradOptimizer(std::vector<NeuralLayer*>* layers, std::map<std::string, double> additionalParameters = std::map<std::string, double>());
 
 	xt::xarray<double> getDeltaWeight(long parameterID, const xt::xarray<double>& gradient); // Adjusts the gradient based on the optimizer
-
-	const static std::string ETA; // = "eta"; // Parameter string [REQUIRED] // Learning rate
-	const static std::string BATCH_SIZE; // = "batchSize"; // Parameter string [OPTIONAL] // Values less than 0 for batch size = N
-	const static std::string EPSILON; // = "epsilon"; // Parameter string [OPTIONAL] // Avoids divide-by-zero errors
+	virtual inline std::vector<std::string> getHyperparameterStrings()
+	{
+		return {
+			BATCH_SIZE, // = "batchSize"; // Values less than 0 for batch size = N
+			ETA, // = "eta"; // Learning rate
+			EPSILON // = "epsilon"; // Avoids divide-by-zero errors
+		};
+	}
 
 private:
 	double eta; // Learning rate

@@ -16,10 +16,15 @@ public:
 
 	xt::xarray<double> getDeltaWeight(long parameterID, const xt::xarray<double>& gradient); // Adjusts the gradient based on the optimizer
 
-	const static std::string MIN_ALPHA; // = "minAlpha"; // Parameter string [OPTIONAL] // Minimum value for any learning rate
-	const static std::string MAX_ALPHA; // = "maxAlpha"; // Parameter string [OPTIONAL] // Maximum value for any learning rate
-	const static std::string SHRINK_ALPHA; // = "shrinkAlpha"; // Parameter string [OPTIONAL] // Value to multiplicatively decrease a learning rate by
-	const static std::string GROW_ALPHA; // = "growAlpha"; // Parameter string [OPTIONAL] // Value to multiplicatively increase a learning rate by
+	virtual inline std::vector<std::string> getHyperparameterStrings()
+	{
+		return {
+			MIN_ALPHA, // = "minAlpha"; // Minimum value for any learning rate
+			MAX_ALPHA, // = "maxAlpha"; // Maximum value for any learning rate
+			SHRINK_ALPHA, // = "shrinkAlpha"; // Value to multiplicatively decrease a learning rate by
+			GROW_ALPHA // = "growAlpha"; // Value to multiplicatively increase a learning rate by
+		};
+	}
 
 private:
 	std::map<long, xt::xarray<double>> alpha; // Learning rates

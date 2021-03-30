@@ -2,53 +2,47 @@
 
 using namespace std;
 
-const std::string SGDOptimizer::ETA = "eta"; // Parameter string [REQUIRED]
-const std::string SGDOptimizer::BATCH_SIZE = "batchSize"; // Parameter string [OPTIONAL]
-const std::string SGDOptimizer::GAMMA = "gamma"; // Parameter string [OPTIONAL]
-const std::string SGDOptimizer::NESTEROV = "nesterov"; // Parameter string [OPTIONAL]
-
-SGDOptimizer::SGDOptimizer(vector<NeuralLayer*>* layers, double eta, int batchSize, double gamma, bool nesterov) : Optimizer(layers)
+SGDOptimizer::SGDOptimizer(vector<NeuralLayer*>* layers, int batchSize, double eta, double gamma, bool nesterov) : Optimizer(layers)
 {
-	this->eta = eta;
 	this->batchSize = batchSize;
+	this->eta = eta;
 	this->gamma = gamma;
 	this->nesterov = nesterov;
 }
 
 SGDOptimizer::SGDOptimizer(vector<NeuralLayer*>* layers, std::map<std::string, double> additionalParameters) : Optimizer(layers)
 {
+	if (additionalParameters.find(BATCH_SIZE) == additionalParameters.end())
+	{
+		this->batchSize = -1;
+	}
+	else
+	{
+		this->batchSize = additionalParameters[BATCH_SIZE];
+	}
 	if (additionalParameters.find(ETA) == additionalParameters.end())
 	{
-		throw std::invalid_argument(std::string("Missing required parameter: ") +
-			"SGDOptimizer::ETA" + " (\"" + ETA + "\")");
+		this->eta = -1;
 	}
 	else
 	{
 		this->eta = additionalParameters[ETA];
-		if (additionalParameters.find(BATCH_SIZE) == additionalParameters.end())
-		{
-			this->batchSize = -1;
-		}
-		else
-		{
-			this->batchSize = additionalParameters[BATCH_SIZE];
-		}
-		if (additionalParameters.find(GAMMA) == additionalParameters.end())
-		{
-			this->gamma = 0;
-		}
-		else
-		{
-			this->gamma = additionalParameters[GAMMA];
-		}
-		if (additionalParameters.find(NESTEROV) == additionalParameters.end())
-		{
-			this->nesterov = false;
-		}
-		else
-		{
-			this->nesterov = (additionalParameters[NESTEROV] != 0);
-		}
+	}
+	if (additionalParameters.find(GAMMA) == additionalParameters.end())
+	{
+		this->gamma = 0;
+	}
+	else
+	{
+		this->gamma = additionalParameters[GAMMA];
+	}
+	if (additionalParameters.find(NESTEROV) == additionalParameters.end())
+	{
+		this->nesterov = false;
+	}
+	else
+	{
+		this->nesterov = (additionalParameters[NESTEROV] != 0);
 	}
 }
 

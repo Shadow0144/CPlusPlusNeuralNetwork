@@ -16,9 +16,14 @@ public:
 
 	xt::xarray<double> getDeltaWeight(long parameterID, const xt::xarray<double>& gradient); // Adjusts the gradient based on the optimizer
 
-	const static std::string BATCH_SIZE; // = "batchSize"; // Parameter string [OPTIONAL] // Values less than 0 for batch size = N
-	const static std::string GAMMA; // = "gamma"; // Parameter string [OPTIONAL] // Momentum rate
-	const static std::string EPSILON; // = "epsilon"; // Parameter string [OPTIONAL] // Avoids divide-by-zero errors
+	virtual inline std::vector<std::string> getHyperparameterStrings()
+	{
+		return {
+			BATCH_SIZE, // = "batchSize"; // Values less than 0 for batch size = N
+			GAMMA, // = "gamma"; // Momentum rate
+			EPSILON // = "epsilon"; // Avoids divide-by-zero errors
+		};
+	}
 
 private:
 	double gamma; // Momentum rate

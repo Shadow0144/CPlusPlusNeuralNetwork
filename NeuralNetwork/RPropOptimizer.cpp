@@ -2,11 +2,6 @@
 
 using namespace std;
 
-const std::string RPropOptimizer::MIN_ALPHA = "minAlpha"; // Parameter string [OPTIONAL]
-const std::string RPropOptimizer::MAX_ALPHA = "maxAlpha"; // Parameter string [OPTIONAL]
-const std::string RPropOptimizer::SHRINK_ALPHA = "shrinkAlpha"; // Parameter string [OPTIONAL]
-const std::string RPropOptimizer::GROW_ALPHA = "growAlpha"; // Parameter string [OPTIONAL]
-
 RPropOptimizer::RPropOptimizer(vector<NeuralLayer*>* layers, double shrinkAlpha, double growAlpha, double minAlpha, double maxAlpha) : Optimizer(layers)
 {
 	this->shrinkAlpha = shrinkAlpha;

@@ -20,19 +20,24 @@ public:
 
 	void substituteParameters(ParameterSet& parameterSet);
 
-	const static std::string BATCH_SIZE; // = "batchSize"; // Parameter string [OPTIONAL] // Values less than 0 for batch size = N
-	const static std::string ALPHA; // = "alpha"; // Parameter string [REQUIRED] // 
-	const static std::string BETA; // = "beta"; // Parameter string [REQUIRED] // 
-	const static std::string LAMDA1; // = "lamda1"; // Parameter string [OPTIONAL] // 
-	const static std::string LAMDA2; // = "lamda2"; // Parameter string [OPTIONAL] // 
+	virtual inline std::vector<std::string> getHyperparameterStrings()
+	{
+		return {
+			BATCH_SIZE, // = "batchSize"; // Values less than 0 for batch size = N
+			ALPHA, // = "alpha"; // Learning rate factor
+			BETA, // = "beta"; // Learning rate factor
+			LAMDA1, // = "lamda1"; // L1 regularization strength
+			LAMDA2, // = "lamda2"; // L2 regularization strength
+		};
+	}
 
 private:
-	double alpha; // 
-	double beta; // 
-	double lamda1; // 
-	double lamda2; // 
+	double alpha; // Learning rate factor
+	double beta; // Learning rate factor
+	double lamda1; // L1 regularization strength
+	double lamda2; // L2 regularization strength
 
-	std::map<long, xt::xarray<double>> z; // 
-	std::map<long, xt::xarray<double>> n; // 
+	std::map<long, xt::xarray<double>> z; // Intermediate
+	std::map<long, xt::xarray<double>> n; // Intermediate
 	std::map<long, xt::xarray<double>> w; // Current weights
 };

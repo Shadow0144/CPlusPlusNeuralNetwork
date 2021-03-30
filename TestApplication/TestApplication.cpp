@@ -37,16 +37,17 @@
 //#include "MeanSquareErrorFunction.h"
 //#include "CrossEntropyErrorFunction.h"
 
-#include "SGDOptimizer.h"
-#include "AdagradOptimizer.h"
-#include "AdadeltaOptimizer.h"
-#include "AdamaxOptimizer.h"
-#include "RPropOptimizer.h"
-#include "RMSPropOptimizer.h"
-#include "AdamOptimizer.h"
-#include "NadamOptimizer.h"
-#include "AMSGradOptimizer.h"
-#include "FtrlOptimizer.h"
+//#include "SGDOptimizer.h"
+//#include "AdagradOptimizer.h"
+//#include "AdadeltaOptimizer.h"
+//#include "AdamaxOptimizer.h"
+//#include "RPropOptimizer.h"
+//#include "RMSPropOptimizer.h"
+//#include "AdamOptimizer.h"
+//#include "NadamOptimizer.h"
+//#include "AMSGradOptimizer.h"
+//#include "FtrlOptimizer.h"
+//#include "Optimizer.h"
 
 #include "NetworkVisualizer.h"
 
@@ -271,8 +272,8 @@ void test_signal(int layers)
     optimizerParams[SGDOptimizer::NESTEROV] = 1.0; // Enable*/
     //optimizerParams[SGDOptimizer::ETA] = 0.002;
     //optimizerParams[FtrlOptimizer::BATCH_SIZE] = 10;
-    optimizerParams[FtrlOptimizer::LAMDA1] = 0.0001;
-    optimizerParams[FtrlOptimizer::LAMDA2] = 0.0001;
+    optimizerParams[Optimizer::LAMDA1] = 0.0001;
+    optimizerParams[Optimizer::LAMDA2] = 0.0001;
     network.setOptimizer(OptimizerType::Ftrl, optimizerParams);
     network.displayRegressionEstimation();
 
@@ -391,7 +392,7 @@ void test_iris(int layers)
 
     NeuralNetwork network = NeuralNetwork();
     std::map<string, double> optimizerParams;
-    optimizerParams[SGDOptimizer::ETA] = 0.01;
+    optimizerParams[Optimizer::ETA] = 0.01;
     network.setOptimizer(OptimizerType::SGD, optimizerParams);
     network.setErrorFunction(ErrorFunctionType::CrossEntropy);
     ImColor* classColors = new ImColor[3]
@@ -474,8 +475,8 @@ void test_binary()
     network.addSoftmaxLayer(-1);
 
     std::map<string, double> optimizerParams;
-    optimizerParams[SGDOptimizer::ETA] = 0.01;
-    optimizerParams[SGDOptimizer::BATCH_SIZE] = 10;
+    optimizerParams[Optimizer::ETA] = 0.01;
+    optimizerParams[Optimizer::BATCH_SIZE] = 10;
     network.setOptimizer(OptimizerType::SGD, optimizerParams);
     network.setErrorFunction(ErrorFunctionType::CrossEntropy);
 
@@ -535,8 +536,8 @@ void test_mnist()
     network.addSoftmaxLayer(-1);
 
     std::map<string, double> optimizerParams;
-    optimizerParams[SGDOptimizer::ETA] = 0.01;
-    optimizerParams[SGDOptimizer::BATCH_SIZE] = 20;
+    optimizerParams[Optimizer::ETA] = 0.01;
+    optimizerParams[Optimizer::BATCH_SIZE] = 20;
     network.setOptimizer(OptimizerType::SGD, optimizerParams);
     network.setErrorFunction(ErrorFunctionType::CrossEntropy);
     network.setOutputRate(1);
@@ -598,8 +599,8 @@ void test_catdog()
     network.addSoftmaxLayer(-1);
 
     std::map<string, double> optimizerParams;
-    optimizerParams[SGDOptimizer::ETA] = 0.01;
-    optimizerParams[SGDOptimizer::BATCH_SIZE] = 1;
+    optimizerParams[Optimizer::ETA] = 0.01;
+    optimizerParams[Optimizer::BATCH_SIZE] = 1;
     network.setOptimizer(OptimizerType::SGD, optimizerParams);
     network.setErrorFunction(ErrorFunctionType::CrossEntropy);
     network.setOutputRate(1);

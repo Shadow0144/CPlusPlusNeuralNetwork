@@ -2,10 +2,6 @@
 
 using namespace std;
 
-const std::string AdadeltaOptimizer::BATCH_SIZE = "batchSize"; // Parameter string [OPTIONAL]
-const std::string AdadeltaOptimizer::GAMMA = "gamma"; // Parameter string [OPTIONAL]
-const std::string AdadeltaOptimizer::EPSILON = "epsilon"; // Parameter string [OPTIONAL]
-
 AdadeltaOptimizer::AdadeltaOptimizer(vector<NeuralLayer*>* layers, int batchSize, double gamma, double epsilon) : Optimizer(layers)
 {
 	this->batchSize = batchSize;

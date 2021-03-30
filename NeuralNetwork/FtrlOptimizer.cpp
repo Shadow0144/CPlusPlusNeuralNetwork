@@ -2,12 +2,6 @@
 
 using namespace std;
 
-const std::string FtrlOptimizer::BATCH_SIZE = "batchSize"; // Parameter string [OPTIONAL]
-const std::string FtrlOptimizer::ALPHA = "alpha"; // Parameter string [OPTIONAL]
-const std::string FtrlOptimizer::BETA = "beta"; // Parameter string [OPTIONAL]
-const std::string FtrlOptimizer::LAMDA1 = "lamda1"; // Parameter string [OPTIONAL]
-const std::string FtrlOptimizer::LAMDA2 = "lamda2"; // Parameter string [OPTIONAL]
-
 FtrlOptimizer::FtrlOptimizer(vector<NeuralLayer*>* layers, int batchSize, double alpha, double beta, double lamda1, double lamda2) : Optimizer(layers)
 {
 	this->batchSize = batchSize;
@@ -19,14 +13,6 @@ FtrlOptimizer::FtrlOptimizer(vector<NeuralLayer*>* layers, int batchSize, double
 
 FtrlOptimizer::FtrlOptimizer(vector<NeuralLayer*>* layers, std::map<std::string, double> additionalParameters) : Optimizer(layers)
 {
-	if (additionalParameters.find(BATCH_SIZE) == additionalParameters.end())
-	{
-		this->batchSize = -1;
-	}
-	else
-	{
-		this->batchSize = additionalParameters[BATCH_SIZE];
-	}
 	if (additionalParameters.find(BATCH_SIZE) == additionalParameters.end())
 	{
 		this->batchSize = -1;

@@ -2,43 +2,38 @@
 
 using namespace std;
 
-const std::string AdagradOptimizer::ETA = "eta"; // Parameter string [REQUIRED]
-const std::string AdagradOptimizer::BATCH_SIZE = "batchSize"; // Parameter string [OPTIONAL]
-const std::string AdagradOptimizer::EPSILON = "epsilon"; // Parameter string [OPTIONAL]
-
-AdagradOptimizer::AdagradOptimizer(vector<NeuralLayer*>* layers, double eta, int batchSize, double epsilon) : Optimizer(layers)
+AdagradOptimizer::AdagradOptimizer(vector<NeuralLayer*>* layers, int batchSize, double eta, double epsilon) : Optimizer(layers)
 {
-	this->eta = eta;
 	this->batchSize = batchSize;
+	this->eta = eta;
 	this->epsilon = epsilon;
 }
 
 AdagradOptimizer::AdagradOptimizer(vector<NeuralLayer*>* layers, std::map<std::string, double> additionalParameters) : Optimizer(layers)
 {
+	if (additionalParameters.find(BATCH_SIZE) == additionalParameters.end())
+	{
+		this->batchSize = -1;
+	}
+	else
+	{
+		this->batchSize = additionalParameters[BATCH_SIZE];
+	}
 	if (additionalParameters.find(ETA) == additionalParameters.end())
 	{
-		throw std::invalid_argument(std::string("Missing required parameter: ") +
-			"AdagradOptimizer::ETA" + " (\"" + ETA + "\")");
+		this->eta = -1;
 	}
 	else
 	{
 		this->eta = additionalParameters[ETA];
-		if (additionalParameters.find(BATCH_SIZE) == additionalParameters.end())
-		{
-			this->batchSize = -1;
-		}
-		else
-		{
-			this->batchSize = additionalParameters[BATCH_SIZE];
-		}
-		if (additionalParameters.find(EPSILON) == additionalParameters.end())
-		{
-			this->epsilon = 1e-7;
-		}
-		else
-		{
-			this->epsilon = additionalParameters[EPSILON];
-		}
+	}
+	if (additionalParameters.find(EPSILON) == additionalParameters.end())
+	{
+		this->epsilon = 1e-7;
+	}
+	else
+	{
+		this->epsilon = additionalParameters[EPSILON];
 	}
 }
 

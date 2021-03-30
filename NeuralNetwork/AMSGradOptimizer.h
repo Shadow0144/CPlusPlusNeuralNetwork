@@ -11,16 +11,21 @@
 class AMSGradOptimizer : public Optimizer
 {
 public:
-	AMSGradOptimizer(std::vector<NeuralLayer*>* layers, double eta, int batchSize = -1, double beta1 = 0.9, double beta2 = 0.999, double epsilon = 1e-8);
+	AMSGradOptimizer(std::vector<NeuralLayer*>* layers, int batchSize = -1, double eta = 0.01, double beta1 = 0.9, double beta2 = 0.999, double epsilon = 1e-8);
 	AMSGradOptimizer(std::vector<NeuralLayer*>* layers, std::map<std::string, double> additionalParameters = std::map<std::string, double>());
 
 	xt::xarray<double> getDeltaWeight(long parameterID, const xt::xarray<double>& gradient); // Adjusts the gradient based on the optimizer
 
-	const static std::string ETA; // = "eta"; // Parameter string [REQUIRED] // Learning rate
-	const static std::string BATCH_SIZE; // = "batchSize"; // Parameter string [OPTIONAL] // Values less than 0 for batch size = N
-	const static std::string BETA1; // = "beta1"; // Parameter string [OPTIONAL] // First movement decay rate
-	const static std::string BETA2; // = "beta2"; // Parameter string [OPTIONAL] // Second movement decay rate
-	const static std::string EPSILON; // = "epsilon"; // Parameter string [OPTIONAL] // Avoids divide-by-zero errors
+	virtual inline std::vector<std::string> getHyperparameterStrings()
+	{
+		return {
+			BATCH_SIZE, // = "batchSize"; // Values less than 0 for batch size = N
+			ETA, // = "eta"; // Parameter string // Learning rate
+			BETA1, // = "beta1"; // Parameter string // First movement decay rate
+			BETA2, // = "beta2"; // Parameter string // Infinite movement decay rate
+			EPSILON // = "epsilon"; // Avoids divide-by-zero errors
+		};
+	}
 
 private:
 	double eta; // Learning rate
