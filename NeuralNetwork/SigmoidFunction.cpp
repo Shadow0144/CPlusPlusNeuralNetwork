@@ -17,16 +17,6 @@ double SigmoidFunction::activate(double z) const
 	return sigmoid(z);
 }
 
-double SigmoidFunction::sigmoid(double z) const
-{
-	return (1.0 / (1.0 + exp(-z)));
-}
-	
-xt::xarray<double> SigmoidFunction::sigmoid(const xt::xarray<double>& z) const
-{
-	return (1.0 / (1.0 + exp(-z)));
-}
-
 xt::xarray<double> SigmoidFunction::feedForward(const xt::xarray<double>& inputs) const
 {
 	return sigmoid(inputs);

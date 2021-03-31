@@ -64,6 +64,16 @@ std::vector<size_t> ActivationFunction::getOutputShape(std::vector<size_t> outpu
 	return outputShape;
 }
 
+double ActivationFunction::sigmoid(double z) const
+{
+	return (1.0 / (1.0 + exp(-z)));
+}
+
+xt::xarray<double> ActivationFunction::sigmoid(const xt::xarray<double>& z) const
+{
+	return (1.0 / (1.0 + exp(-z)));
+}
+
 xt::xarray<double> ActivationFunction::approximateBezier(const xt::xarray<double>& points) const
 {
 	xt::xarray<double> T =

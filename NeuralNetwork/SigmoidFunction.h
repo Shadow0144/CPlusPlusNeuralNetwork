@@ -14,7 +14,4 @@ public:
 
 private:
 	double activate(double z) const;
-
-	double sigmoid(double z) const;
-	xt::xarray<double> sigmoid(const xt::xarray<double>& z) const;
 };

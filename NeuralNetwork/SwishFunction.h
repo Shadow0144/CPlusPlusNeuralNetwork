@@ -17,7 +17,4 @@ private:
 
 	double swish(double z) const;
 	xt::xarray<double> swish(const xt::xarray<double>& z) const;
-
-	double sigmoid(double z) const;
-	xt::xarray<double> sigmoid(const xt::xarray<double>& z) const;
 };

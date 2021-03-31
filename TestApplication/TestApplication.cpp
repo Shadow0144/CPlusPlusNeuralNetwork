@@ -23,6 +23,7 @@
 #include <filesystem>
 #include <xtensor/xarray.hpp>
 #include <xtensor/xnpy.hpp>
+#include <xtensor/xcsv.hpp>
 #include <xtensor/xview.hpp>
 #include <xtensor/xio.hpp>
 #include <xtensor/xsort.hpp>
@@ -262,7 +263,7 @@ void test_signal(int layers)
     //network.addDropoutLayer();
     network.addDenseLayer(ActivationFunctionType::ReLU, 6);
     network.addDenseLayer(ActivationFunctionType::Sigmoid, 6);
-    network.addDenseLayer(ActivationFunctionType::Identity, 1);
+    network.addDenseLayer(ActivationFunctionType::Softplus, 1);
 
     //network.enableStoppingCondition(StoppingCondition::Min_Delta_Error, 1e-8);
     network.setErrorFunction(ErrorFunctionType::MeanSquaredError);
@@ -274,7 +275,7 @@ void test_signal(int layers)
     //optimizerParams[FtrlOptimizer::BATCH_SIZE] = 10;
     optimizerParams[Optimizer::LAMDA1] = 0.0001;
     optimizerParams[Optimizer::LAMDA2] = 0.0001;
-    network.setOptimizer(OptimizerType::Ftrl, optimizerParams);
+    network.setOptimizer(OptimizerType::Adam, optimizerParams);
     network.displayRegressionEstimation();
 
     /* // Linear
@@ -496,7 +497,7 @@ void test_mnist()
     ifstream in_file;
     //in_file.open("mnist_mini.csv");
     in_file.open("mnist_fashion_test.csv");
-    auto data = xt::load_npy<double>(in_file);
+    auto data = xt::load_csv<double>(in_file);
     in_file.close();
 
     const int N = ((int)(data.shape()[0])); // Number of examples
@@ -532,15 +533,18 @@ void test_mnist()
     network.addMaxPooling2DLayer({ 2, 2 }); // 8x8x16 -> 4x4x16
     network.addFlattenLayer(4 * 4 * NUM_KERNELS_2); // 4x4x16 -> 256
     network.addDenseLayer(ActivationFunctionType::Sigmoid, 32); // 256 -> 32
-    network.addDenseLayer(ActivationFunctionType::Softplus, CLASSES); // 32 -> 10
+    network.addDenseLayer(ActivationFunctionType::Sigmoid, CLASSES); // 32 -> 10
     network.addSoftmaxLayer(-1);
 
     std::map<string, double> optimizerParams;
-    optimizerParams[Optimizer::ETA] = 0.01;
-    optimizerParams[Optimizer::BATCH_SIZE] = 20;
-    network.setOptimizer(OptimizerType::SGD, optimizerParams);
+    //optimizerParams[Optimizer::ETA] = 0.01;
+    //optimizerParams[Optimizer::BATCH_SIZE] = 20;
+    optimizerParams[Optimizer::LAMDA1] = 0.0001;
+    optimizerParams[Optimizer::LAMDA2] = 0.0001;
+    network.setOptimizer(OptimizerType::Adam, optimizerParams);
     network.setErrorFunction(ErrorFunctionType::CrossEntropy);
     network.setOutputRate(1);
+    //network.enableStoppingCondition(StoppingCondition::Min_Delta_Error, 1e-5);
 
     const int COLS = 5;
     const int ROWS = min(EXAMPLE_COUNT / COLS, 30);

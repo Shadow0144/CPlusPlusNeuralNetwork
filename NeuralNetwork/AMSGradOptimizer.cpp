@@ -24,7 +24,7 @@ AMSGradOptimizer::AMSGradOptimizer(vector<NeuralLayer*>* layers, std::map<std::s
 	}
 	if (additionalParameters.find(ETA) == additionalParameters.end())
 	{
-		this->eta = -1;
+		this->eta = 0.01;
 	}
 	else
 	{

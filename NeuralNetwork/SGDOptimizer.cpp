@@ -22,7 +22,7 @@ SGDOptimizer::SGDOptimizer(vector<NeuralLayer*>* layers, std::map<std::string, d
 	}
 	if (additionalParameters.find(ETA) == additionalParameters.end())
 	{
-		this->eta = -1;
+		this->eta = 0.01;
 	}
 	else
 	{

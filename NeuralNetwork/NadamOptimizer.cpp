@@ -24,7 +24,7 @@ NadamOptimizer::NadamOptimizer(vector<NeuralLayer*>* layers, std::map<std::strin
 	}
 	if (additionalParameters.find(ETA) == additionalParameters.end())
 	{
-		this->eta = -1;
+		this->eta = 0.01;
 	}
 	else
 	{

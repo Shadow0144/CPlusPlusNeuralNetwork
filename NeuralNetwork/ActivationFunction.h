@@ -62,6 +62,9 @@ protected:
 	xt::xarray<double> lastOutput;
 	bool drawAxes = true;
 
+	double sigmoid(double z) const;
+	xt::xarray<double> sigmoid(const xt::xarray<double>& z) const;
+
 	virtual double activate(double z) const; // For drawing
 	xt::xarray<double> approximateBezier(const xt::xarray<double>& points) const; // For drawing
 	void approximateFunction(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights) const; // For drawing

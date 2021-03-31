@@ -48,11 +48,11 @@ ActivationFunction* ActivationFunctionFactory::getNewActivationFunction(Activati
 		case ActivationFunctionType::ELU:
 			if (additionalParameters.find(ELUFunction::ALPHA) == additionalParameters.end())
 			{
-				activationFunction = new ELUFunction(additionalParameters[ELUFunction::ALPHA]);
+				activationFunction = new ELUFunction();
 			}
 			else
 			{
-				activationFunction = new ELUFunction();
+				activationFunction = new ELUFunction(additionalParameters[ELUFunction::ALPHA]);
 			}
 			break;
 		case ActivationFunctionType::SELU:
@@ -64,11 +64,11 @@ ActivationFunction* ActivationFunctionFactory::getNewActivationFunction(Activati
 		case ActivationFunctionType::LeakyReLU:
 			if (additionalParameters.find(LeakyReLUFunction::A) == additionalParameters.end())
 			{
-				activationFunction = new LeakyReLUFunction(additionalParameters[LeakyReLUFunction::A]);
+				activationFunction = new LeakyReLUFunction();
 			}
 			else
 			{
-				activationFunction = new LeakyReLUFunction();
+				activationFunction = new LeakyReLUFunction(additionalParameters[LeakyReLUFunction::A]);
 			}
 			break;
 		case ActivationFunctionType::PReLU:
@@ -96,21 +96,21 @@ ActivationFunction* ActivationFunctionFactory::getNewActivationFunction(Activati
 		case ActivationFunctionType::ReLUn:
 			if (additionalParameters.find(ReLUnFunction::N) == additionalParameters.end())
 			{
-				activationFunction = new ReLUnFunction(additionalParameters[ReLUnFunction::N]);
+				activationFunction = new ReLUnFunction();
 			}
 			else
 			{
-				activationFunction = new ReLUnFunction();
+				activationFunction = new ReLUnFunction(additionalParameters[ReLUnFunction::N]);
 			}
 			break;
 		case ActivationFunctionType::Softplus:
 			if (additionalParameters.find(SoftplusFunction::K) == additionalParameters.end())
 			{
-				activationFunction = new SoftplusFunction(additionalParameters[SoftplusFunction::K]);
+				activationFunction = new SoftplusFunction();
 			}
 			else
 			{
-				activationFunction = new SoftplusFunction();
+				activationFunction = new SoftplusFunction(additionalParameters[SoftplusFunction::K]);
 			}
 			break;
 		case ActivationFunctionType::Exponential:

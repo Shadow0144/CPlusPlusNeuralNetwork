@@ -24,7 +24,7 @@ AdamaxOptimizer::AdamaxOptimizer(vector<NeuralLayer*>* layers, std::map<std::str
 	}
 	if (additionalParameters.find(ETA) == additionalParameters.end())
 	{
-		this->eta = -1;
+		this->eta = 0.01;
 	}
 	else
 	{

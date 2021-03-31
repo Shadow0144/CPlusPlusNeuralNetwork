@@ -10,16 +10,6 @@ SwishFunction::SwishFunction()
 
 }
 
-double SwishFunction::sigmoid(double z) const
-{
-	return (1.0 / (1.0 + exp(-z)));
-}
-
-xt::xarray<double> SwishFunction::sigmoid(const xt::xarray<double>& z) const
-{
-	return (1.0 / (1.0 + exp(-z)));
-}
-
 double SwishFunction::activate(double z) const
 {
 	return swish(z);

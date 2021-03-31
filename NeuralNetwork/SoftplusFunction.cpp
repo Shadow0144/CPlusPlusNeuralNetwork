@@ -44,9 +44,7 @@ xt::xarray<double> SoftplusFunction::feedForward(const xt::xarray<double>& input
 
 xt::xarray<double> SoftplusFunction::getGradient(const xt::xarray<double>& sigmas, Optimizer* optimizer)
 {
-	// TODO!!!
-	//return (1.0 / (1.0 + exp(-k * xt::linalg::tensordot(lastInput, weights.getParameters(), 1))));
-	return lastInput;
+	return (sigmas * sigmoid(k * lastInput));
 }
 
 double SoftplusFunction::getParameter(const std::string& parameterName) const
