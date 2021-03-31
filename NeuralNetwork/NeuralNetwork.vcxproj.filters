@@ -13,17 +13,11 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Source Files\ErrorFunction">
-      <UniqueIdentifier>{9c6fdaa7-b3a3-4286-ac9c-ed40fb5bba8d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\ActivationFunction">
       <UniqueIdentifier>{292a4076-72cb-4655-98ac-45c13577f502}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\ActivationFunction">
       <UniqueIdentifier>{00e166c2-0aed-4317-916e-b1d7322592fd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\ErrorFunction">
-      <UniqueIdentifier>{71842a1e-ee76-4533-9dbc-721be86e27fd}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\imgui">
       <UniqueIdentifier>{be8b3d9f-c88c-49d4-b3ea-d25413070cc5}</UniqueIdentifier>
@@ -69,6 +63,12 @@
     </Filter>
     <Filter Include="Header Files\Optimizer">
       <UniqueIdentifier>{9becd34e-e9be-496d-89d6-72dab45fb252}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\LossFunction">
+      <UniqueIdentifier>{9c6fdaa7-b3a3-4286-ac9c-ed40fb5bba8d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\LossFunction">
+      <UniqueIdentifier>{71842a1e-ee76-4533-9dbc-721be86e27fd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -126,8 +126,8 @@
     <ClCompile Include="ImageClassVisualizer.cpp">
       <Filter>Source Files\Visualizer</Filter>
     </ClCompile>
-    <ClCompile Include="MeanSquareErrorFunction.cpp">
-      <Filter>Source Files\ErrorFunction</Filter>
+    <ClCompile Include="MeanSquareErrorLossFunction.cpp">
+      <Filter>Source Files\LossFunction</Filter>
     </ClCompile>
     <ClCompile Include="Convolution1DNeuralLayer.cpp">
       <Filter>Source Files\NeuralLayer\ConvolutionLayer</Filter>
@@ -216,8 +216,8 @@
     <ClCompile Include="ActivationFunctionFactory.cpp">
       <Filter>Source Files\ActivationFunction</Filter>
     </ClCompile>
-    <ClCompile Include="CrossEntropyErrorFunction.cpp">
-      <Filter>Source Files\ErrorFunction</Filter>
+    <ClCompile Include="CrossEntropyLossFunction.cpp">
+      <Filter>Source Files\LossFunction</Filter>
     </ClCompile>
     <ClCompile Include="IdentityFunction.cpp">
       <Filter>Source Files\ActivationFunction</Filter>
@@ -287,8 +287,8 @@
     <ClInclude Include="NeuralNetwork.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ErrorFunction.h">
-      <Filter>Header Files\ErrorFunction</Filter>
+    <ClInclude Include="LossFunction.h">
+      <Filter>Header Files\LossFunction</Filter>
     </ClInclude>
     <ClInclude Include="ParameterSet.h">
       <Filter>Header Files</Filter>
@@ -350,8 +350,8 @@
     <ClInclude Include="ImageClassVisualizer.h">
       <Filter>Header Files\Visualizer</Filter>
     </ClInclude>
-    <ClInclude Include="MeanSquareErrorFunction.h">
-      <Filter>Header Files\ErrorFunction</Filter>
+    <ClInclude Include="MeanSquareErrorLossFunction.h">
+      <Filter>Header Files\LossFunction</Filter>
     </ClInclude>
     <ClInclude Include="Convolution1DNeuralLayer.h">
       <Filter>Header Files\NeuralLayer\ConvolutionLayer</Filter>
@@ -440,8 +440,8 @@
     <ClInclude Include="ActivationFunction.h">
       <Filter>Header Files\ActivationFunction</Filter>
     </ClInclude>
-    <ClInclude Include="CrossEntropyErrorFunction.h">
-      <Filter>Header Files\ErrorFunction</Filter>
+    <ClInclude Include="CrossEntropyLossFunction.h">
+      <Filter>Header Files\LossFunction</Filter>
     </ClInclude>
     <ClInclude Include="IdentityFunction.h">
       <Filter>Header Files\ActivationFunction</Filter>

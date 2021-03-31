@@ -1,4 +1,4 @@
-#include "MeanSquareErrorFunction.h"
+#include "MeanSquareErrorLossFunction.h"
 
 #include "Optimizer.h"
 
@@ -8,7 +8,7 @@
 
 using namespace std;
 
-double MeanSquareErrorFunction::getError(const xt::xarray<double>& predicted, const xt::xarray<double>& actual)
+double MeanSquareErrorLossFunction::getLoss(const xt::xarray<double>& predicted, const xt::xarray<double>& actual)
 {
 	size_t n = actual.shape()[0];
 	auto errors = predicted - actual;
@@ -22,7 +22,7 @@ double MeanSquareErrorFunction::getError(const xt::xarray<double>& predicted, co
 	return error();
 }
 
-xt::xarray<double> MeanSquareErrorFunction::getGradient(const xt::xarray<double>& predicted, const xt::xarray<double>& actual)
+xt::xarray<double> MeanSquareErrorLossFunction::getGradient(const xt::xarray<double>& predicted, const xt::xarray<double>& actual)
 {
 	return (2.0 * (predicted - actual));
 }

@@ -6,9 +6,9 @@
 
 class Optimizer;
 
-class ErrorFunction
+class LossFunction
 {
 public:
-	virtual double getError(const xt::xarray<double>& predicted, const xt::xarray<double>& actual) = 0;
+	virtual double getLoss(const xt::xarray<double>& predicted, const xt::xarray<double>& actual) = 0;
 	virtual xt::xarray<double> getGradient(const xt::xarray<double>& predicted, const xt::xarray<double>& actual) = 0;
 };

@@ -47,8 +47,9 @@
 #include "AMSGradOptimizer.h"
 #include "FtrlOptimizer.h"
 
-#include "CrossEntropyErrorFunction.h"
-#include "MeanSquareErrorFunction.h"
+#include "LossFunction.h"
+#include "CrossEntropyLossFunction.h"
+#include "MeanSquareErrorLossFunction.h"
 
 #include "NeuralNetworkFileHelper.h"
 
@@ -78,10 +79,10 @@ NeuralNetwork::NeuralNetwork(bool drawingEnabled)
 	this->currentEpoch = 0;
 
 	this->optimizer = nullptr;
-	this->errorFunction = nullptr;
+	this->lossFunction = nullptr;
 	this->maxEpochs = -1;
-	this->minError = -1;
-	this->errorConvergenceThreshold = -1;
+	this->minLoss = -1;
+	this->lossConvergenceThreshold = -1;
 	this->weightConvergenceThreshold = -1;
 	this->stoppingConditionFlags = new bool[4]; // There are four stopping conditions
 	for (int i = 0; i < 4; i++)
@@ -118,9 +119,9 @@ NeuralNetwork::~NeuralNetwork()
 		delete layers;
 	}
 	else { }
-	if (errorFunction != nullptr)
+	if (lossFunction != nullptr)
 	{
-		delete errorFunction;
+		delete lossFunction;
 	}
 	else { }
 	if (optimizer != nullptr)
@@ -323,10 +324,10 @@ void NeuralNetwork::train(const xt::xarray<double>& inputs, const xt::xarray<dou
 
 	if (optimizer != nullptr)
 	{
-		if (errorFunction != nullptr)
+		if (lossFunction != nullptr)
 		{
 			xt::xarray<double> predicted = predict(inputs);
-			double error = abs(getError(predicted, targets));
+			double loss = abs(getLoss(predicted, targets));
 			output(LearningState::untrained, currentEpoch, inputs, targets, predicted);
 
 			updateDrawing(predicted);
@@ -335,21 +336,21 @@ void NeuralNetwork::train(const xt::xarray<double>& inputs, const xt::xarray<dou
 
 			//currentEpoch = 0; //int t = 0; // This is set either in the constructor or when loading
 			bool converged = false;
-			double lastError = error;
-			double deltaError = error;
+			double lastLoss = loss;
+			double deltaLoss = loss;
 			while
 				(!((stoppingConditionFlags[((int)(StoppingCondition::Max_Epochs))]) && (currentEpoch >= maxEpochs)) &&
-					!((stoppingConditionFlags[((int)(StoppingCondition::Min_Error))]) && (error < 0 || error > minError)) &&
-					!((stoppingConditionFlags[((int)(StoppingCondition::Min_Delta_Error))]) && (deltaError < errorConvergenceThreshold)) &&
+					!((stoppingConditionFlags[((int)(StoppingCondition::Min_Loss))]) && (loss < 0 || loss > minLoss)) &&
+					!((stoppingConditionFlags[((int)(StoppingCondition::Min_Delta_Loss))]) && (deltaLoss < lossConvergenceThreshold)) &&
 					!((stoppingConditionFlags[((int)(StoppingCondition::Min_Delta_Params))]) && (!converged)))
 			{
 				double deltaSum = optimizer->backPropagate(inputs, targets);
 				converged = (deltaSum < weightConvergenceThreshold);
 
 				predicted = predict(inputs);
-				error = getError(predicted, targets);
-				deltaError = abs(lastError - error);
-				lastError = error;
+				loss = getLoss(predicted, targets);
+				deltaLoss = abs(lastLoss - loss);
+				lastLoss = loss;
 
 				updateDrawing(predicted);
 
@@ -375,11 +376,11 @@ void NeuralNetwork::train(const xt::xarray<double>& inputs, const xt::xarray<dou
 				{
 					cout << "Weights have converged" << endl << endl;
 				}
-				else if ((stoppingConditionFlags[((int)(StoppingCondition::Min_Delta_Error))]) && (deltaError <= errorConvergenceThreshold))
+				else if ((stoppingConditionFlags[((int)(StoppingCondition::Min_Delta_Loss))]) && (deltaLoss <= lossConvergenceThreshold))
 				{
-					cout << "Error has converged" << endl << endl;
+					cout << "Loss has converged" << endl << endl;
 				}
-				else if ((stoppingConditionFlags[((int)(StoppingCondition::Min_Error))]) && (error >= 0 && error <= minError))
+				else if ((stoppingConditionFlags[((int)(StoppingCondition::Min_Loss))]) && (loss >= 0 && loss <= minLoss))
 				{
 					cout << "Minimum loss condition reached" << endl << endl;
 				}
@@ -401,7 +402,7 @@ void NeuralNetwork::train(const xt::xarray<double>& inputs, const xt::xarray<dou
 		}
 		else
 		{
-			cout << "No error function set" << endl;
+			cout << "No loss function set" << endl;
 		}
 	}
 	else
@@ -438,7 +439,7 @@ void NeuralNetwork::output(LearningState state, int epoch, const xt::xarray<doub
 		}
 		else { }
 		cout << "Epochs: " << epoch << endl;
-		cout << "Error: " << getError(predicted, targets) << endl;
+		cout << "Loss: " << getLoss(predicted, targets) << endl;
 		cout << endl;
 	}
 	else { }
@@ -486,34 +487,34 @@ void NeuralNetwork::setOptimizer(OptimizerType optimizerType, std::map<string, d
 			break;
 	}
 
-	if (errorFunction != nullptr)
+	if (lossFunction != nullptr)
 	{
-		optimizer->setErrorFunction(errorFunction);
+		optimizer->setLossFunction(lossFunction);
 	}
 	else { }
 }
 
-void NeuralNetwork::setErrorFunction(ErrorFunctionType errorFunctionType)
+void NeuralNetwork::setLossFunction(LossFunctionType errorFunctionType)
 {
-	if (errorFunction != nullptr)
+	if (lossFunction != nullptr)
 	{
-		delete errorFunction;
+		delete lossFunction;
 	}
 	else { }
 
 	switch (errorFunctionType)
 	{
-		case ErrorFunctionType::CrossEntropy:
-			this->errorFunction = new CrossEntropyErrorFunction();
+		case LossFunctionType::CrossEntropy:
+			this->lossFunction = new CrossEntropyLossFunction();
 			break;
-		case ErrorFunctionType::MeanSquaredError:
-			this->errorFunction = new MeanSquareErrorFunction();
+		case LossFunctionType::MeanSquaredError:
+			this->lossFunction = new MeanSquareErrorLossFunction();
 			break;
 	}
 
 	if (optimizer != nullptr)
 	{
-		optimizer->setErrorFunction(errorFunction);
+		optimizer->setLossFunction(lossFunction);
 	}
 	else { }
 }
@@ -526,11 +527,11 @@ void NeuralNetwork::enableStoppingCondition(StoppingCondition condition, double 
 		case StoppingCondition::Max_Epochs:
 			this->maxEpochs = threshold;
 			break;
-		case StoppingCondition::Min_Error:
-			this->minError = threshold;
+		case StoppingCondition::Min_Loss:
+			this->minLoss = threshold;
 			break;
-		case StoppingCondition::Min_Delta_Error:
-			this->errorConvergenceThreshold = threshold;
+		case StoppingCondition::Min_Delta_Loss:
+			this->lossConvergenceThreshold = threshold;
 			break;
 		case StoppingCondition::Min_Delta_Params:
 			this->weightConvergenceThreshold = threshold;
@@ -556,11 +557,11 @@ double NeuralNetwork::getStoppingConditionThreshold(StoppingCondition condition)
 		case StoppingCondition::Max_Epochs:
 			rValue = this->maxEpochs;
 			break;
-		case StoppingCondition::Min_Error:
-			rValue = this->minError;
+		case StoppingCondition::Min_Loss:
+			rValue = this->minLoss;
 			break;
-		case StoppingCondition::Min_Delta_Error:
-			rValue = this->errorConvergenceThreshold;
+		case StoppingCondition::Min_Delta_Loss:
+			rValue = this->lossConvergenceThreshold;
 			break;
 		case StoppingCondition::Min_Delta_Params:
 			rValue = this->weightConvergenceThreshold;
@@ -569,9 +570,9 @@ double NeuralNetwork::getStoppingConditionThreshold(StoppingCondition condition)
 	return rValue;
 }
 
-double NeuralNetwork::getError(const xt::xarray<double>& predicted, const xt::xarray<double>& actual)
+double NeuralNetwork::getLoss(const xt::xarray<double>& predicted, const xt::xarray<double>& actual)
 {
-	return errorFunction->getError(predicted, actual);
+	return lossFunction->getLoss(predicted, actual);
 }
 
 int NeuralNetwork::getVerbosity()

@@ -1,4 +1,4 @@
-#include "CrossEntropyErrorFunction.h"
+#include "CrossEntropyLossFunction.h"
 
 #include "Optimizer.h"
 
@@ -10,7 +10,7 @@ using namespace std;
 
 const double c = pow(10, -8);
 
-double CrossEntropyErrorFunction::getError(const xt::xarray<double>& predicted, const xt::xarray<double>& actual)
+double CrossEntropyLossFunction::getLoss(const xt::xarray<double>& predicted, const xt::xarray<double>& actual)
 {
 	const size_t N = predicted.shape()[0];
 	auto errors = actual * xt::log(predicted + c);
@@ -18,7 +18,7 @@ double CrossEntropyErrorFunction::getError(const xt::xarray<double>& predicted, 
 	return error();
 }
 
-xt::xarray<double> CrossEntropyErrorFunction::getGradient(const xt::xarray<double>& predicted, const xt::xarray<double>& actual)
+xt::xarray<double> CrossEntropyLossFunction::getGradient(const xt::xarray<double>& predicted, const xt::xarray<double>& actual)
 {
 	//auto errors = -(actual / (predicted + 0.00001)); // Need to account for divide-by-zero
 	auto errors = (predicted - actual);
@@ -26,7 +26,7 @@ xt::xarray<double> CrossEntropyErrorFunction::getGradient(const xt::xarray<doubl
 }
 
 // This is only true when combined with softmax and for one-hot vectors // TODO!!!
-xt::xarray<double> CrossEntropyErrorFunction::getDerivativeOfErrorSoftmax(const xt::xarray<double>& predicted, const xt::xarray<double>& actual)
+xt::xarray<double> CrossEntropyLossFunction::getGradientSoftmax(const xt::xarray<double>& predicted, const xt::xarray<double>& actual)
 {
 	auto errors = (predicted - actual);
 	return errors;

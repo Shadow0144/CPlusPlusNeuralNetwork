@@ -2,7 +2,6 @@
 
 #include "NeuralLayer.h"
 #include "Optimizer.h"
-#include "ErrorFunction.h"
 #include "ActivationFunction.h"
 
 #pragma warning(push, 0)
@@ -24,7 +23,7 @@ enum class OptimizerType
 	Ftrl // Follow The Regularized Leader (-Proximal)
 };
 
-enum class ErrorFunctionType
+enum class LossFunctionType
 {
 	CrossEntropy,
 	MeanSquaredError
@@ -33,10 +32,12 @@ enum class ErrorFunctionType
 enum class StoppingCondition
 {
 	Max_Epochs = 0, // Maximum number of epochs
-	Min_Error = 1, // Minimum error threshold
-	Min_Delta_Error = 2, // Minimum change in error between epochs
+	Min_Loss = 1, // Minimum loss threshold
+	Min_Delta_Loss = 2, // Minimum change in loss between epochs
 	Min_Delta_Params = 3 // Minimum change in parameters between epochs
 };
+
+class LossFunction;
 
 class NetworkVisualizer;
 
@@ -73,7 +74,7 @@ public:
 
 	void setOptimizer(OptimizerType optimizerType, std::map<std::string, double> additionalParameters = std::map<std::string, double>());
 
-	void setErrorFunction(ErrorFunctionType errorFunctionType);
+	void setLossFunction(LossFunctionType lossFunctionType);
 	void enableStoppingCondition(StoppingCondition condition, double threshold);
 	void disableStoppingCondition(StoppingCondition condition);
 	bool getStoppingConditionEnabled(StoppingCondition condition);
@@ -81,7 +82,7 @@ public:
 
 	//void setClassificationVisualizationParameters(int rows, int cols, ImColor* classColors);
 
-	double getError(const xt::xarray<double>& predicted, const xt::xarray<double>& actual);
+	double getLoss(const xt::xarray<double>& predicted, const xt::xarray<double>& actual);
 
 	int getVerbosity();
 	void setVerbosity(int verbosity);
@@ -109,11 +110,11 @@ private:
 	size_t layerCount;
 	vector<size_t> inputShape;
 	vector<NeuralLayer*>* layers;
-	ErrorFunction* errorFunction;
+	LossFunction* lossFunction;
 	Optimizer* optimizer;
 	int maxEpochs;
-	double minError;
-	double errorConvergenceThreshold;
+	double minLoss;
+	double lossConvergenceThreshold;
 	double weightConvergenceThreshold;
 	int outputRate;
 	NetworkVisualizer* visualizer;

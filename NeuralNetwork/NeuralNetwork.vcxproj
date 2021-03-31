@@ -107,7 +107,7 @@
     <ClCompile Include="ConvolutionNeuralLayer.cpp" />
     <ClCompile Include="CReLUFunction.cpp" />
     <ClCompile Include="Convolution3DNeuralLayer.cpp" />
-    <ClCompile Include="CrossEntropyErrorFunction.cpp" />
+    <ClCompile Include="CrossEntropyLossFunction.cpp" />
     <ClCompile Include="DropoutNeuralLayer.cpp" />
     <ClCompile Include="ELUFunction.cpp" />
     <ClCompile Include="ExponentialFunction.cpp" />
@@ -131,7 +131,7 @@
     <ClCompile Include="MaxPooling1DNeuralLayer.cpp" />
     <ClCompile Include="MaxPooling2DNeuralLayer.cpp" />
     <ClCompile Include="MaxPooling3DNeuralLayer.cpp" />
-    <ClCompile Include="MeanSquareErrorFunction.cpp" />
+    <ClCompile Include="MeanSquareErrorLossFunction.cpp" />
     <ClCompile Include="NadamOptimizer.cpp" />
     <ClCompile Include="NetworkVisualizer.cpp" />
     <ClCompile Include="NeuralLayer.cpp" />
@@ -178,9 +178,9 @@
     <ClInclude Include="ConvolutionNeuralLayer.h" />
     <ClInclude Include="CReLUFunction.h" />
     <ClInclude Include="Convolution3DNeuralLayer.h" />
-    <ClInclude Include="CrossEntropyErrorFunction.h" />
+    <ClInclude Include="CrossEntropyLossFunction.h" />
     <ClInclude Include="DropoutNeuralLayer.h" />
-    <ClInclude Include="ErrorFunction.h" />
+    <ClInclude Include="LossFunction.h" />
     <ClInclude Include="ExponentialFunction.h" />
     <ClInclude Include="ELUFunction.h" />
     <ClInclude Include="FlattenNeuralLayer.h" />
@@ -207,7 +207,7 @@
     <ClInclude Include="MaxPooling1DNeuralLayer.h" />
     <ClInclude Include="MaxPooling2DNeuralLayer.h" />
     <ClInclude Include="MaxPooling3DNeuralLayer.h" />
-    <ClInclude Include="MeanSquareErrorFunction.h" />
+    <ClInclude Include="MeanSquareErrorLossFunction.h" />
     <ClInclude Include="NadamOptimizer.h" />
     <ClInclude Include="NetworkVisualizer.h" />
     <ClInclude Include="NeuralLayer.h" />

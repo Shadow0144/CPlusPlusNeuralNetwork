@@ -35,8 +35,8 @@
 
 #include "NeuralNetwork.h"
 
-//#include "MeanSquareErrorFunction.h"
-//#include "CrossEntropyErrorFunction.h"
+//#include "MeanSquareErrorLossFunction.h"
+//#include "CrossEntropyErrorLossFunction.h"
 
 //#include "SGDOptimizer.h"
 //#include "AdagradOptimizer.h"
@@ -265,8 +265,8 @@ void test_signal(int layers)
     network.addDenseLayer(ActivationFunctionType::Sigmoid, 6);
     network.addDenseLayer(ActivationFunctionType::Softplus, 1);
 
-    //network.enableStoppingCondition(StoppingCondition::Min_Delta_Error, 1e-8);
-    network.setErrorFunction(ErrorFunctionType::MeanSquaredError);
+    //network.enableStoppingCondition(StoppingCondition::Min_Delta_Loss, 1e-8);
+    network.setLossFunction(LossFunctionType::MeanSquaredError);
 
     std::map<string, double> optimizerParams;
     /*optimizerParams[SGDOptimizer::GAMMA] = 0.9;
@@ -395,7 +395,7 @@ void test_iris(int layers)
     std::map<string, double> optimizerParams;
     optimizerParams[Optimizer::ETA] = 0.01;
     network.setOptimizer(OptimizerType::SGD, optimizerParams);
-    network.setErrorFunction(ErrorFunctionType::CrossEntropy);
+    network.setLossFunction(LossFunctionType::CrossEntropy);
     ImColor* classColors = new ImColor[3]
         { ImColor(1.0f, 0.0f, 0.0f, 1.0f),
           ImColor(0.0f, 1.0f, 0.0f, 1.0f),
@@ -479,7 +479,7 @@ void test_binary()
     optimizerParams[Optimizer::ETA] = 0.01;
     optimizerParams[Optimizer::BATCH_SIZE] = 10;
     network.setOptimizer(OptimizerType::SGD, optimizerParams);
-    network.setErrorFunction(ErrorFunctionType::CrossEntropy);
+    network.setLossFunction(LossFunctionType::CrossEntropy);
 
     const int COLS = 5;
     const int ROWS = min(EXAMPLE_COUNT / COLS, 30);
@@ -542,9 +542,9 @@ void test_mnist()
     optimizerParams[Optimizer::LAMDA1] = 0.0001;
     optimizerParams[Optimizer::LAMDA2] = 0.0001;
     network.setOptimizer(OptimizerType::Adam, optimizerParams);
-    network.setErrorFunction(ErrorFunctionType::CrossEntropy);
+    network.setLossFunction(LossFunctionType::CrossEntropy);
     network.setOutputRate(1);
-    //network.enableStoppingCondition(StoppingCondition::Min_Delta_Error, 1e-5);
+    //network.enableStoppingCondition(StoppingCondition::Min_Delta_Loss, 1e-5);
 
     const int COLS = 5;
     const int ROWS = min(EXAMPLE_COUNT / COLS, 30);
@@ -606,7 +606,7 @@ void test_catdog()
     optimizerParams[Optimizer::ETA] = 0.01;
     optimizerParams[Optimizer::BATCH_SIZE] = 1;
     network.setOptimizer(OptimizerType::SGD, optimizerParams);
-    network.setErrorFunction(ErrorFunctionType::CrossEntropy);
+    network.setLossFunction(LossFunctionType::CrossEntropy);
     network.setOutputRate(1);
 
     const int COLS = 5;

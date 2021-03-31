@@ -2,7 +2,7 @@
 
 #include "Optimizer.h"
 #include "NeuralLayer.h"
-#include "ErrorFunction.h"
+#include "LossFunction.h"
 
 #pragma warning(push, 0)
 #include <xtensor/xarray.hpp>

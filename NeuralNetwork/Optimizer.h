@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ErrorFunction.h"
+#include "LossFunction.h"
 #include "ParameterSet.h"
 
 #pragma warning(push, 0)
@@ -21,7 +21,7 @@ public:
 	virtual void substituteParameters(ParameterSet& parameterSet);
 	virtual void restoreParameters(ParameterSet& parameterSet);
 
-	void setErrorFunction(ErrorFunction* errorFunction);
+	void setLossFunction(LossFunction* lossFunction);
 
 	virtual inline std::vector<std::string> getHyperparameterStrings() = 0;
 
@@ -50,7 +50,7 @@ protected:
 	void restoreAllParameters();
 
 	std::vector<NeuralLayer*>* layers;
-	ErrorFunction* errorFunction;
+	LossFunction* lossFunction;
 	xt::xarray<double> groundTruth;
 
 	int batchSize; // The size of a single batch

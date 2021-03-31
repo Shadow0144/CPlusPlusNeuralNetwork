@@ -25,7 +25,7 @@ const std::string Optimizer::LAMDA2 = "lamda2";
 Optimizer::Optimizer(vector<NeuralLayer*>* layers)
 {
 	this->layers = layers;
-	this->errorFunction = nullptr;
+	this->lossFunction = nullptr;
 	this->batchSize = -1;
 }
 
@@ -34,9 +34,9 @@ Optimizer::~Optimizer()
 
 }
 
-void Optimizer::setErrorFunction(ErrorFunction* errorFunction)
+void Optimizer::setLossFunction(LossFunction* lossFunction)
 {
-	this->errorFunction = errorFunction;
+	this->lossFunction = lossFunction;
 }
 
 // Called internally only, internal batching is handled in getDeltaWeight
@@ -57,7 +57,7 @@ double Optimizer::backPropagate(const xt::xarray<double>& inputs, const xt::xarr
 {
 	double deltaWeights = 0.0;
 
-	if (errorFunction != nullptr)
+	if (lossFunction != nullptr)
 	{
 		const int N = inputs.shape()[0];
 		int batches = 1;
@@ -125,7 +125,7 @@ void Optimizer::backPropagateBatch(const xt::xarray<double>& inputs, const xt::x
 
 		// Feed forward and calculate the gradient
 		xt::xarray<double> predicted = feedForwardTrain(xt::strided_view(inputs, iBatchSV));
-		xt::xarray<double> sigma = errorFunction->getGradient(predicted, xt::strided_view(targets, iBatchSV));
+		xt::xarray<double> sigma = lossFunction->getGradient(predicted, xt::strided_view(targets, iBatchSV));
 
 		// Backpropagate through the layers until the input layer
 		for (int l = (layerCount - 1); l > 0; l--)
