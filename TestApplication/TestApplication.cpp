@@ -263,7 +263,7 @@ void test_signal(int layers)
     //network.addDropoutLayer();
     network.addDenseLayer(ActivationFunctionType::ReLU, 6);
     network.addDenseLayer(ActivationFunctionType::Sigmoid, 6);
-    network.addDenseLayer(ActivationFunctionType::Softplus, 1);
+    network.addDenseLayer(ActivationFunctionType::Identity, 1);
 
     //network.enableStoppingCondition(StoppingCondition::Min_Delta_Loss, 1e-8);
     network.setLossFunction(LossFunctionType::MeanSquaredError);
@@ -275,7 +275,7 @@ void test_signal(int layers)
     //optimizerParams[FtrlOptimizer::BATCH_SIZE] = 10;
     optimizerParams[Optimizer::LAMDA1] = 0.0001;
     optimizerParams[Optimizer::LAMDA2] = 0.0001;
-    network.setOptimizer(OptimizerType::Adam, optimizerParams);
+    network.setOptimizer(OptimizerType::RProp, optimizerParams);
     network.displayRegressionEstimation();
 
     /* // Linear
@@ -542,7 +542,7 @@ void test_mnist()
     optimizerParams[Optimizer::LAMDA1] = 0.0001;
     optimizerParams[Optimizer::LAMDA2] = 0.0001;
     network.setOptimizer(OptimizerType::Adam, optimizerParams);
-    network.setLossFunction(LossFunctionType::CrossEntropy);
+    network.setLossFunction(LossFunctionType::CrossEntropy, 0.1);
     network.setOutputRate(1);
     //network.enableStoppingCondition(StoppingCondition::Min_Delta_Loss, 1e-5);
 

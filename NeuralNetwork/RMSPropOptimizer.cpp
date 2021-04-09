@@ -37,14 +37,16 @@ RMSPropOptimizer::RMSPropOptimizer(vector<NeuralLayer*>* layers, std::map<std::s
 	}
 }
 
-xt::xarray<double> RMSPropOptimizer::getDeltaWeight(long parameterID, const xt::xarray<double>& gradient)
+void RMSPropOptimizer::setDeltaWeight(ParameterSet& parameters, const xt::xarray<double>& gradient)
 {
+	auto g = applyRegularization(parameters, gradient);
+	auto parameterID = parameters.getID();
 	if (Eg2.find(parameterID) == Eg2.end())
 	{
-		Eg2[parameterID] = xt::zeros<double>(gradient.shape());
+		Eg2[parameterID] = xt::zeros<double>(g.shape());
 	}
 	else { }
-	Eg2[parameterID] = (0.9 * Eg2[parameterID]) + ((0.1) * xt::pow(gradient, 2.0));
-	xt::xarray<double> optimizedGradient = -eta * xt::pow(Eg2[parameterID] + epsilon, 0.5) * gradient;
-	return optimizedGradient;
+	Eg2[parameterID] = (0.9 * Eg2[parameterID]) + ((0.1) * xt::pow(g, 2.0));
+	xt::xarray<double> optimizedGradient = -eta * xt::pow(Eg2[parameterID] + epsilon, 0.5) * g;
+	parameters.setDeltaParameters(optimizedGradient);
 }

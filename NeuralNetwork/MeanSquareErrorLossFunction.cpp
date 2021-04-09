@@ -1,6 +1,6 @@
 #include "MeanSquareErrorLossFunction.h"
 
-#include "Optimizer.h"
+#include "NeuralNetwork.h"
 
 #pragma warning(push, 0)
 #include <iostream>
@@ -8,7 +8,7 @@
 
 using namespace std;
 
-double MeanSquareErrorLossFunction::getLoss(const xt::xarray<double>& predicted, const xt::xarray<double>& actual)
+double MeanSquareErrorLossFunction::getLoss(const NeuralNetwork* network, const xt::xarray<double>& predicted, const xt::xarray<double>& actual) const
 {
 	size_t n = actual.shape()[0];
 	auto errors = predicted - actual;
@@ -19,10 +19,15 @@ double MeanSquareErrorLossFunction::getLoss(const xt::xarray<double>& predicted,
 		error = xt::sum(error);
 	}
 	error /= n;
+	if (lambda1 != 0.0 || lambda2 != 0.0)
+	{
+		error += network->getRegularizationLoss(lambda1, lambda2);
+	}
+	else { }
 	return error();
 }
 
-xt::xarray<double> MeanSquareErrorLossFunction::getGradient(const xt::xarray<double>& predicted, const xt::xarray<double>& actual)
+xt::xarray<double> MeanSquareErrorLossFunction::getGradient(const xt::xarray<double>& predicted, const xt::xarray<double>& actual) const
 {
 	return (2.0 * (predicted - actual));
 }

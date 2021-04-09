@@ -19,8 +19,8 @@ const std::string Optimizer::MIN_ALPHA = "minAlpha";
 const std::string Optimizer::MAX_ALPHA = "maxAlpha";
 const std::string Optimizer::SHRINK_ALPHA = "shrinkAlpha";
 const std::string Optimizer::GROW_ALPHA = "growAlpha";
-const std::string Optimizer::LAMDA1 = "lamda1";
-const std::string Optimizer::LAMDA2 = "lamda2";
+const std::string Optimizer::LAMDA1 = "lambda1";
+const std::string Optimizer::LAMDA2 = "lambda2";
 
 Optimizer::Optimizer(vector<NeuralLayer*>* layers)
 {
@@ -161,4 +161,27 @@ void Optimizer::restoreAllParameters()
 	{
 		layers->at(i)->restoreParameters(this);
 	}
+}
+
+xt::xarray<double> Optimizer::applyRegularization(const ParameterSet& parameterSet, const xt::xarray<double>& gradient) const
+{
+	xt::xarray<double> g = gradient;
+	if (!parameterSet.getUnregularized())
+	{
+		double l1 = lossFunction->getL1RegularizationStrength();
+		double l2 = lossFunction->getL2RegularizationStrength();
+		if (l1 != 0.0 || l2 != 0.0)
+		{
+			g += parameterSet.getRegularizedGradient(l1, l2);
+		}
+		else
+		{
+			// Do nothing
+		}
+	}
+	else
+	{
+		// Do nothing
+	}
+	return g;
 }

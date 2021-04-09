@@ -59,6 +59,17 @@ std::vector<size_t> NeuralLayer::getOutputShape()
 	return outputShape;
 }
 
+double NeuralLayer::getRegularizationLoss(double lambda1, double lambda2) const
+{
+	double loss = 0.0;
+	if (activationFunction != nullptr)
+	{
+		loss += activationFunction->getRegularizationLoss(lambda1, lambda2);
+	}
+	else { }
+	return loss;
+}
+
 xt::xarray<double> NeuralLayer::addBiasToInput(const xt::xarray<double>& input)
 {
 	size_t inputDims = input.dimension();

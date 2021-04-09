@@ -41,6 +41,8 @@ public:
 	virtual xt::xarray<double> feedForwardTrain(const xt::xarray<double>& inputs);
 	virtual xt::xarray<double> getGradient(const xt::xarray<double>& sigmas, Optimizer* optimizer) = 0;
 	virtual double applyBackPropagate(); // Updates the parameters and returns the magnitude of the change
+	
+	virtual double getRegularizationLoss(double lambda1, double lambda2) const;
 
 	virtual double getParameter(const std::string& parameterName) const;
 	virtual void setParameter(const std::string& parameterName, double value);

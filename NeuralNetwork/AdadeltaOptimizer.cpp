@@ -37,21 +37,23 @@ AdadeltaOptimizer::AdadeltaOptimizer(vector<NeuralLayer*>* layers, std::map<std:
 	}
 }
 
-xt::xarray<double> AdadeltaOptimizer::getDeltaWeight(long parameterID, const xt::xarray<double>& gradient)
+void AdadeltaOptimizer::setDeltaWeight(ParameterSet& parameters, const xt::xarray<double>& gradient)
 {
+	auto g = applyRegularization(parameters, gradient);
+	auto parameterID = parameters.getID();
 	if (Eg2.find(parameterID) == Eg2.end() || 
 		Ew2.find(parameterID) == Ew2.end() ||
 		deltaW.find(parameterID) == deltaW.end())
 	{
-		Eg2[parameterID] = xt::zeros<double>(gradient.shape());
-		Ew2[parameterID] = xt::zeros<double>(gradient.shape());
-		deltaW[parameterID] = xt::zeros<double>(gradient.shape());
+		Eg2[parameterID] = xt::zeros<double>(g.shape());
+		Ew2[parameterID] = xt::zeros<double>(g.shape());
+		deltaW[parameterID] = xt::zeros<double>(g.shape());
 	}
 	else { }
-	Eg2[parameterID] = (gamma * Eg2[parameterID]) + ((1 - gamma) * xt::pow(gradient, 2.0));
+	Eg2[parameterID] = (gamma * Eg2[parameterID]) + ((1 - gamma) * xt::pow(g, 2.0));
 	Ew2[parameterID] = (gamma * Ew2[parameterID]) + ((1 - gamma) * xt::pow(deltaW[parameterID], 2.0));
 	auto RMSg = xt::pow(Eg2[parameterID] + epsilon, +0.5);
 	auto RMSw = xt::pow(Ew2[parameterID] + epsilon, +0.5);
-	deltaW[parameterID] = -(RMSw / RMSg) * gradient;
-	return deltaW[parameterID];
+	deltaW[parameterID] = -(RMSw / RMSg) * g;
+	parameters.setDeltaParameters(deltaW[parameterID]);
 }

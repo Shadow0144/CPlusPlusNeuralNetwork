@@ -74,7 +74,7 @@ public:
 
 	void setOptimizer(OptimizerType optimizerType, std::map<std::string, double> additionalParameters = std::map<std::string, double>());
 
-	void setLossFunction(LossFunctionType lossFunctionType);
+	void setLossFunction(LossFunctionType lossFunctionType, double lambda1 = 0.0, double lambda2 = 0.0);
 	void enableStoppingCondition(StoppingCondition condition, double threshold);
 	void disableStoppingCondition(StoppingCondition condition);
 	bool getStoppingConditionEnabled(StoppingCondition condition);
@@ -83,6 +83,7 @@ public:
 	//void setClassificationVisualizationParameters(int rows, int cols, ImColor* classColors);
 
 	double getLoss(const xt::xarray<double>& predicted, const xt::xarray<double>& actual);
+	double getRegularizationLoss(double lambda1, double lambda2) const;
 
 	int getVerbosity();
 	void setVerbosity(int verbosity);

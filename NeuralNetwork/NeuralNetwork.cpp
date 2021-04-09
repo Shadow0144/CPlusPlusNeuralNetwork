@@ -494,7 +494,7 @@ void NeuralNetwork::setOptimizer(OptimizerType optimizerType, std::map<string, d
 	else { }
 }
 
-void NeuralNetwork::setLossFunction(LossFunctionType errorFunctionType)
+void NeuralNetwork::setLossFunction(LossFunctionType errorFunctionType, double lambda1, double lambda2)
 {
 	if (lossFunction != nullptr)
 	{
@@ -511,6 +511,8 @@ void NeuralNetwork::setLossFunction(LossFunctionType errorFunctionType)
 			this->lossFunction = new MeanSquareErrorLossFunction();
 			break;
 	}
+	this->lossFunction->setL1RegularizationStrength(lambda1);
+	this->lossFunction->setL2RegularizationStrength(lambda2);
 
 	if (optimizer != nullptr)
 	{
@@ -572,7 +574,21 @@ double NeuralNetwork::getStoppingConditionThreshold(StoppingCondition condition)
 
 double NeuralNetwork::getLoss(const xt::xarray<double>& predicted, const xt::xarray<double>& actual)
 {
-	return lossFunction->getLoss(predicted, actual);
+	return lossFunction->getLoss(this, predicted, actual);
+}
+
+double NeuralNetwork::getRegularizationLoss(double lambda1, double lambda2) const
+{
+	double loss = 0.0;
+	if (lambda1 != 0.0 || lambda2 != 0.0)
+	{
+		for (int i = 0; i < layerCount; i++) // Loop through the layers
+		{
+			loss += layers->at(i)->getRegularizationLoss(lambda1, lambda2);
+		}
+	}
+	else { }
+	return loss;
 }
 
 int NeuralNetwork::getVerbosity()

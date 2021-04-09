@@ -8,6 +8,17 @@
 
 using namespace std;
 
+double ParameterizedNeuralLayer::getRegularizationLoss(double lambda1, double lambda2) const
+{
+	double loss = weights.getRegularizationLoss(lambda1, lambda2);
+	/*if (activationFunction != nullptr)
+	{
+		loss += activationFunction->getRegularizationLoss(lambda1, lambda2);
+	}
+	else { }*/ // Activation function weights are not regularized
+	return loss;
+}
+
 void ParameterizedNeuralLayer::saveParameters(std::string fileName)
 {
 	xt::dump_npy(fileName + ".npy", weights.getParameters());

@@ -57,21 +57,23 @@ AdamOptimizer::AdamOptimizer(vector<NeuralLayer*>* layers, std::map<std::string,
 	this->t = 0;
 }
 
-xt::xarray<double> AdamOptimizer::getDeltaWeight(long parameterID, const xt::xarray<double>& gradient)
+void AdamOptimizer::setDeltaWeight(ParameterSet& parameters, const xt::xarray<double>& gradient)
 {
+	auto g = applyRegularization(parameters, gradient);
+	auto parameterID = parameters.getID();
 	if (m.find(parameterID) == m.end() ||
 		v.find(parameterID) == v.end())
 	{
-		m[parameterID] = xt::zeros<double>(gradient.shape());
-		v[parameterID] = xt::zeros<double>(gradient.shape());
+		m[parameterID] = xt::zeros<double>(g.shape());
+		v[parameterID] = xt::zeros<double>(g.shape());
 		t = 0;
 	}
 	else { }
 	t++;
-	m[parameterID] = (beta1 * m[parameterID]) + ((1 - beta1) * gradient);
-	v[parameterID] = (beta2 * v[parameterID]) + ((1 - beta2) * xt::pow(gradient, 2.0));
+	m[parameterID] = (beta1 * m[parameterID]) + ((1 - beta1) * g);
+	v[parameterID] = (beta2 * v[parameterID]) + ((1 - beta2) * xt::pow(g, 2.0));
 	auto mHat = m[parameterID] / (1 - std::pow(beta1, t));
 	auto vHat = v[parameterID] / (1 - std::pow(beta2, t));
 	xt::xarray<double> optimizedGradient = -eta / (xt::pow(vHat, 0.5) + epsilon) * mHat;
-	return optimizedGradient;
+	parameters.setDeltaParameters(optimizedGradient);
 }

@@ -54,6 +54,7 @@ Convolution3DNeuralLayer::Convolution3DNeuralLayer(NeuralLayer* parent, size_t n
 	if (hasBias)
 	{
 		this->biasWeights.setParametersRandom(numKernels);
+		this->biasWeights.setUnregularized(); // Bias is typically unregularized
 	}
 	else { }
 }
@@ -224,10 +225,10 @@ xt::xarray<double> Convolution3DNeuralLayer::getGradient(const xt::xarray<double
 		xt::strided_view(delta, kernelWindowView) = result;
 	}
 
-	weights.setDeltaParameters(optimizer->getDeltaWeight(weights.getID(), delta));
+	optimizer->setDeltaWeight(weights, delta);
 	if (hasBias)
 	{
-		biasWeights.setDeltaParameters(optimizer->getDeltaWeight(biasWeights.getID(), delta));
+		optimizer->setDeltaWeight(biasWeights, delta);
 	}
 	else { }
 

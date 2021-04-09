@@ -57,21 +57,23 @@ AMSGradOptimizer::AMSGradOptimizer(vector<NeuralLayer*>* layers, std::map<std::s
 	this->t = 0;
 }
 
-xt::xarray<double> AMSGradOptimizer::getDeltaWeight(long parameterID, const xt::xarray<double>& gradient)
+void AMSGradOptimizer::setDeltaWeight(ParameterSet& parameters, const xt::xarray<double>& gradient)
 {
+	auto g = applyRegularization(parameters, gradient);
+	auto parameterID = parameters.getID();
 	if (m.find(parameterID) == m.end() ||
 		v.find(parameterID) == v.end())
 	{
-		m[parameterID] = xt::zeros<double>(gradient.shape());
-		v[parameterID] = xt::zeros<double>(gradient.shape());
-		vHat[parameterID] = xt::zeros<double>(gradient.shape());
+		m[parameterID] = xt::zeros<double>(g.shape());
+		v[parameterID] = xt::zeros<double>(g.shape());
+		vHat[parameterID] = xt::zeros<double>(g.shape());
 		t = 0;
 	}
 	else { }
 	t++;
-	m[parameterID] = (beta1 * m[parameterID]) + ((1 - beta1) * gradient);
-	v[parameterID] = (beta2 * v[parameterID]) + ((1 - beta2) * xt::pow(gradient, 2.0));
+	m[parameterID] = (beta1 * m[parameterID]) + ((1 - beta1) * g);
+	v[parameterID] = (beta2 * v[parameterID]) + ((1 - beta2) * xt::pow(g, 2.0));
 	vHat[parameterID] = xt::maximum(vHat[parameterID], v[parameterID]);
 	xt::xarray<double> optimizedGradient = -eta / (xt::pow(vHat[parameterID], 0.5) + epsilon) * m[parameterID];
-	return optimizedGradient;
+	parameters.setDeltaParameters(optimizedGradient);
 }

@@ -19,6 +19,7 @@ const string PReLUFunction::A = "a";
 PReLUFunction::PReLUFunction(int numUnits)
 {
 	this->a.setParametersPositiveRandom(numUnits); // Strictly positive values
+	this->a.setUnregularized(); // Do not need to regularize this value
 }
 
 PReLUFunction::PReLUFunction(int numUnits, const xt::xarray<double>& a)
@@ -29,6 +30,7 @@ PReLUFunction::PReLUFunction(int numUnits, const xt::xarray<double>& a)
 	}
 	else { }
 	this->a.setParameters(a);
+	this->a.setUnregularized(); // Do not need to regularize this value
 }
 
 xt::xarray<double> PReLUFunction::PReLU(const xt::xarray<double>& z) const
@@ -56,6 +58,17 @@ double PReLUFunction::applyBackPropagate()
 	return deltaWeight;
 }
 
+double PReLUFunction::getRegularizationLoss(double lambda1, double lambda2)
+{
+	double loss = 0.0;
+	if (lambda1 != 0.0 || lambda2 != 0.0)
+	{
+		loss += a.getRegularizationLoss(lambda1, lambda2);
+	}
+	else { }
+	return loss;
+}
+
 xt::xarray<double> PReLUFunction::getGradient(const xt::xarray<double>& sigmas, Optimizer* optimizer)
 {
 	auto nMask = (lastInput <= 0.0);
@@ -69,7 +82,7 @@ xt::xarray<double> PReLUFunction::getGradient(const xt::xarray<double>& sigmas, 
 
 	// Update deltaA
 	auto deltaA = xt::sum<double>(lastInput * nMask, dims) / lastInput.shape()[0];
-	a.setDeltaParameters(optimizer->getDeltaWeight(a.getID(), deltaA));
+	optimizer->setDeltaWeight(a, deltaA);
 
 	return (sigmas * (pMask + (a.getParameters() * (xt::ones<double>(pMask.shape()) - pMask))));
 }

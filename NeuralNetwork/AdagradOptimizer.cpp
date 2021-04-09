@@ -37,15 +37,17 @@ AdagradOptimizer::AdagradOptimizer(vector<NeuralLayer*>* layers, std::map<std::s
 	}
 }
 
-xt::xarray<double> AdagradOptimizer::getDeltaWeight(long parameterID, const xt::xarray<double>& gradient)
+void AdagradOptimizer::setDeltaWeight(ParameterSet& parameters, const xt::xarray<double>& gradient)
 {
+	auto g = applyRegularization(parameters, gradient);
+	auto parameterID = parameters.getID();
 	xt::xarray<double> optimizedGradient;
 	if (G.find(parameterID) == G.end())
 	{
-		G[parameterID] = xt::zeros<double>(gradient.shape());
+		G[parameterID] = xt::zeros<double>(g.shape());
 	}
 	else { }
-	G[parameterID] += xt::pow(gradient, 2.0);
-	optimizedGradient = -eta * (xt::pow((G[parameterID] + epsilon), -0.5)) * gradient;
-	return optimizedGradient;
+	G[parameterID] += xt::pow(g, 2.0);
+	optimizedGradient = -eta * (xt::pow((G[parameterID] + epsilon), -0.5)) * g;
+	parameters.setDeltaParameters(optimizedGradient);
 }

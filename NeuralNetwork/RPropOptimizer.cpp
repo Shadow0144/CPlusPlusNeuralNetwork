@@ -46,19 +46,21 @@ RPropOptimizer::RPropOptimizer(vector<NeuralLayer*>* layers, std::map<std::strin
 	}
 }
 
-xt::xarray<double> RPropOptimizer::getDeltaWeight(long parameterID, const xt::xarray<double>& gradient)
+void RPropOptimizer::setDeltaWeight(ParameterSet& parameters, const xt::xarray<double>& gradient)
 {
+	auto g = applyRegularization(parameters, gradient);
+	auto parameterID = parameters.getID();
 	if (alpha.find(parameterID) == alpha.end() ||
-		g.find(parameterID) == g.end())
+		prevG.find(parameterID) == prevG.end())
 	{
-		alpha[parameterID] = xt::ones<double>(gradient.shape());
-		g[parameterID] = xt::zeros<double>(gradient.shape());
+		alpha[parameterID] = xt::ones<double>(g.shape());
+		prevG[parameterID] = xt::zeros<double>(g.shape());
 	}
 	else { }
-	auto signs = g[parameterID] * gradient;
+	auto signs = prevG[parameterID] * g;
 	alpha[parameterID] *= ((signs < 0) * shrinkAlpha) + ((signs < 0) * growAlpha) + ((xt::equal(signs, 0)) * 1);
 	alpha[parameterID] = xt::maximum(xt::minimum(alpha[parameterID], maxAlpha), minAlpha);
-	g[parameterID] = gradient;
-	xt::xarray<double> optimizedGradient = -alpha[parameterID] * xt::sign(gradient);
-	return optimizedGradient;
+	prevG[parameterID] = g;
+	xt::xarray<double> optimizedGradient = -alpha[parameterID] * xt::sign(g);
+	parameters.setDeltaParameters(optimizedGradient);
 }

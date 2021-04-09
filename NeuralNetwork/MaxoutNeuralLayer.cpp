@@ -43,7 +43,7 @@ MaxoutNeuralLayer::MaxoutNeuralLayer(NeuralLayer* parent, size_t numUnits, size_
 	paramShape.push_back(this->numInputs);
 	paramShape.push_back(this->numUnits);
 	paramShape.push_back(this->numFunctions);
-	this->weights.setParametersRandom(paramShape);
+	this->weights.setParametersRandom(paramShape, addBias);
 }
 
 MaxoutNeuralLayer::~MaxoutNeuralLayer()
@@ -130,13 +130,13 @@ xt::xarray<double> MaxoutNeuralLayer::getGradient(const xt::xarray<double>& sigm
 
 	// The delta weights are the last input dotted with the sigmas
 	auto delta = xt::linalg::tensordot(xt::transpose(lastInput), sigmasMax, 1);
-	weights.setDeltaParameters(optimizer->getDeltaWeight(weights.getID(), delta));
+	optimizer->setDeltaWeight(weights, delta);
 
 	// The new sigmas are the weights dotted with the sigmas
 	xt::xarray<double> xWeights; // The weights (with the bias removed if bias was added)
 	if (addBias)
 	{
-		xWeights = xt::view(weights.getParameters(), xt::range(0, lastInput.shape()[lastInput.dimension() - 1] - 1), xt::all());
+		xWeights = weights.getParametersWithoutBias();
 	}
 	else
 	{

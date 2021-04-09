@@ -6,6 +6,8 @@
 class ParameterizedNeuralLayer : public NeuralLayer
 {
 public:
+	double getRegularizationLoss(double lambda1, double lambda2) const;
+
 	virtual void saveParameters(std::string fileName);
 	virtual void loadParameters(std::string fileName);
 

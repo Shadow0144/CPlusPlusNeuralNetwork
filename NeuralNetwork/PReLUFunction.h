@@ -13,6 +13,9 @@ public:
 	xt::xarray<double> feedForwardTrain(const xt::xarray<double>& input);
 	xt::xarray<double> getGradient(const xt::xarray<double>& sigmas, Optimizer* optimizer);
 	double applyBackPropagate();
+
+	double getRegularizationLoss(double lambda1, double lambda2);
+
 	void draw(ImDrawList* canvas, ImVec2 origin, double scale, int numUnits, const ParameterSet& weights) const;
 
 	double getParameter(const std::string& parameterName) const;

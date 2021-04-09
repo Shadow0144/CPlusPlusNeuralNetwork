@@ -16,7 +16,7 @@ public:
 	~Optimizer();
 
 	virtual double backPropagate(const xt::xarray<double>& inputs, const xt::xarray<double>& targets); // Single step
-	virtual xt::xarray<double> getDeltaWeight(long parameterID, const xt::xarray<double>& gradient) = 0; // Adjusts the gradient based on the optimizer
+	virtual void setDeltaWeight(ParameterSet& parameters, const xt::xarray<double>& gradient) = 0;
 
 	virtual void substituteParameters(ParameterSet& parameterSet);
 	virtual void restoreParameters(ParameterSet& parameterSet);
@@ -39,12 +39,13 @@ public:
 	const static std::string MAX_ALPHA; // = "maxAlpha"; // Maximum value for any learning rate
 	const static std::string SHRINK_ALPHA; // = "shrinkAlpha"; // Value to multiplicatively decrease a learning rate by
 	const static std::string GROW_ALPHA; // = "growAlpha"; // Value to multiplicatively increase a learning rate by
-	const static std::string LAMDA1; // = "lamda1"; // L1 regularization strength
-	const static std::string LAMDA2; // = "lamda2"; // L2 regularization strength
+	const static std::string LAMDA1; // = "lambda1"; // L1 regularization strength
+	const static std::string LAMDA2; // = "lambda2"; // L2 regularization strength
 
 protected:
 	xt::xarray<double> feedForwardTrain(const xt::xarray<double>& inputs); // Updates internal values such as last input and last output
 	virtual void backPropagateBatch(const xt::xarray<double>& inputs, const xt::xarray<double>& targets);
+	xt::xarray<double> applyRegularization(const ParameterSet& parameterSet, const xt::xarray<double>& gradient) const; // Modify the gradient by adding regularization
 
 	void substituteAllParameters();
 	void restoreAllParameters();

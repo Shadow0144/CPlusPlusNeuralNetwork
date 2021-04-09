@@ -63,25 +63,27 @@ void SGDOptimizer::backPropagateBatch(const xt::xarray<double>& inputs, const xt
 	else { }
 }
 
-xt::xarray<double> SGDOptimizer::getDeltaWeight(long parameterID, const xt::xarray<double>& gradient)
+void SGDOptimizer::setDeltaWeight(ParameterSet& parameters, const xt::xarray<double>& gradient)
 {
+	auto g = applyRegularization(parameters, gradient);
+	auto parameterID = parameters.getID();
 	xt::xarray<double> optimizedGradient;
 	if (gamma > 0.0)
 	{
 		if (previousVelocity.find(parameterID) == previousVelocity.end())
 		{
-			previousVelocity[parameterID] = xt::zeros<double>(gradient.shape());
+			previousVelocity[parameterID] = xt::zeros<double>(g.shape());
 		}
 		else { }
-		xt::xarray<double> velocity = gamma * previousVelocity[parameterID] + eta * gradient;
+		xt::xarray<double> velocity = gamma * previousVelocity[parameterID] + eta * g;
 		optimizedGradient = -velocity;
 		previousVelocity[parameterID] = velocity;
 	}
 	else // Skip storing and updating the velocity if the momentum is 0
 	{
-		optimizedGradient = -eta * gradient; // Multiply by the learning rate
+		optimizedGradient = -eta * g; // Multiply by the learning rate
 	}
-	return optimizedGradient;
+	parameters.setDeltaParameters(optimizedGradient);
 }
 
 void SGDOptimizer::substituteParameters(ParameterSet& parameterSet)

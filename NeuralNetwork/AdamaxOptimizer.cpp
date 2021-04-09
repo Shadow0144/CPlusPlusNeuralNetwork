@@ -57,20 +57,22 @@ AdamaxOptimizer::AdamaxOptimizer(vector<NeuralLayer*>* layers, std::map<std::str
 	this->t = 0;
 }
 
-xt::xarray<double> AdamaxOptimizer::getDeltaWeight(long parameterID, const xt::xarray<double>& gradient)
+void AdamaxOptimizer::setDeltaWeight(ParameterSet& parameters, const xt::xarray<double>& gradient)
 {
+	auto g = applyRegularization(parameters, gradient);
+	auto parameterID = parameters.getID();
 	if (m.find(parameterID) == m.end() ||
 		u.find(parameterID) == u.end())
 	{
-		m[parameterID] = xt::zeros<double>(gradient.shape());
-		u[parameterID] = xt::zeros<double>(gradient.shape());
+		m[parameterID] = xt::zeros<double>(g.shape());
+		u[parameterID] = xt::zeros<double>(g.shape());
 		t = 0;
 	}
 	else { }
 	t++;
-	m[parameterID] = (beta1 * m[parameterID]) + ((1 - beta1) * gradient);
-	u[parameterID] = xt::maximum(beta2 * u[parameterID], xt::abs(gradient));
+	m[parameterID] = (beta1 * m[parameterID]) + ((1 - beta1) * g);
+	u[parameterID] = xt::maximum(beta2 * u[parameterID], xt::abs(g));
 	auto mHat = m[parameterID] / (1 - std::pow(beta1, t));
 	xt::xarray<double> optimizedGradient = -eta / (u[parameterID] + epsilon) * mHat;
-	return optimizedGradient;
+	parameters.setDeltaParameters(optimizedGradient);
 }

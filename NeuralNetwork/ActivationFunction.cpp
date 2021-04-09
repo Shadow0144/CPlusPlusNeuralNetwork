@@ -29,6 +29,11 @@ double ActivationFunction::applyBackPropagate()
 	return 0;
 }
 
+double ActivationFunction::getRegularizationLoss(double lambda1, double lambda2) const
+{
+	return 0.0;
+}
+
  double ActivationFunction::getParameter(const std::string& parameterName) const
  {
 	 throw std::invalid_argument(std::string("Parameter ") + parameterName + " does not exist");
