@@ -86,12 +86,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CatDogTests.cpp" />
+    <ClCompile Include="CVTests.cpp" />
+    <ClCompile Include="IrisTests.cpp" />
+    <ClCompile Include="MNISTTests.cpp" />
+    <ClCompile Include="SignalTests.cpp" />
     <ClCompile Include="TestApplication.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CatDogDataset.h" />
     <ClInclude Include="IrisDataset.h" />
     <ClInclude Include="MNISTDataset.h" />
+    <ClInclude Include="TestApplication.h" />
+    <ClInclude Include="Tests.h" />
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="data\iris.dat">

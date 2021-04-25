@@ -16,10 +16,31 @@
     <Filter Include="Data">
       <UniqueIdentifier>{572e026f-e11d-49de-af12-bcff4cd47d6e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Datasets">
+      <UniqueIdentifier>{d80a7809-861c-4d27-9c61-a9c7c8ca6105}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tests">
+      <UniqueIdentifier>{1796db1e-1f19-445c-82e5-549da5b4a024}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestApplication.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CVTests.cpp">
+      <Filter>Source Files\Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="IrisTests.cpp">
+      <Filter>Source Files\Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="SignalTests.cpp">
+      <Filter>Source Files\Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="MNISTTests.cpp">
+      <Filter>Source Files\Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="CatDogTests.cpp">
+      <Filter>Source Files\Tests</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -52,13 +73,19 @@
     </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CatDogDataset.h">
+      <Filter>Header Files\Datasets</Filter>
+    </ClInclude>
     <ClInclude Include="IrisDataset.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Datasets</Filter>
     </ClInclude>
     <ClInclude Include="MNISTDataset.h">
+      <Filter>Header Files\Datasets</Filter>
+    </ClInclude>
+    <ClInclude Include="Tests.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CatDogDataset.h">
+    <ClInclude Include="TestApplication.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
