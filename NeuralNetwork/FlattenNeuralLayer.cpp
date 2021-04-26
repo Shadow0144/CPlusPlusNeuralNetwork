@@ -89,6 +89,7 @@ void FlattenNeuralLayer::drawFlattenFunction(ImDrawList* canvas, ImVec2 origin, 
 
 	const double ARROW_WIDTH = 2.0 * scale;
 	const double ARROW_HEIGHT = 4.0 * scale;
+	const double ARROW_OVERLAP = 0.1 * scale;
 
 	const double RESCALE = DRAW_LEN * scale * RERESCALE;
 	const double HALF_RESCALE = RESCALE / 2.0;
@@ -104,9 +105,9 @@ void FlattenNeuralLayer::drawFlattenFunction(ImDrawList* canvas, ImVec2 origin, 
 
 	// Draw arrow
 	position.x = origin.x;
-	canvas->AddLine(ImVec2(position.x + ARROW_WIDTH, position.y),
+	canvas->AddLine(ImVec2(position.x + ARROW_WIDTH, position.y + ARROW_OVERLAP),
 		ImVec2(position.x - ARROW_WIDTH, position.y - ARROW_HEIGHT), BLACK);
-	canvas->AddLine(ImVec2(position.x + ARROW_WIDTH, position.y),
+	canvas->AddLine(ImVec2(position.x + ARROW_WIDTH, position.y - ARROW_OVERLAP),
 		ImVec2(position.x - ARROW_WIDTH, position.y + ARROW_HEIGHT), BLACK);
 
 	//Draw left

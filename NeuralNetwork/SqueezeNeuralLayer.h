@@ -18,4 +18,6 @@ public:
 
 private:
 	std::vector<size_t> squeezeDims;
+
+	void drawSqueezeFunction(ImDrawList* canvas, ImVec2 origin, double scale);
 };

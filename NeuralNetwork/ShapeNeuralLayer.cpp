@@ -7,6 +7,11 @@
 #include <tuple>
 #pragma warning(pop)
 
+ShapeNeuralLayer::~ShapeNeuralLayer()
+{
+
+}
+
 xt::xarray<double> ShapeNeuralLayer::feedForwardTrain(const xt::xarray<double>& input)
 {
 	lastShape = input.shape();

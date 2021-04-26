@@ -5,6 +5,8 @@
 class ConvolutionNeuralLayer : public ParameterizedNeuralLayer
 {
 public:
+	virtual ~ConvolutionNeuralLayer() = 0; // This class is not intended to be directly instantiated
+
 	xt::xarray<double> feedForward(const xt::xarray<double>& input);
 	xt::xarray<double> feedForwardTrain(const xt::xarray<double>& input);
 	double applyBackPropagate();

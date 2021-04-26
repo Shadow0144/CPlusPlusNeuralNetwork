@@ -9,6 +9,8 @@
 class ShapeNeuralLayer : public NeuralLayer
 {
 public:
+	virtual ~ShapeNeuralLayer() = 0; // This class is not intended to be directly instantiated
+
 	xt::xarray<double> feedForwardTrain(const xt::xarray<double>& input);
 	xt::xarray<double> getGradient(const xt::xarray<double>& sigmas, Optimizer* optimizer);
 	double applyBackPropagate();

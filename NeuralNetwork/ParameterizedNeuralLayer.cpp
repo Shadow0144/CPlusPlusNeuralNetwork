@@ -8,6 +8,11 @@
 
 using namespace std;
 
+ParameterizedNeuralLayer::~ParameterizedNeuralLayer()
+{
+
+}
+
 double ParameterizedNeuralLayer::getRegularizationLoss(double lambda1, double lambda2) const
 {
 	double loss = weights.getRegularizationLoss(lambda1, lambda2);

@@ -6,6 +6,8 @@
 class ParameterizedNeuralLayer : public NeuralLayer
 {
 public:
+	virtual ~ParameterizedNeuralLayer() = 0; // This class is not intended to be directly instantiated
+
 	double getRegularizationLoss(double lambda1, double lambda2) const;
 
 	virtual void saveParameters(std::string fileName);

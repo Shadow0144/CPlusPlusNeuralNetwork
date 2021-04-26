@@ -7,6 +7,11 @@
 
 using namespace std;
 
+ConvolutionNeuralLayer::~ConvolutionNeuralLayer()
+{
+
+}
+
 xt::xarray<double> ConvolutionNeuralLayer::feedForward(const xt::xarray<double>& input)
 {
 	return activationFunction->feedForward(convolveInput(input));

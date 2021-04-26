@@ -5,7 +5,7 @@
 
 const double NeuralLayer::DRAW_LEN = 16.0;
 const double NeuralLayer::RERESCALE = 0.75;
-const double NeuralLayer::SHIFT = 16.0;
+const double NeuralLayer::SHIFT = 18.0;
 const double NeuralLayer::RADIUS = 40;
 const double NeuralLayer::DIAMETER = RADIUS * 2;
 const double NeuralLayer::NEURON_SPACING = 20;

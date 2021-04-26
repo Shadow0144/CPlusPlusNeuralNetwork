@@ -163,3 +163,77 @@ void test_signal(int layers)
 
     std::system("pause");
 }
+
+void test_signal_reshape()
+{
+    NeuralNetwork network = NeuralNetwork(true);
+
+    vector<size_t> inputShape;
+    inputShape.push_back(1);
+    network.addInputLayer(inputShape);
+    network.addDenseLayer(ActivationFunctionType::Identity, 9);
+    network.addReshapeLayer({ 3, 3 });
+    network.addFlattenLayer(9);
+    network.addReshapeLayer({ 3, 1, 1, 3 });
+    network.addSqueezeLayer({ 1 });
+    network.addFlattenLayer(9);
+    network.addReshapeLayer({ 3, 1, 1, 3, 1 });
+    network.addSqueezeLayer();
+    network.addFlattenLayer(9);
+    network.addDenseLayer(ActivationFunctionType::Sigmoid, 6);
+    network.addDenseLayer(ActivationFunctionType::Identity, 1);
+
+    network.setLossFunction(LossFunctionType::MeanSquaredError);
+    network.setOptimizer(OptimizerType::Adam);
+    network.displayRegressionEstimation();
+
+    const int SAMPLES = 100;
+    const double RESCALE = 1.0 / 10.0;
+
+    double twoPi = (2.0 * M_PI);
+    double inc = 2.0 * twoPi / SAMPLES;
+    int i = 0;
+    xt::xarray<int>::shape_type shape_x = { SAMPLES, 1 };
+    xt::xarray<double> training_x = xt::xarray<double>(shape_x);
+    xt::xarray<int>::shape_type shape_y = { SAMPLES, 1 };
+    xt::xarray<double> training_y = xt::xarray<double>(shape_y);
+    for (double t = -twoPi; t < twoPi; t += inc)
+    {
+        training_x(i, 0) = t * RESCALE;
+        training_y(i, 0) = tanh(3.0 * sin(1.0 * t + 0.5)) * RESCALE;
+        i++;
+    }
+
+    // Shuffle
+    bool shuffle = true;
+    if (shuffle)
+    {
+        xt::xstrided_slice_vector svI({ 0, xt::ellipsis() });
+        xt::xstrided_slice_vector svJ({ 0, xt::ellipsis() });
+        const size_t N = training_x.shape()[0];
+        for (size_t i = N - 1; i > 0; i--)
+        {
+            size_t j = rand() % i;
+            svI[0] = i;
+            svJ[0] = j;
+            auto x = xt::xarray<double>(xt::strided_view(training_x, svI));
+            xt::strided_view(training_x, svI) = xt::strided_view(training_x, svJ);
+            xt::strided_view(training_x, svJ) = x;
+            auto y = xt::xarray<double>(xt::strided_view(training_y, svI));
+            xt::strided_view(training_y, svI) = xt::strided_view(training_y, svJ);
+            xt::strided_view(training_y, svJ) = y;
+        }
+    }
+    else { }
+    network.train(training_x, training_y, MAX_EPOCHS);
+
+    xt::xarray<double> predicted = network.predict(training_x);
+    std::cout << endl;
+    for (int i = 0; i < SAMPLES; i += 10)
+    {
+        std::cout << "Predicted: " << predicted(i, 0) << " actual: " << training_y(i, 0) << endl;
+    }
+    std::cout << endl;
+
+    std::system("pause");
+}
