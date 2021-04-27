@@ -1,5 +1,6 @@
 #include "NeuralLayer.h"
 #include "ActivationFunction.h"
+#include "NetworkExceptions.h"
 
 #include "Test.h"
 
@@ -25,6 +26,26 @@ const ImColor NeuralLayer::VERY_LIGHT_GRAY = ImColor(0.8f, 0.8f, 0.8f, 1.0f);
 const ImColor NeuralLayer::WHITE = ImColor(1.0f, 1.0f, 1.0f, 1.0f);
 
 using namespace std;
+
+NeuralLayer::NeuralLayer()
+{
+	functionType = ActivationFunctionType::Identity;
+	numUnits = 0; // Hide warning, this value is set later
+}
+
+NeuralLayer::NeuralLayer(NeuralLayer* parent)
+{
+	this->parent = parent;
+	this->children = nullptr;
+	if (parent != nullptr)
+	{
+		parent->addChildren(this);
+	}
+	else 
+	{
+		throw NeuralLayerConfigurationException();
+	}
+}
 
 NeuralLayer::~NeuralLayer()
 {
@@ -122,6 +143,16 @@ void NeuralLayer::restoreParameters(Optimizer* optimizer)
 		activationFunction->restoreParameters(optimizer);
 	}
 	else { }
+}
+
+void NeuralLayer::useSimplifiedGradient(bool useOptimizedGradient)
+{
+	// Do nothing
+}
+
+bool NeuralLayer::isSoftmaxLayer()
+{
+	return false;
 }
 
 double NeuralLayer::getLayerWidth(size_t numUnits, double scale)

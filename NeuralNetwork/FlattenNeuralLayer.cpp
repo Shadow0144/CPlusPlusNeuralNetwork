@@ -2,21 +2,17 @@
 
 #include "FlattenNeuralLayer.h"
 
+#include "NetworkExceptions.h"
+
 #pragma warning(push, 0)
 #include <math.h>
 #include <tuple>
 #pragma warning(pop)
 
-FlattenNeuralLayer::FlattenNeuralLayer(NeuralLayer* parent, int numOutputs)
+FlattenNeuralLayer::FlattenNeuralLayer(NeuralLayer* parent)
+	: ShapeNeuralLayer(parent)
 {
-	this->parent = parent;
-	this->children = nullptr;
-	if (parent != nullptr)
-	{
-		parent->addChildren(this);
-	}
-	else { }
-	this->numUnits = numOutputs;
+
 }
 
 FlattenNeuralLayer::~FlattenNeuralLayer()
@@ -35,6 +31,19 @@ xt::xarray<double> FlattenNeuralLayer::feedForward(const xt::xarray<double>& inp
 	}
 	auto result = xt::xarray<double>(input);
 	result.reshape({ shape[0], newShape });
+	return result;
+}
+
+std::vector<size_t> FlattenNeuralLayer::getOutputShape()
+{
+	auto shape = parent->getOutputShape();
+	const int DIMS = shape.size();
+	size_t newShape = 1;
+	for (int i = 0; i < DIMS; i++)
+	{
+		newShape *= shape[i];
+	}
+	auto result = { newShape };
 	return result;
 }
 

@@ -53,6 +53,8 @@
 
 #include "NeuralNetworkFileHelper.h"
 
+#include "NetworkExceptions.h"
+
 #include "Test.h"
 
 #pragma warning(push, 0)
@@ -133,6 +135,11 @@ NeuralNetwork::~NeuralNetwork()
 
 void NeuralNetwork::addInputLayer(const std::vector<size_t>& inputShape)
 {
+	if (layerCount != 0) // Ensure this is the first layer
+	{
+		throw InputLayerConfigurationException();
+	}
+	else { }
 	this->inputShape = inputShape; 
 	InputNeuralLayer* layer = new InputNeuralLayer(inputShape);
 	layers->push_back(layer);
@@ -203,51 +210,51 @@ void NeuralNetwork::addConvolution3DLayer(size_t numKernels, const std::vector<s
 	layerCount++;
 }
 
-void NeuralNetwork::addAveragePooling1DLayer(const std::vector<size_t>& poolingShape)
+void NeuralNetwork::addAveragePooling1DLayer(const std::vector<size_t>& poolingShape, bool hasChannels)
 {
-	AveragePooling1DNeuralLayer* layer = new AveragePooling1DNeuralLayer(layers->at(layerCount - 1), poolingShape);
+	AveragePooling1DNeuralLayer* layer = new AveragePooling1DNeuralLayer(layers->at(layerCount - 1), poolingShape, hasChannels);
 	layers->push_back(layer);
 	layerCount++;
 }
 
-void NeuralNetwork::addAveragePooling2DLayer(const std::vector<size_t>& poolingShape)
+void NeuralNetwork::addAveragePooling2DLayer(const std::vector<size_t>& poolingShape, bool hasChannels)
 {
-	AveragePooling2DNeuralLayer* layer = new AveragePooling2DNeuralLayer(layers->at(layerCount - 1), poolingShape);
+	AveragePooling2DNeuralLayer* layer = new AveragePooling2DNeuralLayer(layers->at(layerCount - 1), poolingShape, hasChannels);
 	layers->push_back(layer);
 	layerCount++;
 }
 
-void NeuralNetwork::addAveragePooling3DLayer(const std::vector<size_t>& poolingShape)
+void NeuralNetwork::addAveragePooling3DLayer(const std::vector<size_t>& poolingShape, bool hasChannels)
 {
-	AveragePooling3DNeuralLayer* layer = new AveragePooling3DNeuralLayer(layers->at(layerCount - 1), poolingShape);
+	AveragePooling3DNeuralLayer* layer = new AveragePooling3DNeuralLayer(layers->at(layerCount - 1), poolingShape, hasChannels);
 	layers->push_back(layer);
 	layerCount++;
 }
 
-void NeuralNetwork::addMaxPooling1DLayer(const std::vector<size_t>& poolingShape)
+void NeuralNetwork::addMaxPooling1DLayer(const std::vector<size_t>& poolingShape, bool hasChannels)
 {
-	MaxPooling1DNeuralLayer* layer = new MaxPooling1DNeuralLayer(layers->at(layerCount - 1), poolingShape);
+	MaxPooling1DNeuralLayer* layer = new MaxPooling1DNeuralLayer(layers->at(layerCount - 1), poolingShape, hasChannels);
 	layers->push_back(layer);
 	layerCount++;
 }
 
-void NeuralNetwork::addMaxPooling2DLayer(const std::vector<size_t>& poolingShape)
+void NeuralNetwork::addMaxPooling2DLayer(const std::vector<size_t>& poolingShape, bool hasChannels)
 {
-	MaxPooling2DNeuralLayer* layer = new MaxPooling2DNeuralLayer(layers->at(layerCount - 1), poolingShape);
+	MaxPooling2DNeuralLayer* layer = new MaxPooling2DNeuralLayer(layers->at(layerCount - 1), poolingShape, hasChannels);
 	layers->push_back(layer);
 	layerCount++;
 }
 
-void NeuralNetwork::addMaxPooling3DLayer(const std::vector<size_t>& poolingShape)
+void NeuralNetwork::addMaxPooling3DLayer(const std::vector<size_t>& poolingShape, bool hasChannels)
 {
-	MaxPooling3DNeuralLayer* layer = new MaxPooling3DNeuralLayer(layers->at(layerCount - 1), poolingShape);
+	MaxPooling3DNeuralLayer* layer = new MaxPooling3DNeuralLayer(layers->at(layerCount - 1), poolingShape, hasChannels);
 	layers->push_back(layer);
 	layerCount++;
 }
 
-void NeuralNetwork::addFlattenLayer(int numOutputs)
+void NeuralNetwork::addFlattenLayer()
 {
-	FlattenNeuralLayer* layer = new FlattenNeuralLayer(layers->at(layerCount - 1), numOutputs);
+	FlattenNeuralLayer* layer = new FlattenNeuralLayer(layers->at(layerCount - 1));
 	layers->push_back(layer);
 	layerCount++;
 }
@@ -333,6 +340,9 @@ void NeuralNetwork::train(const xt::xarray<double>& inputs, const xt::xarray<dou
 			updateDrawing(predicted);
 
 			cout << "Beginning training" << endl << endl;
+
+			// Check if there is a special optimized synergy between the gradients of the last layer and the loss function
+			//lossFunction->checkForOptimizedGradient(layers->at(layers->size() - 1));
 
 			//currentEpoch = 0; //int t = 0; // This is set either in the constructor or when loading
 			bool converged = false;

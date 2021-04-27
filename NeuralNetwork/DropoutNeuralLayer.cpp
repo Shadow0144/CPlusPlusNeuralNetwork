@@ -10,14 +10,8 @@
 
 // Input shape is the shape of a single example
 DropoutNeuralLayer::DropoutNeuralLayer(NeuralLayer* parent)
+	: NeuralLayer(parent)
 {
-	this->parent = parent;
-	this->children = nullptr;
-	if (parent != nullptr)
-	{
-		parent->addChildren(this);
-	}
-	else { }
 	this->inputShape = parent->getOutputShape();
 	this->numUnits = inputShape.at(inputShape.size() - 1);
 }

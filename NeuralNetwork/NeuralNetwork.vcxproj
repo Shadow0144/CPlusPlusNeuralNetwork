@@ -127,6 +127,7 @@
     <ClCompile Include="imgui_widgets.cpp" />
     <ClCompile Include="InputNeuralLayer.cpp" />
     <ClCompile Include="LeakyReLUFunction.cpp" />
+    <ClCompile Include="LossFunction.cpp" />
     <ClCompile Include="MaxoutNeuralLayer.cpp" />
     <ClCompile Include="MaxPooling1DNeuralLayer.cpp" />
     <ClCompile Include="MaxPooling2DNeuralLayer.cpp" />
@@ -140,6 +141,7 @@
     <ClCompile Include="Optimizer.cpp" />
     <ClCompile Include="ParameterizedNeuralLayer.cpp" />
     <ClCompile Include="ParameterSet.cpp" />
+    <ClCompile Include="PoolingNeuralLayer.cpp" />
     <ClCompile Include="PReLUFunction.cpp" />
     <ClCompile Include="QuadraticFunction.cpp" />
     <ClCompile Include="ReLU6Function.cpp" />
@@ -211,6 +213,7 @@
     <ClInclude Include="NadamOptimizer.h" />
     <ClInclude Include="NetworkVisualizer.h" />
     <ClInclude Include="NeuralLayer.h" />
+    <ClInclude Include="NetworkExceptions.h" />
     <ClInclude Include="NeuralNetworkFileHelper.h" />
     <ClInclude Include="Optimizer.h" />
     <ClInclude Include="ParameterizedNeuralLayer.h" />
@@ -219,6 +222,7 @@
     <ClInclude Include="ActivationFunction.h" />
     <ClInclude Include="NeuralNetwork.h" />
     <ClInclude Include="DenseNeuralLayer.h" />
+    <ClInclude Include="PoolingNeuralLayer.h" />
     <ClInclude Include="PReLUFunction.h" />
     <ClInclude Include="QuadraticFunction.h" />
     <ClInclude Include="ReLU6Function.h" />

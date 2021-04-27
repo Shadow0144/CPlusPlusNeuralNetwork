@@ -43,7 +43,7 @@ void test_binary_mnist()
     network.addMaxPooling2DLayer({ 2, 2 }); // 24x24x64 -> 12x12x64
     network.addConvolution2DLayer(NUM_KERNELS_2, { 5, 5 }, NUM_KERNELS_1); // 12x12x16 -> 8x8x16
     network.addMaxPooling2DLayer({ 2, 2 }); // 8x8x16 -> 4x4x16
-    network.addFlattenLayer(4 * 4 * NUM_KERNELS_2); // 4x4x16 -> 256
+    network.addFlattenLayer(); // 4x4x16 -> 256
     network.addDenseLayer(ActivationFunctionType::ReLU, 32); // 256 -> 32
     network.addDenseLayer(ActivationFunctionType::ReLU, CLASSES); // 32 -> 2
     network.addSoftmaxLayer(-1);
@@ -104,7 +104,7 @@ void test_mnist()
     network.addMaxPooling2DLayer({ 2, 2 }); // 24x24x64 -> 12x12x64
     network.addConvolution2DLayer(NUM_KERNELS_2, { 5, 5 }, NUM_KERNELS_1); // 12x12x16 -> 8x8x16                                                         
     network.addMaxPooling2DLayer({ 2, 2 }); // 8x8x16 -> 4x4x16
-    network.addFlattenLayer(4 * 4 * NUM_KERNELS_2); // 4x4x16 -> 256
+    network.addFlattenLayer(); // 4x4x16 -> 256
     network.addDenseLayer(ActivationFunctionType::Sigmoid, 32); // 256 -> 32
     network.addDenseLayer(ActivationFunctionType::Sigmoid, CLASSES); // 32 -> 10
     network.addSoftmaxLayer(-1);

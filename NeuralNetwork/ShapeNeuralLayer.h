@@ -16,5 +16,7 @@ public:
 	double applyBackPropagate();
 
 protected:
+	ShapeNeuralLayer(NeuralLayer* parent);
+
 	xt::svector<size_t> lastShape; // The shape of the last training input
 };

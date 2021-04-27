@@ -282,6 +282,12 @@
     <ClCompile Include="FtrlOptimizer.cpp">
       <Filter>Source Files\Optimizer</Filter>
     </ClCompile>
+    <ClCompile Include="LossFunction.cpp">
+      <Filter>Source Files\LossFunction</Filter>
+    </ClCompile>
+    <ClCompile Include="PoolingNeuralLayer.cpp">
+      <Filter>Source Files\NeuralLayer\PoolingLayer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NeuralNetwork.h">
@@ -508,6 +514,12 @@
     </ClInclude>
     <ClInclude Include="FtrlOptimizer.h">
       <Filter>Header Files\Optimizer</Filter>
+    </ClInclude>
+    <ClInclude Include="PoolingNeuralLayer.h">
+      <Filter>Header Files\NeuralLayer\PoolingLayer</Filter>
+    </ClInclude>
+    <ClInclude Include="NetworkExceptions.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

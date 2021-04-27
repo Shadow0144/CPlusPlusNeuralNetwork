@@ -9,8 +9,8 @@
 
 // Input shape is the shape of a single example
 InputNeuralLayer::InputNeuralLayer(const std::vector<size_t>& inputShape)
+	: NeuralLayer() // No parent
 {
-	this->children = nullptr;
 	this->inputShape = inputShape;
 	this->numUnits = inputShape.at(inputShape.size() - 1);
 }

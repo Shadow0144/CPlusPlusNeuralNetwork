@@ -1,5 +1,7 @@
 #include "AveragePooling1DNeuralLayer.h"
 
+#include "NetworkExceptions.h"
+
 #pragma warning(push, 0)
 #include <math.h>
 #include <tuple>
@@ -7,17 +9,14 @@
 
 using namespace std;
 
-AveragePooling1DNeuralLayer::AveragePooling1DNeuralLayer(NeuralLayer* parent, const std::vector<size_t>& filterShape)
+AveragePooling1DNeuralLayer::AveragePooling1DNeuralLayer(NeuralLayer* parent, const std::vector<size_t>& filterShape, bool hasChannels)
+	: PoolingNeuralLayer(parent, filterShape, hasChannels)
 {
-	this->parent = parent;
-	this->children = nullptr;
-	if (parent != nullptr)
+	if (filterShape.size() != 1)
 	{
-		parent->addChildren(this);
+		throw NeuralLayerPoolingShapeException();
 	}
 	else { }
-	this->filterShape = filterShape;
-	this->numUnits = 1;
 }
 
 AveragePooling1DNeuralLayer::~AveragePooling1DNeuralLayer()
@@ -27,8 +26,9 @@ AveragePooling1DNeuralLayer::~AveragePooling1DNeuralLayer()
 
 xt::xarray<double> AveragePooling1DNeuralLayer::feedForward(const xt::xarray<double>& input)
 {
+	const int C = (hasChannels) ? 2 : 1;
 	const int DIMS = input.dimension();
-	const int DIM1 = DIMS - 2; // First dimension
+	const int DIM1 = DIMS - C; // First dimension
 	const int DIMC = DIMS - 1; // Channels
 	auto shape = input.shape();
 	auto maxShape = xt::svector<size_t>(shape);
@@ -104,74 +104,9 @@ double AveragePooling1DNeuralLayer::applyBackPropagate()
 	return deltaWeight; // Return the sum of how much the parameters have changed
 }
 
-void AveragePooling1DNeuralLayer::draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output)
-{
-	const ImColor BLACK(0.0f, 0.0f, 0.0f, 1.0f);
-	const ImColor GRAY(0.3f, 0.3f, 0.3f, 1.0f);
-	const ImColor LIGHT_GRAY(0.6f, 0.6f, 0.6f, 1.0f);
-	const ImColor VERY_LIGHT_GRAY(0.8f, 0.8f, 0.8f, 1.0f);
-	const ImColor WHITE(1.0f, 1.0f, 1.0f, 1.0f);
-	const double LINE_LENGTH = 15;
-
-	// Draw the neurons
-	ImVec2 position = ImVec2(origin);
-	const double LAYER_WIDTH = getLayerWidth(numUnits, scale);
-	for (int i = 0; i < numUnits; i++)
-	{
-		position.x = getNeuronX(origin.x, LAYER_WIDTH, i, scale);
-		canvas->AddCircleFilled(position, RADIUS * scale, LIGHT_GRAY, 32);
-	}
-
-	// Draw the activation function
-	draw1DPooling(canvas, origin, scale);
-
-	// Draw the links to the previous neurons
-	double previousX, previousY;
-	int parentCount = parent->getNumUnits();
-	const double PARENT_LAYER_WIDTH = NeuralLayer::getLayerWidth(parentCount, scale);
-	ImVec2 currentNeuronPt(0, origin.y - (RADIUS * scale));
-	previousY = origin.y - (DIAMETER * scale);
-
-	// Draw each neuron
-	for (int i = 0; i < numUnits; i++)
-	{
-		currentNeuronPt.x = NeuralLayer::getNeuronX(origin.x, LAYER_WIDTH, i, scale);
-		for (int j = 0; j < parentCount; j++) // There should be at least one parent
-		{
-			previousX = NeuralLayer::getNeuronX(origin.x, PARENT_LAYER_WIDTH, j, scale);
-			ImVec2 previousNeuronPt(previousX, previousY);
-
-			// Draw line to previous neuron
-			canvas->AddLine(previousNeuronPt, currentNeuronPt, BLACK, 1.0f);
-		}
-	}
-
-	if (output)
-	{
-		for (int i = 0; i < numUnits; i++)
-		{
-			// Draw the output lines
-			double x = NeuralLayer::getNeuronX(origin.x, LAYER_WIDTH, i, scale);
-			ImVec2 outputPt(x, position.y + (RADIUS * scale));
-			ImVec2 nextPt(x, outputPt.y + (LINE_LENGTH * scale));
-			canvas->AddLine(outputPt, nextPt, GRAY);
-		}
-	}
-	else { }
-
-	// Overlaying black ring
-	for (int i = 0; i < numUnits; i++)
-	{
-		position.x = origin.x - (LAYER_WIDTH * 0.5) + (((DIAMETER + NEURON_SPACING) * i) * scale);
-		canvas->AddCircle(position, RADIUS * scale, BLACK, 32);
-	}
-}
-
-void AveragePooling1DNeuralLayer::draw1DPooling(ImDrawList* canvas, ImVec2 origin, double scale)
+void AveragePooling1DNeuralLayer::drawPooling(ImDrawList* canvas, ImVec2 origin, double scale)
 {
 	drawConversionFunctionBackground(canvas, origin, scale, false);
-
-	const ImColor HALF_GRAY(0.5f, 0.5f, 0.5f, 1.0f);
 
 	const int X = filterShape.at(0);
 	const int Y = 1; // Only one
@@ -183,6 +118,7 @@ void AveragePooling1DNeuralLayer::draw1DPooling(ImDrawList* canvas, ImVec2 origi
 	const float CENTER_X = max(ceil((X - 1.0f) / 2.0f), 1.0f); // Avoid divide-by-zero
 	const float CENTER_Y = max(ceil((Y - 1.0f) / 2.0f), 1.0f); // Avoid divide-by-zero
 
+	float avgColor = 0.0f;
 	const double LAYER_WIDTH = NeuralLayer::getLayerWidth(numUnits, scale);
 	ImVec2 position(0, origin.y);
 	for (int n = 0; n < numUnits; n++) // TODO: Fix padding issues
@@ -197,6 +133,7 @@ void AveragePooling1DNeuralLayer::draw1DPooling(ImDrawList* canvas, ImVec2 origi
 			{
 				float colorValue = 1.0f - (((abs(CENTER_X - j) / CENTER_X)
 					+ (abs(CENTER_Y - i) / CENTER_Y)) / 2.0f);
+				avgColor += colorValue;
 				ImColor color(colorValue, colorValue, colorValue);
 				canvas->AddRectFilled(ImVec2(floor(position.x + x), floor(position.y - y)),
 					ImVec2(ceil(position.x + x + xWidth), ceil(position.y - y - yHeight)),
@@ -205,10 +142,13 @@ void AveragePooling1DNeuralLayer::draw1DPooling(ImDrawList* canvas, ImVec2 origi
 			}
 			y -= yHeight;
 		}
+		avgColor /= (X);
 
 		// Draw right
 		// Draw a grey square
-		position.x = NeuralLayer::getNeuronX(origin.x, LAYER_WIDTH, n, scale) + (SHIFT * scale);
+		position.x = NeuralLayer::getNeuronX(origin.x, LAYER_WIDTH, n, scale) + (SHIFT * scale) - RESCALE;
+		position.y = position.y + RESCALE;
+		const ImColor HALF_GRAY(avgColor, avgColor, avgColor, 1.0f);
 		canvas->AddRectFilled(ImVec2(floor(position.x), floor(position.y)),
 			ImVec2(ceil(position.x + (xWidth * X)), ceil(position.y - (yHeight * Y))),
 			HALF_GRAY);

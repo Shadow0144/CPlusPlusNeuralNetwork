@@ -18,5 +18,7 @@ public:
 	virtual void restoreParameters(Optimizer* optimizer);
 
 protected:
+	ParameterizedNeuralLayer(NeuralLayer* parent);
+
 	ParameterSet weights;
 };

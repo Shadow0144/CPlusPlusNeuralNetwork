@@ -14,6 +14,8 @@ public:
 
 	xt::xarray<double> feedForward(const xt::xarray<double>& input);
 
+	std::vector<size_t> getOutputShape();
+
 	void draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output);
 
 private:

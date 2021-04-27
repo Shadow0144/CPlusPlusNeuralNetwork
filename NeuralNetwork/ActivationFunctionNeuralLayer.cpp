@@ -11,18 +11,12 @@
 
 #include "Test.h"
 
-ActivationFunctionNeuralLayer::ActivationFunctionNeuralLayer(ActivationFunctionType functionType, NeuralLayer* parent, std::map<string, double> additionalParameters)
+ActivationFunctionNeuralLayer::ActivationFunctionNeuralLayer(ActivationFunctionType functionType, 
+	NeuralLayer* parent, std::map<string, double> additionalParameters)
+	: NeuralLayer(parent)
 {
-	this->numInputs = 0;
-	this->parent = parent;
-	this->children = nullptr;
-	if (parent != nullptr)
-	{
-		parent->addChildren(this);
-		this->numInputs = parent->getNumUnits();
-	}
-	else { }
-	this->numUnits = 1;
+	this->numInputs = parent->getNumUnits();
+	this->numUnits = numInputs;
 	this->functionType = functionType;
 	this->activationFunction = ActivationFunctionFactory::getNewActivationFunction(functionType, additionalParameters);
 }
@@ -56,8 +50,7 @@ double ActivationFunctionNeuralLayer::applyBackPropagate()
 
 std::vector<size_t> ActivationFunctionNeuralLayer::getOutputShape()
 {
-	std::vector<size_t> outputShape;
-	outputShape.push_back(numUnits);
+	std::vector<size_t> outputShape = parent->getOutputShape();
 	outputShape = activationFunction->getOutputShape(outputShape);
 	return outputShape;
 }

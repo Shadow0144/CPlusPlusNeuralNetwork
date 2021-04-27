@@ -8,6 +8,12 @@
 
 using namespace std;
 
+ParameterizedNeuralLayer::ParameterizedNeuralLayer(NeuralLayer* parent)
+	: NeuralLayer(parent)
+{
+
+}
+
 ParameterizedNeuralLayer::~ParameterizedNeuralLayer()
 {
 

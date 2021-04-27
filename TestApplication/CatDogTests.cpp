@@ -38,7 +38,7 @@ void test_catdog()
     network.addConvolution2DLayer(NUM_KERNELS_4, { 6, 6 }, NUM_KERNELS_3); // 15x15x16 -> 10x10x16                                                         
     network.addMaxPooling2DLayer({ 2, 2 }); // 10x10x16 -> 5x5x4
 
-    network.addFlattenLayer(5 * 5 * NUM_KERNELS_4); // 5x5x4 -> 100
+    network.addFlattenLayer(); // 5x5x4 -> 100
     network.addDenseLayer(ActivationFunctionType::Sigmoid, 32); // 100 -> 32
     network.addDenseLayer(ActivationFunctionType::Softplus, CLASSES); // 32 -> 2
     network.addSoftmaxLayer(-1);

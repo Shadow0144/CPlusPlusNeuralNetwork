@@ -287,13 +287,17 @@ void test_layers()
 
 int main(int argc, char** argv)
 {
-    //test_network(network::signal, 3);
+    //test_network(network::mnist, 3);
 
     //test_layers();
 
     //test_binary();
 
-    test_signal_reshape();
+    //test_signal_reshape();
+
+    //test_signal_maxout();
+
+    test_signal_crelu();
 
     return 0;
 }

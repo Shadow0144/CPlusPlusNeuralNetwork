@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ParameterizedNeuralLayer.h"
+#include "PoolingNeuralLayer.h"
 #include "ActivationFunction.h"
 
 #pragma warning(push, 0)
@@ -8,20 +8,16 @@
 #include <vector>
 #pragma warning(pop)
 
-class AveragePooling2DNeuralLayer : public ParameterizedNeuralLayer
+class AveragePooling2DNeuralLayer : public PoolingNeuralLayer
 {
 public:
-	AveragePooling2DNeuralLayer(NeuralLayer* parent, const std::vector<size_t>& filterShape);
+	AveragePooling2DNeuralLayer(NeuralLayer* parent, const std::vector<size_t>& filterShape, bool hasChannels = true);
 	~AveragePooling2DNeuralLayer();
 
 	xt::xarray<double> feedForward(const xt::xarray<double>& input);
 	xt::xarray<double> getGradient(const xt::xarray<double>& sigmas, Optimizer* optimizer);
 	double applyBackPropagate();
 
-	void draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output);
-
 private:
-	std::vector<size_t> filterShape;
-
-	void draw2DPooling(ImDrawList* canvas, ImVec2 origin, double scale);
+	void drawPooling(ImDrawList* canvas, ImVec2 origin, double scale);
 };

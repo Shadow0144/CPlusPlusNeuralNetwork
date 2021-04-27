@@ -34,6 +34,9 @@ public:
 	virtual void substituteParameters(Optimizer* optimizer);
 	virtual void restoreParameters(Optimizer* optimizer);
 
+	virtual void useSimplifiedGradient(bool useOptimizedGradient); // For use by certain loss functions for optimized gradient calculations
+	virtual bool isSoftmaxLayer(); // For use by the cross entropy loss function for optimized gradient calculations
+
 	// Drawing constants
 	const static double DRAW_LEN;// = 16.0;
 	const static double RERESCALE;// = 0.75;
@@ -62,6 +65,9 @@ public:
 	virtual void draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output) = 0;
 
 protected:
+	NeuralLayer(); // For input layers
+	NeuralLayer(NeuralLayer* parent); // For non-input layers
+
 	NeuralLayer* parent = nullptr;
 	NeuralLayer* children = nullptr;
 

@@ -7,6 +7,12 @@
 #include <tuple>
 #pragma warning(pop)
 
+ShapeNeuralLayer::ShapeNeuralLayer(NeuralLayer* parent)
+	: NeuralLayer(parent)
+{
+	this->numUnits = 1;
+}
+
 ShapeNeuralLayer::~ShapeNeuralLayer()
 {
 

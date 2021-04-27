@@ -5,6 +5,7 @@
 #pragma warning(pop)
 
 class NeuralNetwork;
+class NeuralLayer;
 
 class LossFunction
 {
@@ -16,6 +17,8 @@ public:
 	inline double getL1RegularizationStrength() const { return lambda1; }
 	inline void setL2RegularizationStrength(double lambda2) { this->lambda2 = lambda2; }
 	inline double getL2RegularizationStrength() const { return lambda2; }
+
+	virtual void checkForOptimizedGradient(NeuralLayer* finalLayer); // The default behavior is to disable any simplified gradient calclution if it was previously enabled
 
 protected:
 	double lambda1;

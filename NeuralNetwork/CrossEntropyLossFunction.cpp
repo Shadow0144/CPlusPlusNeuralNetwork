@@ -8,12 +8,15 @@
 
 using namespace std;
 
-const double c = pow(10, -8);
+CrossEntropyLossFunction::CrossEntropyLossFunction()
+{
+	useSoftmaxGradient = false;
+}
 
 double CrossEntropyLossFunction::getLoss(const NeuralNetwork* network, const xt::xarray<double>& predicted, const xt::xarray<double>& actual) const
 {
 	const size_t N = predicted.shape()[0];
-	auto errors = actual * xt::log(predicted + c);
+	auto errors = actual * xt::log(predicted + EPSILON);
 	auto error = (-xt::sum(errors) / N)();
 	if (lambda1 != 0.0 || lambda2 != 0.0)
 	{
@@ -25,14 +28,40 @@ double CrossEntropyLossFunction::getLoss(const NeuralNetwork* network, const xt:
 
 xt::xarray<double> CrossEntropyLossFunction::getGradient(const xt::xarray<double>& predicted, const xt::xarray<double>& actual) const
 {
-	//auto errors = -(actual / (predicted + 0.00001)); // Need to account for divide-by-zero
-	auto errors = (predicted - actual);
+	xt::xarray<double> errors;
+	if (useSoftmaxGradient)
+	{
+		errors = getGradientSoftmax(predicted, actual);
+	}
+	else
+	{
+		errors = getGradientStandard(predicted, actual);
+	}
 	return errors;
 }
 
-// This is only true when combined with softmax and for one-hot vectors // TODO!!!
+xt::xarray<double> CrossEntropyLossFunction::getGradientStandard(const xt::xarray<double>& predicted, const xt::xarray<double>& actual) const
+{
+	auto errors = -(actual / (predicted + EPSILON)); // Need to account for divide-by-zero
+	return errors;
+}
+
 xt::xarray<double> CrossEntropyLossFunction::getGradientSoftmax(const xt::xarray<double>& predicted, const xt::xarray<double>& actual) const
 {
 	auto errors = (predicted - actual);
 	return errors;
+}
+
+void CrossEntropyLossFunction::checkForOptimizedGradient(NeuralLayer* finalLayer)
+{
+	if (finalLayer->isSoftmaxLayer())
+	{
+		useSoftmaxGradient = true;
+		finalLayer->useSimplifiedGradient(true);
+	}
+	else 
+	{
+		useSoftmaxGradient = false;
+		finalLayer->useSimplifiedGradient(false);
+	}
 }

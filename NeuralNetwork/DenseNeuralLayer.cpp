@@ -6,6 +6,8 @@
 
 #include "PReLUFunction.h"
 
+#include "NetworkExceptions.h"
+
 #pragma warning(push, 0)
 #include <math.h>
 #include <tuple>
@@ -14,17 +16,17 @@
 
 #include "Test.h"
 
-DenseNeuralLayer::DenseNeuralLayer(ActivationFunctionType functionType, NeuralLayer* parent, size_t numUnits, std::map<string, double> additionalParameters, bool addBias)
+DenseNeuralLayer::DenseNeuralLayer(ActivationFunctionType functionType, NeuralLayer* parent, 
+	size_t numUnits, std::map<string, double> additionalParameters, bool addBias)
+	: ParameterizedNeuralLayer(parent)
 {
-	this->numInputs = 0;
-	this->parent = parent;
-	this->children = nullptr;
-	if (parent != nullptr)
+	auto shape = parent->getOutputShape();
+	if (shape.size() != 1) // Limit this layer to only accept inputs which can be transposed
 	{
-		parent->addChildren(this);
-		this->numInputs = parent->getNumUnits();
+		throw NeuralLayerInputShapeException();
 	}
 	else { }
+	this->numInputs = parent->getOutputShape()[0];
 	this->numUnits = numUnits;
 	this->addBias = addBias;
 	this->functionType = functionType;

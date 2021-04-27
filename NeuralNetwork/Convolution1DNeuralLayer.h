@@ -21,10 +21,8 @@ public:
 
 	xt::xarray<double> getGradient(const xt::xarray<double>& errors, Optimizer* optimizer);
 
-	void draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output);
-
 private:
 	xt::xarray<double> convolveInput(const xt::xarray<double>& input);
 	xt::xarray<double> convolude1D(const xt::xarray<double>& f, const xt::xarray<double>& g);
-	void draw1DConvolution(ImDrawList* canvas, ImVec2 origin, double scale);
+	void drawConvolution(ImDrawList* canvas, ImVec2 origin, double scale);
 };

@@ -2,22 +2,17 @@
 
 #include "ReshapeNeuralLayer.h"
 
+#include "NetworkExceptions.h"
+
 #pragma warning(push, 0)
 #include <math.h>
 #include <tuple>
 #pragma warning(pop)
 
 ReshapeNeuralLayer::ReshapeNeuralLayer(NeuralLayer* parent, const std::vector<size_t>& newShape)
+	: ShapeNeuralLayer(parent)
 {
-	this->parent = parent;
-	this->children = NULL;
-	if (parent != NULL)
-	{
-		parent->addChildren(this);
-	}
-	else { }
 	this->newShape = newShape;
-	this->numUnits = 1;
 }
 
 ReshapeNeuralLayer::~ReshapeNeuralLayer()
@@ -36,6 +31,32 @@ xt::xarray<double> ReshapeNeuralLayer::feedForward(const xt::xarray<double>& inp
 	}
 	result.reshape(fullNewShape);
 	return result;
+}
+
+std::vector<size_t> ReshapeNeuralLayer::getOutputShape()
+{
+	auto shape = parent->getOutputShape();
+	const int O_DIMS = shape.size();
+	size_t oldDims = 1;
+	for (int i = 0; i < O_DIMS; i++)
+	{
+		oldDims *= shape[i];
+	}
+
+	const int N_DIMS = newShape.size();
+	size_t newDims = 1;
+	for (int i = 0; i < N_DIMS; i++)
+	{
+		newDims *= newShape[i];
+	}
+
+	if (oldDims != newDims) // Ensure there is still the same number of total elements
+	{
+		throw NeuralLayerInputShapeException();
+	}
+	else { }
+
+	return newShape;
 }
 
 void ReshapeNeuralLayer::draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output)

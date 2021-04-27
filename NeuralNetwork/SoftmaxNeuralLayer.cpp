@@ -6,6 +6,7 @@
 #include <iostream>
 #include <cmath>
 #include <mutex>  // For std::unique_lock
+#include <xtensor-blas/xlinalg.hpp>
 #pragma warning(pop)
 
 #include "Test.h"
@@ -13,19 +14,15 @@
 using namespace std;
 
 SoftmaxNeuralLayer::SoftmaxNeuralLayer(NeuralLayer* parent, int axis)
+	: NeuralLayer(parent)
 {
-	this->parent = parent;
-	this->children = NULL;
-	if (parent != NULL)
-	{
-		parent->addChildren(this);
-	}
-	else { }
 	this->numUnits = 1;
-	this->numOutputs = parent->getNumUnits();
+	this->numOutputs = parent->getOutputShape()[parent->getOutputShape().size()-1];
 	this->numInputs = numOutputs;
 
 	this->axis = axis;
+
+	this->useOptimizedGradient = false;
 }
 
 SoftmaxNeuralLayer::~SoftmaxNeuralLayer()
@@ -70,8 +67,30 @@ xt::xarray<double> SoftmaxNeuralLayer::feedForwardTrain(const xt::xarray<double>
 
 xt::xarray<double> SoftmaxNeuralLayer::getGradient(const xt::xarray<double>& sigmas, Optimizer* optimizer)
 {
-	//auto newSigmas = xt::pow(sigmas, 2.0); // TODO? Potentially wrong equation
-	return sigmas; // TODO Temp
+	xt::xarray<double> newSigmas;
+
+	if (useOptimizedGradient)
+	{
+		newSigmas = getGradientCrossEntropy(sigmas, optimizer);
+	}
+	else
+	{
+		newSigmas = getGradientStandard(sigmas, optimizer);
+	}
+
+	return newSigmas;
+}
+
+xt::xarray<double> SoftmaxNeuralLayer::getGradientStandard(const xt::xarray<double>& sigmas, Optimizer* optimizer)
+{
+	xt::xarray<double> diag = xt::eye(sigmas.shape()[sigmas.dimension()-1]);
+	diag = xt::expand_dims(diag, 0);
+	diag = xt::repeat(diag, sigmas.shape()[0], 0);
+	xt::xarray<double> lastOutputExp = xt::expand_dims(lastOutput, lastOutput.dimension());
+	lastOutputExp = xt::repeat(lastOutputExp, lastOutput.shape()[lastOutput.dimension()-1], lastOutput.dimension());
+	xt::xarray<double> newSigmas = lastOutputExp * (diag - lastOutputExp);
+	newSigmas = xt::sum((newSigmas * lastOutputExp), -1);
+	return newSigmas;
 }
 
 xt::xarray<double> SoftmaxNeuralLayer::getGradientCrossEntropy(const xt::xarray<double>& sigmas, Optimizer* optimizer)
@@ -86,10 +105,17 @@ double SoftmaxNeuralLayer::applyBackPropagate()
 
 std::vector<size_t> SoftmaxNeuralLayer::getOutputShape()
 {
-	std::vector<size_t> outputShape;
-	//outputShape.push_back(numUnits); // There is only 1 unit and it does not contribute toward the output shape
-	outputShape.push_back(numOutputs);
-	return outputShape;
+	return parent->getOutputShape();
+}
+
+void SoftmaxNeuralLayer::useSimplifiedGradient(bool useOptimizedGradient)
+{
+	this->useOptimizedGradient = useOptimizedGradient;
+}
+
+bool SoftmaxNeuralLayer::isSoftmaxLayer()
+{
+	return true;
 }
 
 void SoftmaxNeuralLayer::draw(ImDrawList* canvas, ImVec2 origin, double scale, bool output)

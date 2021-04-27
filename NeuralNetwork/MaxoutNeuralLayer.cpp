@@ -4,6 +4,8 @@
 
 #include "Optimizer.h"
 
+#include "NetworkExceptions.h"
+
 #pragma warning(push, 0)
 #include <iostream>
 #include <limits>
@@ -18,16 +20,15 @@ using namespace std;
 
 // Number of functions is given as k in the original paper
 MaxoutNeuralLayer::MaxoutNeuralLayer(NeuralLayer* parent, size_t numUnits, size_t numFunctions, bool addBias)
+	: ParameterizedNeuralLayer(parent)
 {
-	this->numInputs = 0;
-	this->parent = parent;
-	this->children = nullptr;
-	if (parent != nullptr)
+	auto shape = parent->getOutputShape();
+	if (shape.size() != 1) // Limit this layer to only accept inputs which can be transposed
 	{
-		parent->addChildren(this);
-		this->numInputs = parent->getNumUnits();
+		throw NeuralLayerInputShapeException();
 	}
 	else { }
+	this->numInputs = parent->getOutputShape()[1];
 	this->numUnits = numUnits;
 	this->numFunctions = numFunctions;
 

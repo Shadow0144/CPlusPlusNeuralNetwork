@@ -1,17 +1,12 @@
 #include "SqueezeNeuralLayer.h"
 
+#include "NetworkExceptions.h"
+
 // The squeeze dims account for only the shape of a single example
 SqueezeNeuralLayer::SqueezeNeuralLayer(NeuralLayer* parent, const std::vector<size_t>& squeezeDims)
+	: ShapeNeuralLayer(parent)
 {
-	this->parent = parent;
-	this->children = NULL;
-	if (parent != NULL)
-	{
-		parent->addChildren(this);
-	}
-	else { }
 	this->squeezeDims = squeezeDims;
-	this->numUnits = 1;
 }
 
 SqueezeNeuralLayer::~SqueezeNeuralLayer()
@@ -57,6 +52,51 @@ xt::xarray<double> SqueezeNeuralLayer::feedForward(const xt::xarray<double>& inp
 	}
 	auto result = xt::xarray<double>(input); // Reshape the input
 	result.reshape(fullNewShape);
+	return result;
+}
+
+std::vector<size_t> SqueezeNeuralLayer::getOutputShape()
+{
+	auto shape = parent->getOutputShape();
+	const int DIMS = shape.size();
+	const int sDIMS = squeezeDims.size();
+	if (sDIMS > DIMS)
+	{
+		throw NeuralLayerSqueezeShapeException();
+	}
+	else { }
+	std::vector<size_t> result;
+	if (sDIMS == 0) // If the list is empty, remove all dimensions of size 0 or 1
+	{
+		for (int i = 0; i < DIMS; i++)
+		{
+			if (shape[i] != 0 && shape[i] != 1) // Push back any non-0 and non-1 dimensions
+			{
+				result.push_back(shape[i]);
+			}
+			else { }
+		}
+	}
+	else // If the list is not empty, remove all dimensions specified
+	{
+		int s = 0;
+		for (int i = 0; i < DIMS; i++)
+		{
+			if ((s < sDIMS) && (i == squeezeDims[s])) // Check if a dimension is on the list
+			{
+				if (shape[i] != 0 && shape[i] != 1) // If the removed dimension is not size 0 or 1, throw an exception
+				{
+					throw NeuralLayerSqueezeShapeException();
+				}
+				else { }
+				s++; // Skip adding this dimension
+			}
+			else // If not on the list, add it
+			{
+				result.push_back(shape[i]);
+			}
+		}
+	}
 	return result;
 }
 
