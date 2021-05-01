@@ -171,7 +171,6 @@ void AveragePooling2DNeuralLayer::drawPooling(ImDrawList* canvas, ImVec2 origin,
 		// Draw a grey square
 		position.x = NeuralLayer::getNeuronX(origin.x, LAYER_WIDTH, n, scale) + (SHIFT * scale) - RESCALE;
 		position.y = position.y + RESCALE;
-		position.x = NeuralLayer::getNeuronX(origin.x, LAYER_WIDTH, n, scale) + (SHIFT * scale);
 		const ImColor HALF_GRAY(avgColor, avgColor, avgColor, 1.0f);
 		canvas->AddRectFilled(ImVec2(floor(position.x), floor(position.y)),
 			ImVec2(ceil(position.x + (xWidth * X)), ceil(position.y - (yHeight * Y))),

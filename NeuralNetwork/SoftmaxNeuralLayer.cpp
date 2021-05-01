@@ -16,6 +16,7 @@ using namespace std;
 SoftmaxNeuralLayer::SoftmaxNeuralLayer(NeuralLayer* parent, int axis)
 	: NeuralLayer(parent)
 {
+	// TODO: Assert parent dimension
 	this->numUnits = 1;
 	this->numOutputs = parent->getOutputShape()[parent->getOutputShape().size()-1];
 	this->numInputs = numOutputs;
@@ -83,13 +84,21 @@ xt::xarray<double> SoftmaxNeuralLayer::getGradient(const xt::xarray<double>& sig
 
 xt::xarray<double> SoftmaxNeuralLayer::getGradientStandard(const xt::xarray<double>& sigmas, Optimizer* optimizer)
 {
-	xt::xarray<double> diag = xt::eye(sigmas.shape()[sigmas.dimension()-1]);
-	diag = xt::expand_dims(diag, 0);
-	diag = xt::repeat(diag, sigmas.shape()[0], 0);
-	xt::xarray<double> lastOutputExp = xt::expand_dims(lastOutput, lastOutput.dimension());
-	lastOutputExp = xt::repeat(lastOutputExp, lastOutput.shape()[lastOutput.dimension()-1], lastOutput.dimension());
-	xt::xarray<double> newSigmas = lastOutputExp * (diag - lastOutputExp);
-	newSigmas = xt::sum((newSigmas * lastOutputExp), -1);
+	xt::xarray<double> newSigmas = xt::zeros<double>(sigmas.shape());
+
+	xt::xstrided_slice_vector exampleView;
+	exampleView.push_back(0);
+	exampleView.push_back(xt::ellipsis());
+
+	const int N = sigmas.shape()[sigmas.shape().size() - 1];
+	for (int n = 0; n < N; n++)
+	{
+		auto sigma = xt::strided_view(sigmas, exampleView);
+		auto output = xt::strided_view(lastOutput, exampleView);
+		auto gradient = xt::diag(output) - xt::linalg::outer(output, output);
+		xt::strided_view(newSigmas, exampleView) = xt::linalg::tensordot(sigma, gradient, 1);
+	}
+
 	return newSigmas;
 }
 

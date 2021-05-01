@@ -342,7 +342,7 @@ void NeuralNetwork::train(const xt::xarray<double>& inputs, const xt::xarray<dou
 			cout << "Beginning training" << endl << endl;
 
 			// Check if there is a special optimized synergy between the gradients of the last layer and the loss function
-			//lossFunction->checkForOptimizedGradient(layers->at(layers->size() - 1));
+			lossFunction->checkForOptimizedGradient(layers->at(layers->size() - 1));
 
 			//currentEpoch = 0; //int t = 0; // This is set either in the constructor or when loading
 			bool converged = false;

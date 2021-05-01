@@ -287,7 +287,7 @@ void test_layers()
 
 int main(int argc, char** argv)
 {
-    //test_network(network::mnist, 3);
+    test_network(network::binary, 3);
 
     //test_layers();
 
@@ -297,7 +297,7 @@ int main(int argc, char** argv)
 
     //test_signal_maxout();
 
-    test_signal_crelu();
+    //test_signal_crelu();
 
     return 0;
 }

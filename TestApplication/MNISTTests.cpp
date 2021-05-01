@@ -9,7 +9,7 @@ void test_binary_mnist()
     // Set up the data
     ifstream in_file;
     in_file.open("mnist_binary.csv");
-    auto data = xt::load_npy<double>(in_file);
+    auto data = xt::load_csv<double>(in_file);
     in_file.close();
 
     const int N = ((int)(data.shape()[0])); // Number of examples
@@ -45,13 +45,13 @@ void test_binary_mnist()
     network.addMaxPooling2DLayer({ 2, 2 }); // 8x8x16 -> 4x4x16
     network.addFlattenLayer(); // 4x4x16 -> 256
     network.addDenseLayer(ActivationFunctionType::ReLU, 32); // 256 -> 32
-    network.addDenseLayer(ActivationFunctionType::ReLU, CLASSES); // 32 -> 2
+    network.addDenseLayer(ActivationFunctionType::Sigmoid, CLASSES); // 32 -> 2
     network.addSoftmaxLayer(-1);
 
     std::map<string, double> optimizerParams;
-    optimizerParams[Optimizer::ETA] = 0.01;
+    optimizerParams[Optimizer::ETA] = 0.001;
     optimizerParams[Optimizer::BATCH_SIZE] = 10;
-    network.setOptimizer(OptimizerType::SGD, optimizerParams);
+    network.setOptimizer(OptimizerType::Nadam, optimizerParams);
     network.setLossFunction(LossFunctionType::CrossEntropy);
 
     const int COLS = 5;
@@ -101,13 +101,13 @@ void test_mnist()
     NeuralNetwork network(true);
     network.addInputLayer({ (size_t)IMG_DIM, (size_t)IMG_DIM, C }); // 28x28x1
     network.addConvolution2DLayer(NUM_KERNELS_1, { 5, 5 }, C); // 28x28x1 -> 24x24x64                                                   
-    network.addMaxPooling2DLayer({ 2, 2 }); // 24x24x64 -> 12x12x64
+    network.addAveragePooling2DLayer({ 2, 2 }); // 24x24x64 -> 12x12x64
     network.addConvolution2DLayer(NUM_KERNELS_2, { 5, 5 }, NUM_KERNELS_1); // 12x12x16 -> 8x8x16                                                         
-    network.addMaxPooling2DLayer({ 2, 2 }); // 8x8x16 -> 4x4x16
+    network.addAveragePooling2DLayer({ 2, 2 }); // 8x8x16 -> 4x4x16
     network.addFlattenLayer(); // 4x4x16 -> 256
-    network.addDenseLayer(ActivationFunctionType::Sigmoid, 32); // 256 -> 32
-    network.addDenseLayer(ActivationFunctionType::Sigmoid, CLASSES); // 32 -> 10
-    network.addSoftmaxLayer(-1);
+    network.addDenseLayer(ActivationFunctionType::ReLU, 32); // 256 -> 32
+    network.addDenseLayer(ActivationFunctionType::ReLU, CLASSES); // 32 -> 10
+    //network.addSoftmaxLayer(-1);
 
     std::map<string, double> optimizerParams;
     //optimizerParams[Optimizer::ETA] = 0.01;
@@ -115,7 +115,7 @@ void test_mnist()
     optimizerParams[Optimizer::LAMDA1] = 0.0001;
     optimizerParams[Optimizer::LAMDA2] = 0.0001;
     network.setOptimizer(OptimizerType::Adam, optimizerParams);
-    network.setLossFunction(LossFunctionType::CrossEntropy, 0.1);
+    network.setLossFunction(LossFunctionType::MeanSquaredError, 0.1);
     network.setOutputRate(1);
     //network.enableStoppingCondition(StoppingCondition::Min_Delta_Loss, 1e-5);
 
