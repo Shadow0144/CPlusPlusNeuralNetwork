@@ -21,7 +21,7 @@ public:
 protected:
 	ConvolutionNeuralLayer(NeuralLayer* parent, size_t dims,
 		size_t numKernels, const std::vector<size_t>& convolutionShape,
-		const std::vector<size_t>& stride = { 1 }, bool addBias = false,
+		const std::vector<size_t>& stride = { 1 }, bool padded = false, bool addBias = false,
 		ActivationFunctionType activationFunctionType = ActivationFunctionType::Identity,
 		std::map<std::string, double> additionalParameters = std::map<std::string, double>());
 
@@ -32,10 +32,15 @@ protected:
 	size_t numKernels;
 	std::vector<size_t> convolutionShape;
 	std::vector<size_t> stride;
+	bool padded;
+	xt::svector<size_t> inputShape; // In case of padding
 
 	xt::xstrided_slice_vector kernelWindowView;
 
 	virtual xt::xarray<double> convolveInput(const xt::xarray<double>& input) = 0;
+
+	xt::xarray<double> padInput(const xt::xarray<double>& input);
+	xt::xarray<double> unpadSigmas(const xt::xarray<double>& sigmas);
 
 	virtual void drawConvolution(ImDrawList* canvas, ImVec2 origin, double scale) = 0;
 };

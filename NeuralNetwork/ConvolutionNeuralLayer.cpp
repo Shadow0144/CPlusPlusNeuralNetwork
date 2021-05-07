@@ -11,13 +11,14 @@
 using namespace std;
 
 ConvolutionNeuralLayer::ConvolutionNeuralLayer(NeuralLayer* parent, size_t dims, size_t numKernels,
-	const std::vector<size_t>& convolutionShape, const std::vector<size_t>& stride, bool addBias,
-	ActivationFunctionType activationFunctionType, std::map<string, double> additionalParameters)
+	const std::vector<size_t>& convolutionShape, const std::vector<size_t>& stride, bool padded,
+	bool addBias, ActivationFunctionType activationFunctionType, std::map<string, double> additionalParameters)
 	: ParameterizedNeuralLayer(parent)
 {
 	this->numUnits = numKernels;
 	this->convolutionShape = convolutionShape;
 	this->stride = stride;
+	this->padded = padded;
 	this->numKernels = numKernels;
 	this->activationFunction = ActivationFunctionFactory::getNewActivationFunction(activationFunctionType, additionalParameters);
 
@@ -92,13 +93,29 @@ ConvolutionNeuralLayer::~ConvolutionNeuralLayer()
 
 xt::xarray<double> ConvolutionNeuralLayer::feedForward(const xt::xarray<double>& input)
 {
-	return activationFunction->feedForward(convolveInput(input));
+	xt::xarray<double> output;
+	if (padded)
+	{
+		output = activationFunction->feedForward(convolveInput(padInput(input)));
+	}
+	else
+	{
+		output = activationFunction->feedForward(convolveInput(input));
+	}
+	return output;
 }
 
 xt::xarray<double> ConvolutionNeuralLayer::feedForwardTrain(const xt::xarray<double>& input)
 {
-	lastInput = input;
-	lastOutput = activationFunction->feedForwardTrain(convolveInput(input));
+	if (padded)
+	{
+		lastInput = padInput(input); // Add padding
+	}
+	else 
+	{
+		lastInput = input; // Do nothing
+	}
+	lastOutput = activationFunction->feedForwardTrain(convolveInput(lastInput));
 	return lastOutput;
 }
 
@@ -114,6 +131,61 @@ double ConvolutionNeuralLayer::applyBackPropagate()
 	else { }
 	deltaWeight += activationFunction->applyBackPropagate();
 	return deltaWeight; // Return the sum of how much the parameters have changed
+}
+
+xt::xarray<double> ConvolutionNeuralLayer::padInput(const xt::xarray<double>& input)
+{
+	// Create the padded tensor to hold the values
+	inputShape = input.shape();
+	auto shape = input.shape();
+	const int iDIMS = shape.size();
+	const int DIMS = convolutionShape.size();
+	for (int i = 0; i < DIMS; i++)
+	{
+		shape[iDIMS - DIMS + i - 1] += (convolutionShape[i] - 1);
+	}
+	xt::xarray<double> paddedInput = xt::zeros<double>(shape);
+
+	// Build a padded window
+	xt::xstrided_slice_vector paddedWindowView;
+	const int DIM1 = iDIMS - DIMS - 1;
+	for (int f = 0; f < DIM1; f++)
+	{
+		paddedWindowView.push_back(xt::all());
+	}
+	for (int f = 0; f < DIMS; f++)
+	{
+		const int PAD = ((convolutionShape[f] - 1) / 2);
+		paddedWindowView.push_back(xt::range(PAD, inputShape[DIM1+f] + PAD)); // Convolution dimension
+	}
+	paddedWindowView.push_back(xt::all()); // Channels
+
+	xt::strided_view(paddedInput, paddedWindowView) = input;
+	return paddedInput;
+}
+
+xt::xarray<double> ConvolutionNeuralLayer::unpadSigmas(const xt::xarray<double>& sigmas)
+{
+	auto shape = sigmas.shape();
+	const int iDIMS = shape.size();
+	const int DIMS = convolutionShape.size();
+
+	// Build a padded window
+	xt::xstrided_slice_vector paddedWindowView;
+	const int DIM1 = iDIMS - DIMS - 1;
+	for (int f = 0; f < DIM1; f++)
+	{
+		paddedWindowView.push_back(xt::all());
+	}
+	for (int f = 0; f < DIMS; f++)
+	{
+		const int PAD = ((convolutionShape[f] - 1) / 2);
+		paddedWindowView.push_back(xt::range(PAD, inputShape[DIM1 + f] + PAD)); // Convolution dimension
+	}
+	paddedWindowView.push_back(xt::all()); // Channels
+
+	xt::xarray<double> unpaddedSigmas = xt::strided_view(sigmas, paddedWindowView);
+	return unpaddedSigmas;
 }
 
 void ConvolutionNeuralLayer::saveParameters(std::string fileName)
@@ -154,13 +226,24 @@ std::vector<size_t> ConvolutionNeuralLayer::getOutputShape()
 		throw NeuralLayerInputShapeException();
 	}
 	else { }
-	for (int i = 0; i < C; i++) // Convoluded dimensions
+	if (padded)
 	{
-		// ceil((shape[DIM1] - (convolutionShape[0] - 1)) / stride[0])
-		shape[S - C + i - 1] = ceil((shape[S - C + i - 1] - (convolutionShape[i] - 1)) / stride[i]);
+		for (int i = 0; i < C; i++) // Convolved dimensions
+		{
+			shape[S - C + i - 1] = ((shape[S - C + i - 1]) / stride[i]);
+		}
+		// Channel dimension
+		shape[S - 1] = numKernels;
 	}
-	// Channel dimension
-	shape[S - 1] = numKernels;
+	else // !padded
+	{
+		for (int i = 0; i < C; i++) // Convolved dimensions
+		{
+			shape[S - C + i - 1] = ((shape[S - C + i - 1] - (convolutionShape[i] - 1)) / stride[i]);
+		}
+		// Channel dimension
+		shape[S - 1] = numKernels;
+	}
 	return shape;
 }
 

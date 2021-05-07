@@ -13,10 +13,10 @@
 using namespace std;
 
 Convolution3DNeuralLayer::Convolution3DNeuralLayer(NeuralLayer* parent, size_t numKernels,
-	const std::vector<size_t>& convolutionShape, const std::vector<size_t>& stride, bool addBias,
-	ActivationFunctionType activationFunctionType, std::map<string, double> additionalParameters)
-	: ConvolutionNeuralLayer(parent, 3, numKernels, convolutionShape, stride, addBias,
-		activationFunctionType, additionalParameters)
+	const std::vector<size_t>& convolutionShape, const std::vector<size_t>& stride, bool padded,
+	bool addBias, ActivationFunctionType activationFunctionType, std::map<string, double> additionalParameters)
+	: ConvolutionNeuralLayer(parent, 3, numKernels, convolutionShape, stride, padded, 
+		addBias, activationFunctionType, additionalParameters)
 {
 
 }
@@ -47,9 +47,9 @@ xt::xarray<double> Convolution3DNeuralLayer::convolude3D(const xt::xarray<double
 	int Ks = (useStride) ? stride[2] : 1;
 
 	auto shape = f.shape();
-	shape[DIM1] = ceil((shape[DIM1] - (kernelShape[kDIM1] - 1)) / Is);
-	shape[DIM2] = ceil((shape[DIM2] - (kernelShape[kDIM2] - 1)) / Js);
-	shape[DIM3] = ceil((shape[DIM3] - (kernelShape[kDIM3] - 1)) / Ks);
+	shape[DIM1] = ((shape[DIM1] - (kernelShape[kDIM1] - 1)) / Is);
+	shape[DIM2] = ((shape[DIM2] - (kernelShape[kDIM2] - 1)) / Js);
+	shape[DIM3] = ((shape[DIM3] - (kernelShape[kDIM3] - 1)) / Ks);
 	shape.pop_back(); // Remove the last element
 	xt::xarray<double> h = xt::xarray<double>(shape);
 
@@ -109,9 +109,9 @@ xt::xarray<double> Convolution3DNeuralLayer::convolveInput(const xt::xarray<doub
 
 	// Set up the tensor to hold the result
 	auto shape = input.shape();
-	shape[DIM1] = ceil((shape[DIM1] - (convolutionShape[0] - 1)) / stride[0]);
-	shape[DIM2] = ceil((shape[DIM2] - (convolutionShape[1] - 1)) / stride[1]);
-	shape[DIM3] = ceil((shape[DIM3] - (convolutionShape[2] - 1)) / stride[2]);
+	shape[DIM1] = ((shape[DIM1] - (convolutionShape[0] - 1)) / stride[0]);
+	shape[DIM2] = ((shape[DIM2] - (convolutionShape[1] - 1)) / stride[1]);
+	shape[DIM3] = ((shape[DIM3] - (convolutionShape[2] - 1)) / stride[2]);
 	shape[DIMC] = numKernels; // Output is potentially higher dimension
 	xt::xarray<double> output = xt::xarray<double>(shape);
 
@@ -309,6 +309,13 @@ xt::xarray<double> Convolution3DNeuralLayer::getGradient(const xt::xarray<double
 
 	// Restore kernelWindowView
 	kernelWindowView[kDIMF] = xt::all();
+
+	// Remove the padding if the input was padded
+	if (padded)
+	{
+		sigmasPrime = unpadSigmas(sigmasPrime);
+	}
+	else { }
 
 	return sigmasPrime;
 }

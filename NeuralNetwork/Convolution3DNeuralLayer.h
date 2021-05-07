@@ -13,7 +13,7 @@ class Convolution3DNeuralLayer : public ConvolutionNeuralLayer
 public:
 	Convolution3DNeuralLayer(NeuralLayer* parent, size_t numKernels,
 		const std::vector<size_t>& convolutionShape,
-		const std::vector<size_t>& stride = { 1 }, bool addBias = false,
+		const std::vector<size_t>& stride = { 1 }, bool padded = false, bool addBias = false,
 		ActivationFunctionType activationFunctionType = ActivationFunctionType::Identity,
 		std::map<std::string, double> additionalParameters = std::map<std::string, double>());
 	~Convolution3DNeuralLayer();
