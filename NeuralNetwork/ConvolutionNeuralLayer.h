@@ -21,17 +21,17 @@ public:
 protected:
 	ConvolutionNeuralLayer(NeuralLayer* parent, size_t dims,
 		size_t numKernels, const std::vector<size_t>& convolutionShape,
-		size_t inputChannels, size_t stride = 1, bool addBias = false,
+		const std::vector<size_t>& stride = { 1 }, bool addBias = false,
 		ActivationFunctionType activationFunctionType = ActivationFunctionType::Identity,
 		std::map<std::string, double> additionalParameters = std::map<std::string, double>());
 
 	bool hasBias;
 	ParameterSet biasWeights;
 
+	size_t inputChannels;
 	size_t numKernels;
 	std::vector<size_t> convolutionShape;
-	size_t stride;
-	size_t inputChannels;
+	std::vector<size_t> stride;
 
 	xt::xstrided_slice_vector kernelWindowView;
 

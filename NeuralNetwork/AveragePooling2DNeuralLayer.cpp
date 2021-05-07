@@ -10,13 +10,9 @@
 using namespace std;
 
 AveragePooling2DNeuralLayer::AveragePooling2DNeuralLayer(NeuralLayer* parent, const std::vector<size_t>& filterShape, bool hasChannels)
-	: PoolingNeuralLayer(parent, filterShape, hasChannels)
+	: PoolingNeuralLayer(parent, 2, filterShape, hasChannels)
 {
-	if (filterShape.size() != 2)
-	{
-		throw NeuralLayerPoolingShapeException();
-	}
-	else { }
+
 }
 
 AveragePooling2DNeuralLayer::~AveragePooling2DNeuralLayer()
@@ -49,8 +45,9 @@ xt::xarray<double> AveragePooling2DNeuralLayer::feedForward(const xt::xarray<dou
 
 	int l = 0;
 	int m = 0;
-	const int I = input.shape()[DIM1];
-	const int J = input.shape()[DIM2];
+	auto iShape = input.shape();
+	const int I = iShape[DIM1] - (iShape[DIM1] % filterShape[0]);
+	const int J = iShape[DIM2] - (iShape[DIM2] % filterShape[1]);
 	for (int i = 0; i < I; i += filterShape[0])
 	{
 		inputWindowView[DIM1] = xt::range(i, i + filterShape[0]);
@@ -95,8 +92,9 @@ xt::xarray<double> AveragePooling2DNeuralLayer::getGradient(const xt::xarray<dou
 
 	int l = 0;
 	int m = 0;
-	const int I = lastInput.shape()[DIM1];
-	const int J = lastInput.shape()[DIM2];
+	auto iShape = lastInput.shape();
+	const int I = iShape[DIM1] - (iShape[DIM1] % filterShape[0]);
+	const int J = iShape[DIM2] - (iShape[DIM2] % filterShape[1]);
 	for (int i = 0; i < I; i += filterShape[0])
 	{
 		primeWindowView[DIM1] = xt::range(i, i + filterShape[0]);

@@ -14,7 +14,7 @@ class Convolution2DNeuralLayer : public ConvolutionNeuralLayer
 public:
 	Convolution2DNeuralLayer(NeuralLayer* parent, size_t numKernels,
 		const std::vector<size_t>& convolutionShape,
-		size_t inputChannels, size_t stride = 1, bool addBias = false,
+		const std::vector<size_t>& stride = { 1 }, bool addBias = false,
 		ActivationFunctionType activationFunctionType = ActivationFunctionType::Identity,
 		std::map<std::string, double> additionalParameters = std::map<std::string, double>());
 	~Convolution2DNeuralLayer();
@@ -23,6 +23,6 @@ public:
 
 private:
 	xt::xarray<double> convolveInput(const xt::xarray<double>& input);
-	xt::xarray<double> convolude2D(const xt::xarray<double>& f, const xt::xarray<double>& g);
+	xt::xarray<double> convolude2D(const xt::xarray<double>& f, const xt::xarray<double>& g, bool useStride = true);
 	void drawConvolution(ImDrawList* canvas, ImVec2 origin, double scale);
 };

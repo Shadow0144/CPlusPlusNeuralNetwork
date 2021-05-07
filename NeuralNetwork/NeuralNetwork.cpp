@@ -175,36 +175,36 @@ void NeuralNetwork::addSoftmaxLayer(int axis)
 }
 
 void NeuralNetwork::addConvolution1DLayer(size_t numKernels, const std::vector<size_t>& convolutionShape, 
-											size_t inputChannels, size_t stride, bool addBias,
+											const std::vector<size_t>& stride, bool addBias,
 											ActivationFunctionType activationFunctionType, 
 											std::map<string, double> additionalParameters)
 {
 	Convolution1DNeuralLayer* layer = new Convolution1DNeuralLayer(layers->at(layerCount - 1), numKernels, convolutionShape, 
-																	inputChannels, stride, addBias, activationFunctionType,
+																	stride, addBias, activationFunctionType,
 																	additionalParameters);
 	layers->push_back(layer);
 	layerCount++;
 }
 
 void NeuralNetwork::addConvolution2DLayer(size_t numKernels, const std::vector<size_t>& convolutionShape,
-											size_t inputChannels, size_t stride, bool addBias,
+											const std::vector<size_t>& stride, bool addBias,
 											ActivationFunctionType activationFunctionType,
 											std::map<string, double> additionalParameters)
 {
 	Convolution2DNeuralLayer* layer = new Convolution2DNeuralLayer(layers->at(layerCount - 1), numKernels, convolutionShape,
-																	inputChannels, stride, addBias, activationFunctionType,
+																	stride, addBias, activationFunctionType,
 																	additionalParameters);
 	layers->push_back(layer);
 	layerCount++;
 }
 
 void NeuralNetwork::addConvolution3DLayer(size_t numKernels, const std::vector<size_t>& convolutionShape,
-											size_t inputChannels, size_t stride, bool addBias,
+											const std::vector<size_t>& stride, bool addBias,
 											ActivationFunctionType activationFunctionType,
 											std::map<string, double> additionalParameters)
 {
 	Convolution3DNeuralLayer* layer = new Convolution3DNeuralLayer(layers->at(layerCount - 1), numKernels, convolutionShape,
-																	inputChannels, stride, addBias, activationFunctionType,
+																	stride, addBias, activationFunctionType,
 																	additionalParameters);
 	layers->push_back(layer);
 	layerCount++;

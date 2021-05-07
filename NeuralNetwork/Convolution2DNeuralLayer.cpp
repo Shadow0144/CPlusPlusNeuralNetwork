@@ -7,23 +7,18 @@
 
 #pragma warning(push, 0)
 #include <xtensor/xview.hpp>
-#include <math.h>
 #include <tuple>
 #pragma warning(pop)
 
 using namespace std;
 
 Convolution2DNeuralLayer::Convolution2DNeuralLayer(NeuralLayer* parent, size_t numKernels,
-	const std::vector<size_t>& convolutionShape, size_t inputChannels, size_t stride, bool addBias,
+	const std::vector<size_t>& convolutionShape, const std::vector<size_t>& stride, bool addBias,
 	ActivationFunctionType activationFunctionType, std::map<string, double> additionalParameters)
-	: ConvolutionNeuralLayer(parent, 2, numKernels, convolutionShape, inputChannels, stride, addBias,
+	: ConvolutionNeuralLayer(parent, 2, numKernels, convolutionShape, stride, addBias,
 		activationFunctionType, additionalParameters)
 {
-	if (convolutionShape.size() != 2)
-	{
-		throw NeuralLayerConvolutionShapeException();
-	}
-	else { }
+
 }
 
 Convolution2DNeuralLayer::~Convolution2DNeuralLayer()
@@ -31,7 +26,7 @@ Convolution2DNeuralLayer::~Convolution2DNeuralLayer()
 
 }
 
-xt::xarray<double> Convolution2DNeuralLayer::convolude2D(const xt::xarray<double>& f, const xt::xarray<double>& g)
+xt::xarray<double> Convolution2DNeuralLayer::convolude2D(const xt::xarray<double>& f, const xt::xarray<double>& g, bool useStride)
 {
 	// Assume the last dimension is the channel dimension
 	const int DIMS = f.dimension();
@@ -45,9 +40,12 @@ xt::xarray<double> Convolution2DNeuralLayer::convolude2D(const xt::xarray<double
 	const int kDIM2 = kDIMS - 2;
 	const int kDIMC = kDIMS - 1;
 
+	int Is = (useStride) ? stride[0] : 1;
+	int Js = (useStride) ? stride[1] : 1;
+
 	auto shape = f.shape();
-	shape[DIM1] = ceil((shape[DIM1] - (kernelShape[kDIM1] - 1)) / stride);
-	shape[DIM2] = ceil((shape[DIM2] - (kernelShape[kDIM2] - 1)) / stride);
+	shape[DIM1] = ceil((shape[DIM1] - (kernelShape[kDIM1] - 1)) / Is);
+	shape[DIM2] = ceil((shape[DIM2] - (kernelShape[kDIM2] - 1)) / Js);
 	shape.pop_back(); // Remove the last element
 	xt::xarray<double> h = xt::xarray<double>(shape);
 
@@ -63,12 +61,12 @@ xt::xarray<double> Convolution2DNeuralLayer::convolude2D(const xt::xarray<double
 	const int I = (f.shape()[DIM1] - kernelShape[kDIM1] + 1);
 	const int J = (f.shape()[DIM2] - kernelShape[kDIM2] + 1);
 	int x = 0;
-	for (int i = 0; i < I; i += stride)
+	for (int i = 0; i < I; i += Is)
 	{
 		int y = 0;
 		inputWindowView[DIM1] = xt::range(i, i + kernelShape[kDIM1]);
 		outputWindowView[DIM1] = x++; // Increment after assignment
-		for (int j = 0; j < J; j += stride)
+		for (int j = 0; j < J; j += Js)
 		{
 			inputWindowView[DIM2] = xt::range(j, j + kernelShape[kDIM2]);
 			outputWindowView[DIM2] = y++; // Increment after assignment
@@ -99,8 +97,8 @@ xt::xarray<double> Convolution2DNeuralLayer::convolveInput(const xt::xarray<doub
 
 	// Set up the tensor to hold the result
 	auto shape = input.shape();
-	shape[DIM1] = ceil((shape[DIM1] - (convolutionShape[0] - 1)) / stride);
-	shape[DIM2] = ceil((shape[DIM2] - (convolutionShape[1] - 1)) / stride);
+	shape[DIM1] = ceil((shape[DIM1] - (convolutionShape[0] - 1)) / stride[0]);
+	shape[DIM2] = ceil((shape[DIM2] - (convolutionShape[1] - 1)) / stride[1]);
 	shape[DIMC] = numKernels; // Output is potentially higher dimension
 	xt::xarray<double> output = xt::xarray<double>(shape);
 
@@ -123,7 +121,7 @@ xt::xarray<double> Convolution2DNeuralLayer::convolveInput(const xt::xarray<doub
 
 xt::xarray<double> Convolution2DNeuralLayer::getGradient(const xt::xarray<double>& sigma, Optimizer* optimizer)
 {
-	xt::xarray<double> actSigma = activationFunction->getGradient(sigma, optimizer); // Pass the sigmas through the activation function first
+	xt::xarray<double> actSigmas = activationFunction->getGradient(sigma, optimizer); // Pass the sigmas through the activation function first
 
 	// The change in weights corresponds to a convolution between the input and the sigmas
 	// Assume the last dimension is the channel dimension
@@ -152,12 +150,42 @@ xt::xarray<double> Convolution2DNeuralLayer::getGradient(const xt::xarray<double
 	}
 	else { }
 
+	// In the case of stride > 1, the sigmas need to be dilated
+	xt::xarray<double> dSigmas; // Dilated sigmas
+	auto iShape = lastInput.shape();
+	auto fShape = weights.getDeltaParameters().shape();
+	auto dShape = actSigmas.shape();
+	if (stride[0] > 1 || stride[1] > 1)
+	{
+		dShape[DIM1] = dShape[DIM1] + ((dShape[DIM1] - 1) * (stride[0] - 1)) + abs((int)(((iShape[DIM1] - fShape[0]) % stride[0])));
+		dShape[DIM2] = dShape[DIM2] + ((dShape[DIM2] - 1) * (stride[1] - 1)) + abs((int)(((iShape[DIM2] - fShape[1]) % stride[1])));
+		dSigmas = xt::zeros<double>(dShape);
+
+		int l = 0;
+		for (int i = 0; i < dShape[DIM1]; i += stride[0])
+		{
+			int m = 0;
+			for (int j = 0; j < dShape[DIM2]; j += stride[1])
+			{
+				xt::strided_view(dSigmas, { xt::ellipsis(), i, j, xt::all() }) = 
+					xt::strided_view(actSigmas, { xt::ellipsis(), l, m, xt::all() });
+				m++;
+			}
+			l++;
+		}
+	}
+	else 
+	{
+		dSigmas = actSigmas; // If stride is 1 in all dimensions, no dilation necessary
+	}
+
+	// Weight update
 	for (int k = 0; k < numKernels; k++)
 	{
 		// Select the kth sigma and the kth kernel to update
 		sigmasWindowView[DIMC] = k;
 		kernelWindowView[kDIMK] = k;
-		auto kernelSigma = xt::xarray<double>(xt::strided_view(actSigma, sigmasWindowView));
+		auto kernelSigma = xt::xarray<double>(xt::strided_view(dSigmas, sigmasWindowView));
 		if (hasBias) // The gradient for the bias is simply the sum of the sigmas for each kernel
 		{
 			deltaBias(k) = xt::sum(kernelSigma)();
@@ -167,7 +195,7 @@ xt::xarray<double> Convolution2DNeuralLayer::getGradient(const xt::xarray<double
 		kernelSigma = xt::expand_dims(kernelSigma, DIMC); // The output dimensionality should match the input
 		kernelSigma = xt::repeat(kernelSigma, inputChannels, DIMC);
 		// Convolude the last input with the sigmas for this kernel
-		xt::xarray<double> result = convolude2D(lastInput, kernelSigma);
+		xt::xarray<double> result = convolude2D(lastInput, kernelSigma, false);
 		// Repeat for each of the filters
 		result = xt::expand_dims(result, DIMC);
 		result = xt::repeat(result, inputChannels, DIMC);
@@ -182,19 +210,18 @@ xt::xarray<double> Convolution2DNeuralLayer::getGradient(const xt::xarray<double
 	optimizer->setDeltaWeight(weights, delta);
 	if (hasBias)
 	{
-		optimizer->setDeltaWeight(biasWeights, delta);
+		optimizer->setDeltaWeight(biasWeights, deltaBias);
 	}
 	else { }
 
 	// The updated sigmas are a padded convolution between the original sigmas and the rotated filters
 	// Pad the sigmas and repeat for each of the input channels
 	auto inputShape = lastInput.shape();
-	auto outputShape = lastOutput.shape();
 	auto shape = lastOutput.shape();
-	const int I = (inputShape[DIM1] - outputShape[DIM1]); // Padding size
-	shape[DIM1] = (inputShape[DIM1] + I);
-	const int J = (inputShape[DIM2] - shape[DIM2]);
-	shape[DIM2] = (inputShape[DIM2] + J);
+	const int I = (fShape[0] - 1); // Padding size
+	shape[DIM1] = (dShape[DIM1] + (2 * I));
+	const int J = (fShape[1] - 1); // Padding size
+	shape[DIM2] = (dShape[DIM2] + (2 * J));
 	shape.push_back(inputChannels);
 	xt::xarray<double> paddedSigmas = xt::zeros<double>(shape);
 
@@ -204,12 +231,13 @@ xt::xarray<double> Convolution2DNeuralLayer::getGradient(const xt::xarray<double
 	{
 		paddedWindowView.push_back(xt::all());
 	}
-	paddedWindowView.push_back(xt::range((I / 2), outputShape[DIM1] + (I / 2))); // First dimension
-	paddedWindowView.push_back(xt::range((J / 2), outputShape[DIM2] + (J / 2))); // Second dimension
+	paddedWindowView.push_back(xt::range(I, dShape[DIM1] + I)); // First dimension
+	paddedWindowView.push_back(xt::range(J, dShape[DIM2] + J)); // Second dimension
 	paddedWindowView.push_back(xt::all()); // Filters
 	paddedWindowView.push_back(xt::all()); // Kernels
 
-	auto repSigmas = xt::repeat(xt::expand_dims(sigma, sigma.dimension()), inputChannels, sigma.dimension());
+	// Use the dilated sigmas (in case of stride)
+	auto repSigmas = xt::repeat(xt::expand_dims(dSigmas, dSigmas.dimension()), inputChannels, dSigmas.dimension());
 	xt::strided_view(paddedSigmas, paddedWindowView) = repSigmas;
 	// Restore the view
 	paddedWindowView[DIM1] = xt::all();
@@ -249,7 +277,7 @@ xt::xarray<double> Convolution2DNeuralLayer::getGradient(const xt::xarray<double
 		sigmasPrimeWindowView[DIMC] = c;
 		auto filteredSigmas = xt::xarray<double>(xt::strided_view(paddedSigmas, paddedWindowView));
 		auto kernels = xt::xarray<double>(xt::strided_view(rotFilters, kernelWindowView));
-		auto result = convolude2D(filteredSigmas, kernels);
+		auto result = convolude2D(filteredSigmas, kernels, false);
 		xt::strided_view(sigmasPrime, sigmasPrimeWindowView) = result;
 	}
 

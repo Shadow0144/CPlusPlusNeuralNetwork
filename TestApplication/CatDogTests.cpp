@@ -26,17 +26,17 @@ void test_catdog()
     NeuralNetwork network(true);
     network.addInputLayer({ (size_t)IMG_ROWS, (size_t)IMG_COLS, (size_t)CHANNELS }); // 1024x1024x3
 
-    network.addConvolution2DLayer(NUM_KERNELS_1, { 5, 5 }, (size_t)CHANNELS, 1, true, ActivationFunctionType::ReLU); // 1024x1024x3 -> 1020x1020x16                                            
-    network.addMaxPooling2DLayer({ 4, 4 }); // 1020x1020x16 -> 255x255x16
+    network.addConvolution2DLayer(NUM_KERNELS_1, { 5 }, { 2 }, true, ActivationFunctionType::ReLU); // 1024x1024x3 -> 1020x1020x16                                            
+    network.addMaxPooling2DLayer({ 4 }); // 1020x1020x16 -> 255x255x16
 
-    network.addConvolution2DLayer(NUM_KERNELS_2, { 4, 4 }, NUM_KERNELS_1); // 255x255x16 -> 252x252x16                                                         
-    network.addMaxPooling2DLayer({ 4, 4 }); // 506x506x16 -> 63x63x16
+    network.addConvolution2DLayer(NUM_KERNELS_2, { 4 }, { 4 }); // 255x255x16 -> 252x252x16                                                         
+    network.addMaxPooling2DLayer({ 4 }); // 506x506x16 -> 63x63x16
 
-    network.addConvolution2DLayer(NUM_KERNELS_3, { 4, 4 }, NUM_KERNELS_2); // 63x63x16 -> 60x60x16                                                         
-    network.addMaxPooling2DLayer({ 4, 4 }); // 60x60x16 -> 15x15x16
+    network.addConvolution2DLayer(NUM_KERNELS_3, { 4 }); // 63x63x16 -> 60x60x16                                                         
+    network.addMaxPooling2DLayer({ 4 }); // 60x60x16 -> 15x15x16
 
-    network.addConvolution2DLayer(NUM_KERNELS_4, { 6, 6 }, NUM_KERNELS_3); // 15x15x16 -> 10x10x16                                                         
-    network.addMaxPooling2DLayer({ 2, 2 }); // 10x10x16 -> 5x5x4
+    network.addConvolution2DLayer(NUM_KERNELS_4, { 6 }); // 15x15x16 -> 10x10x16                                                         
+    network.addMaxPooling2DLayer({ 2 }); // 10x10x16 -> 5x5x4
 
     network.addFlattenLayer(); // 5x5x4 -> 100
     network.addDenseLayer(ActivationFunctionType::Sigmoid, 32); // 100 -> 32

@@ -11,16 +11,55 @@
 using namespace std;
 
 ConvolutionNeuralLayer::ConvolutionNeuralLayer(NeuralLayer* parent, size_t dims, size_t numKernels,
-	const std::vector<size_t>& convolutionShape, size_t inputChannels, size_t stride, bool addBias,
+	const std::vector<size_t>& convolutionShape, const std::vector<size_t>& stride, bool addBias,
 	ActivationFunctionType activationFunctionType, std::map<string, double> additionalParameters)
 	: ParameterizedNeuralLayer(parent)
 {
 	this->numUnits = numKernels;
 	this->convolutionShape = convolutionShape;
 	this->stride = stride;
-	this->inputChannels = inputChannels;
 	this->numKernels = numKernels;
 	this->activationFunction = ActivationFunctionFactory::getNewActivationFunction(activationFunctionType, additionalParameters);
+
+	if (convolutionShape.size() == 1)
+	{
+		for (int i = 1; i < dims; i++) // Start at 1
+		{
+			this->convolutionShape.push_back(convolutionShape[0]);
+		}
+	}
+	else if (convolutionShape.size() != dims)
+	{
+		throw NeuralLayerConvolutionShapeException();
+	}
+
+	auto inputShape = parent->getOutputShape();
+	const int iDIMS = inputShape.size();
+	if (iDIMS < (dims + 1)) // Make sure there are enough dimensions in the input
+	{
+		throw NeuralLayerInputShapeException();
+	}
+	else { }
+	this->inputChannels = inputShape.at(iDIMS - 1);
+	for (int i = 0; i < dims; i++) // Make sure the input is at least as large as the convolution
+	{
+		if (inputShape[iDIMS - i - 2] < this->convolutionShape[dims - i - 1]) // - 2 because of the channels
+		{
+			throw NeuralLayerConvolutionShapeException();
+		}
+	}
+
+	if (stride.size() == 1)
+	{
+		for (int i = 1; i < dims; i++) // Start at 1
+		{
+			this->stride.push_back(stride[0]);
+		}
+	}
+	else if (stride.size() != dims)
+	{
+		throw NeuralLayerStrideShapeException();
+	}
 
 	std::vector<size_t> paramShape;
 	// Convolution x ... x filters x kernel -shaped
@@ -28,7 +67,7 @@ ConvolutionNeuralLayer::ConvolutionNeuralLayer(NeuralLayer* parent, size_t dims,
 
 	for (int i = 0; i < dims; i++)
 	{
-		paramShape.push_back(convolutionShape[i]);
+		paramShape.push_back(this->convolutionShape[i]);
 		kernelWindowView.push_back(xt::all());
 	}
 
@@ -117,7 +156,8 @@ std::vector<size_t> ConvolutionNeuralLayer::getOutputShape()
 	else { }
 	for (int i = 0; i < C; i++) // Convoluded dimensions
 	{
-		shape[S - C + i - 1] = shape[S - C + i - 1] - convolutionShape[i] + 1;
+		// ceil((shape[DIM1] - (convolutionShape[0] - 1)) / stride[0])
+		shape[S - C + i - 1] = ceil((shape[S - C + i - 1] - (convolutionShape[i] - 1)) / stride[i]);
 	}
 	// Channel dimension
 	shape[S - 1] = numKernels;

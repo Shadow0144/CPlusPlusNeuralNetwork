@@ -12,6 +12,22 @@
 ReshapeNeuralLayer::ReshapeNeuralLayer(NeuralLayer* parent, const std::vector<size_t>& newShape)
 	: ShapeNeuralLayer(parent)
 {
+	auto prevShape = parent->getOutputShape();
+	int prevShapeCount = 1;
+	for (auto p : prevShape)
+	{
+		prevShapeCount *= p;
+	}
+	int newShapeCount = 1;
+	for (auto n : newShape)
+	{
+		newShapeCount *= n;
+	}
+	if (prevShapeCount != newShapeCount)
+	{
+		throw NeuralLayerReshapeShapeException();
+	}
+	else { }
 	this->newShape = newShape;
 }
 

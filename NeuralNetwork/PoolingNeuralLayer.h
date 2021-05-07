@@ -11,7 +11,7 @@
 class PoolingNeuralLayer : public ParameterizedNeuralLayer
 {
 public:
-	PoolingNeuralLayer(NeuralLayer* parent, const std::vector<size_t>& filterShape, bool hasChannels = true);
+	PoolingNeuralLayer(NeuralLayer* parent, size_t dims, const std::vector<size_t>& filterShape, bool hasChannels = true);
 
 	std::vector<size_t> getOutputShape();
 

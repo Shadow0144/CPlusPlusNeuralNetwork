@@ -34,11 +34,28 @@ class NeuralLayerConvolutionShapeException : public std::exception
 	}
 };
 
+class NeuralLayerStrideShapeException : public std::exception
+{
+	const char* what() const throw()
+	{
+		return "Parameter stride has an incompatible shape with this layer.";
+	}
+};
+
+
 class NeuralLayerPoolingShapeException : public std::exception
 {
 	const char* what() const throw()
 	{
 		return "Parameter filterShape has an incompatible shape with this layer.";
+	}
+};
+
+class NeuralLayerReshapeShapeException : public std::exception
+{
+	const char* what() const throw()
+	{
+		return "An incompatible dimension list was passed. The elements must total the same before and after reshaping.";
 	}
 };
 

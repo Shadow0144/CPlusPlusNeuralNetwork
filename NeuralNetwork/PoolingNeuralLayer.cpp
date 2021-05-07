@@ -2,10 +2,26 @@
 
 #include "NetworkExceptions.h"
 
-PoolingNeuralLayer::PoolingNeuralLayer(NeuralLayer* parent, const std::vector<size_t>& filterShape, bool hasChannels)
+PoolingNeuralLayer::PoolingNeuralLayer(NeuralLayer* parent, size_t dims, const std::vector<size_t>& filterShape, bool hasChannels)
 	: ParameterizedNeuralLayer(parent)
 {
 	this->filterShape = filterShape;
+	const int fDIMS = filterShape.size();
+	if (fDIMS == 1)
+	{
+		for (int i = 1; i < dims; i++)
+		{
+			this->filterShape.push_back(filterShape[0]);
+		}
+	}
+	else 
+	{ 
+		if (fDIMS != dims)
+		{
+			throw NeuralLayerPoolingShapeException();
+		}
+		else { }
+	}
 	this->hasChannels = hasChannels;
 	this->numUnits = 1;
 }
