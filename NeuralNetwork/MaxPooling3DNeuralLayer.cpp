@@ -30,9 +30,9 @@ xt::xarray<double> MaxPooling3DNeuralLayer::feedForward(const xt::xarray<double>
 	const int DIMC = DIMS - 1; // Channels
 	auto shape = input.shape();
 	auto maxShape = xt::svector<size_t>(shape);
-	shape[DIM1] = ceil(shape[DIM1] / filterShape[0]);
-	shape[DIM2] = ceil(shape[DIM2] / filterShape[1]);
-	shape[DIM3] = ceil(shape[DIM3] / filterShape[2]);
+	shape[DIM1] = shape[DIM1] / filterShape[0];
+	shape[DIM2] = shape[DIM2] / filterShape[1];
+	shape[DIM3] = shape[DIM3] / filterShape[2];
 	xt::xarray<double> output = xt::xarray<double>(shape);
 	maxShape[DIM1] = 1;
 	maxShape[DIM2] = 1;
@@ -90,9 +90,9 @@ xt::xarray<double> MaxPooling3DNeuralLayer::getGradient(const xt::xarray<double>
 	const int DIMC = DIMS - 1; // Channels
 	auto shape = lastInput.shape();
 	auto maxesShape = lastInput.shape();
-	shape[DIM1] = ceil(shape[DIM1] / filterShape[0]);
-	shape[DIM2] = ceil(shape[DIM2] / filterShape[1]);
-	shape[DIM3] = ceil(shape[DIM3] / filterShape[2]);
+	shape[DIM1] = shape[DIM1] / filterShape[0];
+	shape[DIM2] = shape[DIM2] / filterShape[1];
+	shape[DIM3] = shape[DIM3] / filterShape[2];
 	maxesShape[DIM1] = 1;
 	maxesShape[DIM2] = 1;
 	maxesShape[DIM3] = 1;

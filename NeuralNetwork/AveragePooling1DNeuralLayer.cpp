@@ -28,7 +28,7 @@ xt::xarray<double> AveragePooling1DNeuralLayer::feedForward(const xt::xarray<dou
 	const int DIMC = DIMS - 1; // Channels
 	auto shape = input.shape();
 	auto maxShape = xt::svector<size_t>(shape);
-	shape[DIM1] = ceil(shape[DIM1] / filterShape[0]);
+	shape[DIM1] = shape[DIM1] / filterShape[0];
 	xt::xarray<double> output = xt::xarray<double>(shape);
 	maxShape[DIM1] = 1;
 
