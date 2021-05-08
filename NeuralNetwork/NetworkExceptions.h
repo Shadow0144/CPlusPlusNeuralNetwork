@@ -2,6 +2,30 @@
 
 #include <exception>
 
+class InputShapeException : public std::exception
+{
+	const char* what() const throw()
+	{
+		return "The shape of this input is incompatible with this network.";
+	}
+};
+
+class TrainingDimensionException : public std::exception
+{
+	const char* what() const throw()
+	{
+		return "The features or labels have the wrong number of dimensions for this network. Ensure that the first dimension is the number of examples.";
+	}
+};
+
+class TrainingShapeException : public std::exception
+{
+	const char* what() const throw()
+	{
+		return "The shape of the features or labels is incompatible with this network or do not have the same number of examples.";
+	}
+};
+
 class InputLayerConfigurationException : public std::exception
 {
 	const char* what() const throw()

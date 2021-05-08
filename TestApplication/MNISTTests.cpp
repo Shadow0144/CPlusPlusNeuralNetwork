@@ -77,6 +77,10 @@ void test_binary_mnist()
     network.setOutputRate(1);
 
     network.train(features, labels, MAX_EPOCHS);
+
+    network.predict(xt::strided_view(features, { 0, xt::ellipsis() }));
+
+    system("Pause");
 }
 
 void test_mnist()

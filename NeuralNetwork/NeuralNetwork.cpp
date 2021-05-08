@@ -282,12 +282,45 @@ void NeuralNetwork::addDropoutLayer(double dropRate)
 
 xt::xarray<double> NeuralNetwork::predict(const xt::xarray<double>& inputs) const
 {
-	const int N = inputs.shape()[0];
+	bool singleExample = false;
+	auto iShape = inputs.shape();
+	int iSize = inputShape.size();
+	int N; // Check if only one example is sent in, i.e. the dimension is one less than expected
+	if ((iShape.size() - 1) == iSize)
+	{
+		N = inputs.shape()[0];
+		for (int i = 0; i < iSize; i++) // Check to make sure the shape is correct
+		{
+			if (iShape[i+1] != inputShape[i]) // The first dimension is for the number of examples
+			{
+				throw InputShapeException();
+			}
+			else { }
+		}
+	}
+	else if (iShape.size() == iSize)
+	{
+		// Single example, add 1 dimension
+		singleExample = true;
+		N = 1;
+		for (int i = 0; i < iSize; i++) // Check to make sure the shape is correct
+		{
+			if (iShape[i] != inputShape[i])
+			{
+				throw InputShapeException();
+			}
+			else { }
+		}
+	}
+	else // If it's the wrong number of dimensions entirely, throw an error
+	{
+		throw InputShapeException();
+	}
+
 	const int INTERNAL_BATCHES = ceil(N / INTERNAL_BATCH_LIMIT);
 	int iBatchSize = N / INTERNAL_BATCHES;
 
 	auto shape = layers->at(layerCount - 1)->getOutputShape();
-	//shape[0] = N;
 	shape.insert(shape.begin(), N);
 	xt::xarray<double> predicted = xt::xarray<double>(shape);
 
@@ -303,7 +336,20 @@ xt::xarray<double> NeuralNetwork::predict(const xt::xarray<double>& inputs) cons
 		else { }
 
 		xt::xstrided_slice_vector iBatchSV({ xt::range(iBatchStart, iBatchEnd), xt::ellipsis() });
-		xt::xarray<double> predictedBatch = xt::strided_view(inputs, iBatchSV);
+
+		xt::xarray<double> predictedBatch;
+		if (singleExample) // Add an additional dimension if the input is only one example
+		{
+			xt::xarray<double> input = inputs;
+			auto exampleShape = inputs.shape();
+			exampleShape.insert(exampleShape.begin(), 1);
+			input.reshape(exampleShape);
+			predictedBatch = xt::strided_view(input, iBatchSV);
+		}
+		else // No change necessary
+		{
+			predictedBatch = xt::strided_view(inputs, iBatchSV);
+		}
 
 		for (int i = 0; i < layerCount; i++) // Loop through the layers
 		{
@@ -313,11 +359,52 @@ xt::xarray<double> NeuralNetwork::predict(const xt::xarray<double>& inputs) cons
 		xt::strided_view(predicted, iBatchSV) = predictedBatch;
 	}
 
+	if (singleExample) // If only a single example, reduce the dimensions by one
+	{
+		predicted = xt::strided_view(predicted, { 0, xt::ellipsis() });
+	}
+	else { }
+
 	return predicted;
 }
 
 void NeuralNetwork::train(const xt::xarray<double>& inputs, const xt::xarray<double>& targets, int maxEpochs)
 {
+	// Check to make sure the shapes are correct
+	int iSize = inputShape.size();
+	auto fShape = inputs.shape();
+	auto tShape = targets.shape();
+	if ((fShape.size() - 1) != iSize) // Check the the number of dimensions is correct
+	{
+		throw TrainingDimensionException();
+	}
+	else
+	{
+		if (fShape[0] != tShape[0]) // Ensure both tensors have the same number of examples
+		{
+			throw TrainingShapeException();
+		}
+		else { }
+		for (int i = 0; i < iSize; i++) // Check to make sure the input shape is correct
+		{
+			if (fShape[i + 1] != inputShape[i]) // The first dimension is for the number of examples
+			{
+				throw TrainingShapeException();
+			}
+			else { }
+		}
+		auto outputShape = layers->at(layerCount - 1)->getOutputShape();
+		int oSize = outputShape.size();
+		for (int o = 0; o < oSize; o++) // Check to make sure the output shape is correct
+		{
+			if (tShape[o + 1] != outputShape[o]) // The first dimension is for the number of examples
+			{
+				throw TrainingShapeException();
+			}
+			else { }
+		}
+	}
+
 	setupDrawing(inputs, targets);
 
 	if (maxEpochs > -1)
