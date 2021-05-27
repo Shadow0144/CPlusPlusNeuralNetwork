@@ -9,8 +9,9 @@
 
 using namespace std;
 
-MaxPooling2DNeuralLayer::MaxPooling2DNeuralLayer(NeuralLayer* parent, const std::vector<size_t>& filterShape, bool hasChannels)
-	: PoolingNeuralLayer(parent, 2, filterShape, hasChannels)
+MaxPooling2DNeuralLayer::MaxPooling2DNeuralLayer(NeuralLayer* parent, const std::vector<size_t>& filterShape,
+													const std::vector<size_t>& stride, bool hasChannels)
+	: PoolingNeuralLayer(parent, 2, filterShape, stride, hasChannels)
 {
 
 }
@@ -29,8 +30,8 @@ xt::xarray<double> MaxPooling2DNeuralLayer::feedForward(const xt::xarray<double>
 	const int DIMC = DIMS - 1; // Channels
 	auto shape = input.shape();
 	auto maxShape = xt::svector<size_t>(shape);
-	shape[DIM1] = shape[DIM1] / filterShape[0];
-	shape[DIM2] = shape[DIM2] / filterShape[1];
+	shape[DIM1] = ceil((shape[DIM1] - (filterShape[0] - 1)) / ((double)(stride[0])));
+	shape[DIM2] = ceil((shape[DIM2] - (filterShape[1] - 1)) / ((double)(stride[1])));
 	xt::xarray<double> output = xt::xarray<double>(shape);
 	maxShape[DIM1] = 1;
 	maxShape[DIM2] = 1;

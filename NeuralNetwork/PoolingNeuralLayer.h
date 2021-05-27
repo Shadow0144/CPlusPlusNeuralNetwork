@@ -11,7 +11,8 @@
 class PoolingNeuralLayer : public ParameterizedNeuralLayer
 {
 public:
-	PoolingNeuralLayer(NeuralLayer* parent, size_t dims, const std::vector<size_t>& filterShape, bool hasChannels = true);
+	PoolingNeuralLayer(NeuralLayer* parent, size_t dims, const std::vector<size_t>& filterShape, 
+						const std::vector<size_t>& stride = { }, bool hasChannels = true);
 
 	std::vector<size_t> getOutputShape();
 
@@ -19,6 +20,7 @@ public:
 
 protected:
 	std::vector<size_t> filterShape;
+	std::vector<size_t> stride;
 	bool hasChannels;
 
 	virtual void drawPooling(ImDrawList* canvas, ImVec2 origin, double scale) = 0;

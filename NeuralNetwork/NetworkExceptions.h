@@ -54,7 +54,7 @@ class NeuralLayerConvolutionShapeException : public std::exception
 {
 	const char* what() const throw()
 	{
-		return "Parameter convolutionShape has an incompatible shape with this layer.";
+		return "Parameter convolutionShape has an incompatible shape with this layer or an invalid element.";
 	}
 };
 
@@ -62,16 +62,31 @@ class NeuralLayerStrideShapeException : public std::exception
 {
 	const char* what() const throw()
 	{
-		return "Parameter stride has an incompatible shape with this layer.";
+		return "Parameter stride has an incompatible shape with this layer or an invalid element.";
 	}
 };
 
-
-class NeuralLayerPoolingShapeException : public std::exception
+class NeuralLayerDilationShapeException : public std::exception
 {
 	const char* what() const throw()
 	{
-		return "Parameter filterShape has an incompatible shape with this layer.";
+		return "Parameter dilation has an incompatible shape with this layer or an invalid element.";
+	}
+};
+
+class NeuralLayerPoolingFilterShapeException : public std::exception
+{
+	const char* what() const throw()
+	{
+		return "Parameter filterShape has an incompatible shape with this layer or an invalid element.";
+	}
+};
+
+class NeuralLayerPoolingStrideShapeException : public std::exception
+{
+	const char* what() const throw()
+	{
+		return "Parameter stride has an incompatible shape with this layer or an invalid element.";
 	}
 };
 

@@ -175,79 +175,82 @@ void NeuralNetwork::addSoftmaxLayer(int axis)
 }
 
 void NeuralNetwork::addConvolution1DLayer(size_t numKernels, const std::vector<size_t>& convolutionShape, 
-											const std::vector<size_t>& stride, bool padded, bool addBias,
+											const std::vector<size_t>& stride, const std::vector<size_t>& dilation,
+											bool padded, bool addBias,
 											ActivationFunctionType activationFunctionType, 
 											std::map<string, double> additionalParameters)
 {
 	Convolution1DNeuralLayer* layer = new Convolution1DNeuralLayer(layers->at(layerCount - 1), numKernels, convolutionShape, 
-																	stride, padded, addBias, activationFunctionType,
+																	stride, dilation, padded, addBias, activationFunctionType,
 																	additionalParameters);
 	layers->push_back(layer);
 	layerCount++;
 }
 
 void NeuralNetwork::addConvolution2DLayer(size_t numKernels, const std::vector<size_t>& convolutionShape,
-											const std::vector<size_t>& stride, bool padded, bool addBias,
+											const std::vector<size_t>& stride, const std::vector<size_t>& dilation,
+											bool padded, bool addBias,
 											ActivationFunctionType activationFunctionType,
 											std::map<string, double> additionalParameters)
 {
 	Convolution2DNeuralLayer* layer = new Convolution2DNeuralLayer(layers->at(layerCount - 1), numKernels, convolutionShape,
-																	stride, padded, addBias, activationFunctionType,
+																	stride, dilation, padded, addBias, activationFunctionType,
 																	additionalParameters);
 	layers->push_back(layer);
 	layerCount++;
 }
 
 void NeuralNetwork::addConvolution3DLayer(size_t numKernels, const std::vector<size_t>& convolutionShape,
-											const std::vector<size_t>& stride, bool padded, bool addBias,
+											const std::vector<size_t>& stride, const std::vector<size_t>& dilation,
+											bool padded, bool addBias,
 											ActivationFunctionType activationFunctionType,
 											std::map<string, double> additionalParameters)
 {
 	Convolution3DNeuralLayer* layer = new Convolution3DNeuralLayer(layers->at(layerCount - 1), numKernels, convolutionShape,
-																	stride, padded, addBias, activationFunctionType,
+																	stride, dilation, padded, addBias, activationFunctionType,
 																	additionalParameters);
 	layers->push_back(layer);
 	layerCount++;
 }
 
-void NeuralNetwork::addAveragePooling1DLayer(const std::vector<size_t>& poolingShape, bool hasChannels)
+void NeuralNetwork::addAveragePooling1DLayer(const std::vector<size_t>& poolingShape, const std::vector<size_t>& stride, bool hasChannels)
 {
-	AveragePooling1DNeuralLayer* layer = new AveragePooling1DNeuralLayer(layers->at(layerCount - 1), poolingShape, hasChannels);
+	AveragePooling1DNeuralLayer* layer = new AveragePooling1DNeuralLayer(layers->at(layerCount - 1), poolingShape, stride, hasChannels);
 	layers->push_back(layer);
 	layerCount++;
 }
 
-void NeuralNetwork::addAveragePooling2DLayer(const std::vector<size_t>& poolingShape, bool hasChannels)
+void NeuralNetwork::addAveragePooling2DLayer(const std::vector<size_t>& poolingShape, const std::vector<size_t>& stride, bool hasChannels)
 {
-	AveragePooling2DNeuralLayer* layer = new AveragePooling2DNeuralLayer(layers->at(layerCount - 1), poolingShape, hasChannels);
+	AveragePooling2DNeuralLayer* layer = new AveragePooling2DNeuralLayer(layers->at(layerCount - 1), poolingShape, stride, hasChannels);
 	layers->push_back(layer);
 	layerCount++;
 }
 
-void NeuralNetwork::addAveragePooling3DLayer(const std::vector<size_t>& poolingShape, bool hasChannels)
+void NeuralNetwork::addAveragePooling3DLayer(const std::vector<size_t>& poolingShape, const std::vector<size_t>& stride, bool hasChannels)
 {
-	AveragePooling3DNeuralLayer* layer = new AveragePooling3DNeuralLayer(layers->at(layerCount - 1), poolingShape, hasChannels);
+	AveragePooling3DNeuralLayer* layer = new AveragePooling3DNeuralLayer(layers->at(layerCount - 1), poolingShape, stride, hasChannels);
 	layers->push_back(layer);
 	layerCount++;
 }
 
-void NeuralNetwork::addMaxPooling1DLayer(const std::vector<size_t>& poolingShape, bool hasChannels)
+void NeuralNetwork::addMaxPooling1DLayer(const std::vector<size_t>& poolingShape, const std::vector<size_t>& stride, bool hasChannels)
 {
-	MaxPooling1DNeuralLayer* layer = new MaxPooling1DNeuralLayer(layers->at(layerCount - 1), poolingShape, hasChannels);
+	MaxPooling1DNeuralLayer* layer = new MaxPooling1DNeuralLayer(layers->at(layerCount - 1), poolingShape, stride, hasChannels);
 	layers->push_back(layer);
 	layerCount++;
 }
 
-void NeuralNetwork::addMaxPooling2DLayer(const std::vector<size_t>& poolingShape, bool hasChannels)
+void NeuralNetwork::addMaxPooling2DLayer(const std::vector<size_t>& poolingShape, const std::vector<size_t>& stride, bool hasChannels)
 {
-	MaxPooling2DNeuralLayer* layer = new MaxPooling2DNeuralLayer(layers->at(layerCount - 1), poolingShape, hasChannels);
+	MaxPooling2DNeuralLayer* layer = new MaxPooling2DNeuralLayer(layers->at(layerCount - 1), poolingShape, stride, hasChannels);
 	layers->push_back(layer);
 	layerCount++;
 }
 
-void NeuralNetwork::addMaxPooling3DLayer(const std::vector<size_t>& poolingShape, bool hasChannels)
+void NeuralNetwork::addMaxPooling3DLayer(const std::vector<size_t>& poolingShape, const std::vector<size_t>& stride, bool hasChannels)
 {
-	MaxPooling3DNeuralLayer* layer = new MaxPooling3DNeuralLayer(layers->at(layerCount - 1), poolingShape, hasChannels);
+	MaxPooling3DNeuralLayer* layer = new MaxPooling3DNeuralLayer(layers->at(layerCount - 1), poolingShape, stride, hasChannels);
 	layers->push_back(layer);
 	layerCount++;
 }

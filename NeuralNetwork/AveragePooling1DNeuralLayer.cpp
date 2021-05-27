@@ -9,8 +9,9 @@
 
 using namespace std;
 
-AveragePooling1DNeuralLayer::AveragePooling1DNeuralLayer(NeuralLayer* parent, const std::vector<size_t>& filterShape, bool hasChannels)
-	: PoolingNeuralLayer(parent, 1, filterShape, hasChannels)
+AveragePooling1DNeuralLayer::AveragePooling1DNeuralLayer(NeuralLayer* parent, const std::vector<size_t>& filterShape, 
+															const std::vector<size_t>& stride, bool hasChannels)
+	: PoolingNeuralLayer(parent, 1, filterShape, stride, hasChannels)
 {
 
 }
@@ -28,7 +29,7 @@ xt::xarray<double> AveragePooling1DNeuralLayer::feedForward(const xt::xarray<dou
 	const int DIMC = DIMS - 1; // Channels
 	auto shape = input.shape();
 	auto maxShape = xt::svector<size_t>(shape);
-	shape[DIM1] = shape[DIM1] / filterShape[0];
+	shape[DIM1] = ceil((shape[DIM1] - (filterShape[0] - 1)) / ((double)(stride[0])));
 	xt::xarray<double> output = xt::xarray<double>(shape);
 	maxShape[DIM1] = 1;
 
@@ -43,7 +44,7 @@ xt::xarray<double> AveragePooling1DNeuralLayer::feedForward(const xt::xarray<dou
 	int l = 0;
 	auto iShape = input.shape();
 	const int I = iShape[DIM1] - (iShape[DIM1] % filterShape[0]);
-	for (int i = 0; i < I; i += filterShape[0])
+	for (int i = 0; i < I; i += stride[0])
 	{
 		inputWindowView[DIM1] = xt::range(i, i + filterShape[0]);
 		outputWindowView[DIM1] = l++; // Increment after assignment

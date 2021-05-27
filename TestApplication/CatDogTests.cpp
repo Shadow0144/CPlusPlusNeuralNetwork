@@ -26,7 +26,7 @@ void test_catdog()
     NeuralNetwork network(true);
     network.addInputLayer({ (size_t)IMG_ROWS, (size_t)IMG_COLS, (size_t)CHANNELS }); // 1024x1024x3
 
-    network.addConvolution2DLayer(NUM_KERNELS_1, { 5 }, { 2 }, false, true, ActivationFunctionType::ReLU); // 1024x1024x3 -> 1020x1020x16                                            
+    network.addConvolution2DLayer(NUM_KERNELS_1, { 5 }, { 2 }, { 1 }, false, true, ActivationFunctionType::ReLU); // 1024x1024x3 -> 1020x1020x16                                            
     network.addMaxPooling2DLayer({ 4 }); // 1020x1020x16 -> 255x255x16
 
     network.addConvolution2DLayer(NUM_KERNELS_2, { 4 }, { 4 }); // 255x255x16 -> 252x252x16                                                         

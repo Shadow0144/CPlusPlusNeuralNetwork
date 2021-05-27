@@ -2,7 +2,8 @@
 
 #include "NetworkExceptions.h"
 
-PoolingNeuralLayer::PoolingNeuralLayer(NeuralLayer* parent, size_t dims, const std::vector<size_t>& filterShape, bool hasChannels)
+PoolingNeuralLayer::PoolingNeuralLayer(NeuralLayer* parent, size_t dims, const std::vector<size_t>& filterShape, 
+										const std::vector<size_t>& stride, bool hasChannels)
 	: ParameterizedNeuralLayer(parent)
 {
 	this->filterShape = filterShape;
@@ -18,9 +19,55 @@ PoolingNeuralLayer::PoolingNeuralLayer(NeuralLayer* parent, size_t dims, const s
 	{ 
 		if (fDIMS != dims)
 		{
-			throw NeuralLayerPoolingShapeException();
+			throw NeuralLayerPoolingFilterShapeException();
 		}
 		else { }
+	}
+	// Ensure none of the filters are zero, negative, or bigger than the input
+	auto iShape = parent->getOutputShape();
+	const int iDIMS = iShape.size() - ((hasChannels) ? 1 : 0);
+	for (int i = 0; i < fDIMS; i++)
+	{
+		if ((this->filterShape[i] <= 0) || (this->filterShape[i] > iShape[iDIMS - dims + i]))
+		{
+			throw NeuralLayerPoolingFilterShapeException();
+		}
+		else { }
+	}
+
+	const int sDIMS = stride.size();
+	if (sDIMS == 0)
+	{
+		this->stride = this->filterShape;
+	}
+	else if (sDIMS == 1)
+	{
+		if (stride[0] <= 0)
+		{
+			throw NeuralLayerPoolingStrideShapeException();
+		}
+		else { }
+		this->stride = stride;
+		for (int i = 1; i < dims; i++)
+		{
+			this->stride.push_back(stride[0]);
+		}
+	}
+	else if (sDIMS == dims)
+	{
+		this->stride = stride;
+		for (int i = 0; i < dims; i++)
+		{
+			if (stride[i] <= 0)
+			{
+				throw NeuralLayerPoolingStrideShapeException();
+			}
+			else { }
+		}
+	}
+	else
+	{
+		throw NeuralLayerPoolingStrideShapeException();
 	}
 	this->hasChannels = hasChannels;
 	this->numUnits = 1;
@@ -40,7 +87,7 @@ std::vector<size_t> PoolingNeuralLayer::getOutputShape()
 		else { }
 		for (int i = 0; i < C; i++) // Pooled dimensions
 		{
-			shape[S - C + i - 1] = shape[S - C + i - 1] / filterShape[i];
+			shape[S - C + i - 1] = ceil((shape[S - C + i - 1] - (filterShape[i] - 1)) / ((double)(stride[i])));
 		}
 		// Channels remain the same
 	}
@@ -53,7 +100,7 @@ std::vector<size_t> PoolingNeuralLayer::getOutputShape()
 		else { }
 		for (int i = 0; i < C; i++) // Pooled dimensions
 		{
-			shape[S - C + i] = shape[S - C + i] / filterShape[i];
+			shape[S - C + i] = ceil((shape[S - C + i] - (filterShape[i] - 1)) / ((double)(filterShape[i])));
 		}
 	}
 	return shape;

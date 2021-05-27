@@ -14,7 +14,8 @@ class Convolution1DNeuralLayer : public ConvolutionNeuralLayer
 public:
 	Convolution1DNeuralLayer(NeuralLayer* parent, size_t numKernels,
 		const std::vector<size_t>& convolutionShape, 
-		const std::vector<size_t>& stride = { 1 }, bool padded = false, bool addBias = false,
+		const std::vector<size_t>& stride = { 1 }, const std::vector<size_t>& dilation = { 1 },
+		bool padded = false, bool addBias = false,
 		ActivationFunctionType activationFunctionType = ActivationFunctionType::Identity,
 		std::map<std::string, double> additionalParameters = std::map<std::string, double>());
 	~Convolution1DNeuralLayer();
@@ -24,5 +25,6 @@ public:
 private:
 	xt::xarray<double> convolveInput(const xt::xarray<double>& input);
 	xt::xarray<double> convolude1D(const xt::xarray<double>& f, const xt::xarray<double>& g, bool useStride = true);
+	void applyDilation();
 	void drawConvolution(ImDrawList* canvas, ImVec2 origin, double scale);
 };

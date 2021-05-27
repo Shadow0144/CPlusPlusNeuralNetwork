@@ -6,22 +6,39 @@
 
 #pragma warning(push, 0)
 #include <xtensor/xnpy.hpp>
+#include <xtensor/xdynamic_view.hpp>
 #pragma warning(pop)
 
 using namespace std;
 
 ConvolutionNeuralLayer::ConvolutionNeuralLayer(NeuralLayer* parent, size_t dims, size_t numKernels,
-	const std::vector<size_t>& convolutionShape, const std::vector<size_t>& stride, bool padded,
-	bool addBias, ActivationFunctionType activationFunctionType, std::map<string, double> additionalParameters)
+	const std::vector<size_t>& convolutionShape, const std::vector<size_t>& stride, const std::vector<size_t>& dilation,
+	bool padded, bool addBias, ActivationFunctionType activationFunctionType, std::map<string, double> additionalParameters)
 	: ParameterizedNeuralLayer(parent)
 {
 	this->numUnits = numKernels;
-	this->convolutionShape = convolutionShape;
 	this->stride = stride;
+	this->dilation = dilation;
 	this->padded = padded;
 	this->numKernels = numKernels;
 	this->activationFunction = ActivationFunctionFactory::getNewActivationFunction(activationFunctionType, additionalParameters);
 
+	// Handle any dilation first
+	this->dilation = dilation;
+	if (dilation.size() == 1)
+	{
+		for (int i = 1; i < dims; i++) // Start at 1
+		{
+			this->dilation.push_back(dilation[0]);
+		}
+	}
+	else if (dilation.size() != dims)
+	{
+		throw NeuralLayerDilationShapeException();
+	}
+	else { }
+
+	this->convolutionShape = convolutionShape;
 	if (convolutionShape.size() == 1)
 	{
 		for (int i = 1; i < dims; i++) // Start at 1
@@ -33,6 +50,7 @@ ConvolutionNeuralLayer::ConvolutionNeuralLayer(NeuralLayer* parent, size_t dims,
 	{
 		throw NeuralLayerConvolutionShapeException();
 	}
+	else { }
 
 	auto inputShape = parent->getOutputShape();
 	const int iDIMS = inputShape.size();
@@ -42,13 +60,6 @@ ConvolutionNeuralLayer::ConvolutionNeuralLayer(NeuralLayer* parent, size_t dims,
 	}
 	else { }
 	this->inputChannels = inputShape.at(iDIMS - 1);
-	for (int i = 0; i < dims; i++) // Make sure the input is at least as large as the convolution
-	{
-		if (inputShape[iDIMS - i - 2] < this->convolutionShape[dims - i - 1]) // - 2 because of the channels
-		{
-			throw NeuralLayerConvolutionShapeException();
-		}
-	}
 
 	if (stride.size() == 1)
 	{
@@ -60,6 +71,15 @@ ConvolutionNeuralLayer::ConvolutionNeuralLayer(NeuralLayer* parent, size_t dims,
 	else if (stride.size() != dims)
 	{
 		throw NeuralLayerStrideShapeException();
+	}
+	else { }
+	for (int i = 0; i < dims; i++) 
+	{
+		if (this->stride[i] < 1)
+		{
+			throw NeuralLayerStrideShapeException();
+		}
+		else { }
 	}
 
 	std::vector<size_t> paramShape;
@@ -84,6 +104,35 @@ ConvolutionNeuralLayer::ConvolutionNeuralLayer(NeuralLayer* parent, size_t dims,
 		this->biasWeights.setUnregularized(); // Bias is typically unregularized
 	}
 	else { }
+
+	// Dilate the convolution as necessary
+	for (int i = 0; i < dims; i++)
+	{
+		if (this->dilation[i] < 1)
+		{
+			throw NeuralLayerDilationShapeException();
+		}
+		else { }
+		if (this->convolutionShape[i] < 1)
+		{
+			throw NeuralLayerConvolutionShapeException();
+		}
+		else { }
+		if (this->dilation[i] > 1)
+		{
+			this->convolutionShape[i] = (this->convolutionShape[i] + ((this->convolutionShape[i] - 1) * (this->dilation[i] - 1)));
+		}
+		else { }
+	}
+
+	for (int i = 0; i < dims; i++) // Make sure the input is at least as large as the convolution
+	{
+		if (inputShape[iDIMS - i - 2] < this->convolutionShape[dims - i - 1]) // - 2 because of the channels
+		{
+			throw NeuralLayerConvolutionShapeException();
+		}
+		else { }
+	}
 }
 
 ConvolutionNeuralLayer::~ConvolutionNeuralLayer()
@@ -230,7 +279,7 @@ std::vector<size_t> ConvolutionNeuralLayer::getOutputShape()
 	{
 		for (int i = 0; i < C; i++) // Convolved dimensions
 		{
-			shape[S - C + i - 1] = ((shape[S - C + i - 1]) / stride[i]);
+			shape[S - C + i - 1] = ceil((shape[S - C + i - 1]) / ((double)(stride[i])));
 		}
 		// Channel dimension
 		shape[S - 1] = numKernels;
@@ -239,7 +288,7 @@ std::vector<size_t> ConvolutionNeuralLayer::getOutputShape()
 	{
 		for (int i = 0; i < C; i++) // Convolved dimensions
 		{
-			shape[S - C + i - 1] = ((shape[S - C + i - 1] - (convolutionShape[i] - 1)) / stride[i]);
+			shape[S - C + i - 1] = ceil((shape[S - C + i - 1] - (convolutionShape[i] - 1)) / ((double)(stride[i])));
 		}
 		// Channel dimension
 		shape[S - 1] = numKernels;

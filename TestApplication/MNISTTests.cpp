@@ -38,25 +38,25 @@ void test_binary_mnist()
     const int NUM_KERNELS_3 = 4;
 
     // Create the network
-    NeuralNetwork network(false);
+    NeuralNetwork network(true);
 
     network.addInputLayer({ (size_t)IMG_DIM, (size_t)IMG_DIM, C }); // 28x28x1
     /*network.addReshapeLayer({ 14, 14, 4, 1 });
-    network.addConvolution3DLayer(NUM_KERNELS_1, { 3 }, { 2 });
-    network.addMaxPooling3DLayer({ 2 });
+    network.addConvolution3DLayer(NUM_KERNELS_1, { 3 }, { 1 }, { 1 });
+    network.addMaxPooling3DLayer({ 2 });*/
     network.addFlattenLayer();
 
-    network.addDenseLayer(ActivationFunctionType::ReLU, 16 * 16 * 8);
-    network.addReshapeLayer({ 16, 16, 8 });*/
-    network.addConvolution2DLayer(NUM_KERNELS_2, { 5 }, { 1 }, true);
-    network.addMaxPooling2DLayer({ 2 });
-    network.addFlattenLayer();
+    /*network.addDenseLayer(ActivationFunctionType::ReLU, 16 * 16 * 8);
+    network.addReshapeLayer({ 16, 16, 8 });
+    network.addConvolution2DLayer(NUM_KERNELS_2, { 5 }, { 1 }, { 2 }, true);
+    network.addMaxPooling2DLayer({ 2 }, { 1 });
+    network.addFlattenLayer();*/
 
     network.addDenseLayer(ActivationFunctionType::ReLU, 16 * 2);
-    /*network.addReshapeLayer({ 16, 2 });
-    network.addConvolution1DLayer(NUM_KERNELS_3, { 5 }, { 2 });
+    network.addReshapeLayer({ 16, 2 });
+    network.addConvolution1DLayer(NUM_KERNELS_3, { 5 }, { 2 }, { 2 });
     network.addMaxPooling1DLayer({ 2 });
-    network.addFlattenLayer();*/
+    network.addFlattenLayer();
 
     network.addDenseLayer(ActivationFunctionType::Sigmoid, CLASSES);
     network.addSoftmaxLayer(-1);

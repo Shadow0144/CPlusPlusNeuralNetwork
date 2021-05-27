@@ -13,17 +13,74 @@
 using namespace std;
 
 Convolution2DNeuralLayer::Convolution2DNeuralLayer(NeuralLayer* parent, size_t numKernels,
-	const std::vector<size_t>& convolutionShape, const std::vector<size_t>& stride, bool padded,
-	bool addBias, ActivationFunctionType activationFunctionType, std::map<string, double> additionalParameters)
-	: ConvolutionNeuralLayer(parent, 2, numKernels, convolutionShape, stride, padded,
+	const std::vector<size_t>& convolutionShape, const std::vector<size_t>& stride, const std::vector<size_t>& dilation,
+	bool padded, bool addBias, ActivationFunctionType activationFunctionType, std::map<string, double> additionalParameters)
+	: ConvolutionNeuralLayer(parent, 2, numKernels, convolutionShape, stride, dilation, padded,
 		addBias, activationFunctionType, additionalParameters)
 {
-
+	applyDilation();
 }
 
 Convolution2DNeuralLayer::~Convolution2DNeuralLayer()
 {
 
+}
+
+void Convolution2DNeuralLayer::applyDilation()
+{
+	const int DIMS = 2;
+	bool needsDilation = false;
+	for (int i = 0; i < DIMS; i++)
+	{
+		if (dilation[i] > 1)
+		{
+			needsDilation = true;
+			break;
+		}
+		else { }
+	}
+	if (needsDilation)
+	{
+		std::vector<size_t> paramShape;
+		for (int i = 0; i < DIMS; i++)
+		{
+			paramShape.push_back(this->convolutionShape[i]);
+		}
+		paramShape.push_back(inputChannels);
+		paramShape.push_back(numKernels);
+
+		xt::xstrided_slice_vector dilatedWindowView;
+		xt::xstrided_slice_vector undilatedWindowView;
+		for (int f = 0; f < DIMS; f++)
+		{
+			dilatedWindowView.push_back(0);
+			undilatedWindowView.push_back(0);
+		}
+		dilatedWindowView.push_back(xt::ellipsis());
+		undilatedWindowView.push_back(xt::ellipsis());
+
+		xt::xarray<double> dilatedWeights = xt::zeros<double>(paramShape);
+		auto undilatedWeights = weights.getParameters();
+		int l = 0;
+		int m = 0;
+		for (int i = 0; i < this->convolutionShape[0]; i += dilation[0])
+		{
+			dilatedWindowView[0] = i;
+			undilatedWindowView[0] = l;
+			for (int j = 0; j < this->convolutionShape[1]; j += dilation[1])
+			{
+				dilatedWindowView[1] = j;
+				undilatedWindowView[1] = m;
+				xt::strided_view(dilatedWeights, dilatedWindowView) = xt::strided_view(undilatedWeights, undilatedWindowView);
+				m++;
+			}
+			m = 0;
+			l++;
+		}
+		// l = 0;
+		weights.setParameters(dilatedWeights);
+	}
+	else { }
 }
 
 xt::xarray<double> Convolution2DNeuralLayer::convolude2D(const xt::xarray<double>& f, const xt::xarray<double>& g, bool useStride)
@@ -44,8 +101,8 @@ xt::xarray<double> Convolution2DNeuralLayer::convolude2D(const xt::xarray<double
 	int Js = (useStride) ? stride[1] : 1;
 
 	auto shape = f.shape();
-	shape[DIM1] = ((shape[DIM1] - (kernelShape[kDIM1] - 1)) / Is);
-	shape[DIM2] = ((shape[DIM2] - (kernelShape[kDIM2] - 1)) / Js);
+	shape[DIM1] = ceil((shape[DIM1] - (kernelShape[kDIM1] - 1)) / ((double)(Is)));
+	shape[DIM2] = ceil((shape[DIM2] - (kernelShape[kDIM2] - 1)) / ((double)(Js)));
 	shape.pop_back(); // Remove the last element
 	xt::xarray<double> h = xt::xarray<double>(shape);
 

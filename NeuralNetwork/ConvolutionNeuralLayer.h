@@ -21,9 +21,12 @@ public:
 protected:
 	ConvolutionNeuralLayer(NeuralLayer* parent, size_t dims,
 		size_t numKernels, const std::vector<size_t>& convolutionShape,
-		const std::vector<size_t>& stride = { 1 }, bool padded = false, bool addBias = false,
+		const std::vector<size_t>& stride = { 1 }, const std::vector<size_t>& dilation = { 1 },
+		bool padded = false, bool addBias = false,
 		ActivationFunctionType activationFunctionType = ActivationFunctionType::Identity,
 		std::map<std::string, double> additionalParameters = std::map<std::string, double>());
+
+	virtual void applyDilation() = 0;
 
 	bool hasBias;
 	ParameterSet biasWeights;
@@ -32,6 +35,7 @@ protected:
 	size_t numKernels;
 	std::vector<size_t> convolutionShape;
 	std::vector<size_t> stride;
+	std::vector<size_t> dilation;
 	bool padded;
 	xt::svector<size_t> inputShape; // In case of padding
 

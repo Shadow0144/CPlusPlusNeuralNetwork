@@ -312,7 +312,7 @@ void test_signal_crelu()
     inputShape.push_back(1);
     network.addInputLayer(inputShape);
     network.addDenseLayer(ActivationFunctionType::CReLU, 2);
-    network.addAveragePooling1DLayer({ 2 }, false);
+    network.addAveragePooling1DLayer({ 2 }, { }, false);
     network.addSqueezeLayer();
     network.addDenseLayer(ActivationFunctionType::Identity, 1);
 

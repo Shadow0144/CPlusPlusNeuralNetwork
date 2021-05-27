@@ -66,6 +66,8 @@ void ParameterSet::setParameters(const xt::xarray<double>& parameters, bool hasB
 	weightsMutex.lock();
 	this->parameters = parameters;
 	weightsMutex.unlock();
+
+	deltaParameters = xt::zeros<double>(parameters.shape());
 }
 
 void ParameterSet::setParametersRandom(size_t numParameters, bool hasBias)

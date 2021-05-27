@@ -11,7 +11,8 @@
 class AveragePooling2DNeuralLayer : public PoolingNeuralLayer
 {
 public:
-	AveragePooling2DNeuralLayer(NeuralLayer* parent, const std::vector<size_t>& filterShape, bool hasChannels = true);
+	AveragePooling2DNeuralLayer(NeuralLayer* parent, const std::vector<size_t>& filterShape, 
+								const std::vector<size_t>& stride = { }, bool hasChannels = true);
 	~AveragePooling2DNeuralLayer();
 
 	xt::xarray<double> feedForward(const xt::xarray<double>& input);
