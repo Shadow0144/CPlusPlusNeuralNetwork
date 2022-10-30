@@ -3,7 +3,7 @@
   <ItemGroup>
     <Filter Include="Source Files">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
     <Filter Include="Header Files">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
@@ -13,83 +13,95 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Data">
-      <UniqueIdentifier>{572e026f-e11d-49de-af12-bcff4cd47d6e}</UniqueIdentifier>
+    <Filter Include="Header Files\Test">
+      <UniqueIdentifier>{5d023732-77ae-4fc5-86e8-27d1a46933cd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Datasets">
-      <UniqueIdentifier>{d80a7809-861c-4d27-9c61-a9c7c8ca6105}</UniqueIdentifier>
+    <Filter Include="Header Files\Dataset">
+      <UniqueIdentifier>{071a8848-7304-4f8f-8420-e14e95e87395}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Tests">
-      <UniqueIdentifier>{1796db1e-1f19-445c-82e5-549da5b4a024}</UniqueIdentifier>
+    <Filter Include="Source Files\Test">
+      <UniqueIdentifier>{b2c64e19-eb48-4a2a-8068-fa97af26510d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Data Files">
+      <UniqueIdentifier>{3482b123-6934-45e3-adb3-b88a76377436}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="TestApplication.cpp">
+    <ClCompile Include="src\TestApplication.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CVTests.cpp">
-      <Filter>Source Files\Tests</Filter>
+    <ClCompile Include="src\Test\CatDogTests.cpp">
+      <Filter>Source Files\Test</Filter>
     </ClCompile>
-    <ClCompile Include="IrisTests.cpp">
-      <Filter>Source Files\Tests</Filter>
+    <ClCompile Include="src\Test\CVTests.cpp">
+      <Filter>Source Files\Test</Filter>
     </ClCompile>
-    <ClCompile Include="SignalTests.cpp">
-      <Filter>Source Files\Tests</Filter>
+    <ClCompile Include="src\Test\IrisTests.cpp">
+      <Filter>Source Files\Test</Filter>
     </ClCompile>
-    <ClCompile Include="MNISTTests.cpp">
-      <Filter>Source Files\Tests</Filter>
+    <ClCompile Include="src\Test\MNISTTests.cpp">
+      <Filter>Source Files\Test</Filter>
     </ClCompile>
-    <ClCompile Include="CatDogTests.cpp">
-      <Filter>Source Files\Tests</Filter>
+    <ClCompile Include="src\Test\SignalTests.cpp">
+      <Filter>Source Files\Test</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <CopyFileToFolders Include="data\iris.dat">
-      <Filter>Data</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="data\mnist_dev.csv">
-      <Filter>Data</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="data\mnist_mini.csv">
-      <Filter>Data</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="data\mnist_test.csv">
-      <Filter>Data</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="data\mnist_train.csv">
-      <Filter>Data</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="data\mnist_binary.csv">
-      <Filter>Data</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="data\mnist_fashion_train_1.csv">
-      <Filter>Data</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="data\mnist_fashion_test.csv">
-      <Filter>Data</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="data\mnist_fashion_train_2.csv">
-      <Filter>Data</Filter>
-    </CopyFileToFolders>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="CatDogDataset.h">
-      <Filter>Header Files\Datasets</Filter>
-    </ClInclude>
-    <ClInclude Include="IrisDataset.h">
-      <Filter>Header Files\Datasets</Filter>
-    </ClInclude>
-    <ClInclude Include="MNISTDataset.h">
-      <Filter>Header Files\Datasets</Filter>
-    </ClInclude>
-    <ClInclude Include="Tests.h">
+    <ClInclude Include="hdr\TestApplication.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TestApplication.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="hdr\Test\Tests.h">
+      <Filter>Header Files\Test</Filter>
+    </ClInclude>
+    <ClInclude Include="hdr\Dataset\CatDogDataset.h">
+      <Filter>Header Files\Dataset</Filter>
+    </ClInclude>
+    <ClInclude Include="hdr\Dataset\IrisDataset.h">
+      <Filter>Header Files\Dataset</Filter>
+    </ClInclude>
+    <ClInclude Include="hdr\Dataset\MNISTDataset.h">
+      <Filter>Header Files\Dataset</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <None Include="imgui.ini">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="data\binary_maker.py">
+      <Filter>Resource Files\Data Files</Filter>
+    </None>
+    <None Include="data\iris.dat">
+      <Filter>Resource Files\Data Files</Filter>
+    </None>
+    <None Include="data\mnist_binary.csv">
+      <Filter>Resource Files\Data Files</Filter>
+    </None>
+    <None Include="data\mnist_dev.csv">
+      <Filter>Resource Files\Data Files</Filter>
+    </None>
+    <None Include="data\mnist_fashion_test.csv">
+      <Filter>Resource Files\Data Files</Filter>
+    </None>
+    <None Include="data\mnist_fashion_train_1.csv">
+      <Filter>Resource Files\Data Files</Filter>
+    </None>
+    <None Include="data\mnist_fashion_train_2.csv">
+      <Filter>Resource Files\Data Files</Filter>
+    </None>
+    <None Include="data\mnist_mini.csv">
+      <Filter>Resource Files\Data Files</Filter>
+    </None>
+    <None Include="data\mnist_test.csv">
+      <Filter>Resource Files\Data Files</Filter>
+    </None>
+    <None Include="data\mnist_train.csv">
+      <Filter>Resource Files\Data Files</Filter>
+    </None>
+    <None Include="data\padding_test.py">
+      <Filter>Resource Files\Data Files</Filter>
+    </None>
+    <None Include="data\pooling_test.py">
+      <Filter>Resource Files\Data Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

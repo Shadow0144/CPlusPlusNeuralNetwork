@@ -3,7 +3,7 @@
   <ItemGroup>
     <Filter Include="Source Files">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
     <Filter Include="Header Files">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
@@ -13,518 +13,420 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Source Files\ActivationFunction">
-      <UniqueIdentifier>{292a4076-72cb-4655-98ac-45c13577f502}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\ActivationFunction">
-      <UniqueIdentifier>{00e166c2-0aed-4317-916e-b1d7322592fd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\imgui">
-      <UniqueIdentifier>{be8b3d9f-c88c-49d4-b3ea-d25413070cc5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\imgui">
-      <UniqueIdentifier>{78995e6a-dd6b-425d-b8e3-4dc5517c7d75}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\imgui\gl3w">
-      <UniqueIdentifier>{c69af12a-00d9-475d-8f09-e2abf24182a4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Visualizer">
-      <UniqueIdentifier>{b285ce44-4aa4-4d01-9bd2-e8c526b8b4e9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Visualizer">
-      <UniqueIdentifier>{4a59ead0-00f7-4043-aed8-15dbabf9d437}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\NeuralLayer">
-      <UniqueIdentifier>{c7798580-57a4-4aef-855c-4af2e7c941fd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\NeuralLayer\ConvolutionLayer">
-      <UniqueIdentifier>{a8a089b7-a9f8-4293-ba93-4b9cbc15b67a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\NeuralLayer\PoolingLayer">
-      <UniqueIdentifier>{1638f387-d229-496a-83dd-f90f39f45159}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\NeuralLayer">
-      <UniqueIdentifier>{7cbaa276-8fb7-4154-9a4c-125599373b3c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\NeuralLayer\ConvolutionLayer">
-      <UniqueIdentifier>{66d6516e-3403-4dcc-b7a8-0deb90e5886d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\NeuralLayer\PoolingLayer">
-      <UniqueIdentifier>{3ed52359-dc90-45bd-aa8a-332646844d6f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\NeuralLayer\ShapeLayer">
-      <UniqueIdentifier>{4ec51ac0-1006-43c4-90ec-f1c0f4fed230}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\NeuralLayer\ShapeLayer">
-      <UniqueIdentifier>{be0b9343-8cec-4768-b939-e45268b9186d}</UniqueIdentifier>
+      <UniqueIdentifier>{a203ffc9-ade9-4fd4-bc15-58aed2c61a28}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Optimizer">
-      <UniqueIdentifier>{149511b3-4430-4658-80ee-91ac5c0b1d13}</UniqueIdentifier>
+      <UniqueIdentifier>{a44c0d4b-9dd8-4667-919f-74a9b17d364d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Optimizer">
-      <UniqueIdentifier>{9becd34e-e9be-496d-89d6-72dab45fb252}</UniqueIdentifier>
+    <Filter Include="Source Files\NeuralLayer">
+      <UniqueIdentifier>{52846b4d-46bc-4bef-baae-c6a0f40f520b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\NeuralLayer\ShapeLayer">
+      <UniqueIdentifier>{624e72ec-a7fe-424f-8282-3d6defb8dea5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\NeuralLayer\PoolingLayer">
+      <UniqueIdentifier>{94ae6863-47f4-430c-96c8-17618ca5cce3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\NeuralLayer\ConvolutionLayer">
+      <UniqueIdentifier>{641fc16e-9257-4251-8793-c7e80785aa40}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\LossFunction">
-      <UniqueIdentifier>{9c6fdaa7-b3a3-4286-ac9c-ed40fb5bba8d}</UniqueIdentifier>
+      <UniqueIdentifier>{e9afb811-5ed9-425f-b912-5eb8b556f6a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ActivationFunction">
+      <UniqueIdentifier>{c5ebab3d-bb09-40b4-a043-1d3165984879}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ActivationFunction">
+      <UniqueIdentifier>{5222e3df-5693-40b8-beed-9e0fdd2895c9}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\LossFunction">
-      <UniqueIdentifier>{71842a1e-ee76-4533-9dbc-721be86e27fd}</UniqueIdentifier>
+      <UniqueIdentifier>{a80719e9-1051-4548-a08a-028feb5227ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\NeuralLayer">
+      <UniqueIdentifier>{01842361-3e0d-49d1-ad39-835e9d38d4f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Optimizer">
+      <UniqueIdentifier>{08cc5b4c-3f81-42c8-b0ef-ab32c9ec5cab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Visualizer">
+      <UniqueIdentifier>{02ed636f-a130-42a1-ba8e-c77de73db6d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\NeuralLayer\ConvolutionLayer">
+      <UniqueIdentifier>{75cf33c2-7d4a-4c1c-b1a5-584d7aeeafbe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\NeuralLayer\PoolingLayer">
+      <UniqueIdentifier>{0604ffb9-4686-4720-a8e3-258bc8e252c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\NeuralLayer\ShapeLayer">
+      <UniqueIdentifier>{d08459db-2ebb-4539-817d-705c02d01882}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="NeuralNetwork.cpp">
+    <ClCompile Include="src\NeuralNetwork.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ParameterSet.cpp">
+    <ClCompile Include="src\ParameterSet.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="imgui_impl_opengl3.cpp">
-      <Filter>Source Files\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui_impl_sdl.cpp">
-      <Filter>Source Files\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="gl3w\GL\gl3w.c">
-      <Filter>Header Files\imgui\gl3w</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui.cpp">
-      <Filter>Source Files\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui_demo.cpp">
-      <Filter>Source Files\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui_draw.cpp">
-      <Filter>Source Files\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui_widgets.cpp">
-      <Filter>Source Files\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="NetworkVisualizer.cpp">
-      <Filter>Source Files\Visualizer</Filter>
-    </ClCompile>
-    <ClCompile Include="ClassifierVisualizer.cpp">
-      <Filter>Source Files\Visualizer</Filter>
-    </ClCompile>
-    <ClCompile Include="DenseNeuralLayer.cpp">
-      <Filter>Source Files\NeuralLayer</Filter>
-    </ClCompile>
-    <ClCompile Include="InputNeuralLayer.cpp">
-      <Filter>Source Files\NeuralLayer</Filter>
-    </ClCompile>
-    <ClCompile Include="FunctionVisualizer.cpp">
-      <Filter>Source Files\Visualizer</Filter>
-    </ClCompile>
-    <ClCompile Include="NeuralLayer.cpp">
-      <Filter>Source Files\NeuralLayer</Filter>
-    </ClCompile>
-    <ClCompile Include="SoftmaxNeuralLayer.cpp">
-      <Filter>Source Files\NeuralLayer</Filter>
-    </ClCompile>
-    <ClCompile Include="Test.cpp">
+    <ClCompile Include="src\Test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ImageClassVisualizer.cpp">
+    <ClCompile Include="src\Visualizer\ClassifierVisualizer.cpp">
       <Filter>Source Files\Visualizer</Filter>
     </ClCompile>
-    <ClCompile Include="MeanSquareErrorLossFunction.cpp">
+    <ClCompile Include="src\Visualizer\FunctionVisualizer.cpp">
+      <Filter>Source Files\Visualizer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Visualizer\ImageClassVisualizer.cpp">
+      <Filter>Source Files\Visualizer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Visualizer\NetworkVisualizer.cpp">
+      <Filter>Source Files\Visualizer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Optimizer\AdadeltaOptimizer.cpp">
+      <Filter>Source Files\Optimizer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Optimizer\AdagradOptimizer.cpp">
+      <Filter>Source Files\Optimizer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Optimizer\AdamaxOptimizer.cpp">
+      <Filter>Source Files\Optimizer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Optimizer\AdamOptimizer.cpp">
+      <Filter>Source Files\Optimizer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Optimizer\AMSGradOptimizer.cpp">
+      <Filter>Source Files\Optimizer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Optimizer\FtrlOptimizer.cpp">
+      <Filter>Source Files\Optimizer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Optimizer\NadamOptimizer.cpp">
+      <Filter>Source Files\Optimizer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Optimizer\Optimizer.cpp">
+      <Filter>Source Files\Optimizer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Optimizer\RMSPropOptimizer.cpp">
+      <Filter>Source Files\Optimizer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Optimizer\RPropOptimizer.cpp">
+      <Filter>Source Files\Optimizer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Optimizer\SGDOptimizer.cpp">
+      <Filter>Source Files\Optimizer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\NeuralLayer\ActivationFunctionNeuralLayer.cpp">
+      <Filter>Source Files\NeuralLayer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\NeuralLayer\DenseNeuralLayer.cpp">
+      <Filter>Source Files\NeuralLayer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\NeuralLayer\DropoutNeuralLayer.cpp">
+      <Filter>Source Files\NeuralLayer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\NeuralLayer\InputNeuralLayer.cpp">
+      <Filter>Source Files\NeuralLayer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\NeuralLayer\MaxoutNeuralLayer.cpp">
+      <Filter>Source Files\NeuralLayer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\NeuralLayer\NeuralLayer.cpp">
+      <Filter>Source Files\NeuralLayer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\NeuralLayer\ParameterizedNeuralLayer.cpp">
+      <Filter>Source Files\NeuralLayer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\NeuralLayer\SoftmaxNeuralLayer.cpp">
+      <Filter>Source Files\NeuralLayer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\NeuralLayer\ShapeLayer\FlattenNeuralLayer.cpp">
+      <Filter>Source Files\NeuralLayer\ShapeLayer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\NeuralLayer\ShapeLayer\ReshapeNeuralLayer.cpp">
+      <Filter>Source Files\NeuralLayer\ShapeLayer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\NeuralLayer\ShapeLayer\ShapeNeuralLayer.cpp">
+      <Filter>Source Files\NeuralLayer\ShapeLayer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\NeuralLayer\ShapeLayer\SqueezeNeuralLayer.cpp">
+      <Filter>Source Files\NeuralLayer\ShapeLayer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\NeuralLayer\PoolingLayer\Average1DNeuralLayer.cpp">
+      <Filter>Source Files\NeuralLayer\PoolingLayer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\NeuralLayer\PoolingLayer\Average2DNeuralLayer.cpp">
+      <Filter>Source Files\NeuralLayer\PoolingLayer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\NeuralLayer\PoolingLayer\Average3DNeuralLayer.cpp">
+      <Filter>Source Files\NeuralLayer\PoolingLayer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\NeuralLayer\PoolingLayer\MaxPooling1DNeuralLayer.cpp">
+      <Filter>Source Files\NeuralLayer\PoolingLayer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\NeuralLayer\PoolingLayer\MaxPooling2DNeuralLayer.cpp">
+      <Filter>Source Files\NeuralLayer\PoolingLayer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\NeuralLayer\PoolingLayer\MaxPooling3DNeuralLayer.cpp">
+      <Filter>Source Files\NeuralLayer\PoolingLayer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\NeuralLayer\PoolingLayer\PoolingNeuralLayer.cpp">
+      <Filter>Source Files\NeuralLayer\PoolingLayer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\NeuralLayer\ConvolutionLayer\Convolution1DNeuralLayer.cpp">
+      <Filter>Source Files\NeuralLayer\ConvolutionLayer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\NeuralLayer\ConvolutionLayer\Convolution2DNeuralLayer.cpp">
+      <Filter>Source Files\NeuralLayer\ConvolutionLayer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\NeuralLayer\ConvolutionLayer\Convolution3DNeuralLayer.cpp">
+      <Filter>Source Files\NeuralLayer\ConvolutionLayer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\NeuralLayer\ConvolutionLayer\ConvolutionNeuralLayer.cpp">
+      <Filter>Source Files\NeuralLayer\ConvolutionLayer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\LossFunction\CrossEntropyLossFunction.cpp">
       <Filter>Source Files\LossFunction</Filter>
     </ClCompile>
-    <ClCompile Include="Convolution1DNeuralLayer.cpp">
-      <Filter>Source Files\NeuralLayer\ConvolutionLayer</Filter>
-    </ClCompile>
-    <ClCompile Include="Convolution2DNeuralLayer.cpp">
-      <Filter>Source Files\NeuralLayer\ConvolutionLayer</Filter>
-    </ClCompile>
-    <ClCompile Include="Convolution3DNeuralLayer.cpp">
-      <Filter>Source Files\NeuralLayer\ConvolutionLayer</Filter>
-    </ClCompile>
-    <ClCompile Include="AveragePooling1DNeuralLayer.cpp">
-      <Filter>Source Files\NeuralLayer\PoolingLayer</Filter>
-    </ClCompile>
-    <ClCompile Include="AveragePooling2DNeuralLayer.cpp">
-      <Filter>Source Files\NeuralLayer\PoolingLayer</Filter>
-    </ClCompile>
-    <ClCompile Include="AveragePooling3DNeuralLayer.cpp">
-      <Filter>Source Files\NeuralLayer\PoolingLayer</Filter>
-    </ClCompile>
-    <ClCompile Include="MaxPooling1DNeuralLayer.cpp">
-      <Filter>Source Files\NeuralLayer\PoolingLayer</Filter>
-    </ClCompile>
-    <ClCompile Include="MaxPooling2DNeuralLayer.cpp">
-      <Filter>Source Files\NeuralLayer\PoolingLayer</Filter>
-    </ClCompile>
-    <ClCompile Include="MaxPooling3DNeuralLayer.cpp">
-      <Filter>Source Files\NeuralLayer\PoolingLayer</Filter>
-    </ClCompile>
-    <ClCompile Include="TanhFunction.cpp">
-      <Filter>Source Files\ActivationFunction</Filter>
-    </ClCompile>
-    <ClCompile Include="AbsoluteReLUFunction.cpp">
-      <Filter>Source Files\ActivationFunction</Filter>
-    </ClCompile>
-    <ClCompile Include="CReLUFunction.cpp">
-      <Filter>Source Files\ActivationFunction</Filter>
-    </ClCompile>
-    <ClCompile Include="ELUFunction.cpp">
-      <Filter>Source Files\ActivationFunction</Filter>
-    </ClCompile>
-    <ClCompile Include="ExponentialFunction.cpp">
-      <Filter>Source Files\ActivationFunction</Filter>
-    </ClCompile>
-    <ClCompile Include="GELUFunction.cpp">
-      <Filter>Source Files\ActivationFunction</Filter>
-    </ClCompile>
-    <ClCompile Include="HardSigmoidFunction.cpp">
-      <Filter>Source Files\ActivationFunction</Filter>
-    </ClCompile>
-    <ClCompile Include="LeakyReLUFunction.cpp">
-      <Filter>Source Files\ActivationFunction</Filter>
-    </ClCompile>
-    <ClCompile Include="PReLUFunction.cpp">
-      <Filter>Source Files\ActivationFunction</Filter>
-    </ClCompile>
-    <ClCompile Include="QuadraticFunction.cpp">
-      <Filter>Source Files\ActivationFunction</Filter>
-    </ClCompile>
-    <ClCompile Include="ReLU6Function.cpp">
-      <Filter>Source Files\ActivationFunction</Filter>
-    </ClCompile>
-    <ClCompile Include="ReLUFunction.cpp">
-      <Filter>Source Files\ActivationFunction</Filter>
-    </ClCompile>
-    <ClCompile Include="ReLUnFunction.cpp">
-      <Filter>Source Files\ActivationFunction</Filter>
-    </ClCompile>
-    <ClCompile Include="SELUFunction.cpp">
-      <Filter>Source Files\ActivationFunction</Filter>
-    </ClCompile>
-    <ClCompile Include="SigmoidFunction.cpp">
-      <Filter>Source Files\ActivationFunction</Filter>
-    </ClCompile>
-    <ClCompile Include="SoftplusFunction.cpp">
-      <Filter>Source Files\ActivationFunction</Filter>
-    </ClCompile>
-    <ClCompile Include="SoftsignFunction.cpp">
-      <Filter>Source Files\ActivationFunction</Filter>
-    </ClCompile>
-    <ClCompile Include="SwishFunction.cpp">
-      <Filter>Source Files\ActivationFunction</Filter>
-    </ClCompile>
-    <ClCompile Include="ActivationFunction.cpp">
-      <Filter>Source Files\ActivationFunction</Filter>
-    </ClCompile>
-    <ClCompile Include="ActivationFunctionFactory.cpp">
-      <Filter>Source Files\ActivationFunction</Filter>
-    </ClCompile>
-    <ClCompile Include="CrossEntropyLossFunction.cpp">
+    <ClCompile Include="src\LossFunction\LossFunction.cpp">
       <Filter>Source Files\LossFunction</Filter>
     </ClCompile>
-    <ClCompile Include="IdentityFunction.cpp">
-      <Filter>Source Files\ActivationFunction</Filter>
-    </ClCompile>
-    <ClCompile Include="MaxoutNeuralLayer.cpp">
-      <Filter>Source Files\NeuralLayer</Filter>
-    </ClCompile>
-    <ClCompile Include="ParameterizedNeuralLayer.cpp">
-      <Filter>Source Files\NeuralLayer</Filter>
-    </ClCompile>
-    <ClCompile Include="ConvolutionNeuralLayer.cpp">
-      <Filter>Source Files\NeuralLayer\ConvolutionLayer</Filter>
-    </ClCompile>
-    <ClCompile Include="ShapeNeuralLayer.cpp">
-      <Filter>Source Files\NeuralLayer\ShapeLayer</Filter>
-    </ClCompile>
-    <ClCompile Include="FlattenNeuralLayer.cpp">
-      <Filter>Source Files\NeuralLayer\ShapeLayer</Filter>
-    </ClCompile>
-    <ClCompile Include="SqueezeNeuralLayer.cpp">
-      <Filter>Source Files\NeuralLayer\ShapeLayer</Filter>
-    </ClCompile>
-    <ClCompile Include="ReshapeNeuralLayer.cpp">
-      <Filter>Source Files\NeuralLayer\ShapeLayer</Filter>
-    </ClCompile>
-    <ClCompile Include="ActivationFunctionNeuralLayer.cpp">
-      <Filter>Source Files\NeuralLayer</Filter>
-    </ClCompile>
-    <ClCompile Include="DropoutNeuralLayer.cpp">
-      <Filter>Source Files\NeuralLayer</Filter>
-    </ClCompile>
-    <ClCompile Include="SGDOptimizer.cpp">
-      <Filter>Source Files\Optimizer</Filter>
-    </ClCompile>
-    <ClCompile Include="Optimizer.cpp">
-      <Filter>Source Files\Optimizer</Filter>
-    </ClCompile>
-    <ClCompile Include="AdagradOptimizer.cpp">
-      <Filter>Source Files\Optimizer</Filter>
-    </ClCompile>
-    <ClCompile Include="AdadeltaOptimizer.cpp">
-      <Filter>Source Files\Optimizer</Filter>
-    </ClCompile>
-    <ClCompile Include="RMSPropOptimizer.cpp">
-      <Filter>Source Files\Optimizer</Filter>
-    </ClCompile>
-    <ClCompile Include="AdamOptimizer.cpp">
-      <Filter>Source Files\Optimizer</Filter>
-    </ClCompile>
-    <ClCompile Include="AdamaxOptimizer.cpp">
-      <Filter>Source Files\Optimizer</Filter>
-    </ClCompile>
-    <ClCompile Include="RPropOptimizer.cpp">
-      <Filter>Source Files\Optimizer</Filter>
-    </ClCompile>
-    <ClCompile Include="NadamOptimizer.cpp">
-      <Filter>Source Files\Optimizer</Filter>
-    </ClCompile>
-    <ClCompile Include="AMSGradOptimizer.cpp">
-      <Filter>Source Files\Optimizer</Filter>
-    </ClCompile>
-    <ClCompile Include="FtrlOptimizer.cpp">
-      <Filter>Source Files\Optimizer</Filter>
-    </ClCompile>
-    <ClCompile Include="LossFunction.cpp">
+    <ClCompile Include="src\LossFunction\MeanSquareErrorLossFunction.cpp">
       <Filter>Source Files\LossFunction</Filter>
     </ClCompile>
-    <ClCompile Include="PoolingNeuralLayer.cpp">
-      <Filter>Source Files\NeuralLayer\PoolingLayer</Filter>
+    <ClCompile Include="src\ActivationFunction\AbsoluteReLUFunction.cpp">
+      <Filter>Source Files\ActivationFunction</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ActivationFunction\ActivationFunction.cpp">
+      <Filter>Source Files\ActivationFunction</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ActivationFunction\ActivationFunctionFactory.cpp">
+      <Filter>Source Files\ActivationFunction</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ActivationFunction\CReLUFunction.cpp">
+      <Filter>Source Files\ActivationFunction</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ActivationFunction\ELUFunction.cpp">
+      <Filter>Source Files\ActivationFunction</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ActivationFunction\ExponentialFunction.cpp">
+      <Filter>Source Files\ActivationFunction</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ActivationFunction\GELUFunction.cpp">
+      <Filter>Source Files\ActivationFunction</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ActivationFunction\HardSigmoidFunction.cpp">
+      <Filter>Source Files\ActivationFunction</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ActivationFunction\IdentityFunction.cpp">
+      <Filter>Source Files\ActivationFunction</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ActivationFunction\LeakyReLUFunction.cpp">
+      <Filter>Source Files\ActivationFunction</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ActivationFunction\PReLUFunction.cpp">
+      <Filter>Source Files\ActivationFunction</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ActivationFunction\QuadraticFunction.cpp">
+      <Filter>Source Files\ActivationFunction</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ActivationFunction\ReLU6Function.cpp">
+      <Filter>Source Files\ActivationFunction</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ActivationFunction\ReLUFunction.cpp">
+      <Filter>Source Files\ActivationFunction</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ActivationFunction\ReLUnFunction.cpp">
+      <Filter>Source Files\ActivationFunction</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ActivationFunction\SELUFunction.cpp">
+      <Filter>Source Files\ActivationFunction</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ActivationFunction\SigmoidFunction.cpp">
+      <Filter>Source Files\ActivationFunction</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ActivationFunction\SoftplusFunction.cpp">
+      <Filter>Source Files\ActivationFunction</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ActivationFunction\SoftsignFunction.cpp">
+      <Filter>Source Files\ActivationFunction</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ActivationFunction\SwishFunction.cpp">
+      <Filter>Source Files\ActivationFunction</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ActivationFunction\TanhFunction.cpp">
+      <Filter>Source Files\ActivationFunction</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="NeuralNetwork.h">
+    <ClInclude Include="hdr\NetworkExceptions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="LossFunction.h">
+    <ClInclude Include="hdr\NeuralNetwork.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hdr\NeuralNetworkFileHelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hdr\ParameterSet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hdr\Test.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hdr\Visualizer\ClassifierVisualizer.h">
+      <Filter>Header Files\Visualizer</Filter>
+    </ClInclude>
+    <ClInclude Include="hdr\Visualizer\FunctionVisualizer.h">
+      <Filter>Header Files\Visualizer</Filter>
+    </ClInclude>
+    <ClInclude Include="hdr\Visualizer\ImageClassVisualizer.h">
+      <Filter>Header Files\Visualizer</Filter>
+    </ClInclude>
+    <ClInclude Include="hdr\Visualizer\NetworkVisualizer.h">
+      <Filter>Header Files\Visualizer</Filter>
+    </ClInclude>
+    <ClInclude Include="hdr\NeuralLayer\DenseNeuralLayer.h">
+      <Filter>Header Files\NeuralLayer</Filter>
+    </ClInclude>
+    <ClInclude Include="hdr\NeuralLayer\DropoutNeuralLayer.h">
+      <Filter>Header Files\NeuralLayer</Filter>
+    </ClInclude>
+    <ClInclude Include="hdr\NeuralLayer\FlattenNeuralLayer.h">
+      <Filter>Header Files\NeuralLayer</Filter>
+    </ClInclude>
+    <ClInclude Include="hdr\NeuralLayer\InputNeuralLayer.h">
+      <Filter>Header Files\NeuralLayer</Filter>
+    </ClInclude>
+    <ClInclude Include="hdr\NeuralLayer\MaxoutNeuralLayer.h">
+      <Filter>Header Files\NeuralLayer</Filter>
+    </ClInclude>
+    <ClInclude Include="hdr\NeuralLayer\NeuralLayer.h">
+      <Filter>Header Files\NeuralLayer</Filter>
+    </ClInclude>
+    <ClInclude Include="hdr\NeuralLayer\ParameterizedNeuralLayer.h">
+      <Filter>Header Files\NeuralLayer</Filter>
+    </ClInclude>
+    <ClInclude Include="hdr\NeuralLayer\SoftmaxNeuralLayer.h">
+      <Filter>Header Files\NeuralLayer</Filter>
+    </ClInclude>
+    <ClInclude Include="hdr\NeuralLayer\PoolingLayer\AveragePooling1DNeuralLayer.h">
+      <Filter>Header Files\NeuralLayer\PoolingLayer</Filter>
+    </ClInclude>
+    <ClInclude Include="hdr\NeuralLayer\PoolingLayer\AveragePooling2DNeuralLayer.h">
+      <Filter>Header Files\NeuralLayer\PoolingLayer</Filter>
+    </ClInclude>
+    <ClInclude Include="hdr\NeuralLayer\PoolingLayer\AveragePooling3DNeuralLayer.h">
+      <Filter>Header Files\NeuralLayer\PoolingLayer</Filter>
+    </ClInclude>
+    <ClInclude Include="hdr\NeuralLayer\PoolingLayer\MaxPooling1DNeuralLayer.h">
+      <Filter>Header Files\NeuralLayer\PoolingLayer</Filter>
+    </ClInclude>
+    <ClInclude Include="hdr\NeuralLayer\PoolingLayer\MaxPooling2DNeuralLayer.h">
+      <Filter>Header Files\NeuralLayer\PoolingLayer</Filter>
+    </ClInclude>
+    <ClInclude Include="hdr\NeuralLayer\PoolingLayer\MaxPooling3DNeuralLayer.h">
+      <Filter>Header Files\NeuralLayer\PoolingLayer</Filter>
+    </ClInclude>
+    <ClInclude Include="hdr\NeuralLayer\PoolingLayer\PoolingNeuralLayer.h">
+      <Filter>Header Files\NeuralLayer\PoolingLayer</Filter>
+    </ClInclude>
+    <ClInclude Include="hdr\NeuralLayer\ShapeLayer\ReshapeNeuralLayer.h">
+      <Filter>Header Files\NeuralLayer\ShapeLayer</Filter>
+    </ClInclude>
+    <ClInclude Include="hdr\NeuralLayer\ShapeLayer\ShapeNeuralLayer.h">
+      <Filter>Header Files\NeuralLayer\ShapeLayer</Filter>
+    </ClInclude>
+    <ClInclude Include="hdr\NeuralLayer\ShapeLayer\SqueezeNeuralLayer.h">
+      <Filter>Header Files\NeuralLayer\ShapeLayer</Filter>
+    </ClInclude>
+    <ClInclude Include="hdr\NeuralLayer\ConvolutionLayer\Convolution1DNeuralLayer.h">
+      <Filter>Header Files\NeuralLayer\ConvolutionLayer</Filter>
+    </ClInclude>
+    <ClInclude Include="hdr\NeuralLayer\ConvolutionLayer\Convolution2DNeuralLayer.h">
+      <Filter>Header Files\NeuralLayer\ConvolutionLayer</Filter>
+    </ClInclude>
+    <ClInclude Include="hdr\NeuralLayer\ConvolutionLayer\Convolution3DNeuralLayer.h">
+      <Filter>Header Files\NeuralLayer\ConvolutionLayer</Filter>
+    </ClInclude>
+    <ClInclude Include="hdr\NeuralLayer\ConvolutionLayer\ConvolutionNeuralLayer.h">
+      <Filter>Header Files\NeuralLayer\ConvolutionLayer</Filter>
+    </ClInclude>
+    <ClInclude Include="hdr\LossFunction\CrossEntropyLossFunction.h">
       <Filter>Header Files\LossFunction</Filter>
     </ClInclude>
-    <ClInclude Include="ParameterSet.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui_impl_opengl3.h">
-      <Filter>Header Files\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui_impl_sdl.h">
-      <Filter>Header Files\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="gl3w\GL\gl3w.h">
-      <Filter>Header Files\imgui\gl3w</Filter>
-    </ClInclude>
-    <ClInclude Include="gl3w\GL\glcorearb.h">
-      <Filter>Header Files\imgui\gl3w</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui.h">
-      <Filter>Header Files\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="imconfig.h">
-      <Filter>Header Files\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui_internal.h">
-      <Filter>Header Files\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="imstb_textedit.h">
-      <Filter>Header Files\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="imstb_rectpack.h">
-      <Filter>Header Files\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="imstb_truetype.h">
-      <Filter>Header Files\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="NetworkVisualizer.h">
-      <Filter>Header Files\Visualizer</Filter>
-    </ClInclude>
-    <ClInclude Include="ClassifierVisualizer.h">
-      <Filter>Header Files\Visualizer</Filter>
-    </ClInclude>
-    <ClInclude Include="DenseNeuralLayer.h">
-      <Filter>Header Files\NeuralLayer</Filter>
-    </ClInclude>
-    <ClInclude Include="NeuralLayer.h">
-      <Filter>Header Files\NeuralLayer</Filter>
-    </ClInclude>
-    <ClInclude Include="InputNeuralLayer.h">
-      <Filter>Header Files\NeuralLayer</Filter>
-    </ClInclude>
-    <ClInclude Include="FunctionVisualizer.h">
-      <Filter>Header Files\Visualizer</Filter>
-    </ClInclude>
-    <ClInclude Include="SoftmaxNeuralLayer.h">
-      <Filter>Header Files\NeuralLayer</Filter>
-    </ClInclude>
-    <ClInclude Include="Test.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageClassVisualizer.h">
-      <Filter>Header Files\Visualizer</Filter>
-    </ClInclude>
-    <ClInclude Include="MeanSquareErrorLossFunction.h">
+    <ClInclude Include="hdr\LossFunction\LossFunction.h">
       <Filter>Header Files\LossFunction</Filter>
     </ClInclude>
-    <ClInclude Include="Convolution1DNeuralLayer.h">
-      <Filter>Header Files\NeuralLayer\ConvolutionLayer</Filter>
-    </ClInclude>
-    <ClInclude Include="Convolution2DNeuralLayer.h">
-      <Filter>Header Files\NeuralLayer\ConvolutionLayer</Filter>
-    </ClInclude>
-    <ClInclude Include="Convolution3DNeuralLayer.h">
-      <Filter>Header Files\NeuralLayer\ConvolutionLayer</Filter>
-    </ClInclude>
-    <ClInclude Include="AveragePooling1DNeuralLayer.h">
-      <Filter>Header Files\NeuralLayer\PoolingLayer</Filter>
-    </ClInclude>
-    <ClInclude Include="AveragePooling2DNeuralLayer.h">
-      <Filter>Header Files\NeuralLayer\PoolingLayer</Filter>
-    </ClInclude>
-    <ClInclude Include="AveragePooling3DNeuralLayer.h">
-      <Filter>Header Files\NeuralLayer\PoolingLayer</Filter>
-    </ClInclude>
-    <ClInclude Include="MaxPooling1DNeuralLayer.h">
-      <Filter>Header Files\NeuralLayer\PoolingLayer</Filter>
-    </ClInclude>
-    <ClInclude Include="MaxPooling2DNeuralLayer.h">
-      <Filter>Header Files\NeuralLayer\PoolingLayer</Filter>
-    </ClInclude>
-    <ClInclude Include="MaxPooling3DNeuralLayer.h">
-      <Filter>Header Files\NeuralLayer\PoolingLayer</Filter>
-    </ClInclude>
-    <ClInclude Include="AbsoluteReLUFunction.h">
-      <Filter>Header Files\ActivationFunction</Filter>
-    </ClInclude>
-    <ClInclude Include="CReLUFunction.h">
-      <Filter>Header Files\ActivationFunction</Filter>
-    </ClInclude>
-    <ClInclude Include="ELUFunction.h">
-      <Filter>Header Files\ActivationFunction</Filter>
-    </ClInclude>
-    <ClInclude Include="ExponentialFunction.h">
-      <Filter>Header Files\ActivationFunction</Filter>
-    </ClInclude>
-    <ClInclude Include="GELUFunction.h">
-      <Filter>Header Files\ActivationFunction</Filter>
-    </ClInclude>
-    <ClInclude Include="HardSigmoidFunction.h">
-      <Filter>Header Files\ActivationFunction</Filter>
-    </ClInclude>
-    <ClInclude Include="LeakyReLUFunction.h">
-      <Filter>Header Files\ActivationFunction</Filter>
-    </ClInclude>
-    <ClInclude Include="PReLUFunction.h">
-      <Filter>Header Files\ActivationFunction</Filter>
-    </ClInclude>
-    <ClInclude Include="QuadraticFunction.h">
-      <Filter>Header Files\ActivationFunction</Filter>
-    </ClInclude>
-    <ClInclude Include="ReLU6Function.h">
-      <Filter>Header Files\ActivationFunction</Filter>
-    </ClInclude>
-    <ClInclude Include="ReLUFunction.h">
-      <Filter>Header Files\ActivationFunction</Filter>
-    </ClInclude>
-    <ClInclude Include="ReLUnFunction.h">
-      <Filter>Header Files\ActivationFunction</Filter>
-    </ClInclude>
-    <ClInclude Include="SELUFunction.h">
-      <Filter>Header Files\ActivationFunction</Filter>
-    </ClInclude>
-    <ClInclude Include="SigmoidFunction.h">
-      <Filter>Header Files\ActivationFunction</Filter>
-    </ClInclude>
-    <ClInclude Include="SoftplusFunction.h">
-      <Filter>Header Files\ActivationFunction</Filter>
-    </ClInclude>
-    <ClInclude Include="SoftsignFunction.h">
-      <Filter>Header Files\ActivationFunction</Filter>
-    </ClInclude>
-    <ClInclude Include="SwishFunction.h">
-      <Filter>Header Files\ActivationFunction</Filter>
-    </ClInclude>
-    <ClInclude Include="TanhFunction.h">
-      <Filter>Header Files\ActivationFunction</Filter>
-    </ClInclude>
-    <ClInclude Include="ActivationFunctionFactory.h">
-      <Filter>Header Files\ActivationFunction</Filter>
-    </ClInclude>
-    <ClInclude Include="ActivationFunction.h">
-      <Filter>Header Files\ActivationFunction</Filter>
-    </ClInclude>
-    <ClInclude Include="CrossEntropyLossFunction.h">
+    <ClInclude Include="hdr\LossFunction\MeanSquareErrorLossFunction.h">
       <Filter>Header Files\LossFunction</Filter>
     </ClInclude>
-    <ClInclude Include="IdentityFunction.h">
+    <ClInclude Include="hdr\ActivationFunction\AbsoluteReLUFunction.h">
       <Filter>Header Files\ActivationFunction</Filter>
     </ClInclude>
-    <ClInclude Include="MaxoutNeuralLayer.h">
-      <Filter>Header Files\NeuralLayer</Filter>
+    <ClInclude Include="hdr\ActivationFunction\ActivationFunction.h">
+      <Filter>Header Files\ActivationFunction</Filter>
     </ClInclude>
-    <ClInclude Include="ParameterizedNeuralLayer.h">
-      <Filter>Header Files\NeuralLayer</Filter>
+    <ClInclude Include="hdr\ActivationFunction\ActivationFunctionFactory.h">
+      <Filter>Header Files\ActivationFunction</Filter>
     </ClInclude>
-    <ClInclude Include="ConvolutionNeuralLayer.h">
-      <Filter>Header Files\NeuralLayer\ConvolutionLayer</Filter>
+    <ClInclude Include="hdr\ActivationFunction\ActivationFunctionNeuralLayer.h">
+      <Filter>Header Files\ActivationFunction</Filter>
     </ClInclude>
-    <ClInclude Include="ShapeNeuralLayer.h">
-      <Filter>Header Files\NeuralLayer\ShapeLayer</Filter>
+    <ClInclude Include="hdr\ActivationFunction\CReLuFunction.h">
+      <Filter>Header Files\ActivationFunction</Filter>
     </ClInclude>
-    <ClInclude Include="ReshapeNeuralLayer.h">
-      <Filter>Header Files\NeuralLayer\ShapeLayer</Filter>
+    <ClInclude Include="hdr\ActivationFunction\ELUFunction.h">
+      <Filter>Header Files\ActivationFunction</Filter>
     </ClInclude>
-    <ClInclude Include="SqueezeNeuralLayer.h">
-      <Filter>Header Files\NeuralLayer\ShapeLayer</Filter>
+    <ClInclude Include="hdr\ActivationFunction\ExponentialFunction.h">
+      <Filter>Header Files\ActivationFunction</Filter>
     </ClInclude>
-    <ClInclude Include="FlattenNeuralLayer.h">
-      <Filter>Header Files\NeuralLayer\ShapeLayer</Filter>
+    <ClInclude Include="hdr\ActivationFunction\GELUFunction.h">
+      <Filter>Header Files\ActivationFunction</Filter>
     </ClInclude>
-    <ClInclude Include="ActivationFunctionNeuralLayer.h">
-      <Filter>Header Files\NeuralLayer</Filter>
+    <ClInclude Include="hdr\ActivationFunction\HardSigmoidFunction.h">
+      <Filter>Header Files\ActivationFunction</Filter>
     </ClInclude>
-    <ClInclude Include="NeuralNetworkFileHelper.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="hdr\ActivationFunction\IdentityFunction.h">
+      <Filter>Header Files\ActivationFunction</Filter>
     </ClInclude>
-    <ClInclude Include="DropoutNeuralLayer.h">
-      <Filter>Header Files\NeuralLayer</Filter>
+    <ClInclude Include="hdr\ActivationFunction\LeakyReLuFunction.h">
+      <Filter>Header Files\ActivationFunction</Filter>
     </ClInclude>
-    <ClInclude Include="Optimizer.h">
-      <Filter>Header Files\Optimizer</Filter>
+    <ClInclude Include="hdr\ActivationFunction\PReLUFunction.h">
+      <Filter>Header Files\ActivationFunction</Filter>
     </ClInclude>
-    <ClInclude Include="SGDOptimizer.h">
-      <Filter>Header Files\Optimizer</Filter>
+    <ClInclude Include="hdr\ActivationFunction\QuadraticFunction.h">
+      <Filter>Header Files\ActivationFunction</Filter>
     </ClInclude>
-    <ClInclude Include="AdagradOptimizer.h">
-      <Filter>Header Files\Optimizer</Filter>
+    <ClInclude Include="hdr\ActivationFunction\ReLU6Function.h">
+      <Filter>Header Files\ActivationFunction</Filter>
     </ClInclude>
-    <ClInclude Include="AdadeltaOptimizer.h">
-      <Filter>Header Files\Optimizer</Filter>
+    <ClInclude Include="hdr\ActivationFunction\ReLUFunction.h">
+      <Filter>Header Files\ActivationFunction</Filter>
     </ClInclude>
-    <ClInclude Include="RMSPropOptimizer.h">
-      <Filter>Header Files\Optimizer</Filter>
+    <ClInclude Include="hdr\ActivationFunction\ReLUnFunction.h">
+      <Filter>Header Files\ActivationFunction</Filter>
     </ClInclude>
-    <ClInclude Include="AdamOptimizer.h">
-      <Filter>Header Files\Optimizer</Filter>
+    <ClInclude Include="hdr\ActivationFunction\SELUFunction.h">
+      <Filter>Header Files\ActivationFunction</Filter>
     </ClInclude>
-    <ClInclude Include="AdamaxOptimizer.h">
-      <Filter>Header Files\Optimizer</Filter>
+    <ClInclude Include="hdr\ActivationFunction\SigmoidFunction.h">
+      <Filter>Header Files\ActivationFunction</Filter>
     </ClInclude>
-    <ClInclude Include="RPropOptimizer.h">
-      <Filter>Header Files\Optimizer</Filter>
+    <ClInclude Include="hdr\ActivationFunction\SoftplusFunction.h">
+      <Filter>Header Files\ActivationFunction</Filter>
     </ClInclude>
-    <ClInclude Include="NadamOptimizer.h">
-      <Filter>Header Files\Optimizer</Filter>
+    <ClInclude Include="hdr\ActivationFunction\SoftsignFunction.h">
+      <Filter>Header Files\ActivationFunction</Filter>
     </ClInclude>
-    <ClInclude Include="AMSGradOptimizer.h">
-      <Filter>Header Files\Optimizer</Filter>
+    <ClInclude Include="hdr\ActivationFunction\SwishFunction.h">
+      <Filter>Header Files\ActivationFunction</Filter>
     </ClInclude>
-    <ClInclude Include="FtrlOptimizer.h">
-      <Filter>Header Files\Optimizer</Filter>
+    <ClInclude Include="hdr\ActivationFunction\TanhFunction.h">
+      <Filter>Header Files\ActivationFunction</Filter>
     </ClInclude>
-    <ClInclude Include="PoolingNeuralLayer.h">
-      <Filter>Header Files\NeuralLayer\PoolingLayer</Filter>
-    </ClInclude>
-    <ClInclude Include="NetworkExceptions.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="SuccessVisualStudioWindows.jpg">
-      <Filter>Resource Files</Filter>
-    </Image>
   </ItemGroup>
 </Project>
