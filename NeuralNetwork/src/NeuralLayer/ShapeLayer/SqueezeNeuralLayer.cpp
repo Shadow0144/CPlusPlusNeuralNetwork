@@ -1,4 +1,4 @@
-#include "SqueezeNeuralLayer.h"
+#include "NeuralLayer/ShapeLayer/SqueezeNeuralLayer.h"
 
 #include "NetworkExceptions.h"
 

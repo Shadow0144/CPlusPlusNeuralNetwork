@@ -1,4 +1,4 @@
-#include "PoolingNeuralLayer.h"
+#include "NeuralLayer/PoolingLayer/PoolingNeuralLayer.h"
 
 #include "NetworkExceptions.h"
 

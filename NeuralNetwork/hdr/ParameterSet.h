@@ -34,9 +34,9 @@ public:
 	xt::xarray<double> getRegularizedGradient(double lambda1, double lambda2) const;
 
 private:
-	mutable std::shared_mutex weightsMutex;
-	xt::xarray<double> parameters;
-	xt::xarray<double> deltaParameters;
+	//mutable std::shared_mutex weightsMutex;
+	//xt::xarray<double> parameters;
+	//xt::xarray<double> deltaParameters;
 
 	bool hasBias; // Flag for regularization
 	bool unregularized; // For parameters that do not get regularized

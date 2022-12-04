@@ -13,7 +13,7 @@
 #include <iostream>
 #include <xtensor/xsort.hpp>
 #include <xtensor/xview.hpp>
-#include "xtensor/xindex_view.hpp"
+#include <xtensor/xindex_view.hpp>
 #include <xtensor-blas/xlinalg.hpp>
 #pragma warning(pop)
 

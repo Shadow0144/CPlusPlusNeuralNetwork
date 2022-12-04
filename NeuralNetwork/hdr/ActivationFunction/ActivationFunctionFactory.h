@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ActivationFunction.h"
+#include "ActivationFunction/ActivationFunction.h"
 
 #pragma warning(push, 0)
 #include <map>

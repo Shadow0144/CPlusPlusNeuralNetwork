@@ -1,7 +1,7 @@
 #pragma once
 
-#include "PoolingNeuralLayer.h"
-#include "ActivationFunction.h"
+#include "NeuralLayer/PoolingLayer/PoolingNeuralLayer.h"
+#include "ActivationFunction/ActivationFunction.h"
 
 #pragma warning(push, 0)
 #include "imgui.h"

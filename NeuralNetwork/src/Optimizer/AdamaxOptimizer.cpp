@@ -1,4 +1,4 @@
-#include "AdamaxOptimizer.h"
+#include "Optimizer/AdamaxOptimizer.h"
 
 using namespace std;
 

@@ -1,6 +1,6 @@
 #define _USE_MATH_DEFINES
 
-#include "DropoutNeuralLayer.h"
+#include "NeuralLayer/DropoutNeuralLayer.h"
 
 #pragma warning(push, 0)
 #include <math.h>

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Optimizer.h"
-#include "NeuralLayer.h"
-#include "LossFunction.h"
+#include "Optimizer/Optimizer.h"
+#include "NeuralLayer/NeuralLayer.h"
+#include "LossFunction/LossFunction.h"
 #include "ParameterSet.h"
 
 #pragma warning(push, 0)

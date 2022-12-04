@@ -1,5 +1,5 @@
-#include "NeuralLayer.h"
-#include "ActivationFunction.h"
+#include "NeuralLayer/NeuralLayer.h"
+#include "ActivationFunction/ActivationFunction.h"
 #include "NetworkExceptions.h"
 
 #include "Test.h"

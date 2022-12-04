@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ActivationFunction.h"
+#include "ActivationFunction/ActivationFunction.h"
 
 // Identity / Linear / Pass-through
 class IdentityFunction : public ActivationFunction

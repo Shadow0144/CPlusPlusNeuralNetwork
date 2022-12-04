@@ -1,5 +1,5 @@
-#include "ActivationFunction.h"
-#include "NeuralLayer.h"
+#include "ActivationFunction/ActivationFunction.h"
+#include "NeuralLayer/NeuralLayer.h"
 
 #pragma warning(push, 0)
 #include <iostream>

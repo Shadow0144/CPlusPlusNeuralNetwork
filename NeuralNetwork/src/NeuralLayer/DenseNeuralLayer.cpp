@@ -1,10 +1,10 @@
 #define _USE_MATH_DEFINES
 
-#include "DenseNeuralLayer.h"
+#include "NeuralLayer/DenseNeuralLayer.h"
 
-#include "ActivationFunctionFactory.h"
+#include "ActivationFunction/ActivationFunctionFactory.h"
 
-#include "PReLUFunction.h"
+#include "ActivationFunction/PReLUFunction.h"
 
 #include "NetworkExceptions.h"
 

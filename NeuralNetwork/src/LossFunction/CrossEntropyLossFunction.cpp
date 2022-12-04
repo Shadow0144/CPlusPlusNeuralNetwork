@@ -1,4 +1,4 @@
-#include "CrossEntropyLossFunction.h"
+#include "LossFunction/CrossEntropyLossFunction.h"
 
 #include "NeuralNetwork.h"
 

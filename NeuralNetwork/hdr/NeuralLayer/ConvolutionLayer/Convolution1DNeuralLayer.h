@@ -1,7 +1,7 @@
 #pragma once
 
-#include "ConvolutionNeuralLayer.h"
-#include "ActivationFunction.h"
+#include "NeuralLayer/ConvolutionLayer/ConvolutionNeuralLayer.h"
+#include "ActivationFunction/ActivationFunction.h"
 
 #pragma warning(push, 0)
 #include "imgui.h"

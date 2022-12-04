@@ -1,4 +1,4 @@
-#include "MeanSquareErrorLossFunction.h"
+#include "LossFunction/MeanSquareErrorLossFunction.h"
 
 #include "NeuralNetwork.h"
 

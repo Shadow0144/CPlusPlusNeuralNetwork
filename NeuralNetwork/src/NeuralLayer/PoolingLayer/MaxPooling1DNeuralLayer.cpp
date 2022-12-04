@@ -1,4 +1,4 @@
-#include "MaxPooling1DNeuralLayer.h"
+#include "NeuralLayer/PoolingLayer/MaxPooling1DNeuralLayer.h"
 
 #include "NetworkExceptions.h"
 

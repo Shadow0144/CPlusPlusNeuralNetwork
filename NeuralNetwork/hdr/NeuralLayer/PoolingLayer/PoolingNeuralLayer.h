@@ -1,7 +1,7 @@
 #pragma once
 
-#include "ParameterizedNeuralLayer.h"
-#include "ActivationFunction.h"
+#include "NeuralLayer/ParameterizedNeuralLayer.h"
+#include "ActivationFunction/ActivationFunction.h"
 
 #pragma warning(push, 0)
 #include "imgui.h"

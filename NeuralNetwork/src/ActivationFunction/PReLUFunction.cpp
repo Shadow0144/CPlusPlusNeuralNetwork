@@ -1,5 +1,5 @@
-#include "PReLUFunction.h"
-#include "NeuralLayer.h"
+#include "ActivationFunction/PReLUFunction.h"
+#include "NeuralLayer/NeuralLayer.h"
 #include "NeuralNetworkFileHelper.h"
 
 #pragma warning(push, 0)

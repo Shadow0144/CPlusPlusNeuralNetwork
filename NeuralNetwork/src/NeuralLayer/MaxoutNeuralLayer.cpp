@@ -1,8 +1,8 @@
 #define _USE_MATH_DEFINES
 
-#include "MaxoutNeuralLayer.h"
+#include "NeuralLayer/MaxoutNeuralLayer.h"
 
-#include "Optimizer.h"
+#include "Optimizer/Optimizer.h"
 
 #include "NetworkExceptions.h"
 

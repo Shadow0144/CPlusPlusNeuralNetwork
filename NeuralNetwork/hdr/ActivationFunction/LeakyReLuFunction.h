@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ActivationFunction.h"
+#include "ActivationFunction/ActivationFunction.h"
 
 // Leaky Rectified Linear Unit
 class LeakyReLUFunction : public ActivationFunction

@@ -1,5 +1,5 @@
-#include "FunctionVisualizer.h"
-#include "NetworkVisualizer.h"
+#include "Visualizer/FunctionVisualizer.h"
+#include "Visualizer/NetworkVisualizer.h"
 
 FunctionVisualizer::FunctionVisualizer(NetworkVisualizer* visualizer, NeuralNetwork* network)
 {

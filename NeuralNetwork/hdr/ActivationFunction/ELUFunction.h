@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ActivationFunction.h"
+#include "ActivationFunction/ActivationFunction.h"
 
 // Exponential Linear Unit
 class ELUFunction : public ActivationFunction

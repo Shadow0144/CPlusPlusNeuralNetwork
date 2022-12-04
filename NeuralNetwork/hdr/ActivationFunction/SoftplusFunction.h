@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ActivationFunction.h"
+#include "ActivationFunction/ActivationFunction.h"
 
 // Softplus / Smooth Rectified Linear Unit
 class SoftplusFunction : public ActivationFunction

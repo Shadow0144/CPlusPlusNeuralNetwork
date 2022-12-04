@@ -1,5 +1,5 @@
-#include "ReLUnFunction.h"
-#include "NeuralLayer.h"
+#include "ActivationFunction/ReLUnFunction.h"
+#include "NeuralLayer/NeuralLayer.h"
 #include "NeuralNetworkFileHelper.h"
 
 #pragma warning(push, 0)

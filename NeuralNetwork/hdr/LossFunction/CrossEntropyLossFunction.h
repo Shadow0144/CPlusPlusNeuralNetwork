@@ -1,6 +1,6 @@
 #pragma once
 
-#include "LossFunction.h"
+#include "LossFunction/LossFunction.h"
 
 class CrossEntropyLossFunction : public LossFunction
 {

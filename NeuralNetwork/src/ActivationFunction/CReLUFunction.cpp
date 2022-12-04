@@ -1,5 +1,5 @@
-#include "CReLUFunction.h"
-#include "NeuralLayer.h"
+#include "ActivationFunction/CReLUFunction.h"
+#include "NeuralLayer/NeuralLayer.h"
 
 #pragma warning(push, 0)
 #include <iostream>

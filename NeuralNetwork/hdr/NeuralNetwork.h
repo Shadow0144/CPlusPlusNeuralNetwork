@@ -1,8 +1,8 @@
 #pragma once
 
-#include "NeuralLayer.h"
-#include "Optimizer.h"
-#include "ActivationFunction.h"
+#include "NeuralLayer/NeuralLayer.h"
+#include "Optimizer/Optimizer.h"
+#include "ActivationFunction/ActivationFunction.h"
 
 #pragma warning(push, 0)
 #include <vector>

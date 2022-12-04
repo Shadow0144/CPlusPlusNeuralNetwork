@@ -1,6 +1,6 @@
 #define _USE_MATH_DEFINES
 
-#include "ReshapeNeuralLayer.h"
+#include "NeuralLayer/ShapeLayer/ReshapeNeuralLayer.h"
 
 #include "NetworkExceptions.h"
 

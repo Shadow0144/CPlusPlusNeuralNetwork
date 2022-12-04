@@ -1,6 +1,6 @@
-#include "LossFunction.h"
+#include "LossFunction/LossFunction.h"
 
-#include "NeuralLayer.h"
+#include "NeuralLayer/NeuralLayer.h"
 
 void LossFunction::checkForOptimizedGradient(NeuralLayer* finalLayer)
 {

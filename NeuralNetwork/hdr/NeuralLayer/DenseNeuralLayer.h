@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ParameterizedNeuralLayer.h"
+#include "NeuralLayer/ParameterizedNeuralLayer.h"
 
 #pragma warning(push, 0)
 #include "imgui.h"

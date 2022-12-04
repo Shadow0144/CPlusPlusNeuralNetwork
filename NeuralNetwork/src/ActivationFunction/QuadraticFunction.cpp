@@ -1,5 +1,5 @@
-#include "QuadraticFunction.h"
-#include "NeuralLayer.h"
+#include "ActivationFunction/QuadraticFunction.h"
+#include "NeuralLayer/NeuralLayer.h"
 
 using namespace std;
 

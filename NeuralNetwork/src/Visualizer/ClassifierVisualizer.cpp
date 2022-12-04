@@ -1,5 +1,5 @@
-#include "ClassifierVisualizer.h"
-#include "NetworkVisualizer.h"
+#include "Visualizer/ClassifierVisualizer.h"
+#include "Visualizer/NetworkVisualizer.h"
 
 ClassifierVisualizer::ClassifierVisualizer(NetworkVisualizer* visualizer, int rows, int cols, ImColor* classColors)
 {

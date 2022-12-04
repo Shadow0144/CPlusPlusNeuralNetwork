@@ -51,3 +51,4 @@ NeuralNetwork/x64/
 TestApplication/x86/
 TestApplication/x64/
 PreviousBuilds/
+build/

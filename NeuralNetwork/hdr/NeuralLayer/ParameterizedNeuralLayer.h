@@ -1,6 +1,6 @@
 #pragma once
 
-#include "NeuralLayer.h"
+#include "NeuralLayer/NeuralLayer.h"
 #include "ParameterSet.h"
 
 class ParameterizedNeuralLayer : public NeuralLayer

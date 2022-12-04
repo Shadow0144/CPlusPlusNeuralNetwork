@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ActivationFunction.h"
+#include "ActivationFunction/ActivationFunction.h"
 
 // Parametric Rectified Linear Unit
 class PReLUFunction : public ActivationFunction

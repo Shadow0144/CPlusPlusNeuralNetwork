@@ -1,4 +1,4 @@
-#include "ELUFunction.h"
+#include "ActivationFunction/ELUFunction.h"
 #include "NeuralNetworkFileHelper.h"
 
 #pragma warning(push, 0)

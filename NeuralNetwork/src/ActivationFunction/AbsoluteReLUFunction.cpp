@@ -1,4 +1,4 @@
-#include "AbsoluteReLUFunction.h"
+#include "ActivationFunction/AbsoluteReLUFunction.h"
 #include "NeuralNetwork.h"
 
 #pragma warning(push, 0)

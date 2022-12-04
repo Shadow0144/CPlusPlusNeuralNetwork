@@ -5,7 +5,7 @@
 #include <xtensor/xarray.hpp>
 #pragma warning(pop)
 
-#include "ActivationFunction.h"
+#include "ActivationFunction/ActivationFunction.h"
 
 class Optimizer;
 

@@ -1,7 +1,7 @@
 #define _USE_MATH_DEFINES
 
-#include "GELUFunction.h"
-#include "NeuralLayer.h"
+#include "ActivationFunction/GELUFunction.h"
+#include "NeuralLayer/NeuralLayer.h"
 
 #pragma warning(push, 0)
 #include <iostream>

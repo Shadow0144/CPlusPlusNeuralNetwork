@@ -1,6 +1,6 @@
 #define _USE_MATH_DEFINES
 
-#include "FlattenNeuralLayer.h"
+#include "NeuralLayer/ShapeLayer/FlattenNeuralLayer.h"
 
 #include "NetworkExceptions.h"
 

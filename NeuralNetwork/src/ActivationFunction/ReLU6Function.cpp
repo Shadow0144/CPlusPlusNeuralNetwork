@@ -1,5 +1,5 @@
-#include "ReLU6Function.h"
-#include "NeuralLayer.h"
+#include "ActivationFunction/ReLU6Function.h"
+#include "NeuralLayer/NeuralLayer.h"
 
 #pragma warning(push, 0)
 #include <iostream>

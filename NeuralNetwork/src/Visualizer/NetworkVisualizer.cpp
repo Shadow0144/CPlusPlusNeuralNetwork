@@ -1,4 +1,4 @@
-#include "NetworkVisualizer.h"
+#include "Visualizer/NetworkVisualizer.h"
 #include "NeuralNetwork.h"
 
 #pragma warning(push, 0)
@@ -10,8 +10,8 @@
 #include <math.h>
 #pragma warning(pop)
 
-#include "TanhFunction.h"
-#include "SigmoidFunction.h"
+#include "ActivationFunction/TanhFunction.h"
+#include "ActivationFunction/SigmoidFunction.h"
 
 NetworkVisualizer::NetworkVisualizer(NeuralNetwork* network)
 {

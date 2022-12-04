@@ -1,7 +1,7 @@
 #pragma once
 
 #pragma warning(push, 0)
-#include "NeuralLayer.h"
+#include "NeuralLayer/NeuralLayer.h"
 #include <vector>
 #pragma warning(pop)
 

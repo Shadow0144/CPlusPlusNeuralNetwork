@@ -1,8 +1,8 @@
 #define _USE_MATH_DEFINES
 
-#include "Convolution1DNeuralLayer.h"
+#include "NeuralLayer/ConvolutionLayer/Convolution1DNeuralLayer.h"
 
-#include "ActivationFunctionFactory.h"
+#include "ActivationFunction/ActivationFunctionFactory.h"
 #include "NetworkExceptions.h"
 
 #pragma warning(push, 0)

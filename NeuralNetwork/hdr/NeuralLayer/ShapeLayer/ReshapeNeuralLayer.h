@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ShapeNeuralLayer.h"
+#include "NeuralLayer/ShapeLayer/ShapeNeuralLayer.h"
 
 #pragma warning(push, 0)
 #include <vector>

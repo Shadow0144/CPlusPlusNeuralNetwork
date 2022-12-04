@@ -1,5 +1,5 @@
-#include "SoftsignFunction.h"
-#include "NeuralLayer.h"
+#include "ActivationFunction/SoftsignFunction.h"
+#include "NeuralLayer/NeuralLayer.h"
 
 #pragma warning(push, 0)
 #include <iostream>

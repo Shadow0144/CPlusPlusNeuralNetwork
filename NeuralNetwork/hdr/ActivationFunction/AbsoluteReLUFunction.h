@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ActivationFunction.h"
+#include "ActivationFunction/ActivationFunction.h"
 
 // Absolute Rectified Linear Unit / Absolute Value Rectified Linear Unit
 class AbsoluteReLUFunction : public ActivationFunction

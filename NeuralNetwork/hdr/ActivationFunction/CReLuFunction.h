@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ActivationFunction.h"
+#include "ActivationFunction/ActivationFunction.h"
 
 // Concatenated Rectified Linear Unit
 class CReLUFunction : public ActivationFunction

@@ -1,6 +1,6 @@
 #define _USE_MATH_DEFINES
 
-#include "SoftmaxNeuralLayer.h"
+#include "NeuralLayer/SoftmaxNeuralLayer.h"
 
 #pragma warning(push, 0)
 #include <iostream>

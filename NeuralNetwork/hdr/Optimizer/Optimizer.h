@@ -1,6 +1,6 @@
 #pragma once
 
-#include "LossFunction.h"
+#include "LossFunction/LossFunction.h"
 #include "ParameterSet.h"
 
 #pragma warning(push, 0)

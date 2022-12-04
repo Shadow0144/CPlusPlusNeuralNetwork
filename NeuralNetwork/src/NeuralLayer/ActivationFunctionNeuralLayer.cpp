@@ -1,8 +1,8 @@
 #define _USE_MATH_DEFINES
 
-#include "ActivationFunctionNeuralLayer.h"
+#include "NeuralLayer/ActivationFunctionNeuralLayer.h"
 
-#include "ActivationFunctionFactory.h"
+#include "ActivationFunction/ActivationFunctionFactory.h"
 
 #pragma warning(push, 0)
 #include <math.h>

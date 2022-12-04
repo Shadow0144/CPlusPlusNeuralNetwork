@@ -1,6 +1,6 @@
 #define _USE_MATH_DEFINES
 
-#include "ShapeNeuralLayer.h"
+#include "NeuralLayer/ShapeLayer/ShapeNeuralLayer.h"
 
 #pragma warning(push, 0)
 #include <math.h>

@@ -1,7 +1,7 @@
-#include "ConvolutionNeuralLayer.h"
+#include "NeuralLayer/ConvolutionLayer/ConvolutionNeuralLayer.h"
 
 #include "NeuralNetworkFileHelper.h"
-#include "ActivationFunctionFactory.h"
+#include "ActivationFunction/ActivationFunctionFactory.h"
 #include "NetworkExceptions.h"
 
 #pragma warning(push, 0)

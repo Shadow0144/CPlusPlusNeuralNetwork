@@ -1,5 +1,5 @@
-#include "HardSigmoidFunction.h"
-#include "NeuralLayer.h"
+#include "ActivationFunction/HardSigmoidFunction.h"
+#include "NeuralLayer/NeuralLayer.h"
 
 using namespace std;
 

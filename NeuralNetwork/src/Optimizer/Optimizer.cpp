@@ -1,6 +1,6 @@
-#include "Optimizer.h"
+#include "Optimizer/Optimizer.h"
 
-#include "NeuralLayer.h"
+#include "NeuralLayer/NeuralLayer.h"
 
 using namespace std;
 

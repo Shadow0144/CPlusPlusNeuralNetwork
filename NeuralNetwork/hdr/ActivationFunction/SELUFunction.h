@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ActivationFunction.h"
+#include "ActivationFunction/ActivationFunction.h"
 
 // Scaled Exponential Linear Unit
 class SELUFunction : public ActivationFunction

@@ -1,5 +1,5 @@
-#include "ImageClassVisualizer.h"
-#include "NetworkVisualizer.h"
+#include "Visualizer/ImageClassVisualizer.h"
+#include "Visualizer/NetworkVisualizer.h"
 
 ImageClassVisualizer::ImageClassVisualizer(NetworkVisualizer* visualizer, int rows, int cols, ImColor* classColors)
 {

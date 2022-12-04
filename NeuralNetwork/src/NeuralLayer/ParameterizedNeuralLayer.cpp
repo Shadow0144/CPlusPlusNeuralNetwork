@@ -1,6 +1,6 @@
-#include "ParameterizedNeuralLayer.h"
+#include "NeuralLayer/ParameterizedNeuralLayer.h"
 #include "NeuralNetworkFileHelper.h"
-#include "Optimizer.h"
+#include "Optimizer/Optimizer.h"
 
 #pragma warning(push, 0)
 #include <xtensor/xnpy.hpp>
