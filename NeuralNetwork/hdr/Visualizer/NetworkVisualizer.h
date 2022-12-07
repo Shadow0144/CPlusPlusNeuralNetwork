@@ -1,9 +1,9 @@
 #pragma once
 
 #pragma warning(push, 0)
-#include <SDL.h>
+#include <SDL3/SDL.h>
 #include <thread>
-#include "imgui.h"
+#include <imgui.h>
 #include <shared_mutex>
 #pragma warning(pop)
 
@@ -44,6 +44,8 @@ private:
 	SDL_Window* window;
 	SDL_GLContext gl_context;
 	ImGuiIO io;
+	SDL_Renderer* renderer;
+	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
 	ClassifierVisualizer* classifier;
 	bool displayClasses;

@@ -18,19 +18,6 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(SDL)
 
 FetchContent_Declare(
-  OpenCV
-  GIT_REPOSITORY https://github.com/opencv/opencv.git
-  GIT_TAG origin/4.x
-)
-FetchContent_MakeAvailable(OpenCV)
-
-FetchContent_Declare(
-  gl3w
-  GIT_REPOSITORY https://github.com/bwrsandman/gl3w.git
-)
-FetchContent_MakeAvailable(gl3w)
-
-FetchContent_Declare(
   imgui
   GIT_REPOSITORY https://github.com/pr0g/imgui.cmake.git
   GIT_TAG origin/main

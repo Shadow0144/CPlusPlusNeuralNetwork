@@ -1,6 +1,6 @@
-#include "Tests.h"
+#include "Test/Tests.h"
 #include "TestApplication.h"
-#include "IrisDataset.h"
+#include "Dataset/IrisDataset.h"
 
 using namespace xt::placeholders;
 using namespace std;

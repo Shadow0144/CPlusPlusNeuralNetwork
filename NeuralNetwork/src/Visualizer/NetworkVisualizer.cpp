@@ -2,12 +2,13 @@
 #include "NeuralNetwork.h"
 
 #pragma warning(push, 0)
-#include <GL/gl3w.h>
-#include "imgui_impl_sdl.h"
-#include "imgui_impl_opengl3.h"
+#include <backends/imgui_impl_sdl.h>
+#include <backends/imgui_impl_sdlrenderer.h>
 #include <stdio.h>
 #include <iostream>
 #include <math.h>
+#include <thread>
+#include <chrono>
 #pragma warning(pop)
 
 #include "ActivationFunction/TanhFunction.h"
@@ -78,30 +79,27 @@ void NetworkVisualizer::setup()
     }
     else { }
 
-    // GL 3.0 + GLSL 130
-    const char* glsl_version = "#version 130";
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, 0);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
-
     // Create window with graphics context
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
     SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
+
+    // Create window
     SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
     window = SDL_CreateWindow("Neural Network", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, winSize.x, winSize.y, window_flags);
     gl_context = SDL_GL_CreateContext(window);
+
+    // More window settings
     SDL_GL_MakeCurrent(window, gl_context);
     SDL_GL_SetSwapInterval(1); // Enable vsync
 
-    bool err = gl3wInit() != 0;
-
-    if (err)
+    // Setup SDL_Renderer instance
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
+    if (renderer == NULL)
     {
-        fprintf(stderr, "Failed to initialize OpenGL loader!\n");
+        SDL_Log("Error creating SDL_Renderer!");
+        fprintf(stderr, "Error creating SDL_Renderer!\n");
     }
-    else { }
 
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
@@ -114,9 +112,9 @@ void NetworkVisualizer::setup()
     ImGui::StyleColorsDark();
     //ImGui::StyleColorsClassic();
 
-    // Setup Platform/Renderer bindings
-    ImGui_ImplSDL2_InitForOpenGL(window, gl_context);
-    ImGui_ImplOpenGL3_Init(glsl_version);
+    // Setup Platform/Renderer backends
+    ImGui_ImplSDL2_InitForSDLRenderer(window, renderer);
+    ImGui_ImplSDLRenderer_Init(renderer);
 
     // Setup the origin
     origin = ImVec2(winSize.x / 2.0, winSize.y / 2.0);
@@ -223,15 +221,15 @@ void NetworkVisualizer::draw()
     while (rendering)
     {
         renderFrame();
-        Sleep(1);
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
 
     // Cleanup
-    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplSDLRenderer_Shutdown();
     ImGui_ImplSDL2_Shutdown();
     ImGui::DestroyContext();
 
-    SDL_GL_DeleteContext(gl_context);
+    SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
 
@@ -305,11 +303,11 @@ void NetworkVisualizer::renderFrame()
     }
     else { }
 
-    origin.x = max((-MAX_PAN * scale), min(origin.x, (10 * MAX_PAN * scale)));
-    origin.y = max((-MAX_PAN * scale), min(origin.y, (10 * MAX_PAN * scale)));
+    origin.x = max((-MAX_PAN * scale), min(static_cast<double>(origin.x), (10 * MAX_PAN * scale)));
+    origin.y = max((-MAX_PAN * scale), min(static_cast<double>(origin.y), (10 * MAX_PAN * scale)));
 
-    ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplSDL2_NewFrame(window); 
+    ImGui_ImplSDLRenderer_NewFrame();
+    ImGui_ImplSDL2_NewFrame();
     ImGui::NewFrame();
     ImGui::PushStyleColor(ImGuiCol_WindowBg, VERY_LIGHT_GRAY);
 
@@ -348,9 +346,8 @@ void NetworkVisualizer::renderFrame()
 
     // Rendering
     ImGui::Render();
-    glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
-    glClearColor(CLEAR_COLOR.x, CLEAR_COLOR.y, CLEAR_COLOR.z, CLEAR_COLOR.w);
-    glClear(GL_COLOR_BUFFER_BIT);
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-    SDL_GL_SwapWindow(window);
+    SDL_SetRenderDrawColor(renderer, (Uint8)(clear_color.x * 255), (Uint8)(clear_color.y * 255), (Uint8)(clear_color.z * 255), (Uint8)(clear_color.w * 255));
+    SDL_RenderClear(renderer);
+    ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
+    SDL_RenderPresent(renderer);
 }

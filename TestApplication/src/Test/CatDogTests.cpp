@@ -1,6 +1,6 @@
-#include "Tests.h"
+#include "Test/Tests.h"
 #include "TestApplication.h"
-#include "CatDogDataset.h"
+#include "DataSet/CatDogDataset.h"
 
 using namespace xt::placeholders;
 using namespace std;

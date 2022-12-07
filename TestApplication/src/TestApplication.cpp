@@ -1,5 +1,5 @@
 #include "TestApplication.h"
-#include "Tests.h"
+#include "Test/Tests.h"
 
 using namespace xt::placeholders;
 using namespace std;

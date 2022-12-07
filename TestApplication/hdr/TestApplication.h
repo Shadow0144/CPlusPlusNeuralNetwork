@@ -29,37 +29,34 @@
 #include <xtensor/xview.hpp>
 #include <xtensor/xio.hpp>
 #include <xtensor/xsort.hpp>
-#include <opencv2/core.hpp>
-#include <opencv2/imgcodecs.hpp>
-#include <opencv2/highgui.hpp>
-#include <opencv2/imgproc.hpp>
+#include <opencv2/opencv.hpp>
 #pragma warning(pop)
 
 #include "NeuralNetwork.h"
 
-//#include "MeanSquareErrorLossFunction.h"
-//#include "CrossEntropyErrorLossFunction.h"
+//#include "LossFunction/MeanSquareErrorLossFunction.h"
+//#include "LossFunction/CrossEntropyErrorLossFunction.h"
 
-//#include "SGDOptimizer.h"
-//#include "AdagradOptimizer.h"
-//#include "AdadeltaOptimizer.h"
-//#include "AdamaxOptimizer.h"
-//#include "RPropOptimizer.h"
-//#include "RMSPropOptimizer.h"
-//#include "AdamOptimizer.h"
-//#include "NadamOptimizer.h"
-//#include "AMSGradOptimizer.h"
-//#include "FtrlOptimizer.h"
-//#include "Optimizer.h"
+//#include "Optimizer/SGDOptimizer.h"
+//#include "Optimizer/AdagradOptimizer.h"
+//#include "Optimizer/AdadeltaOptimizer.h"
+//#include "Optimizer/AdamaxOptimizer.h"
+//#include "Optimizer/RPropOptimizer.h"
+//#include "Optimizer/RMSPropOptimizer.h"
+//#include "Optimizer/AdamOptimizer.h"
+//#include "Optimizer/NadamOptimizer.h"
+//#include "Optimizer/AMSGradOptimizer.h"
+//#include "Optimizer/FtrlOptimizer.h"
+//#include "Optimizer/Optimizer.h"
 
-#include "NetworkVisualizer.h"
+#include "Visualizer/NetworkVisualizer.h"
 
-//#include "Convolution2DFunction.h"
-//#include "MaxPooling2DFunction.h"
-//#include "FlattenFunction.h"
-#include "ReLUFunction.h"
-#include "SigmoidFunction.h"
-//#include "SoftmaxFunction.h"
+//#include "ActivationFunction/Convolution2DFunction.h"
+//#include "ActivationFunction/MaxPooling2DFunction.h"
+//#include "ActivationFunction/FlattenFunction.h"
+#include "ActivationFunction/ReLUFunction.h"
+#include "ActivationFunction/SigmoidFunction.h"
+//#include "ActivationFunction/SoftmaxFunction.h"
 
 #include "Test.h"
 

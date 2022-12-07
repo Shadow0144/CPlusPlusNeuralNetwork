@@ -52,3 +52,4 @@ TestApplication/x86/
 TestApplication/x64/
 PreviousBuilds/
 build/
+include/

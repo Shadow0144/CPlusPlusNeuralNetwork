@@ -5,6 +5,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
+find_package(OpenCV REQUIRED)
+
 file(GLOB_RECURSE HDR "hdr/*.h")
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${HDR})
 
@@ -13,6 +15,14 @@ source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${SRC})
 
 add_executable(TestApplication ${HDR} ${SRC})
 
-include_directories(TestApplication
+target_include_directories(TestApplication PRIVATE
   "hdr")
-target_link_libraries(TestApplication doctest SDL OpenCV gl3w imgui xtl xtensor xtensor-blas NeuralNetwork)
+
+target_link_libraries(TestApplication
+  SDL
+  ${OpenCV_LIBS}
+  imgui
+  xtl
+  xtensor
+  xtensor-blas
+  NeuralNetwork)
