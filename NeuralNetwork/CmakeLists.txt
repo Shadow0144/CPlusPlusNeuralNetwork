@@ -7,6 +7,9 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 find_package(OpenCV REQUIRED)
 
+set(BLA_VENDOR OpenBLAS)
+find_package(BLAS REQUIRED)
+
 include_directories(${EXTERNAL_INSTALL_LOCATION}/include)
 link_directories(${EXTERNAL_INSTALL_LOCATION}/lib)
 
@@ -26,3 +29,11 @@ target_include_directories(NeuralNetwork PUBLIC
   "${xtl_SOURCE_DIR}/include"
   "${xtensor_SOURCE_DIR}/include"
   "${xtensor-blas_SOURCE_DIR}/include")
+
+target_link_libraries(NeuralNetwork
+  ${OpenCV_LIBS}
+  ${BLAS_LIBRARIES}
+  SDL3
+  imgui.cmake
+  xtl
+  xtensor)

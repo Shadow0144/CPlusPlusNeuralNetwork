@@ -19,10 +19,4 @@ target_include_directories(TestApplication PRIVATE
   "hdr")
 
 target_link_libraries(TestApplication
-  SDL
-  ${OpenCV_LIBS}
-  imgui
-  xtl
-  xtensor
-  xtensor-blas
   NeuralNetwork)

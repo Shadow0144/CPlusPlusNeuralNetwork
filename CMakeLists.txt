@@ -8,7 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(BUILD_TESTS OFF CACHE BOOL "xtl test suite")
-set(WITH_LAPACK OFF CACHE BOOL "Include Lapack library support")
+set(USE_OPENBLAS ON CACHE BOOL "use OpenBLAS (requires suitable OpenBLASConfig.cmake)")
 
 FetchContent_Declare(
   SDL
